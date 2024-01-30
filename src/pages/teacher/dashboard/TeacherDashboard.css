@@ -1,0 +1,23 @@
+.teacher-dashboard-container{
+    position: relative;
+    top: 100px;
+}
+
+.appointments-container{
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding: 10px;
+    
+}
+.appoinment-card{
+    padding: 10px;
+    border: 1px solid gray;
+    display: flex;
+    justify-content: space-around;
+}
+
+.teacher-action {
+    display: flex;
+    gap: 20px;
+}

@@ -1,0 +1,16 @@
+.navbar-container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    width: 100%;
+    justify-content: space-around;
+    position: fixed;
+    z-index: 20;
+}
+.nav-links{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    width: 50%;
+    justify-content: space-around;
+}
