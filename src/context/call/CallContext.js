@@ -171,6 +171,7 @@ export const CallProvider = ({ children }) => {
           receiver: receiver,
           caller: caller,
           callID: callID,
+          status: 'calling',
           createdAt: serverTimestamp(),
         });
       }
@@ -179,11 +180,19 @@ export const CallProvider = ({ children }) => {
     }
   };
 
+  const updateCallOffer  = async (offerID) => {
+    if(auth.currentUser){
+      const callofferdocref = doc(firestore, 'CallOffers', offerID)
+      const updateCallOffer = {status: 'responded'}
+      await updateDoc(callofferdocref, updateCallOffer)
+    }
+  }
+
   const subscribeToCallOfferChanges = async (callback) => {
     try {
       if (auth.currentUser) {
         const unsubscribe = onSnapshot(
-          query(callOffersRef, where("receiver", "==", auth.currentUser.uid)),
+          query(callOffersRef, where("receiver", "==", auth.currentUser.uid), where('status', '==', 'calling')),
           (snapshot) => {
             snapshot.docChanges().forEach((change) => {
               if (change.type === "added") {
@@ -214,6 +223,7 @@ export const CallProvider = ({ children }) => {
     remoteVideoRef,
     callInput,
     offerCall,
+    updateCallOffer,
     subscribeToCallOfferChanges,
   };
 

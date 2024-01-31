@@ -42,11 +42,19 @@ const Dashboard = () => {
     const fetchData = async () => {
       try {
         const unsubscribe = call.subscribeToCallOfferChanges(
-          (newCallOffers) => {
+          async (newCallOffers) => {
             console.log("Your are being called");
-            navigate(
-              `/VideoCall?receiver=${newCallOffers.receiver}&caller=${newCallOffers.caller}`
-            );
+            
+            if(newCallOffers && newCallOffers.callID){
+              navigate(
+                `/VideoCall?receiver=${newCallOffers.receiver}&caller=${newCallOffers.caller}`
+              );
+              
+              const timeoutId = setTimeout(async () => {
+                await call.updateCallOffer(newCallOffers.id)
+              }, 3000);
+              return () => clearTimeout(timeoutId)
+            }
           }
         );
         return () => unsubscribe();
