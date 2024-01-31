@@ -3,31 +3,53 @@ import React, { useEffect, useState } from "react";
 import "./StudentDashboard.css";
 import { useDB } from "../../../context/db/DBContext";
 import { useAuth } from "../../../context/auth/AuthContext";
+import { Link } from "react-router-dom";
 
 const StudentDashboard = () => {
   const db = useDB();
   const auth = useAuth();
   const [instructors, setInstructors] = useState();
   const [appointments, setAppointments] = useState();
+  const [myInfo, setMyInfo] = useState();
+
+  const handleGetUser = async () => {
+    const me = await db.getUser();
+    setMyInfo(me);
+    console.log(me);
+  };
 
   const handleGetTeachers = async () => {
     const teachers = await db.getTeachers();
-    console.log(teachers);
     setInstructors(teachers);
   };
 
-  const handleGetAppointmentRequest = async () => {
-    const appointmentReq = await db.getAppointmentRequests();
-    setAppointments(appointmentReq);
-  };
-
-  const handleRequestAppointment = async (teacheruid, date, isOnline) => {
-    await db.sendAppointmentRequest(teacheruid, date, isOnline);
+  const handleRequestAppointment = async (
+    teacheruid,
+    teacherFirstName,
+    teacherLastName,
+    teacherPhoneno,
+    teacheruserID,
+    date,
+    isOnline,
+    phoneno,
+    studentIDnumber
+  ) => {
+    await db.sendAppointmentRequest(
+      teacheruid,
+      teacherFirstName,
+      teacherLastName,
+      teacherPhoneno,
+      teacheruserID,
+      date,
+      isOnline,
+      phoneno,
+      studentIDnumber
+    );
   };
 
   useEffect(() => {
-    if (appointments === undefined) {
-      handleGetAppointmentRequest();
+    if (myInfo === undefined) {
+      handleGetUser();
     }
   });
 
@@ -36,6 +58,24 @@ const StudentDashboard = () => {
       handleGetTeachers();
     }
   });
+
+  useEffect(() => {
+    const fetchData = async () => {
+      if (auth.currentUser) {
+        try {
+          const unsubscribe = db.subscribeToRequestedAppointmentChanges(
+            (newAppointment) => {
+              setAppointments(newAppointment);
+            }
+          );
+          return () => unsubscribe();
+        } catch (error) {
+          console.log(error);
+        }
+      }
+    };
+    fetchData();
+  }, []);
 
   return (
     <div className="student-dashboard-container">
@@ -49,11 +89,23 @@ const StudentDashboard = () => {
                 className="CCS-instructor-cards-container"
                 key={instructor.userID}
               >
-                <p>{instructor.displayName}</p>
+                <p>
+                  {instructor.firstName} {instructor.lastName}
+                </p>
                 <p>{instructor.email}</p>
                 <button
                   onClick={() =>
-                    handleRequestAppointment(instructor.email, 2021, true)
+                    handleRequestAppointment(
+                      instructor.email,
+                      instructor.firstName,
+                      instructor.lastName,
+                      instructor.phoneNumber,
+                      instructor.userID,
+                      2021,
+                      true,
+                      myInfo.phoneNumber,
+                      myInfo && myInfo.studentIdnumber
+                    )
                   }
                 >
                   Request Appointment
@@ -66,7 +118,31 @@ const StudentDashboard = () => {
         </div>
         <div className="">
           <p>Appointments</p>
-          <div className="appointment-wrappers"></div>
+          <div className="appointment-wrappers">
+            {appointments && appointments.length !== 0 ? (
+              appointments.map((appointment) => (
+                <div
+                  className=""
+                  style={{ display: "flex", gap: "10px" }}
+                  key={appointment.id}
+                >
+                  <p>{appointment.appointmentDate}</p>
+                  <p>{appointment.appointedTeacher.teacherDisplayName}</p>
+                  {appointment.appointmentStatus === "Accepted" ? (
+                    <Link
+                      to={`/Chatroom?receiver=${appointment.appointedTeacher.teacherDisplayName} `}
+                    >
+                      <p>Chat</p>
+                    </Link>
+                  ) : (
+                    <p>{appointment.appointmentStatus}</p>
+                  )}
+                </div>
+              ))
+            ) : (
+              <div className=""></div>
+            )}
+          </div>
         </div>
       </div>
     </div>

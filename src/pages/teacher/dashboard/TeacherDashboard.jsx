@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import "./TeacherDashboard.css";
 import { useDB } from "../../../context/db/DBContext";
 import { useAuth } from "../../../context/auth/AuthContext";
+import { Link } from "react-router-dom";
 
 const TeacherDashboard = () => {
   const db = useDB();
@@ -52,7 +53,7 @@ const TeacherDashboard = () => {
             appointments.map((appointment) => (
               <div key={appointment.id} className="appoinment-card">
                 <p>Cosultation Appointment Requested By:</p>
-                <p>{appointment.appointee}</p>
+                <p>{appointment.appointee.name}</p>
                 <p>{appointment.appointmentType}</p>
                 <p>{appointment.appointmentStatus}</p>
                 <div className="teacher-action">
@@ -63,13 +64,21 @@ const TeacherDashboard = () => {
                       >
                         Accept
                       </button>
-                      <button onClick={() => handleDenyAppointment()}>
+                      <button
+                        onClick={() => handleDenyAppointment(appointment.id)}
+                      >
                         Deny
                       </button>
                     </>
                   ) : (
                     <div className="">
-                      <button>hello</button>
+                      <Link
+                        to={`/Chatroom?receiver=${
+                          appointment && appointment.appointee.name
+                        } `}
+                      >
+                        <p>Chat</p>
+                      </Link>
                     </div>
                   )}
                 </div>

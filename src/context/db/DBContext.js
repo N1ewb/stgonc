@@ -50,6 +50,7 @@ export const DBProvider = ({ children }) => {
     }
   };
 
+  //General
   const getUser = async () => {
     try {
       if (auth.currentUser) {
@@ -92,12 +93,34 @@ export const DBProvider = ({ children }) => {
     }
   };
 
-  const sendAppointmentRequest = async (teacheremail, date, isOnline) => {
+  //As Student
+  const sendAppointmentRequest = async (
+    teacheremail,
+    firstName,
+    lastName,
+    teacherPhoneno,
+    teacheruserUID,
+    date,
+    isOnline,
+    phoneNumber,
+    studentIDnumber
+  ) => {
     try {
       if (auth.currentUser) {
         await addDoc(appointmentsRef, {
-          appointedTeacherEmail: teacheremail,
-          appointee: auth.currentUser.email,
+          appointedTeacher: {
+            teacheremail: teacheremail,
+            teacherDisplayName: firstName + " " + lastName,
+            teacherPhoneno: teacherPhoneno,
+            teacheruserID: teacheruserUID,
+          },
+          appointee: {
+            name: auth.currentUser.displayName,
+            email: auth.currentUser.email,
+            phoneNumber: phoneNumber,
+            studentIDnumber: studentIDnumber,
+            userID: auth.currentUser.uid,
+          },
           appointmentDate: date,
           appointmentStatus: "pending",
           appointmentType: "initial",
@@ -112,12 +135,13 @@ export const DBProvider = ({ children }) => {
     }
   };
 
+  //As teacher
   const getAppointmentRequests = async () => {
     try {
       if (auth.currentUser) {
         const q = query(
           appointmentsRef,
-          where("appointedTeacherEmail", "==", auth.currentUser.email)
+          where("appointedTeacher.teacheremail", "==", auth.currentUser.email)
         );
         const querySnapshot = await getDocs(q);
         const appointmentData = querySnapshot.docs.map((doc) => ({
@@ -164,6 +188,7 @@ export const DBProvider = ({ children }) => {
     }
   };
 
+  //General
   const getMessages = async (receiver) => {
     try {
       if (auth.currentUser && receiver) {
@@ -209,13 +234,14 @@ export const DBProvider = ({ children }) => {
     }
   };
 
+  //As Teacher
   const subscribeToAppointmentChanges = async (callback) => {
     try {
       if (auth.currentUser) {
         const unsubscribe = onSnapshot(
           query(
             appointmentsRef,
-            where("appointedTeacherEmail", "==", auth.currentUser.email)
+            where("appointedTeacher.teacheremail", "==", auth.currentUser.email)
           ),
           (snapshot) => {
             const data = snapshot.docs.map((doc) => ({
@@ -240,7 +266,12 @@ export const DBProvider = ({ children }) => {
           messagesRef,
           orderBy("createAt", "desc"),
 
-          where("participants", "array-contains", auth.currentUser.displayName),
+          where(
+            "participants",
+            "array-contains",
+            auth.currentUser.displayName,
+            auth.currentUser.email
+          ),
           limit(20)
         ),
 
@@ -258,6 +289,31 @@ export const DBProvider = ({ children }) => {
     }
   };
 
+  //As student
+  const subscribeToRequestedAppointmentChanges = async (callback) => {
+    try {
+      if (auth.currentUser) {
+        const unsubscribe = onSnapshot(
+          query(
+            appointmentsRef,
+            where("appointee.email", "==", auth.currentUser.email)
+          ),
+          (snapshot) => {
+            const data = snapshot.docs.map((doc) => ({
+              id: doc.id,
+              ...doc.data(),
+            }));
+
+            callback(data);
+          }
+        );
+        return unsubscribe;
+      }
+    } catch (error) {
+      console.error();
+    }
+  };
+
   const value = {
     getUsers,
     getUser,
@@ -270,6 +326,7 @@ export const DBProvider = ({ children }) => {
     sendMessage,
     subscribeToAppointmentChanges,
     subscribeToMessageChanges,
+    subscribeToRequestedAppointmentChanges,
   };
 
   return (
