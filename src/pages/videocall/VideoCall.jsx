@@ -52,10 +52,10 @@ const VideoCall = () => {
     <>
       <div className="home-container">
         <div className="local-cam-display">
-          <video ref={localVideoRef} autoPlay mute />
+          <video ref={localVideoRef} autoPlay muted />
         </div>
         <div className="remote-cam-display">
-          <video ref={remoteVideoRef} autoPlay mute />
+          <video ref={remoteVideoRef} autoPlay />
         </div>
         <div className="cam-button">
           <button onClick={() => handleWebcamOn()}>Turn Camera On</button>
