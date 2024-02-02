@@ -52,7 +52,7 @@ const VideoCall = () => {
     <>
       <div className="home-container">
         <div className="local-cam-display">
-          <video ref={localVideoRef} autoPlay />
+          <video ref={localVideoRef} autoPlay mute />
         </div>
         <div className="remote-cam-display">
           <video ref={remoteVideoRef} autoPlay mute />
