@@ -42,7 +42,7 @@ function App() {
                   />
                   <Route path="/VideoCall" element={<VideoCall />} />
                   <Route path="/Chatroom" element={<Chatroom />} />
-                  <Route path={`/Userpage/:id`} element={<Userpage />} />
+                  <Route path={`/Userpage`} element={<Userpage />} />
                   <Route path="/Dashboard" element={<Dashboard />} />
                 </Route>
 

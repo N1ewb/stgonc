@@ -4,22 +4,17 @@ import { useAuth } from "../../context/auth/AuthContext";
 import { useNavigate } from "react-router-dom";
 import "./Navbar.css";
 import { useDB } from "../../context/db/DBContext";
+import Profile from "../userProfile/Profile";
 
 const Navbar = () => {
   const auth = useAuth();
   const db = useDB();
   const [user, setUser] = useState(null);
-  const navigate = useNavigate();
 
   const handleGetUser = async () => {
     const user = await db.getUser();
     setUser(user);
     console.log(user && user.role);
-  };
-
-  const handleSignout = async () => {
-    await auth.SignOut();
-    navigate("/");
   };
 
   useEffect(() => {
@@ -69,8 +64,7 @@ const Navbar = () => {
         ) : (
           <>
             <img src={auth.currentUser && auth.currentUser.photoUrl} />
-            <p>{auth.currentUser && auth.currentUser.displayName}</p>
-            <button onClick={() => handleSignout()}>Logout</button>
+            <Profile />
           </>
         )}
       </div>
