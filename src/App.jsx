@@ -17,6 +17,8 @@ import AdminDashboard from "./pages/admin/dashboard/AdminDashboard";
 import TeacherRegister from "./pages/teacher/teacher_register/TeacherRegister";
 import TeacherDashboard from "./pages/teacher/dashboard/TeacherDashboard";
 import { CallProvider } from "./context/call/CallContext";
+import SendCallReq from "./pages/videocall/SendCallReq";
+import ReceiveCallReq from "./pages/videocall/ReceiveCallReq";
 
 function App() {
   return (
@@ -41,6 +43,8 @@ function App() {
                     element={<TeacherDashboard />}
                   />
                   <Route path="/VideoCall" element={<VideoCall />} />
+                  <Route path="/SendCallReq" element={<SendCallReq />} />
+                  <Route path="/ReceiveCallReq" element={<ReceiveCallReq />} />
                   <Route path="/Chatroom" element={<Chatroom />} />
                   <Route path={`/Userpage`} element={<Userpage />} />
                   <Route path="/Dashboard" element={<Dashboard />} />

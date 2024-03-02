@@ -1,17 +1,80 @@
 .message{
-    border: 1px solid black;
     padding: 3px;
-    width: 400px;
+    width: 100%;
     background-color: white;
 }
 
 .message.sent {
-
     display: flex;
     flex-direction: column;
     text-align: right;
 }
-.message.received {
+/* Chatmessages.css */
 
-  
+.message {
+    margin: 8px 0;
+    padding: 10px;
+    border-radius: 20px;
+    max-width: 75%;
+    position: relative;
+    color: #333;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+}
+
+/* Aligning sent messages to the right and received to the left */
+.message.sent {
+    margin-left: auto;
+    background-color: #dcf8c6; /* Light green, similar to WhatsApp */
+    text-align: left;
+}
+
+.message.received {
+    margin-right: auto;
+    background-color: #fff; /* Keep it white for received messages */
+    text-align: left;
+    border: 1px solid #eee;
+}
+
+/* Additional details for the message */
+.message p {
+    margin: 4px 0; /* Adding some space between paragraphs */
+}
+
+/* Styling for sender info, you might choose to hide or style this differently */
+.message p:last-child {
+    font-size: 0.75rem;
+    color: #666;
+    text-align: right;
+    margin-top: 8px;
+}
+
+/* Adding a small tail to the messages to make them look like speech bubbles */
+.message.sent::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 0;
+    height: 0;
+    border: 10px solid transparent;
+    border-bottom-color: #dcf8c6;
+    border-top: 0;
+    border-right: 0;
+    margin-top: -10px;
+    margin-right: -10px;
+}
+
+.message.received::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 0;
+    height: 0;
+    border: 10px solid transparent;
+    border-bottom-color: #fff;
+    border-top: 0;
+    border-left: 0;
+    margin-top: -10px;
+    margin-left: -10px;
 }

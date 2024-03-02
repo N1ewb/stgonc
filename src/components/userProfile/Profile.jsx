@@ -42,12 +42,9 @@ const Profile = () => {
             {auth.currentUser.displayName}
           </Dropdown.Item>
 
-          <Link
-            to="/Userpage"
-            style={{ textDecoration: "none", color: "black" }}
-          >
+          <Dropdown.Item onClick={() => navigate("/Userpage")}>
             Account Settings
-          </Link>
+          </Dropdown.Item>
 
           <Dropdown.Item href="#/action-2">Give Feedback</Dropdown.Item>
           <Dropdown.Item onClick={() => handleSignout()}>Logout</Dropdown.Item>

@@ -80,11 +80,7 @@ const Chatroom = () => {
 
   return (
     <div className="chatroom-container">
-      <p>
-        Participants:{" "}
-        {auth.currentUser &&
-          "from " + auth.currentUser.displayName + ", " + "to " + receiver}
-      </p>
+      <div className="chat-receiver">{receiver}</div>
       <div className="messages-wrapper">
         <div ref={dummy}></div>
         {filterbyParticipants === undefined ? (

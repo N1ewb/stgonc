@@ -21,3 +21,17 @@
     display: flex;
     gap: 20px;
 }
+.action-links{
+    display: flex;
+    justify-content: space-around;
+    width: 200px;
+}
+.action-links a{
+    text-align: center;
+    align-items: center;
+    width: 40%;
+    text-decoration: none;
+    color: white;
+    background-color: #96a0ff;
+    border-radius: 15px;
+}

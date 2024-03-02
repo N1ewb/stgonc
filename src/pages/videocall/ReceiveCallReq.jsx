@@ -2,14 +2,13 @@ import React, { useRef, useState, useEffect } from "react";
 import { useCall } from "../../context/call/CallContext";
 import { useLocation } from "react-router-dom";
 
-import "./VideoCall.css";
+import "./RecieveCallReq.css";
 
-const VideoCall = () => {
+const ReceiveCallReq = () => {
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
   const receiver = queryParams.get("receiver");
   const caller = queryParams.get("caller");
-  const [newCalloffer, setNewCallOffer] = useState();
 
   const call = useCall();
   const localVideoRef = call.localVideoRef;
@@ -26,7 +25,6 @@ const VideoCall = () => {
         const unsubscribe = call.subscribeToCallOfferChanges(
           (newCallOffers) => {
             callInput.current.value = newCallOffers.callID;
-            setNewCallOffer(newCallOffers.id);
           }
         );
         return () => unsubscribe();
@@ -43,16 +41,11 @@ const VideoCall = () => {
   };
 
   const handleAnswerCall = async () => {
-    await call.answerCallOffer(newCalloffer);
     await call.AnswerCall();
   };
 
   const handlehangUp = async () => {
-    if (newCalloffer) {
-      await call.hangUp(newCalloffer);
-    } else {
-      console.log("Error: newCalloffer is undefined.");
-    }
+    await call.hangUp();
   };
 
   return (
@@ -66,16 +59,16 @@ const VideoCall = () => {
         </div>
         <div className="cam-button">
           <button onClick={() => handleWebcamOn()}>Turn Camera On</button>
-          <button onClick={() => handleCallButton(receiver, caller)}>
-            Call now
-          </button>
-          <input ref={callInput} placeholder="Call Input" />
+          <input
+            style={{ display: "none" }}
+            ref={callInput}
+            placeholder="Call Input"
+          />
           <button onClick={() => handleAnswerCall()}>Answer Call</button>
-          <button onClick={() => handlehangUp()}>Hang now</button>
         </div>
       </div>
     </>
   );
 };
 
-export default VideoCall;
+export default ReceiveCallReq;

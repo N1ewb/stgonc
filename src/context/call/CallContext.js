@@ -14,6 +14,8 @@ import {
   serverTimestamp,
   where,
   query,
+  limit,
+  orderBy,
 } from "firebase/firestore";
 
 import { useAuth } from "../auth/AuthContext";
@@ -148,17 +150,21 @@ export const CallProvider = ({ children }) => {
     });
   };
 
-  const hangUp = async () => {
+  const hangUp = async (newCalloffer) => {
     const callId = callInput.current.value;
     const callDoc = doc(collection(firestore, "calls"), callId);
     const callOfferDoc = doc(collection(firestore, "CallOffers"), callId);
     try {
       await pc.close();
-      pc.onicecandidate = null;
-      localVideoRef.current.srcObject = null;
-      remoteVideoRef.current.srcObject = null;
+      const callofferdocref = doc(firestore, "CallOffers", newCalloffer);
+      const updateCallOffer = { status: "ended" };
+      await updateDoc(callofferdocref, updateCallOffer);
       await deleteDoc(callDoc);
       await deleteDoc(callOfferDoc);
+      pc.onicecandidate = null;
+
+      localVideoRef.current.srcObject = null;
+      remoteVideoRef.current.srcObject = null;
     } catch (error) {
       console.error("Error during hangup:", error);
     }
@@ -171,7 +177,7 @@ export const CallProvider = ({ children }) => {
           receiver: receiver,
           caller: caller,
           callID: callID,
-          status: 'calling',
+          status: "calling",
           createdAt: serverTimestamp(),
         });
       }
@@ -180,19 +186,62 @@ export const CallProvider = ({ children }) => {
     }
   };
 
-  const updateCallOffer  = async (offerID) => {
-    if(auth.currentUser){
-      const callofferdocref = doc(firestore, 'CallOffers', offerID)
-      const updateCallOffer = {status: 'responded'}
-      await updateDoc(callofferdocref, updateCallOffer)
+  const updateCallOffer = async (offerID) => {
+    if (auth.currentUser) {
+      const callofferdocref = doc(firestore, "CallOffers", offerID);
+      const updateCallOffer = { status: "responded" };
+      await updateDoc(callofferdocref, updateCallOffer);
     }
-  }
+  };
+
+  const answerCallOffer = async (offerID) => {
+    if (auth.currentUser) {
+      const callofferdocref = doc(firestore, "CallOffers", offerID);
+      const updateCallOffer = { status: "answered" };
+      await updateDoc(callofferdocref, updateCallOffer);
+    }
+  };
+
+  const subscribeToAnsweredOfferChanges = async (callback) => {
+    try {
+      if (auth.currentUser) {
+        const unsubscribe = onSnapshot(
+          query(
+            callOffersRef,
+            where("caller", "==", auth.currentUser.uid),
+            where("status", "==", "answered"),
+            orderBy("createdAt", "desc"),
+            limit(1)
+          ),
+          (snapshot) => {
+            snapshot.docChanges().forEach((change) => {
+              if (change.type === "added") {
+                const doc = change.doc;
+                const data = {
+                  id: doc.id,
+                  ...doc.data(),
+                };
+                callback(data);
+              }
+            });
+          }
+        );
+        return unsubscribe;
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   const subscribeToCallOfferChanges = async (callback) => {
     try {
       if (auth.currentUser) {
         const unsubscribe = onSnapshot(
-          query(callOffersRef, where("receiver", "==", auth.currentUser.uid), where('status', '==', 'calling')),
+          query(
+            callOffersRef,
+            where("receiver", "==", auth.currentUser.uid),
+            where("status", "==", "calling")
+          ),
           (snapshot) => {
             snapshot.docChanges().forEach((change) => {
               if (change.type === "added") {
@@ -224,6 +273,8 @@ export const CallProvider = ({ children }) => {
     callInput,
     offerCall,
     updateCallOffer,
+    answerCallOffer,
+    subscribeToAnsweredOfferChanges,
     subscribeToCallOfferChanges,
   };
 

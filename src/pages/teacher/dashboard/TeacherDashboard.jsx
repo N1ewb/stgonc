@@ -71,13 +71,20 @@ const TeacherDashboard = () => {
                       </button>
                     </>
                   ) : (
-                    <div className="">
+                    <div className="action-links">
                       <Link
                         to={`/Chatroom?receiver=${
                           appointment && appointment.appointee.name
                         } `}
                       >
                         <p>Chat</p>
+                      </Link>
+                      <Link
+                        to={`/SendCallReq?receiver=${
+                          appointment && appointment.appointee.userID
+                        }&caller=${auth.currentUser.uid}`}
+                      >
+                        Call
                       </Link>
                     </div>
                   )}

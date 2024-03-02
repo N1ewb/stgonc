@@ -1,15 +1,28 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../../context/auth/AuthContext";
-import { useNavigate } from "react-router-dom";
-import "./Navbar.css";
 import { useDB } from "../../context/db/DBContext";
 import Profile from "../userProfile/Profile";
+import "./Navbar.css";
 
 const Navbar = () => {
   const auth = useAuth();
   const db = useDB();
   const [user, setUser] = useState(null);
+
+  const dashboardLink = () => {
+    const role = user && user.role;
+    switch (role) {
+      case "admin":
+        return "/AdminDashboard";
+      case "teacher":
+        return "/TeacherDashboard";
+      case "student":
+        return "/StudentDashboard";
+      default:
+        return "/";
+    }
+  };
 
   const handleGetUser = async () => {
     const user = await db.getUser();
@@ -33,25 +46,12 @@ const Navbar = () => {
           <p>Landing page</p>
         </Link>
 
-        {auth.currentUser && (user && user.role) === "admin" ? (
-          <Link to="/AdminDashboard">
-            <p>A Dashboard</p>
+        {auth.currentUser && (
+          <Link to={dashboardLink()}>
+            <p>Dashboard</p>
           </Link>
-        ) : user && user.role === "teacher" ? (
-          <Link to="/TeacherDashboard">
-            <p>T Dashboard</p>
-          </Link>
-        ) : user && user.role === "student" ? (
-          <Link to="/StudentDashboard">
-            <p>S Dashboard</p>
-          </Link>
-        ) : (
-          "hello"
         )}
 
-        <Link to="/VideoCall">
-          <p>VideoCall</p>
-        </Link>
         {!auth.currentUser ? (
           <>
             <Link to="/Login">
