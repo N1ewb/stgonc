@@ -51,13 +51,10 @@ export const DBProvider = ({ children }) => {
   };
 
   //General
-  const getUser = async () => {
+  const getUser = async (UID) => {
     try {
       if (auth.currentUser) {
-        const q = query(
-          usersCollectionRef,
-          where("userID", "==", auth.currentUser.uid)
-        );
+        const q = query(usersCollectionRef, where("userID", "==", UID));
 
         const querySnapshot = await getDocs(q);
         const userDoc = querySnapshot.docs[0];

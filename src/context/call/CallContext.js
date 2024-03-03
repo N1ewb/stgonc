@@ -240,7 +240,9 @@ export const CallProvider = ({ children }) => {
           query(
             callOffersRef,
             where("receiver", "==", auth.currentUser.uid),
-            where("status", "==", "calling")
+            where("status", "==", "calling"),
+            orderBy("createdAt", "desc"),
+            limit(1)
           ),
           (snapshot) => {
             snapshot.docChanges().forEach((change) => {

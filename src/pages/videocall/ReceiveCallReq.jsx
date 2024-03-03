@@ -1,23 +1,24 @@
-import React, { useRef, useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useCall } from "../../context/call/CallContext";
 import { useLocation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import Profile from "../../static/images/default-profile.png";
+import AnswerCall from "../../static/images/icons8-video-call-64.png";
+import HangUp from "../../static/images/icons8-hang-up-48.png";
 
 import "./RecieveCallReq.css";
+import { useDB } from "../../context/db/DBContext";
 
 const ReceiveCallReq = () => {
+  const db = useDB();
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
   const receiver = queryParams.get("receiver");
   const caller = queryParams.get("caller");
-
+  const navigate = useNavigate();
   const call = useCall();
-  const localVideoRef = call.localVideoRef;
-  const remoteVideoRef = call.remoteVideoRef;
   const callInput = call.callInput;
-
-  const handleWebcamOn = async () => {
-    await call.WebcamOn();
-  };
+  const [callerName, setCallerName] = useState();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -25,6 +26,7 @@ const ReceiveCallReq = () => {
         const unsubscribe = call.subscribeToCallOfferChanges(
           (newCallOffers) => {
             callInput.current.value = newCallOffers.callID;
+            handleGetCaller();
           }
         );
         return () => unsubscribe();
@@ -35,13 +37,19 @@ const ReceiveCallReq = () => {
     fetchData();
   }, [call]);
 
-  const handleCallButton = async (receiver, caller, callID) => {
-    await call.CallButton();
-    await call.offerCall(receiver, caller, callInput.current.value);
+  const handleGetCaller = async () => {
+    try {
+      const callerInfo = await db.getUser(caller);
+      if (callerInfo) {
+        setCallerName(callerInfo);
+      }
+    } catch (error) {
+      console.error("Failed to fetch caller info:", error);
+    }
   };
 
   const handleAnswerCall = async () => {
-    await call.AnswerCall();
+    navigate(`/VideoCall?receiver=${receiver}&caller=${caller}`);
   };
 
   const handlehangUp = async () => {
@@ -51,20 +59,27 @@ const ReceiveCallReq = () => {
   return (
     <>
       <div className="home-container">
-        <div className="local-cam-display">
-          <video ref={localVideoRef} autoPlay muted />
-        </div>
-        <div className="remote-cam-display">
-          <video ref={remoteVideoRef} autoPlay />
+        <div className="caller-details">
+          <p>Incoming Call</p>
+          <img src={Profile} alt="profile-picture" height="80px" />
+          <p>
+            {callerName && callerName.firstName + " " + callerName.lastName} is
+            calling you
+          </p>
+          <span>The call will start as soon as accept</span>
         </div>
         <div className="cam-button">
-          <button onClick={() => handleWebcamOn()}>Turn Camera On</button>
           <input
             style={{ display: "none" }}
             ref={callInput}
             placeholder="Call Input"
           />
-          <button onClick={() => handleAnswerCall()}>Answer Call</button>
+          <button onClick={() => handleAnswerCall()}>
+            <img src={AnswerCall} alt="answer-call" width="30px" />
+          </button>
+          <button onClick={() => handlehangUp()}>
+            <img src={HangUp} alt="camera" width="30px" />
+          </button>
         </div>
       </div>
     </>

@@ -13,9 +13,10 @@ const StudentDashboard = () => {
   const [myInfo, setMyInfo] = useState();
 
   const handleGetUser = async () => {
-    const me = await db.getUser();
-    setMyInfo(me);
-    console.log(me);
+    if (auth.currentUser) {
+      const me = await db.getUser(auth.currentUser.uid);
+      setMyInfo(me);
+    }
   };
 
   const handleGetTeachers = async () => {

@@ -8,26 +8,49 @@
     align-items: center;
 }
 
-.local-cam-display{
-    height: 50%;
-    width: 40%;
-    background-color: antiquewhite;
+.v-local-cam-display{
+    position: relative; 
+    display: flex;
+    flex-direction: row;
+    justify-content: right; 
+    top: 31%; 
+    left: 39%; 
+    height: auto; 
+     width: 300px;
+    background-color: transparent;
 }
-.remote-cam-display{
-    height: 50%;
-    width: 40%;
-    background-color: antiquewhite;
+.v-local-cam-display video{
+    position: relative;
+    height: 100%;
+    width: 100%;
+    border-radius: 20px;
 }
-.cam-button {
+.v-remote-cam-display{
+    position: absolute;
+    top: 10%;
+    left: 12%;
+    height: auto;
+    width: 50%;
+    background-color: aliceblue;
+}
+.v-remote-cam-display video{
+    position: absolute;
+    top: 10%;
+    left: 27%;
+    height: auto;
+    width: 100%;
+}
+.call-buttons {
+    position: absolute;
     width: 100%;
     display:flex;
-    flex-direction: column;
+    flex-direction: row;
     justify-content: center;
     align-items: center;
+    bottom: 2%;
+    right: 0%;
 }
-.cam-button button,input {
-    z-index: 10;
-    height: 50px;
-    width: 50%;
+.call-buttons button {
+    background-color: transparent;
     cursor: pointer;
 }

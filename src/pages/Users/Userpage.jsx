@@ -15,8 +15,10 @@ const Userpage = () => {
   const [user, setUser] = useState();
 
   const handleGetUser = async () => {
-    const curentUser = await db.getUser();
-    setUser(curentUser);
+    if (auth.currentUser) {
+      const curentUser = await db.getUser(auth.curentUser.uid);
+      setUser(curentUser);
+    }
   };
 
   const handleChangePhoto = async () => {

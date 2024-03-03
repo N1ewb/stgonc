@@ -21,8 +21,10 @@ const Dashboard = () => {
   };
 
   const handleGetUser = async () => {
-    const user = await db.getUser();
-    setUser(user);
+    if (auth.currentUser) {
+      const user = await db.getUser(auth.currentUser.uid);
+      setUser(user);
+    }
   };
 
   useEffect(() => {
@@ -44,16 +46,16 @@ const Dashboard = () => {
         const unsubscribe = call.subscribeToCallOfferChanges(
           async (newCallOffers) => {
             console.log("Your are being called");
-            
-            if(newCallOffers && newCallOffers.callID){
+
+            if (newCallOffers && newCallOffers.callID) {
               navigate(
-                `/VideoCall?receiver=${newCallOffers.receiver}&caller=${newCallOffers.caller}`
+                `/ReceiveCallReq?receiver=${newCallOffers.receiver}&caller=${newCallOffers.caller}`
               );
-              
+
               const timeoutId = setTimeout(async () => {
-                await call.updateCallOffer(newCallOffers.id)
+                await call.updateCallOffer(newCallOffers.id);
               }, 3000);
-              return () => clearTimeout(timeoutId)
+              return () => clearTimeout(timeoutId);
             }
           }
         );

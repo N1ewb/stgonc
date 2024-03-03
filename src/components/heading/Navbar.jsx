@@ -25,9 +25,10 @@ const Navbar = () => {
   };
 
   const handleGetUser = async () => {
-    const user = await db.getUser();
-    setUser(user);
-    console.log(user && user.role);
+    if (auth.currentUser) {
+      const user = await db.getUser(auth.currentUser.uid);
+      setUser(user);
+    }
   };
 
   useEffect(() => {

@@ -2,6 +2,11 @@ import React, { useRef, useState, useEffect } from "react";
 import { useCall } from "../../context/call/CallContext";
 import { useLocation } from "react-router-dom";
 
+import Profile from "../../static/images/default-profile.png";
+import Camera from "../../static/images/icons8-camera-64.png";
+import CallButton from "../../static/images/icons8-call-64-white.png";
+import HangUp from "../../static/images/icons8-hang-up-48.png";
+
 import "./VideoCall.css";
 
 const VideoCall = () => {
@@ -10,7 +15,6 @@ const VideoCall = () => {
   const receiver = queryParams.get("receiver");
   const caller = queryParams.get("caller");
   const [newCalloffer, setNewCallOffer] = useState();
-
   const call = useCall();
   const localVideoRef = call.localVideoRef;
   const remoteVideoRef = call.remoteVideoRef;
@@ -35,16 +39,13 @@ const VideoCall = () => {
       }
     };
     fetchData();
-  }, [call]);
-
-  const handleCallButton = async (receiver, caller, callID) => {
-    await call.CallButton();
-    await call.offerCall(receiver, caller, callInput.current.value);
-  };
+  }, [call, callInput]);
 
   const handleAnswerCall = async () => {
-    await call.answerCallOffer(newCalloffer);
-    await call.AnswerCall();
+    if (newCalloffer) {
+      await call.answerCallOffer(newCalloffer);
+      await call.AnswerCall();
+    }
   };
 
   const handlehangUp = async () => {
@@ -55,23 +56,36 @@ const VideoCall = () => {
     }
   };
 
+  useEffect(() => {
+    const setup = async () => {
+      await handleWebcamOn();
+      await handleAnswerCall();
+    };
+    setup();
+  }, []);
+
   return (
     <>
       <div className="home-container">
-        <div className="local-cam-display">
+        <div className="v-local-cam-display">
           <video ref={localVideoRef} autoPlay muted />
         </div>
-        <div className="remote-cam-display">
+        <div className="v-remote-cam-display">
           <video ref={remoteVideoRef} autoPlay />
         </div>
-        <div className="cam-button">
-          <button onClick={() => handleWebcamOn()}>Turn Camera On</button>
-          <button onClick={() => handleCallButton(receiver, caller)}>
-            Call now
+        <div className="call-buttons">
+          <button onClick={() => handleWebcamOn()}>
+            <img src={Camera} alt="camera" width="30px" />
           </button>
-          <input ref={callInput} placeholder="Call Input" />
+          <input
+            style={{ display: "none" }}
+            ref={callInput}
+            placeholder="Call Input"
+          />
           <button onClick={() => handleAnswerCall()}>Answer Call</button>
-          <button onClick={() => handlehangUp()}>Hang now</button>
+          <button onClick={() => handlehangUp()}>
+            <img src={HangUp} alt="camera" width="30px" />
+          </button>
         </div>
       </div>
     </>
