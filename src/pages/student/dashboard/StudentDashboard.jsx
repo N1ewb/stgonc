@@ -4,6 +4,8 @@ import "./StudentDashboard.css";
 import { useDB } from "../../../context/db/DBContext";
 import { useAuth } from "../../../context/auth/AuthContext";
 import { Link } from "react-router-dom";
+import Button from 'react-bootstrap/Button';
+import RequestAppointmentForm from "../../../components/forms/RequestAppointmentForm";
 
 const StudentDashboard = () => {
   const db = useDB();
@@ -11,6 +13,9 @@ const StudentDashboard = () => {
   const [instructors, setInstructors] = useState();
   const [appointments, setAppointments] = useState();
   const [myInfo, setMyInfo] = useState();
+  const [show, setShow] = useState(false);
+
+  const toggleShow = () => setShow(!show);
 
   const handleGetUser = async () => {
     if (auth.currentUser) {
@@ -82,8 +87,13 @@ const StudentDashboard = () => {
     <div className="student-dashboard-container">
       <div className="">
         <h3>Student Dashboard</h3>
+        <select>
+          <option></option>
+          <option>Department Counseling</option>
+          <option>Career & Guidance Counseling</option>
+        </select>
         <div className="CCS-instructors-container">
-          <p>Instructors</p>
+          <p>Department Instructors</p>
           {instructors && instructors.length !== 0 ? (
             instructors.map((instructor, index) => (
               <div
@@ -94,23 +104,10 @@ const StudentDashboard = () => {
                   {instructor.firstName} {instructor.lastName}
                 </p>
                 <p>{instructor.email}</p>
-                <button
-                  onClick={() =>
-                    handleRequestAppointment(
-                      instructor.email,
-                      instructor.firstName,
-                      instructor.lastName,
-                      instructor.phoneNumber,
-                      instructor.userID,
-                      2021,
-                      true,
-                      myInfo.phoneNumber,
-                      myInfo && myInfo.studentIdnumber
-                    )
-                  }
-                >
+                <Button  variant="primary" onClick={() => toggleShow()}>
                   Request Appointment
-                </button>
+                </Button>
+                <RequestAppointmentForm instructor={instructor} toggleShow={toggleShow} show={show}/>
               </div>
             ))
           ) : (
