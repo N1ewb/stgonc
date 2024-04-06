@@ -16,8 +16,8 @@ const Userpage = () => {
 
   const handleGetUser = async () => {
     if (auth.currentUser) {
-      const curentUser = await db.getUser(auth.curentUser.uid);
-      setUser(curentUser);
+      const user = await db.getUser(auth.currentUser.uid);
+      setUser(user);
     }
   };
 
@@ -26,10 +26,10 @@ const Userpage = () => {
   };
 
   useEffect(() => {
-    if (user === undefined) {
+    if (auth.currentUser) {
       handleGetUser();
     }
-  });
+  }, []);
 
   return (
     <div className="Userpage-container">

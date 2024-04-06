@@ -84,7 +84,7 @@ export const AuthProvider = ({ children }) => {
               email: email,
               phoneNumber,
               studentIdnumber,
-              role: "student",
+              role: "Student",
               isOnline: true,
             }
           );
@@ -115,7 +115,7 @@ export const AuthProvider = ({ children }) => {
               lastName: lastName,
               email: email,
               phoneNumber,
-              role: "teacher",
+              role: "Teacher",
               isOnline: true,
               appointments: {},
               schedules: {},

@@ -2,36 +2,51 @@
     position: relative;
     top: 100px;
 }
-
-.appointments-container{
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
+.teacher-dashboard-container {
+    /* Existing styles */
+  }
+  
+  .appointments-container {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  .appoinment-card {
+    display: table-row;
+    border-bottom: 1px solid #ccc;
+  }
+  
+  .appoinment-card > * {
+    display: table-cell;
     padding: 10px;
-    
-}
-.appoinment-card{
-    padding: 10px;
-    border: 1px solid gray;
+  }
+  
+  .teacher-action {
     display: flex;
-    justify-content: space-around;
-}
-
-.teacher-action {
-    display: flex;
-    gap: 20px;
-}
-.action-links{
-    display: flex;
-    justify-content: space-around;
-    width: 200px;
-}
-.action-links a{
-    text-align: center;
+    justify-content: center;
     align-items: center;
-    width: 40%;
-    text-decoration: none;
+    gap: 10px;
+  }
+  
+  .teacher-action button {
+    padding: 5px 10px;
+    background-color: #4caf50;
     color: white;
-    background-color: #96a0ff;
-    border-radius: 15px;
-}
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  .action-links {
+    display: flex;
+    gap: 10px;
+  }
+  
+  .action-links a {
+    color: #0077b6;
+    text-decoration: none;
+  }
+  
+  .action-links a:hover {
+    text-decoration: underline;
+  }

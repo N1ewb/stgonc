@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-
 import "./TeacherDashboard.css";
 import { useDB } from "../../../context/db/DBContext";
 import { useAuth } from "../../../context/auth/AuthContext";
@@ -75,7 +74,7 @@ const TeacherDashboard = () => {
                       <Link
                         to={`/Chatroom?receiver=${
                           appointment && appointment.appointee.name
-                        } `}
+                        }`}
                       >
                         <p>Chat</p>
                       </Link>

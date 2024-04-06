@@ -75,7 +75,7 @@ export const DBProvider = ({ children }) => {
   const getTeachers = async () => {
     try {
       if (auth.currentUser) {
-        const q = query(usersCollectionRef, where("role", "==", "teacher"));
+        const q = query(usersCollectionRef, where("role", "==", "Teacher"));
 
         const querySnapshot = await getDocs(q);
         const usersData = querySnapshot.docs.map((doc) => ({

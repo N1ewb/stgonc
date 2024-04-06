@@ -1,6 +1,6 @@
 import React from "react";
 import "./App.css";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Link, Navigate } from "react-router-dom";
 import LandingPage from "./pages/landingpage/LandingPage";
 import { AuthProvider } from "./context/auth/AuthContext";
 import Dashboard from "./pages/dashboard/Dashboard";
@@ -12,13 +12,13 @@ import Userpage from "./pages/Users/Userpage";
 import { DBProvider } from "./context/db/DBContext";
 import Chatroom from "./pages/chatroom/Chatroom";
 import { PrivateRoutes } from "./utils/protected-routes/routes";
-import StudentDashboard from "./pages/student/dashboard/StudentDashboard";
-import AdminDashboard from "./pages/admin/dashboard/AdminDashboard";
 import TeacherRegister from "./pages/teacher/teacher_register/TeacherRegister";
-import TeacherDashboard from "./pages/teacher/dashboard/TeacherDashboard";
 import { CallProvider } from "./context/call/CallContext";
 import SendCallReq from "./pages/videocall/SendCallReq";
 import ReceiveCallReq from "./pages/videocall/ReceiveCallReq";
+import TeacherDashboard from "./pages/teacher/dashboard/TeacherDashboard";
+import AdminDashboard from "./pages/admin/dashboard/AdminDashboard";
+import StudentDashboard from "./pages/student/dashboard/StudentDashboard";
 
 function App() {
   return (
@@ -30,29 +30,18 @@ function App() {
               <Navbar />
               <Routes>
                 <Route path="/" exact element={<LandingPage />} />
-
                 <Route element={<PrivateRoutes />}>
-                  <Route
-                    index
-                    path="/StudentDashboard"
-                    element={<StudentDashboard />}
-                  />
-                  <Route path="/AdminDashboard" element={<AdminDashboard />} />
-                  <Route
-                    path="/TeacherDashboard"
-                    element={<TeacherDashboard />}
-                  />
                   <Route path="/VideoCall" element={<VideoCall />} />
                   <Route path="/SendCallReq" element={<SendCallReq />} />
                   <Route path="/ReceiveCallReq" element={<ReceiveCallReq />} />
                   <Route path="/Chatroom" element={<Chatroom />} />
-                  <Route path={`/Userpage`} element={<Userpage />} />
+                  <Route path="/Userpage" element={<Userpage />} />
                   <Route path="/Dashboard" element={<Dashboard />} />
                 </Route>
-
                 <Route path="/Login" element={<Login />} />
                 <Route path="/StudentRegister" element={<StudentRegister />} />
                 <Route path="/TeacherRegister" element={<TeacherRegister />} />
+                <Route path="*" element={<Navigate to="/" />} />
               </Routes>
             </BrowserRouter>
           </div>

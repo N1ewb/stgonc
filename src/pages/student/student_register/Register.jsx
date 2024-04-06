@@ -70,7 +70,7 @@ const StudentRegister = () => {
   };
   useEffect(() => {
     if (auth.currentUser) {
-      navigate("/dashboard");
+      navigate("/Dashboard");
     }
   }, [auth.currentUser, navigate]);
   return (

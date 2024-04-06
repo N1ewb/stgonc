@@ -10,20 +10,6 @@ const Navbar = () => {
   const db = useDB();
   const [user, setUser] = useState(null);
 
-  const dashboardLink = () => {
-    const role = user && user.role;
-    switch (role) {
-      case "admin":
-        return "/AdminDashboard";
-      case "teacher":
-        return "/TeacherDashboard";
-      case "student":
-        return "/StudentDashboard";
-      default:
-        return "/";
-    }
-  };
-
   const handleGetUser = async () => {
     if (auth.currentUser) {
       const user = await db.getUser(auth.currentUser.uid);
@@ -48,7 +34,7 @@ const Navbar = () => {
         </Link>
 
         {auth.currentUser && (
-          <Link to={dashboardLink()}>
+          <Link to="/Dashboard">
             <p>Dashboard</p>
           </Link>
         )}
