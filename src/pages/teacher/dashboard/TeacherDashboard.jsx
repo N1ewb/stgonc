@@ -3,10 +3,12 @@ import "./TeacherDashboard.css";
 import { useDB } from "../../../context/db/DBContext";
 import { useAuth } from "../../../context/auth/AuthContext";
 import { Link } from "react-router-dom";
+import toast, { Toaster } from "react-hot-toast";
 
 const TeacherDashboard = () => {
   const db = useDB();
   const auth = useAuth();
+
   const [appointments, setAppointments] = useState();
 
   const handleAcceptAppointment = async (id) => {
@@ -47,6 +49,7 @@ const TeacherDashboard = () => {
     <div className="teacher-dashboard-container">
       <div className="">
         <h3>Teachers Dashboard</h3>
+        <Toaster />
         <div className="appointments-container">
           {appointments && appointments.length !== 0 ? (
             appointments.map((appointment) => (

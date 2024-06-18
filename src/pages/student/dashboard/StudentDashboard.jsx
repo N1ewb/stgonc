@@ -3,13 +3,16 @@ import React, { useEffect, useState } from "react";
 import "./StudentDashboard.css";
 import { useDB } from "../../../context/db/DBContext";
 import { useAuth } from "../../../context/auth/AuthContext";
-import { Link } from "react-router-dom";
-import Button from 'react-bootstrap/Button';
+import { Link, useNavigate } from "react-router-dom";
+import Button from "react-bootstrap/Button";
 import RequestAppointmentForm from "../../../components/forms/RequestAppointmentForm";
-
+import { Toaster, toast } from "react-hot-toast";
+import { useCall } from "../../../context/call/CallContext";
 const StudentDashboard = () => {
   const db = useDB();
   const auth = useAuth();
+  const call = useCall();
+  const navigate = useNavigate();
   const [instructors, setInstructors] = useState();
   const [appointments, setAppointments] = useState();
   const [myInfo, setMyInfo] = useState();
@@ -83,10 +86,29 @@ const StudentDashboard = () => {
     fetchData();
   }, []);
 
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const unsubscribe = call.subscribeToCallOfferChanges(
+          (newcalloffers) => {
+            navigate(
+              `/ReceiveCallReq?receiver=${auth.currentUser.uid}&caller=${newcalloffers.caller}`
+            );
+          }
+        );
+        return () => unsubscribe();
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    fetchData();
+  }, [call]);
+
   return (
     <div className="student-dashboard-container">
       <div className="">
         <h3>Student Dashboard</h3>
+        <Toaster />
         <select>
           <option></option>
           <option>Department Counseling</option>
@@ -104,10 +126,14 @@ const StudentDashboard = () => {
                   {instructor.firstName} {instructor.lastName}
                 </p>
                 <p>{instructor.email}</p>
-                <Button  variant="primary" onClick={() => toggleShow()}>
+                <Button variant="primary" onClick={() => toggleShow()}>
                   Request Appointment
                 </Button>
-                <RequestAppointmentForm instructor={instructor} toggleShow={toggleShow} show={show}/>
+                <RequestAppointmentForm
+                  instructor={instructor}
+                  toggleShow={toggleShow}
+                  show={show}
+                />
               </div>
             ))
           ) : (
@@ -127,11 +153,13 @@ const StudentDashboard = () => {
                   <p>{appointment.appointmentDate}</p>
                   <p>{appointment.appointedTeacher.teacherDisplayName}</p>
                   {appointment.appointmentStatus === "Accepted" ? (
-                    <Link
-                      to={`/Chatroom?receiver=${appointment.appointedTeacher.teacherDisplayName} `}
-                    >
-                      <p>Chat</p>
-                    </Link>
+                    <>
+                      <Link
+                        to={`/Chatroom?receiver=${appointment.appointedTeacher.teacherDisplayName} `}
+                      >
+                        <p>Chat</p>
+                      </Link>
+                    </>
                   ) : (
                     <p>{appointment.appointmentStatus}</p>
                   )}

@@ -76,6 +76,7 @@ export const CallProvider = ({ children }) => {
     const answerCandidates = collection(callDoc, "answerCandidates");
 
     callInput.current.value = callDoc.id;
+    console.log(callDoc.id);
 
     pc.onicecandidate = (event) => {
       event.candidate && addDoc(offerCandidates, event.candidate.toJSON());
@@ -102,7 +103,7 @@ export const CallProvider = ({ children }) => {
     onSnapshot(answerCandidates, (snapshot) => {
       snapshot.docChanges().forEach((change) => {
         if (change.type === "added") {
-          const candidateData = change.doc.data(); // Access data correctly
+          const candidateData = change.doc.data();
           const candidate = new RTCIceCandidate(candidateData);
           pc.addIceCandidate(candidate);
         }
@@ -155,7 +156,7 @@ export const CallProvider = ({ children }) => {
     const callDoc = doc(collection(firestore, "calls"), callId);
     const callOfferDoc = doc(collection(firestore, "CallOffers"), callId);
     try {
-      await pc.close();
+      pc.close();
       const callofferdocref = doc(firestore, "CallOffers", newCalloffer);
       const updateCallOffer = { status: "ended" };
       await updateDoc(callofferdocref, updateCallOffer);
@@ -264,6 +265,37 @@ export const CallProvider = ({ children }) => {
     }
   };
 
+  const subscribeToRespondedCallChanges = async (callback) => {
+    try {
+      if (auth.currentUser) {
+        const unsubscribe = onSnapshot(
+          query(
+            callOffersRef,
+            where("receiver", "==", auth.currentUser.uid),
+            where("status", "==", "responded"),
+            orderBy("createdAt", "desc"),
+            limit(1)
+          ),
+          (snapshot) => {
+            snapshot.docChanges().forEach((change) => {
+              if (change.type === "added") {
+                const doc = change.doc;
+                const data = {
+                  id: doc.id,
+                  ...doc.data(),
+                };
+                callback(data);
+              }
+            });
+          }
+        );
+        return unsubscribe;
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   const value = {
     PcState,
     WebcamOn,
@@ -278,6 +310,7 @@ export const CallProvider = ({ children }) => {
     answerCallOffer,
     subscribeToAnsweredOfferChanges,
     subscribeToCallOfferChanges,
+    subscribeToRespondedCallChanges,
   };
 
   return (

@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useCall } from "../../context/call/CallContext";
 import { useLocation } from "react-router-dom";
 
@@ -44,8 +44,13 @@ const SendCallReq = () => {
   }, [call]);
 
   const handleCallButton = async (receiver, caller, callID) => {
-    await call.CallButton();
-    await call.offerCall(receiver, caller, callInput.current.value);
+    try {
+      console.log("pressed call button");
+      await call.CallButton();
+      await call.offerCall(receiver, caller, callInput.current.value);
+    } catch (error) {
+      console.log(error.message);
+    }
   };
 
   const handlehangUp = async (newCalloffer) => {
@@ -111,10 +116,10 @@ const SendCallReq = () => {
             <img src={Camera} alt="camera" width="30px" />
           </button>
           <button onClick={() => handleCallButton(receiver, caller)}>
-            <img src={CallButton} alt="camera" width="30px" />
+            <img src={CallButton} alt="call button" width="30px" />
           </button>
           <button onClick={() => handlehangUp()}>
-            <img src={HangUp} alt="camera" width="30px" />
+            <img src={HangUp} alt="hang up" width="30px" />
           </button>
           <input
             style={{ display: "none" }}

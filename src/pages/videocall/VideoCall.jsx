@@ -14,7 +14,7 @@ const VideoCall = () => {
   const queryParams = new URLSearchParams(location.search);
   const receiver = queryParams.get("receiver");
   const caller = queryParams.get("caller");
-  const [newCalloffer, setNewCallOffer] = useState();
+  const [newCalloffer, setNewCallOffer] = useState(null);
   const call = useCall();
   const localVideoRef = call.localVideoRef;
   const remoteVideoRef = call.remoteVideoRef;
@@ -27,10 +27,13 @@ const VideoCall = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const unsubscribe = call.subscribeToCallOfferChanges(
+        const unsubscribe = call.subscribeToRespondedCallChanges(
           (newCallOffers) => {
-            callInput.current.value = newCallOffers.callID;
-            setNewCallOffer(newCallOffers.id);
+            if (newCallOffers) {
+              console.log(`Call offer ${newCallOffers}`);
+              callInput.current.value = newCallOffers.callID;
+              setNewCallOffer(newCallOffers.id);
+            }
           }
         );
         return () => unsubscribe();
@@ -39,20 +42,22 @@ const VideoCall = () => {
       }
     };
     fetchData();
-  }, [call, callInput]);
+  }, [call]);
 
   const handleAnswerCall = async () => {
-    if (newCalloffer) {
+    console.log("Pressed answer call");
+    if (newCalloffer !== null) {
+      console.log(`Call offer ${newCalloffer}`);
       await call.answerCallOffer(newCalloffer);
       await call.AnswerCall();
     }
   };
 
   const handlehangUp = async () => {
-    if (newCalloffer) {
+    if (newCalloffer !== null) {
       await call.hangUp(newCalloffer);
     } else {
-      console.log("Error: newCalloffer is undefined.");
+      console.log("Error: newCalloffer is null.");
     }
   };
 

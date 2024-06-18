@@ -3,6 +3,7 @@ import { initializeApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
 import { getStorage } from "firebase/storage";
+import { getMessaging } from "firebase/messaging";
 
 const firebaseConfig = {
   apiKey: "AIzaSyCwbUjWoy5niE46Gz68zvuBBjx-o7fghig",
@@ -23,6 +24,7 @@ const iceServers = await response.json();
 export const firestore = getFirestore(app);
 export const auth = getAuth(app);
 export const storage = getStorage(app);
+export const messaging = getMessaging(app);
 
 export const servers = {
   iceServers: iceServers && iceServers,

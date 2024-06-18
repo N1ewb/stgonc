@@ -6,7 +6,7 @@ import Profile from "../../static/images/default-profile.png";
 import AnswerCall from "../../static/images/icons8-video-call-64.png";
 import HangUp from "../../static/images/icons8-hang-up-48.png";
 
-import "./RecieveCallReq.css";
+import "./ReceiveCallReq.css";
 import { useDB } from "../../context/db/DBContext";
 
 const ReceiveCallReq = () => {
@@ -19,6 +19,7 @@ const ReceiveCallReq = () => {
   const call = useCall();
   const callInput = call.callInput;
   const [callerName, setCallerName] = useState();
+  const [newCalloffer, setNewCallOffer] = useState();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -26,6 +27,8 @@ const ReceiveCallReq = () => {
         const unsubscribe = call.subscribeToCallOfferChanges(
           (newCallOffers) => {
             callInput.current.value = newCallOffers.callID;
+            console.log(newCallOffers);
+            setNewCallOffer(newCallOffers);
             handleGetCaller();
           }
         );
@@ -49,7 +52,10 @@ const ReceiveCallReq = () => {
   };
 
   const handleAnswerCall = async () => {
-    navigate(`/VideoCall?receiver=${receiver}&caller=${caller}`);
+    if (newCalloffer) {
+      await call.updateCallOffer(newCalloffer.id);
+      navigate(`/VideoCall?receiver=${receiver}&caller=${caller}`);
+    }
   };
 
   const handlehangUp = async () => {

@@ -88,8 +88,8 @@ const Chatroom = () => {
         ) : (
           filterbyParticipants.length > 0 &&
           filterbyParticipants.map((message) => (
-            <div className="messages-container">
-              <Chatmessages key={message.id} message={message} />
+            <div className="messages-container" key={message.id}>
+              <Chatmessages message={message} />
             </div>
           ))
         )}
