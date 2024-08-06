@@ -17,6 +17,7 @@ import { CallProvider } from "./context/call/CallContext";
 import SendCallReq from "./pages/videocall/SendCallReq";
 import ReceiveCallReq from "./pages/videocall/ReceiveCallReq";
 import { MessagingProvider } from "./context/notification/NotificationContext";
+import AdminRegistration from "./pages/admin/admin_register/AdminRegistration";
 
 function App() {
   return (
@@ -48,6 +49,10 @@ function App() {
                   <Route
                     path="/TeacherRegister"
                     element={<TeacherRegister />}
+                  />
+                  <Route
+                    path="/AdminRegister"
+                    element={<AdminRegistration />}
                   />
                   <Route path="*" element={<Navigate to="/" />} />
                 </Routes>

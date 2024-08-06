@@ -130,6 +130,39 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  const AdminSignUp = (email, password, firstName, lastName, phoneNumber) => {
+    if (!currentUser) {
+      return createUserWithEmailAndPassword(auth, email, password)
+        .then((userCredential) => {
+          const user = userCredential.user;
+          updateProfile(user, {
+            displayName: `${firstName} ${lastName}`,
+          });
+          console.log("Signed upp");
+
+          return setDoc(
+            doc(collection(firestore, "Users"), userCredential.user.uid),
+            {
+              userID: userCredential.user.uid,
+              firstName: firstName,
+              lastName: lastName,
+              email: email,
+              phoneNumber,
+              role: "Admin",
+              isOnline: true,
+              appointments: {},
+              schedules: {},
+            }
+          );
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    } else {
+      return console.log("logout first");
+    }
+  };
+
   const SignOut = async () => {
     const uid = auth.currentUser.uid;
     const usersDocRef = doc(usersCollectionRef, uid);
@@ -158,6 +191,7 @@ export const AuthProvider = ({ children }) => {
     SignIn,
     StudentSignUp,
     TeacherSignUp,
+    AdminSignUp,
   };
 
   return (

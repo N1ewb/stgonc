@@ -29,10 +29,6 @@ const Navbar = () => {
         <h2>Student Counsel</h2>
       </div>
       <div className="nav-links">
-        <Link to="/">
-          <p>Landing page</p>
-        </Link>
-
         {auth.currentUser && (
           <Link to="/Dashboard">
             <p>Dashboard</p>
