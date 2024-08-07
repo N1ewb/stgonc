@@ -311,6 +311,22 @@ export const DBProvider = ({ children }) => {
     }
   };
 
+  //As Admin
+  const getAppointmentList = async () => {
+    try {
+      if (auth.currentUser) {
+        const usersSnapshot = await getDocs(appointmentsRef);
+        const usersData = usersSnapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+        return usersData;
+      }
+    } catch (error) {
+      notifyError(error);
+    }
+  };
+
   const value = {
     getUsers,
     getUser,
@@ -321,6 +337,7 @@ export const DBProvider = ({ children }) => {
     denyAppointment,
     getMessages,
     sendMessage,
+    getAppointmentList,
     subscribeToAppointmentChanges,
     subscribeToMessageChanges,
     subscribeToRequestedAppointmentChanges,

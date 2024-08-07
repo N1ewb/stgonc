@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import "./AdminDashboard.css";
 import AdminGraphs from "../admin_pages/admin_graphs/admin_graphs";
@@ -6,13 +6,31 @@ import AdmingPendingRegPage from "../admin_pages/admin_pending_registratons/admi
 import AdminAppointmentPage from "../admin_pages/admin_appointments/adming_appointments";
 import AdminSchedulesPage from "../admin_pages/admin_schedules/admin_schedules";
 import AdminRegisteruserPage from "../admin_pages/adming_register_user/admin_reg_user";
+import { useDB } from "../../../context/db/DBContext";
+import { useAuth } from "../../../context/auth/AuthContext";
 
 const AdminDashboard = () => {
+  const db = useDB();
+  const auth = useAuth();
+
+  const [appointments, setAppointments] = useState();
   const [currentPage, setCurrentPage] = useState("Graphs");
 
   const handleSetCurrentPage = (pageName) => {
     setCurrentPage(pageName);
   };
+
+  const handleGetAppointments = async (email) => {
+    const appointment = await db.getAppointmentRequests(email);
+    setAppointments(appointment);
+    console.log("setted", appointments);
+  };
+
+  useEffect(() => {
+    if (appointments === undefined) {
+      handleGetAppointments(auth.currentUser.email);
+    }
+  }, []);
 
   return (
     <div className="Admin-Dashboard-Container">
@@ -37,11 +55,15 @@ const AdminDashboard = () => {
       <div className="Main-Content">
         <p>AdminDashboard</p>
         {currentPage === "Graphs" ? (
-          <AdminGraphs />
+          <AdminGraphs appointments={appointments} />
         ) : currentPage === "PendingReg" ? (
           <AdmingPendingRegPage />
         ) : currentPage === "Appointments" ? (
-          <AdminAppointmentPage />
+          <AdminAppointmentPage
+            appointments={appointments}
+            auth={auth}
+            db={db}
+          />
         ) : currentPage === "Schedules" ? (
           <AdminSchedulesPage />
         ) : currentPage === "RegiserUser" ? (
