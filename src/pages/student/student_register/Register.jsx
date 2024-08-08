@@ -3,6 +3,8 @@ import { Link, useNavigate } from "react-router-dom";
 import { AuthProvider, useAuth } from "../../../context/auth/AuthContext";
 import { runAiTest } from "../../../utils/gemini/gemini";
 
+import registerpageimage from "../../../static/images/register-page-image.png";
+
 import "./Register.css";
 
 const StudentRegister = () => {
@@ -76,44 +78,37 @@ const StudentRegister = () => {
   return (
     <>
       <AuthProvider>
-        <div
-          className="signup-container"
-          style={{ backgroundColor: "#545763" }}
-        >
-          <div className="sign-up">
-            <div className="content-signup left">
+        <div className="signup-container">
+          <div className="content-left">
+            <div className="signin-form-container">
+              <div className="signin-form-container-heading">
+                <h1>
+                  <b>Sign Up</b>
+                </h1>
+                <p>
+                  Let’s get you all st up so you can access your personal
+                  account.
+                </p>
+              </div>
               <div className="spacer"></div>
-              <div className="signin-form-container">
-                <div className="signin-form-container-heading">
-                  <div className="signin-form-container-heading-wrapper">
-                    <p>{"start_for_free"}</p>
-                    <h1>{"create_new_account"}</h1>
-                    <p>
-                      {"already_have_account"}{" "}
-                      <Link to={"/Login"} style={{ textDecoration: "none" }}>
-                        <span>{"login"}</span>
-                      </Link>
-                    </p>
-                  </div>
+              <div className="signin-form">
+                <div className="fullname">
+                  <input
+                    ref={firstNameRef}
+                    name="First-Name"
+                    type="text"
+                    placeholder={"First Name"}
+                  />
+
+                  <input
+                    ref={lastNameRef}
+                    name="Last-Name"
+                    type="text"
+                    placeholder={"Last Name"}
+                  />
                 </div>
-                <div className="signin-form">
-                  <div className="fullname">
-                    <i className="fa fa-address-card-o" aria-hidden="true"></i>
-                    <input
-                      ref={firstNameRef}
-                      name="First-Name"
-                      type="text"
-                      placeholder={"first_name"}
-                    />
-                    <i className="fa fa-address-card-o" aria-hidden="true"></i>
-                    <input
-                      ref={lastNameRef}
-                      name="Last-Name"
-                      type="text"
-                      placeholder={"last_name"}
-                    />
-                  </div>
-                  <i className="fa fa-envelope" aria-hidden="true"></i>
+
+                <div className="personal-numbers">
                   <input
                     ref={emailRef}
                     type="email"
@@ -126,59 +121,70 @@ const StudentRegister = () => {
                     name="phone-number"
                     placeholder="Phone Number"
                   />
-                  <input
-                    ref={studentIDnumberRef}
-                    type="text"
-                    name="id-number"
-                    placeholder="Student ID Number"
-                  />
-                  <input
-                    onChange={handleFileChange}
-                    type="file"
-                    name="id-image"
-                    placeholder="Picture of your ID"
-                  />
+                </div>
+                <input
+                  ref={studentIDnumberRef}
+                  type="text"
+                  name="id-number"
+                  placeholder="Student ID Number"
+                />
+                <input
+                  onChange={handleFileChange}
+                  type="file"
+                  name="id-image"
+                  placeholder="Picture of your ID"
+                />
 
-                  <i className="fa fa-lock" aria-hidden="true"></i>
-                  <input
-                    ref={passwordRef}
-                    type="password"
-                    name="password"
-                    placeholder={"password"}
-                  />
-                  <i className="fa fa-lock" aria-hidden="true"></i>
-                  <input
-                    ref={passwordConfirmRef}
-                    type="password"
-                    name="confirm-password"
-                    placeholder={"confirm_password"}
-                  />
-                  <div className="sign-in-buttons">
-                    <button
-                      type="submit"
-                      className="singin-button"
-                      onClick={() => handleStudentSignUp()}
-                    >
-                      {"signup"}
-                    </button>
-                    <div
-                      className="with-google"
-                      onClick={() => handleSignInWithGoogle()}
-                    >
-                      <p>
-                        <img
-                          src="https://cdn1.iconfinder.com/data/icons/google-s-logo/150/Google_Icons-09-512.png"
-                          alt="Google Icon"
-                          height="20px"
-                        />{" "}
-                        <span>{"sign-in-with-google"}</span>
-                      </p>
-                    </div>
+                <input
+                  ref={passwordRef}
+                  type="password"
+                  name="password"
+                  placeholder={"Password"}
+                />
+
+                <input
+                  ref={passwordConfirmRef}
+                  type="password"
+                  name="confirm-password"
+                  placeholder={"Confirm Password"}
+                />
+                <div className="register-sign-in-buttons">
+                  <button type="submit" onClick={() => handleStudentSignUp()}>
+                    Create account
+                  </button>
+                  <p>
+                    <b>Already have an account?</b>{" "}
+                    <Link to={"/Login"} style={{ textDecoration: "none" }}>
+                      <span style={{ color: "#FF8682" }}> Login</span>
+                    </Link>
+                  </p>
+                  <div className="or-sign-in-with">
+                    <div className="or-sign-in-with-line "></div>
+                    <p>Or Sign up with</p>
+                    <div className="or-sign-in-with-line "></div>
+                  </div>
+                  <div
+                    className="with-google"
+                    onClick={() => handleSignInWithGoogle()}
+                  >
+                    <p>
+                      <img
+                        src="https://cdn1.iconfinder.com/data/icons/google-s-logo/150/Google_Icons-09-512.png"
+                        alt="Google Icon"
+                        height="30px"
+                      />
+                    </p>
                   </div>
                 </div>
               </div>
             </div>
-            <div className="content right"></div>
+          </div>
+          <div className="content-right">
+            <img
+              src={registerpageimage}
+              alt="register-page-image"
+              height={800}
+            />
           </div>
         </div>
       </AuthProvider>

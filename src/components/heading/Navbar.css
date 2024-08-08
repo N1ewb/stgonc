@@ -3,11 +3,13 @@
     display: flex;
     flex-direction: row;
     align-items: center;
+    position: fixed;
     width: 100%;
-    justify-content: space-around;
+    justify-content: space-between;
     z-index: 20;
     padding: 20px;
     color: rgb(132, 0, 255);
+    background-color: #360000;
 }
 .nav-links{
     display: flex;
@@ -19,4 +21,12 @@
 }
 .nav-links a{
     text-decoration: none;
+    color: white;
+}
+
+.page-info{
+    width: 40%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
 }

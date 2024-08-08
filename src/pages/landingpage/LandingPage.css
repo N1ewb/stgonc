@@ -1,0 +1,65 @@
+.landing-page-container{
+    background-color: white;
+    height: 100%;
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    font-family: "Inter", sans-serif;
+}
+.left-content {
+    width: 50%;
+    display: flex;
+    justify-content: space-evenly;
+}
+.right-content{
+    width: 50%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.right-content-box{
+    background-color: #740000;
+    width: 70%;
+    color:white;
+    padding: 70px 100px 70px 100px;
+    border-radius: 4%;
+    display: flex;
+    flex-direction: column;
+}
+
+.landing-page-image{
+    position: absolute;
+    right: 38%;
+}
+
+.auth-links{
+    display: flex;
+    width: 100%;
+    justify-content: space-around;
+    align-items: center;
+    text-align: center;
+    padding: 40px 0px 20px 0px;
+}
+
+.auth-links a {
+    text-decoration: none;
+    
+}
+
+.landing-register-button {
+    background-color: white;
+    color: #360000;
+    width: 160px;
+    padding: 10px;
+    border-radius: 22px;
+}
+
+.landing-login-button {
+    background-color: #360000;
+    color: white;
+    width: 160px;
+    padding: 10px;
+    border-radius: 22px;
+}

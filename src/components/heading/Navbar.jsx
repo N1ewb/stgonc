@@ -2,7 +2,9 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../../context/auth/AuthContext";
 import { useDB } from "../../context/db/DBContext";
+
 import Profile from "../userProfile/Profile";
+import STGONCLOGO from "../../static/images/STGONC-LOGO-WHITE.png";
 import "./Navbar.css";
 
 const Navbar = () => {
@@ -26,7 +28,7 @@ const Navbar = () => {
   return (
     <div className="navbar-container">
       <div className="logo-wrapper">
-        <h2>Student Counsel</h2>
+        <img src={STGONCLOGO} />
       </div>
       <div className="nav-links">
         {auth.currentUser && (
@@ -36,14 +38,14 @@ const Navbar = () => {
         )}
 
         {!auth.currentUser ? (
-          <>
-            <Link to="/Login">
-              <p>Login</p>
+          <div className="page-info">
+            <Link to="#">
+              <p>About Us</p>
             </Link>
-            <Link to="/StudentRegister">
-              <p>Register</p>
+            <Link to="#">
+              <p>Contact Us</p>
             </Link>
-          </>
+          </div>
         ) : (
           <>
             <img src={auth.currentUser && auth.currentUser.photoUrl} />
