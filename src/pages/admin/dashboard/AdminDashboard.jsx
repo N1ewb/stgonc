@@ -8,13 +8,39 @@ import AdminSchedulesPage from "../admin_pages/admin_schedules/admin_schedules";
 import AdminRegisteruserPage from "../admin_pages/adming_register_user/admin_reg_user";
 import { useDB } from "../../../context/db/DBContext";
 import { useAuth } from "../../../context/auth/AuthContext";
+import SidebarProfile from "../../../components/userProfile/SidebarProfile";
+import Sidebar from "../../../components/sidebar/Sidebar";
+import Profile from "../../../components/userProfile/Profile";
 
 const AdminDashboard = () => {
   const db = useDB();
   const auth = useAuth();
 
   const [appointments, setAppointments] = useState();
-  const [currentPage, setCurrentPage] = useState("Graphs");
+  const [currentPage, setCurrentPage] = useState("Dashboard");
+
+  const SidebarLinks = [
+    {
+      name: "Dashboard",
+      link: "Dashboard",
+    },
+    {
+      name: "Pending Regs",
+      link: "PendingReg",
+    },
+    {
+      name: "Appointments",
+      link: "Appointments",
+    },
+    {
+      name: "Schedules",
+      link: "Schedules",
+    },
+    {
+      name: "Register User",
+      link: "RegisterUser",
+    },
+  ];
 
   const handleSetCurrentPage = (pageName) => {
     setCurrentPage(pageName);
@@ -35,26 +61,18 @@ const AdminDashboard = () => {
   return (
     <div className="Admin-Dashboard-Container">
       <div className="Admin-Sidebar-Container">
-        <div className="Sidebar-Links">
-          <button onClick={() => handleSetCurrentPage("Graphs")}>Graphs</button>
-          <button onClick={() => handleSetCurrentPage("PendingReg")}>
-            Pending Registrations
-          </button>
-          <button onClick={() => handleSetCurrentPage("Appointments")}>
-            Appointments
-          </button>
-          <button onClick={() => handleSetCurrentPage("Schedules")}>
-            Schedules
-          </button>
-          <button onClick={() => handleSetCurrentPage("RegisterUser")}>
-            Register User
-          </button>
-        </div>
+        <Profile />
+        <Sidebar
+          handleSetCurrentPage={handleSetCurrentPage}
+          SidebarLinks={SidebarLinks}
+        />
       </div>
 
       <div className="Main-Content">
-        <p>AdminDashboard</p>
-        {currentPage === "Graphs" ? (
+        <p style={{ color: "#360000", fontSize: "30px" }}>
+          <b>Welcome</b> {auth.currentUser && auth.currentUser.displayName}!
+        </p>
+        {currentPage === "Dashboard" ? (
           <AdminGraphs appointments={appointments} />
         ) : currentPage === "PendingReg" ? (
           <AdmingPendingRegPage />
@@ -66,7 +84,7 @@ const AdminDashboard = () => {
           />
         ) : currentPage === "Schedules" ? (
           <AdminSchedulesPage />
-        ) : currentPage === "RegiserUser" ? (
+        ) : currentPage === "RegisterUser" ? (
           <AdminRegisteruserPage />
         ) : (
           <AdminGraphs />

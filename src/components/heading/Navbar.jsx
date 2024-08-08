@@ -28,30 +28,15 @@ const Navbar = () => {
   return (
     <div className="navbar-container">
       <div className="logo-wrapper">
-        <img src={STGONCLOGO} />
+        <img src={STGONCLOGO} alt="stgonc-logo" height={40} />
       </div>
       <div className="nav-links">
-        {auth.currentUser && (
-          <Link to="/Dashboard">
-            <p>Dashboard</p>
-          </Link>
-        )}
-
-        {!auth.currentUser ? (
-          <div className="page-info">
-            <Link to="#">
-              <p>About Us</p>
-            </Link>
-            <Link to="#">
-              <p>Contact Us</p>
-            </Link>
-          </div>
-        ) : (
-          <>
-            <img src={auth.currentUser && auth.currentUser.photoUrl} />
-            <Profile />
-          </>
-        )}
+        <Link to="#">
+          <p>About Us</p>
+        </Link>
+        <Link to="#">
+          <p>Contact Us</p>
+        </Link>
       </div>
     </div>
   );

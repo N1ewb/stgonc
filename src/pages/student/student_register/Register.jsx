@@ -82,9 +82,7 @@ const StudentRegister = () => {
           <div className="content-left">
             <div className="signin-form-container">
               <div className="signin-form-container-heading">
-                <h1>
-                  <b>Sign Up</b>
-                </h1>
+                <h1>Sign Up</h1>
                 <p>
                   Let’s get you all st up so you can access your personal
                   account.
@@ -160,7 +158,7 @@ const StudentRegister = () => {
                   </p>
                   <div className="or-sign-in-with">
                     <div className="or-sign-in-with-line "></div>
-                    <p>Or Sign up with</p>
+                    Or Sign up with
                     <div className="or-sign-in-with-line "></div>
                   </div>
                   <div

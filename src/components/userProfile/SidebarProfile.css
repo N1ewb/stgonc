@@ -1,0 +1,5 @@
+.sidebar-profile-container{
+    display: flex;
+    flex-direction: column;
+    color: white;
+}
