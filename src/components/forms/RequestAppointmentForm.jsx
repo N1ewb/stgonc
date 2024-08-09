@@ -3,13 +3,48 @@ import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
 
 import "./RequestAppointmentForm.css";
+import { useDB } from "../../context/db/DBContext";
+import { useAuth } from "../../context/auth/AuthContext";
 
-const RequestAppointmentForm = ({ instructor, show, toggleShow }) => {
+const RequestAppointmentForm = ({ instructor, show, toggleShow, myInfo }) => {
   const handleToggleShow = () => {
     toggleShow();
   };
 
+  const db = useDB();
+  const auth = useAuth();
+
   const concernRef = useRef();
+  const appointmentDateRef = useRef();
+  const appointmentTimeRef = useRef();
+
+  const handleRequestAppointment = async (
+    teacheruid,
+    teacherFirstName,
+    teacherLastName,
+    teacherPhoneno,
+    teacheruserID,
+    concern,
+    date,
+    time,
+    isOnline,
+    phoneno,
+    studentIDnumber
+  ) => {
+    await db.sendAppointmentRequest(
+      teacheruid,
+      teacherFirstName,
+      teacherLastName,
+      teacherPhoneno,
+      teacheruserID,
+      concern,
+      date,
+      time,
+      isOnline,
+      phoneno,
+      studentIDnumber
+    );
+  };
 
   return (
     <>
@@ -21,7 +56,8 @@ const RequestAppointmentForm = ({ instructor, show, toggleShow }) => {
           <form className="application-form">
             <label for="concern">Describe your Concerns</label>
             <input id="concern" name="concern" type="text" ref={concernRef} />
-
+            <input id="date" name="date" type="date" ref={appointmentDateRef} />
+            <input id="time" name="time" type="time" ref={appointmentTimeRef} />
             <label for="image">Picture of Yourself right now this moment</label>
             <input id="image" name="image" type="file" />
           </form>
@@ -33,18 +69,19 @@ const RequestAppointmentForm = ({ instructor, show, toggleShow }) => {
           <Button
             variant="primary"
             onClick={() =>
-              // handleRequestAppointment(
-              //   instructor.email,
-              //   instructor.firstName,
-              //   instructor.lastName,
-              //   instructor.phoneNumber,
-              //   instructor.userID,
-              //   2021,
-              //   true,
-              //   myInfo.phoneNumber,
-              //   myInfo && myInfo.studentIdnumber
-              // )
-              console.log("Appointment set")
+              handleRequestAppointment(
+                instructor.email,
+                instructor.firstName,
+                instructor.lastName,
+                instructor.phoneNumber,
+                instructor.userID,
+                concernRef.current.value,
+                appointmentDateRef.current.value,
+                appointmentTimeRef.current.value,
+                true,
+                myInfo.phoneNumber,
+                myInfo && myInfo.studentIdnumber
+              )
             }
           >
             Save Changes

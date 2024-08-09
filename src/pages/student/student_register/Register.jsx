@@ -67,9 +67,6 @@ const StudentRegister = () => {
     }
   };
 
-  const handleSignInWithGoogle = (e) => {
-    auth.SignInWithGoogle();
-  };
   useEffect(() => {
     if (auth.currentUser) {
       navigate("/Dashboard");
@@ -156,23 +153,6 @@ const StudentRegister = () => {
                       <span style={{ color: "#FF8682" }}> Login</span>
                     </Link>
                   </p>
-                  <div className="or-sign-in-with">
-                    <div className="or-sign-in-with-line "></div>
-                    Or Sign up with
-                    <div className="or-sign-in-with-line "></div>
-                  </div>
-                  <div
-                    className="with-google"
-                    onClick={() => handleSignInWithGoogle()}
-                  >
-                    <p>
-                      <img
-                        src="https://cdn1.iconfinder.com/data/icons/google-s-logo/150/Google_Icons-09-512.png"
-                        alt="Google Icon"
-                        height="30px"
-                      />
-                    </p>
-                  </div>
                 </div>
               </div>
             </div>

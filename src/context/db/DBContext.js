@@ -75,7 +75,10 @@ export const DBProvider = ({ children }) => {
   const getTeachers = async () => {
     try {
       if (auth.currentUser) {
-        const q = query(usersCollectionRef, where("role", "==", "Teacher"));
+        const q = query(
+          usersCollectionRef,
+          where("role", "in", ["Teacher", "Admin"])
+        );
 
         const querySnapshot = await getDocs(q);
         const usersData = querySnapshot.docs.map((doc) => ({
@@ -97,7 +100,9 @@ export const DBProvider = ({ children }) => {
     lastName,
     teacherPhoneno,
     teacheruserUID,
+    concern,
     date,
+    time,
     isOnline,
     phoneNumber,
     studentIDnumber
@@ -118,7 +123,9 @@ export const DBProvider = ({ children }) => {
             studentIDnumber: studentIDnumber,
             userID: auth.currentUser.uid,
           },
+          appointmentConcern: concern,
           appointmentDate: date,
+          appointmentsTime: time,
           appointmentStatus: "pending",
           appointmentType: "initial",
           appointmentDuration: "1 hour", // Adjusted

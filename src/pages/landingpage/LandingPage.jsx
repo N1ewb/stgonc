@@ -1,6 +1,6 @@
 import React from "react";
 
-import STGONCLOGOLARGE from "../../static/images/STGONC-LOGO-LARGE.png";
+import tria from "../../static/images/tria.png";
 import SPCLOGO from "../../static/images/spc logo.jpg";
 import landingpageimage from "../../static/images/landing-page-image.png";
 import { Link } from "react-router-dom";
@@ -11,9 +11,13 @@ const LandingPage = () => {
   return (
     <div className="landing-page-container">
       <div className="left-content">
-        <img src={STGONCLOGOLARGE} alt="stgonc-logo" height={300} />
-        <img src={SPCLOGO} alt="spc-logo" height={100} />
+        <p>STUDENT-TEACHER AND GUIDANCE ONLINE CONSULTATION</p>
+        <div className="landing-logos">
+          <img src={tria} alt="stgonc-logo" height={100} />
+          <img src={SPCLOGO} alt="spc-logo" height={100} />
+        </div>
       </div>
+      <div className="spacer"></div>
       <div className="right-content">
         <img
           className="landing-page-image"

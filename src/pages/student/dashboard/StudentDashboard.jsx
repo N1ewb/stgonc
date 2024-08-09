@@ -8,6 +8,7 @@ import Button from "react-bootstrap/Button";
 import RequestAppointmentForm from "../../../components/forms/RequestAppointmentForm";
 import { Toaster, toast } from "react-hot-toast";
 import { useCall } from "../../../context/call/CallContext";
+import Profile from "../../../components/userProfile/Profile";
 const StudentDashboard = () => {
   const db = useDB();
   const auth = useAuth();
@@ -30,30 +31,6 @@ const StudentDashboard = () => {
   const handleGetTeachers = async () => {
     const teachers = await db.getTeachers();
     setInstructors(teachers);
-  };
-
-  const handleRequestAppointment = async (
-    teacheruid,
-    teacherFirstName,
-    teacherLastName,
-    teacherPhoneno,
-    teacheruserID,
-    date,
-    isOnline,
-    phoneno,
-    studentIDnumber
-  ) => {
-    await db.sendAppointmentRequest(
-      teacheruid,
-      teacherFirstName,
-      teacherLastName,
-      teacherPhoneno,
-      teacheruserID,
-      date,
-      isOnline,
-      phoneno,
-      studentIDnumber
-    );
   };
 
   useEffect(() => {
@@ -106,7 +83,13 @@ const StudentDashboard = () => {
 
   return (
     <div className="student-dashboard-container">
-      <div className="">
+      <div className="student-sidebar">
+        <Profile />
+      </div>
+      <div className="student-main-content">
+        <p>Welcome {auth.currentUser && auth.currentUser.displayName}</p>
+      </div>
+      {/* <div className="">
         <h3>Student Dashboard</h3>
         <Toaster />
         <select>
@@ -133,6 +116,7 @@ const StudentDashboard = () => {
                   instructor={instructor}
                   toggleShow={toggleShow}
                   show={show}
+                  myInfo={myInfo}
                 />
               </div>
             ))
@@ -170,7 +154,7 @@ const StudentDashboard = () => {
             )}
           </div>
         </div>
-      </div>
+      </div> */}
     </div>
   );
 };
