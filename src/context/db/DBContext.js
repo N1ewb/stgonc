@@ -93,6 +93,26 @@ export const DBProvider = ({ children }) => {
     }
   };
 
+  const getAllUsers = async () => {
+    try {
+      if (auth.currentUser) {
+        const q = query(usersCollectionRef);
+
+        const querySnapshot = await getDocs(q);
+        const usersData = querySnapshot.docs
+          .map((doc) => ({
+            id: doc.id,
+            ...doc.data(),
+          }))
+          .filter((user) => user.role !== "Moderator");
+
+        return usersData;
+      }
+    } catch (error) {
+      console.error("Error fetching users:", error);
+    }
+  };
+
   //As Student
   const sendAppointmentRequest = async (
     teacheremail,
@@ -338,6 +358,7 @@ export const DBProvider = ({ children }) => {
     getUsers,
     getUser,
     getTeachers,
+    getAllUsers,
     sendAppointmentRequest,
     getAppointmentRequests,
     approveAppointment,

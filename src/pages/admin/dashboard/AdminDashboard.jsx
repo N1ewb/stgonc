@@ -1,16 +1,19 @@
 import React, { useEffect, useState } from "react";
 
-import "./AdminDashboard.css";
 import AdminGraphs from "../admin_pages/admin_graphs/admin_graphs";
 import AdmingPendingRegPage from "../admin_pages/admin_pending_registratons/admin_pending_reg";
 import AdminAppointmentPage from "../admin_pages/admin_appointments/adming_appointments";
 import AdminSchedulesPage from "../admin_pages/admin_schedules/admin_schedules";
 import AdminRegisteruserPage from "../admin_pages/adming_register_user/admin_reg_user";
+
 import { useDB } from "../../../context/db/DBContext";
 import { useAuth } from "../../../context/auth/AuthContext";
-import SidebarProfile from "../../../components/userProfile/SidebarProfile";
+
 import Sidebar from "../../../components/sidebar/Sidebar";
 import Profile from "../../../components/userProfile/Profile";
+import AdminUserList from "../admin_pages/admin_userlist/adminUserList";
+
+import "./AdminDashboard.css";
 
 const AdminDashboard = () => {
   const db = useDB();
@@ -39,6 +42,10 @@ const AdminDashboard = () => {
     {
       name: "Register User",
       link: "RegisterUser",
+    },
+    {
+      name: "User List",
+      link: "Userlist",
     },
   ];
 
@@ -86,6 +93,8 @@ const AdminDashboard = () => {
           <AdminSchedulesPage />
         ) : currentPage === "RegisterUser" ? (
           <AdminRegisteruserPage />
+        ) : currentPage === "Userlist" ? (
+          <AdminUserList db={db} auth={auth} />
         ) : (
           <AdminGraphs />
         )}
