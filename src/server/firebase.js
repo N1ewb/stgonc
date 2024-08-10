@@ -5,7 +5,7 @@ import { getAuth } from "firebase/auth";
 import { getStorage } from "firebase/storage";
 import { getMessaging } from "firebase/messaging";
 
-const firebaseConfig = {
+export const firebaseConfig = {
   apiKey: "AIzaSyCwbUjWoy5niE46Gz68zvuBBjx-o7fghig",
   authDomain: "student-teacher-counseling-app.firebaseapp.com",
   projectId: "student-teacher-counseling-app",

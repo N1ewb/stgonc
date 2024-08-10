@@ -23,6 +23,8 @@ import {
   setDoc,
   updateDoc,
 } from "firebase/firestore";
+import toast from "react-hot-toast";
+import { Toast } from "react-bootstrap";
 
 const AuthContext = createContext();
 
@@ -33,6 +35,11 @@ export function useAuth() {
 export const AuthProvider = ({ children }) => {
   const [currentUser, setCurrentUser] = useState(null);
   const usersCollectionRef = collection(firestore, "Users");
+  const studentRegistrationRequestRef = collection(
+    firestore,
+    "StudentRegistrationRequest"
+  );
+  const toastMessage = (message) => toast(message);
 
   const SignIn = async (email, password) => {
     if (!currentUser) {
@@ -51,14 +58,16 @@ export const AuthProvider = ({ children }) => {
           }
         );
       } catch (error) {
-        console.log(error);
+        toastMessage(error.message);
+      } finally {
+        toastMessage("Logged in Successfully");
       }
     } else {
       return console.log("already logged in");
     }
   };
 
-  const StudentSignUp = (
+  const StudentSignUpRequest = (
     email,
     password,
     firstName,
@@ -66,36 +75,71 @@ export const AuthProvider = ({ children }) => {
     phoneNumber,
     studentIdnumber
   ) => {
-    if (!currentUser) {
-      return createUserWithEmailAndPassword(auth, email, password)
-        .then((userCredential) => {
-          const user = userCredential.user;
-          updateProfile(user, {
-            displayName: `${firstName} ${lastName}`,
-          });
-          console.log("Signed upp");
-
-          return setDoc(
-            doc(collection(firestore, "Users"), userCredential.user.uid),
-            {
-              userID: userCredential.user.uid,
-              firstName: firstName,
-              lastName: lastName,
-              email: email,
-              phoneNumber,
-              studentIdnumber,
-              role: "Student",
-              isOnline: true,
-            }
-          );
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-    } else {
-      return console.log("logout first");
+    try {
+      return setDoc(doc(collection(firestore, "StudentRegistrationRequest")), {
+        firstName: firstName,
+        lastName: lastName,
+        email: email,
+        password,
+        phoneNumber,
+        studentIdnumber,
+        role: "Student",
+        status: "Pending",
+      });
+    } catch (error) {
+      toastMessage(error.message);
     }
   };
+
+  // const AdminCreateStudentAccount = (
+  //   email,
+  //   password,
+  //   firstName,
+  //   lastName,
+  //   phoneNumber,
+  //   studentIdnumber,
+  //   requestID,
+  //   passwordRef
+  // ) => {
+  //   if (currentUser) {
+  //     return createUserWithEmailAndPassword(auth, email, password)
+  //       .then(async (userCredential) => {
+  //         const user = userCredential.user;
+  //         await updateProfile(user, {
+  //           displayName: `${firstName} ${lastName}`,
+  //         });
+
+  //         const docRef = doc(
+  //           collection(firestore, "StudentRegistrationRequest"),
+  //           requestID
+  //         );
+
+  //         await updateDoc(docRef, { status: "approved" });
+
+  //         await setDoc(doc(collection(firestore, "Users"), user.uid), {
+  //           userID: user.uid,
+  //           firstName: firstName,
+  //           lastName: lastName,
+  //           email: email,
+  //           phoneNumber,
+  //           studentIdnumber,
+  //           role: "Student",
+  //           isOnline: false,
+  //         });
+  //         await signOut(auth);
+
+  //         await signInWithEmailAndPassword(
+  //           auth,
+  //           auth.currentUser.email,
+  //           passwordRef
+  //         );
+  //         toastMessage("Student Account Created Successfully");
+  //       })
+  //       .catch((error) => {
+  //         toastMessage(error.message);
+  //       });
+  //   }
+  // };
 
   const TeacherSignUp = (email, password, firstName, lastName, phoneNumber) => {
     if (!currentUser) {
@@ -189,14 +233,18 @@ export const AuthProvider = ({ children }) => {
     currentUser,
     SignOut,
     SignIn,
-    StudentSignUp,
+    // AdminCreateStudentAccount,
+    StudentSignUpRequest,
     TeacherSignUp,
     AdminSignUp,
   };
 
   return (
     <>
-      <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
+      <AuthContext.Provider value={value}>
+        {children}
+        <Toast />
+      </AuthContext.Provider>
     </>
   );
 };

@@ -6,17 +6,33 @@ import "./adminUserList.css";
 
 const AdminUserList = ({ db, auth }) => {
   const [userList, setUserList] = useState();
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   const handleGetAllUsers = async () => {
-    const users = await db.getAllUsers();
-    setUserList(users);
+    try {
+      const users = await db.getAllUsers();
+      setUserList(users);
+    } catch (error) {
+      setError("Something went wrong while collecting users");
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
     if (userList === undefined) {
       handleGetAllUsers();
     }
-  }, []);
+  });
+
+  if (loading) {
+    return <div className="loading-screen">Loading User...</div>;
+  }
+
+  if (error) {
+    return <div className="error-screen">{error}</div>;
+  }
 
   return (
     <div className="admin-userlist-container">

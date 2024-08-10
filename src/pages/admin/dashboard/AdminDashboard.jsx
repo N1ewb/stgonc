@@ -82,7 +82,7 @@ const AdminDashboard = () => {
         {currentPage === "Dashboard" ? (
           <AdminGraphs appointments={appointments} />
         ) : currentPage === "PendingReg" ? (
-          <AdmingPendingRegPage />
+          <AdmingPendingRegPage db={db} auth={auth} />
         ) : currentPage === "Appointments" ? (
           <AdminAppointmentPage
             appointments={appointments}

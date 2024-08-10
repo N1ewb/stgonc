@@ -1,0 +1,12 @@
+form {
+    display: flex;
+    flex-direction: column;
+}
+
+form input:focus {
+    border-color: #740000 ;
+}
+
+form button {
+    background-color: #740000;
+}

@@ -30,9 +30,14 @@ export const DBProvider = ({ children }) => {
   const usersCollectionRef = collection(firestore, "Users");
   const messagesRef = collection(firestore, "Messages");
   const appointmentsRef = collection(firestore, "Appointments");
+  const studentRegistrationRequestRef = collection(
+    firestore,
+    "StudentRegistrationRequest"
+  );
   const auth = useAuth();
 
   const addSuccess = () => toast("Registered Successfuly");
+  const toastMessage = (message) => toast(message);
   const notifyError = (error) => toast(error.message);
 
   const getUsers = async () => {
@@ -68,7 +73,7 @@ export const DBProvider = ({ children }) => {
         return null;
       }
     } catch (error) {
-      console.error("Error fetching user:", error);
+      notifyError(error);
     }
   };
 
@@ -89,7 +94,7 @@ export const DBProvider = ({ children }) => {
         return usersData;
       }
     } catch (error) {
-      console.error("Error fetching teachers:", error);
+      notifyError(error);
     }
   };
 
@@ -109,7 +114,7 @@ export const DBProvider = ({ children }) => {
         return usersData;
       }
     } catch (error) {
-      console.error("Error fetching users:", error);
+      notifyError(error);
     }
   };
 
@@ -155,7 +160,7 @@ export const DBProvider = ({ children }) => {
         });
       }
     } catch (error) {
-      console.error(error);
+      notifyError(error);
     }
   };
 
@@ -180,7 +185,7 @@ export const DBProvider = ({ children }) => {
         }
       }
     } catch (error) {
-      console.error();
+      notifyError(error);
     }
   };
 
@@ -194,7 +199,7 @@ export const DBProvider = ({ children }) => {
         return await updateDoc(appointmentDocRef, updatedAppointmentDocRef);
       }
     } catch (error) {
-      console.error();
+      notifyError(error);
     }
   };
 
@@ -343,11 +348,26 @@ export const DBProvider = ({ children }) => {
     try {
       if (auth.currentUser) {
         const usersSnapshot = await getDocs(appointmentsRef);
-        const usersData = usersSnapshot.docs.map((doc) => ({
+        const appointmentData = usersSnapshot.docs.map((doc) => ({
           id: doc.id,
           ...doc.data(),
         }));
-        return usersData;
+        return appointmentData;
+      }
+    } catch (error) {
+      notifyError(error);
+    }
+  };
+
+  const getPendingRegistrationRequests = async () => {
+    try {
+      if (auth.currentUser) {
+        const usersSnapshot = await getDocs(studentRegistrationRequestRef);
+        const pendingRegData = usersSnapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+        return pendingRegData;
       }
     } catch (error) {
       notifyError(error);
@@ -366,6 +386,7 @@ export const DBProvider = ({ children }) => {
     getMessages,
     sendMessage,
     getAppointmentList,
+    getPendingRegistrationRequests,
     subscribeToAppointmentChanges,
     subscribeToMessageChanges,
     subscribeToRequestedAppointmentChanges,

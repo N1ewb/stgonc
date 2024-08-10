@@ -6,6 +6,7 @@ import { runAiTest } from "../../../utils/gemini/gemini";
 import registerpageimage from "../../../static/images/register-page-image.png";
 
 import "./Register.css";
+import toast, { Toaster } from "react-hot-toast";
 
 const StudentRegister = () => {
   const firstNameRef = useRef();
@@ -18,6 +19,9 @@ const StudentRegister = () => {
   const passwordConfirmRef = useRef();
   const auth = useAuth();
   const navigate = useNavigate();
+
+  const toastMessage = (message) => toast(message);
+
   // const passwordError = () => toast('Password dont match')
   // const passwordCharsError = () => toast('Password should be 6 characters or longer')
 
@@ -36,7 +40,7 @@ const StudentRegister = () => {
     if (idImage !== null) {
       console.log(typeof idImage);
       if (passwordRef.current.value.length < 6) {
-        console.log("Password should be 6 characters or longe");
+        toastMessage("Password should be 6 characters or longer");
       } else {
         if (passwordRef.current.value === passwordConfirmRef.current.value) {
           try {
@@ -44,7 +48,7 @@ const StudentRegister = () => {
             const aiTestResult = JSON.parse(aiTestResultString);
 
             if (aiTestResult && aiTestResult.is_similar === true) {
-              auth.StudentSignUp(
+              auth.StudentSignUpRequest(
                 emailRef.current.value,
                 passwordRef.current.value,
                 firstNameRef.current.value,
@@ -53,17 +57,17 @@ const StudentRegister = () => {
                 studentIDnumberRef.current.value
               );
             } else {
-              console.log("cant Prove ID");
+              toastMessage("cant Prove ID");
             }
           } catch (error) {
-            console.log(error);
+            toastMessage(error);
           }
         } else {
-          console.log("Password dont match");
+          toastMessage("Password dont match");
         }
       }
     } else {
-      console.log("Please enter Id image");
+      toastMessage("Please enter Id image");
     }
   };
 
@@ -165,6 +169,7 @@ const StudentRegister = () => {
             />
           </div>
         </div>
+        <Toaster />
       </AuthProvider>
     </>
   );
