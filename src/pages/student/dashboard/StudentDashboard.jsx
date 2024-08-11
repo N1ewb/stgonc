@@ -61,7 +61,7 @@ const StudentDashboard = () => {
       }
     };
     fetchData();
-  }, []);
+  }, [db]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -88,15 +88,6 @@ const StudentDashboard = () => {
       </div>
       <div className="student-main-content">
         <p>Welcome {auth.currentUser && auth.currentUser.displayName}</p>
-      </div>
-      {/* <div className="">
-        <h3>Student Dashboard</h3>
-        <Toaster />
-        <select>
-          <option></option>
-          <option>Department Counseling</option>
-          <option>Career & Guidance Counseling</option>
-        </select>
         <div className="CCS-instructors-container">
           <p>Department Instructors</p>
           {instructors && instructors.length !== 0 ? (
@@ -124,37 +115,35 @@ const StudentDashboard = () => {
             <div className="">No instructors</div>
           )}
         </div>
-        <div className="">
-          <p>Appointments</p>
-          <div className="appointment-wrappers">
-            {appointments && appointments.length !== 0 ? (
-              appointments.map((appointment) => (
-                <div
-                  className=""
-                  style={{ display: "flex", gap: "10px" }}
-                  key={appointment.id}
-                >
-                  <p>{appointment.appointmentDate}</p>
-                  <p>{appointment.appointedTeacher.teacherDisplayName}</p>
-                  {appointment.appointmentStatus === "Accepted" ? (
-                    <>
-                      <Link
-                        to={`/Chatroom?receiver=${appointment.appointedTeacher.teacherDisplayName} `}
-                      >
-                        <p>Chat</p>
-                      </Link>
-                    </>
-                  ) : (
-                    <p>{appointment.appointmentStatus}</p>
-                  )}
-                </div>
-              ))
-            ) : (
-              <div className=""></div>
-            )}
-          </div>
+        <p>Appointments</p>
+        <div className="appointment-wrappers">
+          {appointments && appointments.length !== 0 ? (
+            appointments.map((appointment) => (
+              <div
+                className=""
+                style={{ display: "flex", gap: "10px" }}
+                key={appointment.id}
+              >
+                <p>{appointment.appointmentDate}</p>
+                <p>{appointment.appointedTeacher.teacherDisplayName}</p>
+                {appointment.appointmentStatus === "Accepted" ? (
+                  <>
+                    <Link
+                      to={`/Chatroom?receiver=${appointment.appointedTeacher.teacherDisplayName} `}
+                    >
+                      <p>Chat</p>
+                    </Link>
+                  </>
+                ) : (
+                  <p>{appointment.appointmentStatus}</p>
+                )}
+              </div>
+            ))
+          ) : (
+            <div className="">No appointments yet</div>
+          )}
         </div>
-      </div> */}
+      </div>
     </div>
   );
 };

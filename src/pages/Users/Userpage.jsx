@@ -8,11 +8,50 @@ import { FaCamera } from "react-icons/fa6";
 import DefaultProfile from "../../static/images/default-profile.png";
 import "./Userpage.css";
 import { useDB } from "../../context/db/DBContext";
+import { useStorage } from "../../context/storage/StorageContext";
 
 const Userpage = () => {
   const auth = useAuth();
   const db = useDB();
+  const storage = useStorage();
   const [user, setUser] = useState();
+
+  // const handleUploadImage = async (event) => {
+  //   const file = event.target.files[0];
+  //   if (file && auth.currentUser) {
+  //     try {
+  //       setLoading(true);
+  //       const { imageId } = await storage.UploadImage(
+  //         file,
+  //         auth.currentUser.uid
+  //       );
+  //       setUploadedImageId(imageId);
+  //     } catch (err) {
+  //       setError(err.message);
+  //     } finally {
+  //       setLoading(false);
+  //     }
+  //   }
+  // };
+
+  // useEffect(() => {
+  //   const fetchImage = async () => {
+  //     if (uploadedImageId) {
+  //       try {
+  //         setLoading(true);
+  //         const data = await storage.RetrieveImage(uploadedImageId);
+  //         setImageData(data);
+  //         setError(null);
+  //       } catch (err) {
+  //         setError(err.message);
+  //       } finally {
+  //         setLoading(false);
+  //       }
+  //     }
+  //   };
+
+  //   fetchImage();
+  // }, [uploadedImageId, storage]);
 
   const handleGetUser = async () => {
     if (auth.currentUser) {
@@ -21,8 +60,16 @@ const Userpage = () => {
     }
   };
 
-  const handleChangePhoto = async () => {
-    console.log("changine you pfp");
+  const handleChangePhoto = async (event) => {
+    const file = event.target.files[0];
+    if (file && auth.currentUser) {
+      try {
+        await db.handleChangeUserProfile(file);
+        console.log("Profile photo updated successfully");
+      } catch (err) {
+        console.error("Error updating profile photo:", err.message);
+      }
+    }
   };
 
   useEffect(() => {
@@ -73,11 +120,7 @@ const Userpage = () => {
                         <span>This will be displayed on your Profile: </span>
                       </p>
                       <img
-                        src={
-                          auth.currentUser && auth.currentUser.photoUrl
-                            ? auth.currentUser.photoUrl
-                            : DefaultProfile
-                        }
+                        src={auth.currentUser.photoUrl || DefaultProfile}
                         alt="your pfp"
                         width="70px"
                         height="70px"
@@ -99,7 +142,12 @@ const Userpage = () => {
                           cursor: "pointer",
                         }}
                       >
-                        <FaCamera onClick={() => handleChangePhoto()} />
+                        <input
+                          type="file"
+                          name="updateProfile"
+                          onChange={handleChangePhoto}
+                          accept="image/*"
+                        />
                       </div>
                     </div>
                     <div

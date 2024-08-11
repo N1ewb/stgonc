@@ -5,8 +5,11 @@ import Button from "react-bootstrap/Button";
 import "./RequestAppointmentForm.css";
 import { useDB } from "../../context/db/DBContext";
 import { useAuth } from "../../context/auth/AuthContext";
+import toast from "react-hot-toast";
 
 const RequestAppointmentForm = ({ instructor, show, toggleShow, myInfo }) => {
+  const toastMessage = (message) => toast(message);
+
   const handleToggleShow = () => {
     toggleShow();
   };
@@ -31,19 +34,25 @@ const RequestAppointmentForm = ({ instructor, show, toggleShow, myInfo }) => {
     phoneno,
     studentIDnumber
   ) => {
-    await db.sendAppointmentRequest(
-      teacheruid,
-      teacherFirstName,
-      teacherLastName,
-      teacherPhoneno,
-      teacheruserID,
-      concern,
-      date,
-      time,
-      isOnline,
-      phoneno,
-      studentIDnumber
-    );
+    try {
+      await db.sendAppointmentRequest(
+        teacheruid,
+        teacherFirstName,
+        teacherLastName,
+        teacherPhoneno,
+        teacheruserID,
+        concern,
+        date,
+        time,
+        isOnline,
+        phoneno,
+        studentIDnumber
+      );
+      handleToggleShow();
+      toastMessage("Appointment request sent");
+    } catch (error) {
+      toastMessage("Request Appoinment not sent");
+    }
   };
 
   return (
@@ -53,14 +62,16 @@ const RequestAppointmentForm = ({ instructor, show, toggleShow, myInfo }) => {
           <Modal.Title>Appointment Application Form</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <form className="application-form">
-            <label for="concern">Describe your Concerns</label>
+          <div className="application-form">
+            <label htmlFor="concern">Describe your Concerns</label>
             <input id="concern" name="concern" type="text" ref={concernRef} />
             <input id="date" name="date" type="date" ref={appointmentDateRef} />
             <input id="time" name="time" type="time" ref={appointmentTimeRef} />
-            <label for="image">Picture of Yourself right now this moment</label>
+            <label htmlFor="image">
+              Picture of Yourself right now this moment
+            </label>
             <input id="image" name="image" type="file" />
-          </form>
+          </div>
         </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={() => toggleShow()}>
@@ -84,7 +95,7 @@ const RequestAppointmentForm = ({ instructor, show, toggleShow, myInfo }) => {
               )
             }
           >
-            Save Changes
+            Submit
           </Button>
         </Modal.Footer>
       </Modal>

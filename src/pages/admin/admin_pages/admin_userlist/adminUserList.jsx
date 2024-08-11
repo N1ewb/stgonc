@@ -3,11 +3,14 @@ import React, { useEffect, useState } from "react";
 import defaultProfile from "../../../../static/images/default-profile.png";
 
 import "./adminUserList.css";
+import toast from "react-hot-toast";
 
 const AdminUserList = ({ db, auth }) => {
   const [userList, setUserList] = useState();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  const toastMessage = (message) => toast(message);
 
   const handleGetAllUsers = async () => {
     try {
@@ -21,13 +24,24 @@ const AdminUserList = ({ db, auth }) => {
   };
 
   useEffect(() => {
-    if (userList === undefined) {
-      handleGetAllUsers();
-    }
-  });
+    const fetchData = async () => {
+      if (auth.currentUser) {
+        try {
+          const unsubscribe = db.subscribeToUserChanges((newUserList) => {
+            setUserList(newUserList);
+            setLoading(false);
+          });
+          return () => unsubscribe();
+        } catch (error) {
+          setError(error);
+        }
+      }
+    };
+    fetchData();
+  }, [db, auth.currentUser]);
 
   if (loading) {
-    return <div className="loading-screen">Loading User...</div>;
+    return <div className="loading-screen">Loading Users...</div>;
   }
 
   if (error) {

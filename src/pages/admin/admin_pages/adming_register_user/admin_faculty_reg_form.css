@@ -1,0 +1,13 @@
+.faculty-reg-form {
+    display: flex;
+    flex-direction: column;
+    gap:10px;
+}
+
+.faculty-reg-form input:focus {
+    border-color: #740000 ;
+}
+
+.faculty-reg-form button {
+    background-color: #740000;
+}

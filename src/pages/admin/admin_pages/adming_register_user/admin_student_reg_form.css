@@ -1,12 +1,13 @@
-form {
+.student-reg-form {
     display: flex;
     flex-direction: column;
+    gap:10px;
 }
 
-form input:focus {
+.student-reg-form input:focus {
     border-color: #740000 ;
 }
 
-form button {
+.student-reg-form button {
     background-color: #740000;
 }

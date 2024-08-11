@@ -1,6 +1,12 @@
 import React, { useRef } from "react";
 
+import "./admin_faculty_reg_form.css";
+import { AdminCreateFacultyAccount } from "../../../../context/auth/adminCreateAccount";
+import toast from "react-hot-toast";
+
 const RegisterFacultyForm = () => {
+  const toastMessage = (message) => toast(message);
+
   const firstnameRef = useRef();
   const lastnameRef = useRef();
   const emailRef = useRef();
@@ -9,10 +15,26 @@ const RegisterFacultyForm = () => {
   const passwordRef = useRef();
   const confirmpasswordRef = useRef();
 
+  const handleCreateFacultyAccount = async () => {
+    try {
+      await AdminCreateFacultyAccount(
+        firstnameRef.current.value,
+        lastnameRef.current.value,
+        emailRef.current.value,
+        phonenumberRef.current.value,
+        studentidnumberRef.current.value,
+        passwordRef.current.value,
+        confirmpasswordRef.current.value
+      );
+    } catch (error) {
+      toastMessage(error);
+    }
+  };
+
   return (
     <div className="register-form-cotnainer">
       <h2>Faculty Registration Form</h2>
-      <form>
+      <div className="faculty-reg-form">
         <input
           name="firstname"
           placeholder="First Name"
@@ -50,8 +72,10 @@ const RegisterFacultyForm = () => {
           type="password"
           ref={confirmpasswordRef}
         />
-        <button>Register Faculty</button>
-      </form>
+        <button onClick={() => handleCreateFacultyAccount()}>
+          Register Faculty
+        </button>
+      </div>
     </div>
   );
 };

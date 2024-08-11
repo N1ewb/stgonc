@@ -22,9 +22,6 @@ const StudentRegister = () => {
 
   const toastMessage = (message) => toast(message);
 
-  // const passwordError = () => toast('Password dont match')
-  // const passwordCharsError = () => toast('Password should be 6 characters or longer')
-
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (file) {

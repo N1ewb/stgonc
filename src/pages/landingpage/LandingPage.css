@@ -79,10 +79,20 @@
     border-radius: 22px;
 }
 
+.landing-register-button:hover {
+    background-color: #360000;
+    color: white;
+}
+
 .landing-login-button {
     background-color: #360000;
     color: white;
     width: 160px;
     padding: 10px;
     border-radius: 22px;
+}
+
+.landing-login-button:hover {
+    background-color: white;
+    color: #360000;
 }

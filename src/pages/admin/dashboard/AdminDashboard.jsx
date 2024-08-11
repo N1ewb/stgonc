@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 
 import AdminGraphs from "../admin_pages/admin_graphs/admin_graphs";
 import AdmingPendingRegPage from "../admin_pages/admin_pending_registratons/admin_pending_reg";
-import AdminAppointmentPage from "../admin_pages/admin_appointments/adming_appointments";
+import AdminAppointmentPage from "../admin_pages/admin_appointments/admin_appointments";
 import AdminSchedulesPage from "../admin_pages/admin_schedules/admin_schedules";
 import AdminRegisteruserPage from "../admin_pages/adming_register_user/admin_reg_user";
 
@@ -64,6 +64,22 @@ const AdminDashboard = () => {
       handleGetAppointments(auth.currentUser.email);
     }
   }, []);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      if (auth.currentUser) {
+        try {
+          const unsubscribe = db.subscribeToAppointmentChanges((callback) => {
+            setAppointments(callback);
+          });
+          return () => unsubscribe();
+        } catch (error) {
+          console.log(error);
+        }
+      }
+    };
+    fetchData();
+  }, [db]);
 
   return (
     <div className="Admin-Dashboard-Container">

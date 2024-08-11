@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 
 import "./admin_pending_reg.css";
 import toast, { Toaster } from "react-hot-toast";
-import { AdminCreateStudentAccount } from "../../../../context/auth/adminCreateAccount";
+import { AdminAccepptStudentAccount } from "../../../../context/auth/adminCreateAccount";
 
 const AdmingPendingRegPage = ({ db, auth }) => {
   const [pendingRegistrationList, setPendingRegistrationList] = useState();
@@ -34,7 +34,7 @@ const AdmingPendingRegPage = ({ db, auth }) => {
     requestID
   ) => {
     try {
-      await AdminCreateStudentAccount(
+      await AdminAccepptStudentAccount(
         email,
         password,
         firstName,

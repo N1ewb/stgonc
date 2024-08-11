@@ -25,3 +25,14 @@
     border-radius: 70px 0px 0px 70px;
     padding: 50px;
 }
+.CCS-instructors-container{
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.CCS-instructor-cards-container{
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  justify-content: space-between;
+}

@@ -15,10 +15,13 @@ import {
   where,
   arrayUnion,
 } from "firebase/firestore";
-import { firestore } from "../../server/firebase";
+import { firestore, storage } from "../../server/firebase";
 import { useAuth } from "../auth/AuthContext";
 
 import toast, { Toaster } from "react-hot-toast";
+import { updateProfile } from "firebase/auth";
+import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
+import { useStorage } from "../storage/StorageContext";
 
 const dbContext = createContext();
 
@@ -263,6 +266,48 @@ export const DBProvider = ({ children }) => {
     }
   };
 
+  const handleChangeUserProfile = async (imageFile) => {
+    if (auth.currentUser) {
+      try {
+        const storageRef = ref(
+          storage,
+          `profileImages/${auth.currentUser.uid}`
+        );
+        await uploadBytes(storageRef, imageFile);
+        const downloadURL = await getDownloadURL(storageRef);
+        await updateProfile(auth.currentUser, {
+          photoURL: downloadURL,
+        });
+        console.log("Profile photo updated successfully");
+      } catch (error) {
+        console.error("Error updating profile photo:", error);
+        throw error;
+      }
+    } else {
+      throw new Error("No user is currently signed in");
+    }
+  };
+
+  //As Admin
+
+  const subscribeToUserChanges = async (callback) => {
+    try {
+      if (auth.currentUser) {
+        const unsubscribe = onSnapshot(usersCollectionRef, (snapshot) => {
+          const data = snapshot.docs.map((doc) => ({
+            id: doc.id,
+            ...doc.data(),
+          }));
+          const updatedData = data.filter((user) => user.role !== "moderator");
+          callback(updatedData);
+        });
+        return unsubscribe;
+      }
+    } catch (error) {
+      toastMessage("Error subscribing to user changes:", error);
+    }
+  };
+
   //As Teacher
   const subscribeToAppointmentChanges = async (callback) => {
     try {
@@ -385,11 +430,13 @@ export const DBProvider = ({ children }) => {
     denyAppointment,
     getMessages,
     sendMessage,
+    handleChangeUserProfile,
     getAppointmentList,
     getPendingRegistrationRequests,
     subscribeToAppointmentChanges,
     subscribeToMessageChanges,
     subscribeToRequestedAppointmentChanges,
+    subscribeToUserChanges,
   };
 
   return (

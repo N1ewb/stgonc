@@ -18,6 +18,7 @@ import SendCallReq from "./pages/videocall/SendCallReq";
 import ReceiveCallReq from "./pages/videocall/ReceiveCallReq";
 import { MessagingProvider } from "./context/notification/NotificationContext";
 import AdminRegistration from "./pages/admin/admin_register/AdminRegistration";
+import { StorageProvider } from "./context/storage/StorageContext";
 
 function App() {
   return (
@@ -25,39 +26,41 @@ function App() {
       <DBProvider>
         <CallProvider>
           <MessagingProvider>
-            <div className="App">
-              <BrowserRouter>
-                <Navbar />
-                <Routes>
-                  <Route path="/" exact element={<LandingPage />} />
-                  <Route element={<PrivateRoutes />}>
-                    <Route path="/VideoCall" element={<VideoCall />} />
-                    <Route path="/SendCallReq" element={<SendCallReq />} />
+            <StorageProvider>
+              <div className="App">
+                <BrowserRouter>
+                  <Navbar />
+                  <Routes>
+                    <Route path="/" exact element={<LandingPage />} />
+                    <Route element={<PrivateRoutes />}>
+                      <Route path="/VideoCall" element={<VideoCall />} />
+                      <Route path="/SendCallReq" element={<SendCallReq />} />
+                      <Route
+                        path="/ReceiveCallReq"
+                        element={<ReceiveCallReq />}
+                      />
+                      <Route path="/Chatroom" element={<Chatroom />} />
+                      <Route path="/Userpage" element={<Userpage />} />
+                      <Route path="/Dashboard" element={<Dashboard />} />
+                    </Route>
+                    <Route path="/Login" element={<Login />} />
                     <Route
-                      path="/ReceiveCallReq"
-                      element={<ReceiveCallReq />}
+                      path="/StudentRegister"
+                      element={<StudentRegister />}
                     />
-                    <Route path="/Chatroom" element={<Chatroom />} />
-                    <Route path="/Userpage" element={<Userpage />} />
-                    <Route path="/Dashboard" element={<Dashboard />} />
-                  </Route>
-                  <Route path="/Login" element={<Login />} />
-                  <Route
-                    path="/StudentRegister"
-                    element={<StudentRegister />}
-                  />
-                  <Route
-                    path="/TeacherRegister"
-                    element={<TeacherRegister />}
-                  />
-                  <Route
-                    path="/AdminRegister"
-                    element={<AdminRegistration />}
-                  />
-                  <Route path="*" element={<Navigate to="/" />} />
-                </Routes>
-              </BrowserRouter>
-            </div>
+                    <Route
+                      path="/TeacherRegister"
+                      element={<TeacherRegister />}
+                    />
+                    <Route
+                      path="/AdminRegister"
+                      element={<AdminRegistration />}
+                    />
+                    <Route path="*" element={<Navigate to="/" />} />
+                  </Routes>
+                </BrowserRouter>
+              </div>
+            </StorageProvider>
           </MessagingProvider>
         </CallProvider>
       </DBProvider>

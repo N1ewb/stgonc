@@ -43,7 +43,7 @@ const TeacherDashboard = () => {
       }
     };
     fetchData();
-  }, []);
+  }, [db]);
 
   return (
     <div className="teacher-dashboard-container">
