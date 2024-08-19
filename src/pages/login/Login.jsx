@@ -15,10 +15,6 @@ const LoginPage = () => {
     auth.SignIn(emailRef.current.value, passwordRef.current.value);
   };
 
-  const handleSignInWithGoogle = (e) => {
-    auth.SignInWithGoogle();
-  };
-
   useEffect(() => {
     if (auth.currentUser) {
       navigate("/dashboard");

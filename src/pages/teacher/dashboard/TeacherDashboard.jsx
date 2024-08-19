@@ -3,31 +3,56 @@ import "./TeacherDashboard.css";
 import { useDB } from "../../../context/db/DBContext";
 import { useAuth } from "../../../context/auth/AuthContext";
 import { Link } from "react-router-dom";
-import toast, { Toaster } from "react-hot-toast";
+import toast from "react-hot-toast";
+import Sidebar from "../../../components/sidebar/Sidebar";
+import TeacherGraphs from "../teacher_pages/teacher-graphs/TeacherGraphs";
+import TeacherAppointmentListPage from "../teacher_pages/appointment-list-page/TeacherAppointmentListPage";
+import TeacherAppointmentReqPage from "../teacher_pages/appointment-req-page/TeacherAppointmentReqPage";
+import TeacherSchedulePage from "../teacher_pages/schedules-page/TeacherSchedulePage";
 
 const TeacherDashboard = () => {
   const db = useDB();
   const auth = useAuth();
 
   const [appointments, setAppointments] = useState();
+  const [acceptedAppointments, setAcceptedAppointments] = useState();
+  const [requestedAppointments, setRequestedAppointments] = useState();
+  const [currentPage, setCurrentPage] = useState("Dashboard");
 
-  const handleAcceptAppointment = async (id) => {
-    await db.approveAppointment(id);
+  const SidebarLinks = [
+    {
+      name: "Dashboard",
+      link: "Dashboard",
+    },
+    {
+      name: "Appointment List",
+      link: "AppoinmentList",
+    },
+    {
+      name: "Appointment Requests",
+      link: "AppointmentReq",
+    },
+    {
+      name: "Schedules",
+      link: "Schedules",
+    },
+  ];
+
+  const handleSetCurrentPage = (pageName) => {
+    setCurrentPage(pageName);
   };
 
-  const handleDenyAppointment = async () => {};
-
-  const handleGetAppointments = async (email) => {
-    const appointment = await db.getAppointmentRequests(email);
-    setAppointments(appointment);
-    console.log("setted", appointments);
+  const handleGetAcceptedAppointment = (appointments) => {
+    return appointments.filter(
+      (appointment) => appointment.appointmentStatus === "Accepted"
+    );
   };
 
-  useEffect(() => {
-    if (appointments === undefined) {
-      handleGetAppointments(auth.currentUser.email);
-    }
-  });
+  const handleGetRequestedAppointment = (appointments) => {
+    return appointments.filter(
+      (appointment) => appointment.appointmentStatus === "pending"
+    );
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -35,6 +60,8 @@ const TeacherDashboard = () => {
         try {
           const unsubscribe = db.subscribeToAppointmentChanges((callback) => {
             setAppointments(callback);
+            setAcceptedAppointments(handleGetAcceptedAppointment(callback));
+            setRequestedAppointments(handleGetRequestedAppointment(callback));
           });
           return () => unsubscribe();
         } catch (error) {
@@ -47,9 +74,35 @@ const TeacherDashboard = () => {
 
   return (
     <div className="teacher-dashboard-container">
-      <div className="">
+      <div className="teacher-sidebar-container">
+        <Sidebar
+          handleSetCurrentPage={handleSetCurrentPage}
+          SidebarLinks={SidebarLinks}
+        />
+      </div>
+      <div className="Main-Content">
+        {currentPage === "Dashboard" ? (
+          <TeacherGraphs appointments={appointments} />
+        ) : currentPage === "AppoinmentList" ? (
+          <TeacherAppointmentListPage
+            acceptedAppointments={acceptedAppointments}
+            db={db}
+            auth={auth}
+          />
+        ) : currentPage === "AppointmentReq" ? (
+          <TeacherAppointmentReqPage
+            requestedAppointments={requestedAppointments}
+            db={db}
+            auth={auth}
+          />
+        ) : currentPage === "Schedule" ? (
+          <TeacherSchedulePage />
+        ) : (
+          <TeacherGraphs />
+        )}
+      </div>
+      {/* <div className="">
         <h3>Teachers Dashboard</h3>
-        <Toaster />
         <div className="appointments-container">
           {appointments && appointments.length !== 0 ? (
             appointments.map((appointment) => (
@@ -99,7 +152,7 @@ const TeacherDashboard = () => {
             </div>
           )}
         </div>
-      </div>
+      </div> */}
     </div>
   );
 };

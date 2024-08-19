@@ -5,7 +5,13 @@ import {
   updateProfile,
   signOut,
 } from "firebase/auth";
-import { doc, setDoc, updateDoc, collection } from "firebase/firestore";
+import {
+  doc,
+  setDoc,
+  updateDoc,
+  collection,
+  Timestamp,
+} from "firebase/firestore";
 import toast from "react-hot-toast";
 import { firebaseConfig, firestore } from "../../server/firebase";
 
@@ -54,6 +60,7 @@ export const AdminAccepptStudentAccount = async (
       studentIdnumber,
       role: "Student",
       isOnline: false,
+      createdAt: Timestamp.now(),
     });
 
     await signOut(secondaryAuth);
@@ -96,6 +103,7 @@ export const AdminCreateStudentAccount = async (
           studentIdnumber,
           role: "Student",
           isOnline: false,
+          createdAt: Timestamp.now(),
         });
 
         await signOut(secondaryAuth);
@@ -144,6 +152,7 @@ export const AdminCreateFacultyAccount = async (
           studentIdnumber,
           role: "Teacher",
           isOnline: false,
+          createdAt: Timestamp.now(),
         });
 
         await signOut(secondaryAuth);

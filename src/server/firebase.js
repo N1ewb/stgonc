@@ -15,8 +15,9 @@ export const firebaseConfig = {
 };
 
 const app = initializeApp(firebaseConfig);
+
 const response = await fetch(
-  "https://tscforspc.metered.live/api/v1/turn/credentials?apiKey=f470630a11e73767208d39cf8b7c35914cd2"
+  "https://tscforspc.metered.live/api/v1/turn/credentials?apiKey=8883ab6c0b75e82a000f2975e6cb59499568"
 );
 
 const iceServers = await response.json();

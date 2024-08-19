@@ -37,6 +37,7 @@ export const DBProvider = ({ children }) => {
     firestore,
     "StudentRegistrationRequest"
   );
+  const schedulesCollectionRef = collection(firestore, "Schedules");
   const auth = useAuth();
 
   const addSuccess = () => toast("Registered Successfuly");
@@ -419,6 +420,63 @@ export const DBProvider = ({ children }) => {
     }
   };
 
+  const setInstructorSchedule = async (day, timeslot, assignedInstructor) => {
+    try {
+      const docRef = await addDoc(collection(firestore, "Schedules"), {
+        day: day,
+        time: timeslot,
+        assignedInstructor: assignedInstructor,
+        available: true,
+      });
+      console.log("Document written with ID: ", docRef.id);
+    } catch (error) {
+      toastMessage("Error adding document: ", error.message);
+    }
+  };
+
+  const getSchedules = async () => {
+    try {
+      if (auth.currentUser) {
+        const schedulesSnapshot = await getDocs(schedulesCollectionRef);
+        const schedulesData = schedulesSnapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+        return schedulesData;
+      }
+    } catch (error) {
+      toastMessage(error.message);
+    }
+  };
+
+  const updateScheduleData = async (instructor, id) => {
+    try {
+      const schedulesDocRef = doc(firestore, "Schedule", id);
+      const updatedSchedulesDocRef = { assignedInstructor: instructor };
+      return await updateDoc(schedulesDocRef, updatedSchedulesDocRef);
+    } catch (error) {
+      toastMessage(error.message);
+    }
+  };
+
+  const subscribeToSchedulesChanges = async (callback) => {
+    try {
+      if (auth.currentUser) {
+        const unsubscribe = onSnapshot(schedulesCollectionRef, (snapshot) => {
+          const schedulesData = snapshot.docs.map((doc) => ({
+            id: doc.id,
+            ...doc.data(),
+          }));
+
+          callback(schedulesData);
+        });
+        return unsubscribe;
+      }
+    } catch (error) {
+      toastMessage("Error subscribing to schedule changes:", error);
+    }
+  };
+
   const value = {
     getUsers,
     getUser,
@@ -430,13 +488,17 @@ export const DBProvider = ({ children }) => {
     denyAppointment,
     getMessages,
     sendMessage,
+    getSchedules,
+    updateScheduleData,
     handleChangeUserProfile,
+    setInstructorSchedule,
     getAppointmentList,
     getPendingRegistrationRequests,
     subscribeToAppointmentChanges,
     subscribeToMessageChanges,
     subscribeToRequestedAppointmentChanges,
     subscribeToUserChanges,
+    subscribeToSchedulesChanges,
   };
 
   return (

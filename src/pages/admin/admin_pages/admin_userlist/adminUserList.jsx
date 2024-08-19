@@ -62,8 +62,10 @@ const AdminUserList = ({ db, auth }) => {
               alt="default profile"
               height={25}
             />
-            <p>{users.firstName}</p>
-            <p>{users.lastName}</p>
+            <p>
+              {users.firstName} {users.lastName}
+            </p>
+
             <p>{users.email}</p>
             <p>{users.role}</p>
             <p>{users.phoneNumber}</p>

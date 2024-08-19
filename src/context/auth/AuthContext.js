@@ -35,6 +35,8 @@ export function useAuth() {
 export const AuthProvider = ({ children }) => {
   const [currentUser, setCurrentUser] = useState(null);
   const usersCollectionRef = collection(firestore, "Users");
+  const [error, setError] = useState();
+
   const studentRegistrationRequestRef = collection(
     firestore,
     "StudentRegistrationRequest"
@@ -44,14 +46,11 @@ export const AuthProvider = ({ children }) => {
   const SignIn = async (email, password) => {
     if (!currentUser) {
       try {
-        if (currentUser) {
-          console.log("logged in");
-        }
-
         return await signInWithEmailAndPassword(auth, email, password).then(
           async () => {
             const uid = auth.currentUser.uid;
             const usersDocRef = doc(usersCollectionRef, uid);
+
             await updateDoc(usersDocRef, {
               isOnline: true,
             });
@@ -59,11 +58,14 @@ export const AuthProvider = ({ children }) => {
         );
       } catch (error) {
         toastMessage(error.message);
+        setError(error.message);
       } finally {
-        toastMessage("Logged in Successfully");
+        if (!error) {
+          toastMessage("Logged in Successfully");
+        }
       }
     } else {
-      return console.log("already logged in");
+      return toastMessage("Already logged in");
     }
   };
 
@@ -214,10 +216,8 @@ export const AuthProvider = ({ children }) => {
       isOnline: false,
     });
     signOut(auth)
-      .then(async () => {
-        console.log("logged out");
-      })
-      .catch((error) => console.log(error));
+      .then(async () => {})
+      .catch((error) => toastMessage(error.message));
   };
 
   useEffect(() => {

@@ -10,7 +10,6 @@ import { useDB } from "../../../context/db/DBContext";
 import { useAuth } from "../../../context/auth/AuthContext";
 
 import Sidebar from "../../../components/sidebar/Sidebar";
-import Profile from "../../../components/userProfile/Profile";
 import AdminUserList from "../admin_pages/admin_userlist/adminUserList";
 
 import "./AdminDashboard.css";
@@ -20,6 +19,7 @@ const AdminDashboard = () => {
   const auth = useAuth();
 
   const [appointments, setAppointments] = useState();
+  const [teachersList, setTeachersList] = useState();
   const [currentPage, setCurrentPage] = useState("Dashboard");
 
   const SidebarLinks = [
@@ -66,6 +66,14 @@ const AdminDashboard = () => {
   }, []);
 
   useEffect(() => {
+    const handleGetTechears = async () => {
+      const teachers = await db.getTeachers();
+      setTeachersList(teachers);
+    };
+    handleGetTechears();
+  }, []);
+
+  useEffect(() => {
     const fetchData = async () => {
       if (auth.currentUser) {
         try {
@@ -84,7 +92,6 @@ const AdminDashboard = () => {
   return (
     <div className="Admin-Dashboard-Container">
       <div className="Admin-Sidebar-Container">
-        <Profile />
         <Sidebar
           handleSetCurrentPage={handleSetCurrentPage}
           SidebarLinks={SidebarLinks}
@@ -106,7 +113,7 @@ const AdminDashboard = () => {
             db={db}
           />
         ) : currentPage === "Schedules" ? (
-          <AdminSchedulesPage />
+          <AdminSchedulesPage teachersList={teachersList} db={db} />
         ) : currentPage === "RegisterUser" ? (
           <AdminRegisteruserPage />
         ) : currentPage === "Userlist" ? (

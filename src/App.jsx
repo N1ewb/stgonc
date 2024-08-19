@@ -19,6 +19,7 @@ import ReceiveCallReq from "./pages/videocall/ReceiveCallReq";
 import { MessagingProvider } from "./context/notification/NotificationContext";
 import AdminRegistration from "./pages/admin/admin_register/AdminRegistration";
 import { StorageProvider } from "./context/storage/StorageContext";
+import { Toaster } from "react-hot-toast";
 
 function App() {
   return (
@@ -59,6 +60,7 @@ function App() {
                     <Route path="*" element={<Navigate to="/" />} />
                   </Routes>
                 </BrowserRouter>
+                <Toaster />
               </div>
             </StorageProvider>
           </MessagingProvider>

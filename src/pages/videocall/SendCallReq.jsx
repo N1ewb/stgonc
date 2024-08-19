@@ -17,15 +17,38 @@ const SendCallReq = () => {
   const receiver = queryParams.get("receiver");
   const caller = queryParams.get("caller");
   const [newCalloffer, setNewCallOffer] = useState();
+  const [localVideoRef, setLocalVideoRef] = useState(null);
+  const [remoteVideoRef, setRemoteVideoRef] = useState(null);
 
   const call = useCall();
-  const localVideoRef = call.localVideoRef;
-  const remoteVideoRef = call.remoteVideoRef;
   const callInput = call.callInput;
 
   const handleWebcamOn = async () => {
     await call.WebcamOn();
   };
+
+  const handleCallButton = async (receiver, caller) => {
+    try {
+      console.log("pressed call button");
+      await call.CallButton();
+      await call.offerCall(receiver, caller, callInput.current.value);
+    } catch (error) {
+      console.log(error.message);
+    }
+  };
+
+  const handlehangUp = async (newCalloffer) => {
+    try {
+      await call.hangUp(newCalloffer);
+    } catch (error) {
+      console.log(error.message);
+    }
+  };
+
+  useEffect(() => {
+    setLocalVideoRef(call.localVideoRef);
+    setRemoteVideoRef(call.remoteVideoRef);
+  }, [remoteVideoRef, localVideoRef]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -42,20 +65,6 @@ const SendCallReq = () => {
     };
     fetchData();
   }, [call]);
-
-  const handleCallButton = async (receiver, caller, callID) => {
-    try {
-      console.log("pressed call button");
-      await call.CallButton();
-      await call.offerCall(receiver, caller, callInput.current.value);
-    } catch (error) {
-      console.log(error.message);
-    }
-  };
-
-  const handlehangUp = async (newCalloffer) => {
-    await call.hangUp(newCalloffer);
-  };
 
   useEffect(() => {
     const fetchData = async () => {

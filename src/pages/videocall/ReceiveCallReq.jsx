@@ -21,25 +21,6 @@ const ReceiveCallReq = () => {
   const [callerName, setCallerName] = useState();
   const [newCalloffer, setNewCallOffer] = useState();
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const unsubscribe = call.subscribeToCallOfferChanges(
-          (newCallOffers) => {
-            callInput.current.value = newCallOffers.callID;
-            console.log(newCallOffers);
-            setNewCallOffer(newCallOffers);
-            handleGetCaller();
-          }
-        );
-        return () => unsubscribe();
-      } catch (error) {
-        console.log(error);
-      }
-    };
-    fetchData();
-  }, [call]);
-
   const handleGetCaller = async () => {
     try {
       const callerInfo = await db.getUser(caller);
@@ -61,6 +42,25 @@ const ReceiveCallReq = () => {
   const handlehangUp = async () => {
     await call.hangUp();
   };
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const unsubscribe = call.subscribeToCallOfferChanges(
+          async (newCallOffers) => {
+            callInput.current.value = newCallOffers.callID;
+            console.log(newCallOffers);
+            setNewCallOffer(newCallOffers);
+            handleGetCaller();
+          }
+        );
+        return () => unsubscribe();
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    fetchData();
+  }, [call]);
 
   return (
     <>
