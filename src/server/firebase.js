@@ -19,7 +19,7 @@ const app = initializeApp(firebaseConfig);
 const response = await fetch(
   "https://tscforspc.metered.live/api/v1/turn/credentials?apiKey=8883ab6c0b75e82a000f2975e6cb59499568"
 );
-
+const asd = "";
 const iceServers = await response.json();
 
 export const firestore = getFirestore(app);
