@@ -36,21 +36,34 @@ const AdminSchedulesPage = ({ teachersList, db }) => {
     setShow(!show);
   };
 
-  const setTd = async (value) => {
+  const setTd = (value) => {
     try {
       const updatedScheduleData = { ...scheduleData };
 
       choosenCells.forEach(async (cell) => {
         const JsonFormat = JSON.parse(cell);
+
+        //DI MO GANA
+        const matchingSchedules = schedules.filter(
+          (schedule) =>
+            schedule.day === JsonFormat.day && schedule.time === JsonFormat.time
+        );
+
+        if (matchingSchedules) {
+          matchingSchedules.forEach(async (matchingSchedule) => {
+            console.log("Deleted", matchingSchedule.id);
+            await handleDeleteSchedulesDoc(matchingSchedule.id);
+          });
+        }
+        ////////////////
+
         updatedScheduleData[`${JsonFormat.time}-${JsonFormat.day}`] = value;
         await db.setInstructorSchedule(
           JsonFormat.day,
           JsonFormat.time,
           updatedScheduleData[`${JsonFormat.time}-${JsonFormat.day}`]
         );
-        console.log(
-          updatedScheduleData[`${JsonFormat.time}-${JsonFormat.day}`]
-        );
+        console.log(`${JsonFormat.time}-${JsonFormat.day}`);
       });
 
       setChoosenCells([]);
@@ -79,6 +92,14 @@ const AdminSchedulesPage = ({ teachersList, db }) => {
           ? prev.filter((cell) => cell !== JsonFormat)
           : [...prev, JsonFormat]
       );
+    }
+  };
+
+  const handleDeleteSchedulesDoc = async (id) => {
+    try {
+      await db.deleteSchedule(id);
+    } catch (error) {
+      toastMessage("Error in updating schedule", error.message);
     }
   };
 

@@ -14,6 +14,7 @@ import {
   query,
   where,
   arrayUnion,
+  Timestamp,
 } from "firebase/firestore";
 import { firestore, storage } from "../../server/firebase";
 import { useAuth } from "../auth/AuthContext";
@@ -422,13 +423,13 @@ export const DBProvider = ({ children }) => {
 
   const setInstructorSchedule = async (day, timeslot, assignedInstructor) => {
     try {
-      const docRef = await addDoc(collection(firestore, "Schedules"), {
+      await addDoc(collection(firestore, "Schedules"), {
         day: day,
         time: timeslot,
         assignedInstructor: assignedInstructor,
         available: true,
+        createdAt: Timestamp.now(),
       });
-      console.log("Document written with ID: ", docRef.id);
     } catch (error) {
       toastMessage("Error adding document: ", error.message);
     }
@@ -445,7 +446,18 @@ export const DBProvider = ({ children }) => {
         return schedulesData;
       }
     } catch (error) {
-      toastMessage(error.message);
+      toastMessage("Error in getting schedules list:", error.message);
+    }
+  };
+
+  const deleteSchedule = async (scheduleID) => {
+    try {
+      if (auth.currentUser) {
+        const scheduleDoc = doc(collection(firestore, "Schedules"), scheduleID);
+        await deleteDoc(scheduleDoc);
+      }
+    } catch (error) {
+      toastMessage("Error in updating Schedule:", error.message);
     }
   };
 
@@ -490,6 +502,7 @@ export const DBProvider = ({ children }) => {
     sendMessage,
     getSchedules,
     updateScheduleData,
+    deleteSchedule,
     handleChangeUserProfile,
     setInstructorSchedule,
     getAppointmentList,

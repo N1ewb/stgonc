@@ -51,7 +51,6 @@ const AdmingPendingRegPage = ({ db, auth }) => {
   useEffect(() => {
     if (pendingRegistrationList === undefined) {
       handleGetPendingRegistrations();
-      console.log(pendingRegistrationList);
     }
   }, []);
 

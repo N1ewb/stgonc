@@ -17,10 +17,8 @@ const SchedulesModal = ({
     try {
       const value = JSON.parse(selectedTeacher);
       setTd(value);
-      console.log(value.firstName);
       toggleShow();
-
-      toastMessage("Schedule Setted");
+      toastMessage("Schedule assigned");
     } catch (error) {
       toastMessage(error.message);
     }
@@ -35,6 +33,7 @@ const SchedulesModal = ({
         <Modal.Body>
           <div className="application-form">
             <form onSubmit={handleSetTableData}>
+              <p>Choose the instructor you want to assign to this timeslot</p>
               <select
                 value={selectedTeacher}
                 onChange={(e) => setSelectedTeacher(e.target.value)}
@@ -60,7 +59,6 @@ const SchedulesModal = ({
                   <option value="">No instructors</option>
                 )}
               </select>
-              <input name="" placeholder="" />
             </form>
           </div>
         </Modal.Body>

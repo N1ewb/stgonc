@@ -56,7 +56,7 @@ const AdminDashboard = () => {
   const handleGetAppointments = async (email) => {
     const appointment = await db.getAppointmentRequests(email);
     setAppointments(appointment);
-    console.log("setted", appointments);
+    console.log("Setted", appointments);
   };
 
   useEffect(() => {
