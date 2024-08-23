@@ -58,7 +58,8 @@
 }
 
 .clickable-cell{
-  background-color: rgba(120, 174, 255, 0.767);
+  background-color: rgba(255, 120, 127, 0.767);
+  cursor: pointer;
 }
 .clickable-cell:hover{
   background-color: rgba(16, 79, 173, 0.767);
@@ -66,5 +67,5 @@
 }
 
 .selected-cell {
-  background-color: #056cc0; 
+  background-color: #c0050ed3; 
 }

@@ -99,9 +99,6 @@ const AdminDashboard = () => {
       </div>
 
       <div className="Main-Content">
-        <p style={{ color: "#360000", fontSize: "30px" }}>
-          <b>Welcome</b> {auth.currentUser && auth.currentUser.displayName}!
-        </p>
         {currentPage === "Dashboard" ? (
           <AdminGraphs appointments={appointments} />
         ) : currentPage === "PendingReg" ? (
