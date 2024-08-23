@@ -33,7 +33,11 @@ const AdminSchedulesPage = ({ teachersList, db }) => {
   );
 
   const toggleShow = () => {
-    setShow(!show);
+    if (choosenCells.length !== 0) {
+      setShow(!show);
+    } else {
+      toastMessage("Please choose a timeslot");
+    }
   };
 
   const setTd = (value) => {

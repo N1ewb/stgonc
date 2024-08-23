@@ -39,11 +39,7 @@
   background-color: #f9f9f9;
 }
 
-.schedules-table td:hover {
-  background-color: #ddd;
-  cursor: pointer;
-  
-}
+
 
 .schedules-table td {
   height: 40px;
@@ -63,6 +59,10 @@
 
 .clickable-cell{
   background-color: rgba(120, 174, 255, 0.767);
+}
+.clickable-cell:hover{
+  background-color: rgba(16, 79, 173, 0.767);
+  cursor: pointer;
 }
 
 .selected-cell {

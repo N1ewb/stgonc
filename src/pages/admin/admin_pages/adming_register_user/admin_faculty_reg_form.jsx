@@ -11,9 +11,19 @@ const RegisterFacultyForm = () => {
   const lastnameRef = useRef();
   const emailRef = useRef();
   const phonenumberRef = useRef();
-  const studentidnumberRef = useRef();
+  const facultyIdnumberRef = useRef();
+  const departmentRef = useRef();
   const passwordRef = useRef();
   const confirmpasswordRef = useRef();
+
+  const spcDepartments = [
+    "College of Computer Studies",
+    "College of Criminology",
+    "College of Education",
+    "College of Business Administration",
+    "College of Engineering",
+    "College of Arts and Sciences",
+  ];
 
   const handleCreateFacultyAccount = async () => {
     try {
@@ -22,7 +32,8 @@ const RegisterFacultyForm = () => {
         lastnameRef.current.value,
         emailRef.current.value,
         phonenumberRef.current.value,
-        studentidnumberRef.current.value,
+        facultyIdnumberRef.current.value,
+        departmentRef.current.value,
         passwordRef.current.value,
         confirmpasswordRef.current.value
       );
@@ -55,11 +66,25 @@ const RegisterFacultyForm = () => {
           ref={phonenumberRef}
         />
         <input
-          name="studentidnumber"
+          name="facultyIdnumber"
           placeholder="Faculty ID Number"
           type="text"
-          ref={studentidnumberRef}
+          ref={facultyIdnumberRef}
         />
+        <select ref={departmentRef}>
+          <option name="placeholder" value="">
+            Department
+          </option>
+          {spcDepartments && spcDepartments.length !== 0 ? (
+            spcDepartments.map((department, index) => (
+              <option value={department} key={index}>
+                {department}
+              </option>
+            ))
+          ) : (
+            <option value="">No Department</option>
+          )}
+        </select>
         <input
           name="password"
           placeholder="Password"

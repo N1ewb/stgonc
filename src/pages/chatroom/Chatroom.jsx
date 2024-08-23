@@ -5,6 +5,7 @@ import { useAuth } from "../../context/auth/AuthContext";
 import { useDB } from "../../context/db/DBContext";
 
 import "./Chatroom.css";
+import { Link } from "react-router-dom";
 
 const Chatroom = () => {
   const urlParams = new URLSearchParams(window.location.search);
@@ -80,6 +81,7 @@ const Chatroom = () => {
 
   return (
     <div className="chatroom-container">
+      <Link to="/dashboard">Back to Dashboard</Link>
       <div className="chat-receiver">{receiver}</div>
       <div className="messages-wrapper">
         <div ref={dummy}></div>

@@ -14,12 +14,17 @@ const StudentDashboard = () => {
   const auth = useAuth();
   const call = useCall();
   const navigate = useNavigate();
+  const toastMessage = (message) => toast(message);
   const [instructors, setInstructors] = useState();
+  const [currentInstructor, setCurrentInstructor] = useState();
   const [appointments, setAppointments] = useState();
   const [myInfo, setMyInfo] = useState();
   const [show, setShow] = useState(false);
 
-  const toggleShow = () => setShow(!show);
+  const toggleShow = (instructor) => {
+    setShow(!show);
+    setCurrentInstructor(instructor);
+  };
 
   const handleGetUser = async () => {
     if (auth.currentUser) {
@@ -92,29 +97,30 @@ const StudentDashboard = () => {
           <p>Department Instructors</p>
           {instructors && instructors.length !== 0 ? (
             instructors.map((instructor, index) => (
-              <div
-                className="CCS-instructor-cards-container"
-                key={instructor.userID}
-              >
+              <div className="CCS-instructor-cards-container" key={index}>
                 <p>
                   {instructor.firstName} {instructor.lastName}
                 </p>
                 <p>{instructor.email}</p>
-                <Button variant="primary" onClick={() => toggleShow()}>
+
+                <Button
+                  variant="primary"
+                  onClick={() => toggleShow(instructor)}
+                >
                   Request Appointment
                 </Button>
-                <RequestAppointmentForm
-                  instructor={instructor}
-                  toggleShow={toggleShow}
-                  show={show}
-                  myInfo={myInfo}
-                />
               </div>
             ))
           ) : (
             <div className="">No instructors</div>
           )}
         </div>
+        <RequestAppointmentForm
+          instructor={currentInstructor}
+          toggleShow={toggleShow}
+          show={show}
+          myInfo={myInfo}
+        />
         <p>Appointments</p>
         <div className="appointment-wrappers">
           {appointments && appointments.length !== 0 ? (

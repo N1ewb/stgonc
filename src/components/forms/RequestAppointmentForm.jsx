@@ -7,7 +7,13 @@ import { useDB } from "../../context/db/DBContext";
 import { useAuth } from "../../context/auth/AuthContext";
 import toast from "react-hot-toast";
 
-const RequestAppointmentForm = ({ instructor, show, toggleShow, myInfo }) => {
+const RequestAppointmentForm = ({
+  instructor,
+  show,
+  toggleShow,
+  myInfo,
+  index,
+}) => {
   const toastMessage = (message) => toast(message);
 
   const handleToggleShow = () => {
@@ -16,7 +22,8 @@ const RequestAppointmentForm = ({ instructor, show, toggleShow, myInfo }) => {
 
   const db = useDB();
   const auth = useAuth();
-
+  const [instructorSchedule, setInstructorSchedule] = useState();
+  const [loadingSchedules, setLoadingSchedules] = useState(true);
   const concernRef = useRef();
   const appointmentDateRef = useRef();
   const appointmentTimeRef = useRef();
@@ -35,25 +42,58 @@ const RequestAppointmentForm = ({ instructor, show, toggleShow, myInfo }) => {
     studentIDnumber
   ) => {
     try {
-      await db.sendAppointmentRequest(
-        teacheruid,
-        teacherFirstName,
-        teacherLastName,
-        teacherPhoneno,
-        teacheruserID,
-        concern,
-        date,
-        time,
-        isOnline,
-        phoneno,
-        studentIDnumber
-      );
-      handleToggleShow();
-      toastMessage("Appointment request sent");
+      if (concernRef.current.value && appointmentTimeRef.current.value) {
+        await db.sendAppointmentRequest(
+          teacheruid,
+          teacherFirstName,
+          teacherLastName,
+          teacherPhoneno,
+          teacheruserID,
+          concern.current.value,
+          date.current.value,
+          time.current.value,
+          isOnline,
+          phoneno,
+          studentIDnumber
+        );
+        toastMessage("Appointment request sent");
+        handleToggleShow();
+      } else {
+        toastMessage("Please fill in fields");
+      }
     } catch (error) {
       toastMessage("Request Appoinment not sent");
     }
   };
+  const handleGetInstructorSchedule = async (email) => {
+    try {
+      const getSchedule = await db.getInstructorSchedule(email);
+      setInstructorSchedule(getSchedule);
+      console.log(getSchedule);
+    } catch (error) {
+      toastMessage(error.message);
+    }
+  };
+
+  useEffect(() => {
+    const fetchInstructorSchedule = async () => {
+      if (instructor) {
+        try {
+          const getSchedule = await db.getInstructorSchedule(instructor.email);
+          setInstructorSchedule(getSchedule);
+          console.log(instructorSchedule);
+        } catch (error) {
+          toastMessage(
+            "Error in fetching instructor schedules: ",
+            error.message
+          );
+        } finally {
+          setLoadingSchedules(false);
+        }
+      }
+    };
+    fetchInstructorSchedule();
+  }, [db, show]);
 
   return (
     <>
@@ -65,7 +105,21 @@ const RequestAppointmentForm = ({ instructor, show, toggleShow, myInfo }) => {
           <div className="application-form">
             <label htmlFor="concern">Describe your Concerns</label>
             <input id="concern" name="concern" type="text" ref={concernRef} />
-            <input id="date" name="date" type="date" ref={appointmentDateRef} />
+
+            {!loadingSchedules ? (
+              <div>
+                {instructorSchedule && instructorSchedule.length !== 0 ? (
+                  instructorSchedule.map((schedule, index) => (
+                    <p key={index}>{schedule.time}</p>
+                  ))
+                ) : (
+                  <option value="">No schedules Available</option>
+                )}
+              </div>
+            ) : (
+              <p>Loading Schedules...</p>
+            )}
+
             <input id="time" name="time" type="time" ref={appointmentTimeRef} />
             <label htmlFor="image">
               Picture of Yourself right now this moment
@@ -86,9 +140,9 @@ const RequestAppointmentForm = ({ instructor, show, toggleShow, myInfo }) => {
                 instructor.lastName,
                 instructor.phoneNumber,
                 instructor.userID,
-                concernRef.current.value,
-                appointmentDateRef.current.value,
-                appointmentTimeRef.current.value,
+                concernRef,
+                appointmentDateRef,
+                appointmentTimeRef,
                 true,
                 myInfo.phoneNumber,
                 myInfo && myInfo.studentIdnumber

@@ -28,3 +28,14 @@
 .admin-register-page-right-content{
     width: 50%;
 }
+
+select {
+    height: 50px;
+    border-radius: 30px;
+    border-color: #ccc;
+    padding: 8px;
+}
+
+select[name="placeholder"]{
+    color: #ccc !important;
+}

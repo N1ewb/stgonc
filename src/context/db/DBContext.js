@@ -450,6 +450,30 @@ export const DBProvider = ({ children }) => {
     }
   };
 
+  const getInstructorSchedule = async (email) => {
+    try {
+      if (auth.currentUser) {
+        const q = query(
+          schedulesCollectionRef,
+          where("assignedInstructor.email", "==", email)
+        );
+        const querySnapshot = await getDocs(q);
+        const scheduleData = querySnapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+
+        if (scheduleData) {
+          return scheduleData;
+        } else {
+          return console.log("No schedule data");
+        }
+      }
+    } catch (error) {
+      toastMessage("Error in retrieving teacher schedules:", error.message);
+    }
+  };
+
   const deleteSchedule = async (scheduleID) => {
     try {
       if (auth.currentUser) {
@@ -501,6 +525,7 @@ export const DBProvider = ({ children }) => {
     getMessages,
     sendMessage,
     getSchedules,
+    getInstructorSchedule,
     updateScheduleData,
     deleteSchedule,
     handleChangeUserProfile,

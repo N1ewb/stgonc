@@ -77,6 +77,7 @@ export const AdminCreateStudentAccount = async (
   email,
   phoneNumber,
   studentIdnumber,
+  department,
   password,
   confirmPassword
 ) => {
@@ -101,6 +102,7 @@ export const AdminCreateStudentAccount = async (
           email: email,
           phoneNumber,
           studentIdnumber,
+          department,
           role: "Student",
           isOnline: false,
           createdAt: Timestamp.now(),
@@ -125,7 +127,8 @@ export const AdminCreateFacultyAccount = async (
   lastName,
   email,
   phoneNumber,
-  studentIdnumber,
+  facultyIdnumber,
+  department,
   password,
   confirmPassword
 ) => {
@@ -149,7 +152,8 @@ export const AdminCreateFacultyAccount = async (
           lastName: lastName,
           email: email,
           phoneNumber,
-          studentIdnumber,
+          facultyIdnumber,
+          department,
           role: "Teacher",
           isOnline: false,
           createdAt: Timestamp.now(),
