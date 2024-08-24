@@ -14,23 +14,90 @@ const AdminSchedulesPage = ({ teachersList, db }) => {
   const [choosenCells, setChoosenCells] = useState([]);
   const [isEditMode, setIsEditMode] = useState(false);
 
-  const daysOfWeek = [
-    "Monday",
-    "Tuesday",
-    "Wednesday",
-    "Thursday",
-    "Friday",
-    "Saturday",
-    "Sunday",
+  // const daysOfWeek = [
+  //   "Monday",
+  //   "Tuesday",
+  //   "Wednesday",
+  //   "Thursday",
+  //   "Friday",
+  //   "Saturday",
+  //   "Sunday",
+  // ];
+
+  // const times = [
+  //   "07:00-08:00",
+  //   "08:00-09:00",
+  //   "09:00-10:00",
+  //   "10:00-11:00",
+  //   "11:00-12:00",
+  //   "12:00-13:00",
+  //   "13:00-14:00",
+  //   "14:00-15:00",
+  //   "15:00-16:00",
+  //   "16:00-17:00",
+  //   "17:00-18:00",
+  //   "18:00-19:00",
+  //   "19:00-20:00",
+  // ];
+
+  const times = [
+    {
+      startTime: 7,
+      endTime: 8,
+    },
+    {
+      startTime: 8,
+      endTime: 9,
+    },
+    {
+      startTime: 9,
+      endTime: 10,
+    },
+    {
+      startTime: 10,
+      endTime: 11,
+    },
+    {
+      startTime: 11,
+      endTime: 12,
+    },
+    {
+      startTime: 12,
+      endTime: 13,
+    },
+    {
+      startTime: 13,
+      endTime: 14,
+    },
+    {
+      startTime: 14,
+      endTime: 15,
+    },
+    {
+      startTime: 16,
+      endTime: 17,
+    },
+    {
+      startTime: 17,
+      endTime: 18,
+    },
+    {
+      startTime: 18,
+      endTime: 19,
+    },
+    {
+      startTime: 19,
+      endTime: 20,
+    },
   ];
 
-  const startTime = 7;
-  const endTime = 20;
+  // const startTime = 7;
+  // const endTime = 21;
 
-  const times = Array.from(
-    { length: endTime - startTime },
-    (_, i) => `${startTime + i}:00`
-  );
+  // const times = Array.from(
+  //   { length: endTime - startTime },
+  //   (_, i) => `${startTime + i}:00`
+  // );
 
   const toggleShow = () => {
     if (choosenCells.length !== 0) {
@@ -45,29 +112,29 @@ const AdminSchedulesPage = ({ teachersList, db }) => {
       const updatedScheduleData = { ...scheduleData };
 
       choosenCells.forEach(async (cell) => {
-        const JsonFormat = JSON.parse(cell);
+        const { time, day, fullDay } = JSON.parse(cell);
 
-        //DI MO GANA
         const matchingSchedules = schedules.filter(
           (schedule) =>
-            schedule.day === JsonFormat.day && schedule.time === JsonFormat.time
+            schedule.day === day &&
+            schedule.time.startTime === time.startTime &&
+            schedule.time.endTime === time.endTime
         );
 
-        if (matchingSchedules) {
+        if (matchingSchedules.length > 0) {
           matchingSchedules.forEach(async (matchingSchedule) => {
             console.log("Deleted", matchingSchedule.id);
             await handleDeleteSchedulesDoc(matchingSchedule.id);
           });
         }
-        ////////////////
 
-        updatedScheduleData[`${JsonFormat.time}-${JsonFormat.day}`] = value;
+        updatedScheduleData[`${time.startTime}-${time.endTime}-${day}`] = value;
         await db.setInstructorSchedule(
-          JsonFormat.day,
-          JsonFormat.time,
-          updatedScheduleData[`${JsonFormat.time}-${JsonFormat.day}`]
+          fullDay,
+          time,
+          updatedScheduleData[`${time.startTime}-${time.endTime}-${day}`]
         );
-        console.log(`${JsonFormat.time}-${JsonFormat.day}`);
+        console.log(`${time.startTime}-${time.endTime}-${day}`);
       });
 
       setChoosenCells([]);
@@ -88,9 +155,9 @@ const AdminSchedulesPage = ({ teachersList, db }) => {
 
   const handleCellClick = (time, day) => {
     if (isEditMode) {
-      const selectedCell = `${time}-${day}`;
-
-      const JsonFormat = JSON.stringify({ time, day });
+      const cellData = { time, day: day.dayOfWeek, fullDay: day };
+      const JsonFormat = JSON.stringify(cellData);
+      console.log(JsonFormat);
       setChoosenCells((prev) =>
         prev.includes(JsonFormat)
           ? prev.filter((cell) => cell !== JsonFormat)
@@ -108,32 +175,57 @@ const AdminSchedulesPage = ({ teachersList, db }) => {
   };
 
   useEffect(() => {
-    const handleGetSchedules = async () => {
+    const handleGetDays = async () => {
       try {
-        const schedule = await db.getSchedules();
-        setSchedules(schedule);
+        const dayOfWeek = await db.getDays();
+        setSchedules(dayOfWeek);
       } catch (error) {
         toastMessage(error.message);
       }
     };
-    handleGetSchedules();
+    handleGetDays();
   }, []);
+
+  const handleGetTimeSlots = async (day) => {
+    try {
+      const timeSlot = await db.getTimeslotsForDay(day);
+    } catch (error) {
+      toastMessage("Error in retreivng timeslots", error.message);
+    }
+  };
 
   useEffect(() => {
     const fetchSchedules = async () => {
       try {
-        const unsubscribe = db.subscribeToSchedulesChanges((schedules) => {
-          const newScheduleData = {};
+        const unsubscribeSchedules = db.subscribeToSchedulesChanges(
+          async (schedules) => {
+            const unsubscribeTimeslotCallbacks = [];
 
-          schedules.forEach((schedule) => {
-            const key = `${schedule.time}-${schedule.day}`;
-            newScheduleData[key] = schedule.assignedInstructor;
-          });
+            const newScheduleData = {};
 
-          setScheduleData(newScheduleData);
-        });
+            schedules.forEach((schedule) => {
+              const unsubscribeTimeslot = db.subscribeToTimeslotChanges(
+                (timeslots) => {
+                  timeslots.forEach((timeslot) => {
+                    const key = `${timeslot.time.startTime}-${timeslot.time.endTime}-${schedule.dayOfWeek}`;
+                    newScheduleData[key] = timeslot.assignedInstructor;
+                  });
+                  setScheduleData({ ...scheduleData, ...newScheduleData });
+                },
+                schedule
+              );
 
-        return () => unsubscribe();
+              unsubscribeTimeslotCallbacks.push(unsubscribeTimeslot);
+            });
+
+            return () => {
+              unsubscribeSchedules();
+              unsubscribeTimeslotCallbacks.forEach((unsubscribe) =>
+                unsubscribe()
+              );
+            };
+          }
+        );
       } catch (error) {
         toastMessage("Error fetching schedules: " + error.message);
       }
@@ -151,31 +243,42 @@ const AdminSchedulesPage = ({ teachersList, db }) => {
           <thead>
             <tr>
               <th>Time/Days</th>
-              {daysOfWeek.map((day) => (
-                <th key={day}>{day}</th>
-              ))}
+              {schedules && schedules.length !== 0
+                ? schedules.map((day) => <th key={day.id}>{day.dayOfWeek}</th>)
+                : ""}
             </tr>
           </thead>
           <tbody>
             {times.map((time) => (
-              <tr key={time}>
-                <td>{time}</td>
-                {daysOfWeek.map((day) => (
-                  <td
-                    key={`${time}-${day}`}
-                    onClick={() => handleCellClick(time, day)}
-                    className={
-                      isEditMode &&
-                      choosenCells.includes(JSON.stringify({ time, day }))
-                        ? "clickable-cell selected-cell"
-                        : isEditMode
-                        ? "clickable-cell"
-                        : ""
-                    }
-                  >
-                    {scheduleData[`${time}-${day}`]?.firstName || ""}
-                  </td>
-                ))}
+              <tr key={`${time.startTime}-${time.endTime}`}>
+                <td>{`${time.startTime}:00 ${time.endTime}:00`} </td>
+                {schedules && schedules.length !== 0
+                  ? schedules.map((day) => (
+                      <td
+                        key={`${time.startTime}-${time.endTime}-${day.dayOfWeek}`}
+                        onClick={() => handleCellClick(time, day)}
+                        className={
+                          isEditMode &&
+                          choosenCells.some((cell) => {
+                            const parsedCell = JSON.parse(cell);
+                            return (
+                              parsedCell.time.startTime === time.startTime &&
+                              parsedCell.time.endTime === time.endTime &&
+                              parsedCell.day === day.dayOfWeek
+                            );
+                          })
+                            ? "clickable-cell selected-cell"
+                            : isEditMode
+                            ? "clickable-cell"
+                            : ""
+                        }
+                      >
+                        {scheduleData[
+                          `${time.startTime}-${time.endTime}-${day.dayOfWeek}`
+                        ]?.firstName || ""}
+                      </td>
+                    ))
+                  : ""}
               </tr>
             ))}
           </tbody>

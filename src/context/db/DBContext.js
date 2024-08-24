@@ -423,8 +423,9 @@ export const DBProvider = ({ children }) => {
 
   const setInstructorSchedule = async (day, timeslot, assignedInstructor) => {
     try {
-      await addDoc(collection(firestore, "Schedules"), {
-        day: day,
+      const dayRef = doc(firestore, "Schedules", day.id);
+
+      await addDoc(collection(dayRef, "timeslots"), {
         time: timeslot,
         assignedInstructor: assignedInstructor,
         available: true,
@@ -435,7 +436,7 @@ export const DBProvider = ({ children }) => {
     }
   };
 
-  const getSchedules = async () => {
+  const getDays = async () => {
     try {
       if (auth.currentUser) {
         const schedulesSnapshot = await getDocs(schedulesCollectionRef);
@@ -443,6 +444,9 @@ export const DBProvider = ({ children }) => {
           id: doc.id,
           ...doc.data(),
         }));
+
+        schedulesData.sort((a, b) => a.createdAt - b.createdAt);
+
         return schedulesData;
       }
     } catch (error) {
@@ -475,24 +479,23 @@ export const DBProvider = ({ children }) => {
   };
 
   const deleteSchedule = async (scheduleID) => {
-    try {
-      if (auth.currentUser) {
-        const scheduleDoc = doc(collection(firestore, "Schedules"), scheduleID);
-        await deleteDoc(scheduleDoc);
-      }
-    } catch (error) {
-      toastMessage("Error in updating Schedule:", error.message);
-    }
-  };
-
-  const updateScheduleData = async (instructor, id) => {
-    try {
-      const schedulesDocRef = doc(firestore, "Schedule", id);
-      const updatedSchedulesDocRef = { assignedInstructor: instructor };
-      return await updateDoc(schedulesDocRef, updatedSchedulesDocRef);
-    } catch (error) {
-      toastMessage(error.message);
-    }
+    //   try {
+    //     if (auth.currentUser) {
+    //       const scheduleDoc = doc(collection(firestore, "Schedules"), scheduleID);
+    //       await deleteDoc(scheduleDoc);
+    //     }
+    //   } catch (error) {
+    //     toastMessage("Error in updating Schedule:", error.message);
+    //   }
+    // };
+    // const updateScheduleData = async (instructor, id) => {
+    //   try {
+    //     const schedulesDocRef = doc(firestore, "Schedule", id);
+    //     const updatedSchedulesDocRef = { assignedInstructor: instructor };
+    //     return await updateDoc(schedulesDocRef, updatedSchedulesDocRef);
+    //   } catch (error) {
+    //     toastMessage(error.message);
+    //   }
   };
 
   const subscribeToSchedulesChanges = async (callback) => {
@@ -513,6 +516,47 @@ export const DBProvider = ({ children }) => {
     }
   };
 
+  const getTimeslotsForDay = async (day) => {
+    try {
+      const dayRef = doc(firestore, "Schedules", day.id);
+      const timeslotsRef = collection(dayRef, "timeslots");
+
+      const q = query(timeslotsRef);
+      const querySnapshot = await getDocs(q);
+
+      const timeslots = querySnapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+
+      return timeslots;
+    } catch (error) {
+      console.error("Error getting timeslots: ", error.message);
+      return [];
+    }
+  };
+
+  const subscribeToTimeslotChanges = async (callback, day) => {
+    try {
+      if (auth.currentUser) {
+        const dayRef = doc(firestore, "Schedules", day.id);
+        const timeslotsCollectionRef = collection(dayRef, "timeslots");
+
+        const unsubscribe = onSnapshot(timeslotsCollectionRef, (snapshot) => {
+          const timeslotsData = snapshot.docs.map((doc) => ({
+            id: doc.id,
+            ...doc.data(),
+          }));
+
+          callback(timeslotsData);
+        });
+        return unsubscribe;
+      }
+    } catch (error) {
+      toastMessage("Error subscribing to timeslot changes:", error);
+    }
+  };
+
   const value = {
     getUsers,
     getUser,
@@ -524,12 +568,14 @@ export const DBProvider = ({ children }) => {
     denyAppointment,
     getMessages,
     sendMessage,
-    getSchedules,
+    getDays,
+    getTimeslotsForDay,
     getInstructorSchedule,
-    updateScheduleData,
+    // updateScheduleData,
     deleteSchedule,
     handleChangeUserProfile,
     setInstructorSchedule,
+    subscribeToTimeslotChanges,
     getAppointmentList,
     getPendingRegistrationRequests,
     subscribeToAppointmentChanges,

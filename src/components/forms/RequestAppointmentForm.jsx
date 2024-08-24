@@ -105,12 +105,14 @@ const RequestAppointmentForm = ({
           <div className="application-form">
             <label htmlFor="concern">Describe your Concerns</label>
             <input id="concern" name="concern" type="text" ref={concernRef} />
-
+            <label>Timeslot</label>
             {!loadingSchedules ? (
               <div>
                 {instructorSchedule && instructorSchedule.length !== 0 ? (
                   instructorSchedule.map((schedule, index) => (
-                    <p key={index}>{schedule.time}</p>
+                    <p
+                      key={index}
+                    >{`${schedule.time.startTime}-${schedule.time.endTime}`}</p>
                   ))
                 ) : (
                   <option value="">No schedules Available</option>
