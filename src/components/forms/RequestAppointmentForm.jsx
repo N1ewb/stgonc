@@ -6,6 +6,7 @@ import "./RequestAppointmentForm.css";
 import { useDB } from "../../context/db/DBContext";
 import { useAuth } from "../../context/auth/AuthContext";
 import toast from "react-hot-toast";
+import Calendar from "../calendar/Calendar";
 
 const RequestAppointmentForm = ({
   instructor,
@@ -21,12 +22,66 @@ const RequestAppointmentForm = ({
   };
 
   const db = useDB();
-  const auth = useAuth();
-  const [instructorSchedule, setInstructorSchedule] = useState();
-  const [loadingSchedules, setLoadingSchedules] = useState(true);
+
+  const [instructorSchedule, setInstructorSchedule] = useState([]);
+  const [instructorTimeslots, setInstructorTimeslots] = useState([]);
+  const [days, setDays] = useState();
+
   const concernRef = useRef();
-  const appointmentDateRef = useRef();
-  const appointmentTimeRef = useRef();
+  const [appointmentDate, setAppointmentDate] = useState(null);
+  const [appointmentTime, setAppointmentTime] = useState(null);
+
+  const handleGetInstructorTimeSlots = async (day, email) => {
+    try {
+      const scheduleDay = await db.getScheduleDay(day.dayOfWeek);
+      const timeslots = await db.getInstructorTimeslots(scheduleDay[0], email);
+      setInstructorTimeslots(timeslots);
+    } catch (error) {
+      toastMessage("Error in retreiving instrctor timeslots: ", error.message);
+    }
+  };
+
+  const handleGetInstructorAvailableDays = async (days, email) => {
+    try {
+      if (days && days.length !== 0) {
+        console.log("Days: ", days);
+
+        const availableDays = [];
+
+        for (const day of days) {
+          const timeslots = await db.getInstructorTimeslots(day, email);
+
+          if (timeslots && timeslots.length !== 0) {
+            availableDays.push(day.dayOfWeek);
+          }
+        }
+        setInstructorSchedule(availableDays);
+        console.log(availableDays);
+      }
+      console.log("Instructor Available Days: ", instructorSchedule);
+    } catch (error) {
+      toastMessage(
+        "Error in retreiving instructor available dates: ",
+        error.message
+      );
+    }
+  };
+
+  useEffect(() => {
+    const handleGetDays = async () => {
+      try {
+        setInstructorSchedule([]);
+        if (show) {
+          const dayOfWeek = await db.getDays();
+          setDays(dayOfWeek);
+          handleGetInstructorAvailableDays(dayOfWeek, instructor.email);
+        }
+      } catch (error) {
+        toastMessage("Error in retreiving days: ", error.message);
+      }
+    };
+    handleGetDays();
+  }, [show]);
 
   const handleRequestAppointment = async (
     teacheruid,
@@ -42,7 +97,11 @@ const RequestAppointmentForm = ({
     studentIDnumber
   ) => {
     try {
-      if (concernRef.current.value && appointmentTimeRef.current.value) {
+      if (
+        concernRef.current.value &&
+        appointmentTime &&
+        appointmentDate.dateWithoutTime
+      ) {
         await db.sendAppointmentRequest(
           teacheruid,
           teacherFirstName,
@@ -50,8 +109,8 @@ const RequestAppointmentForm = ({
           teacherPhoneno,
           teacheruserID,
           concern.current.value,
-          date.current.value,
-          time.current.value,
+          appointmentDate.dateWithoutTime,
+          appointmentTime,
           isOnline,
           phoneno,
           studentIDnumber
@@ -65,35 +124,12 @@ const RequestAppointmentForm = ({
       toastMessage("Request Appoinment not sent");
     }
   };
-  const handleGetInstructorSchedule = async (email) => {
-    try {
-      const getSchedule = await db.getInstructorSchedule(email);
-      setInstructorSchedule(getSchedule);
-      console.log(getSchedule);
-    } catch (error) {
-      toastMessage(error.message);
-    }
-  };
 
   useEffect(() => {
-    const fetchInstructorSchedule = async () => {
-      if (instructor) {
-        try {
-          const getSchedule = await db.getInstructorSchedule(instructor.email);
-          setInstructorSchedule(getSchedule);
-          console.log(instructorSchedule);
-        } catch (error) {
-          toastMessage(
-            "Error in fetching instructor schedules: ",
-            error.message
-          );
-        } finally {
-          setLoadingSchedules(false);
-        }
-      }
-    };
-    fetchInstructorSchedule();
-  }, [db, show]);
+    if (appointmentDate && appointmentDate.dayOfWeek && instructor) {
+      handleGetInstructorTimeSlots(appointmentDate, instructor.email);
+    }
+  }, [appointmentDate, instructor]);
 
   return (
     <>
@@ -102,27 +138,56 @@ const RequestAppointmentForm = ({
           <Modal.Title>Appointment Application Form</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <div className="application-form">
+          <div className="application-form h-[100%]">
+            <h3>
+              Requesting{" "}
+              {instructor && instructor.firstName + " " + instructor.lastName}
+            </h3>
             <label htmlFor="concern">Describe your Concerns</label>
             <input id="concern" name="concern" type="text" ref={concernRef} />
-            <label>Timeslot</label>
-            {!loadingSchedules ? (
-              <div>
-                {instructorSchedule && instructorSchedule.length !== 0 ? (
-                  instructorSchedule.map((schedule, index) => (
-                    <p
-                      key={index}
-                    >{`${schedule.time.startTime}-${schedule.time.endTime}`}</p>
+            <Calendar
+              setAppointmentDate={setAppointmentDate}
+              instructorSchedule={instructorSchedule}
+            />
+
+            <div className="timeslot-container flex w-full justify-center items-center text-center">
+              <p>Timeslot</p>
+              {appointmentDate ? (
+                instructorTimeslots.length !== 0 ? (
+                  instructorTimeslots.map((timeslot) => (
+                    <div
+                      key={timeslot.id}
+                      className="timeslot flex flex-row justify-around"
+                    >
+                      <input
+                        type="radio"
+                        name="timeslot"
+                        id={`timeslot-${timeslot.id}`}
+                        data-start-time={timeslot.time.startTime}
+                        data-end-time={timeslot.time.endTime}
+                        onChange={(e) => {
+                          setAppointmentTime({
+                            appointmentStartTime: e.target.dataset.startTime,
+                            appointmentEndTime: e.target.dataset.endTime,
+                          });
+                        }}
+                        value={timeslot.id}
+                      />
+                      <label htmlFor={`timeslot-${timeslot.id}`}>
+                        {`${timeslot.time.startTime}:00  - ${timeslot.time.endTime}:00`}
+                      </label>
+                    </div>
                   ))
                 ) : (
-                  <option value="">No schedules Available</option>
-                )}
-              </div>
-            ) : (
-              <p>Loading Schedules...</p>
-            )}
+                  <div className="h-[50px] w-[50%] bg-[red] p-5 rounded-lg m-0">
+                    Instructor not available on this day
+                  </div>
+                )
+              ) : (
+                <div className="div"></div>
+              )}
+            </div>
 
-            <input id="time" name="time" type="time" ref={appointmentTimeRef} />
             <label htmlFor="image">
               Picture of Yourself right now this moment
             </label>
@@ -134,7 +199,6 @@ const RequestAppointmentForm = ({
             Close
           </Button>
           <Button
-            variant="primary"
             onClick={() =>
               handleRequestAppointment(
                 instructor.email,
@@ -143,8 +207,8 @@ const RequestAppointmentForm = ({
                 instructor.phoneNumber,
                 instructor.userID,
                 concernRef,
-                appointmentDateRef,
-                appointmentTimeRef,
+                appointmentDate,
+                appointmentTime,
                 true,
                 myInfo.phoneNumber,
                 myInfo && myInfo.studentIdnumber

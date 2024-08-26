@@ -478,6 +478,27 @@ export const DBProvider = ({ children }) => {
     }
   };
 
+  const getScheduleDay = async (day) => {
+    try {
+      if (auth.currentUser) {
+        const q = query(schedulesCollectionRef, where("dayOfWeek", "==", day));
+        const querySnapshot = await getDocs(q);
+        const scheduleDayData = querySnapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+        console.log(scheduleDayData);
+        if (scheduleDayData) {
+          return scheduleDayData;
+        } else {
+          return console.log("No schedule data");
+        }
+      }
+    } catch (error) {
+      toastMessage("Error in retrieving schedule day:", error.message);
+    }
+  };
+
   const deleteSchedule = async (scheduleID) => {
     //   try {
     //     if (auth.currentUser) {
@@ -536,6 +557,34 @@ export const DBProvider = ({ children }) => {
     }
   };
 
+  const getInstructorTimeslots = async (day, email) => {
+    try {
+      const dayRef = doc(firestore, "Schedules", day.id);
+      const timeslotsRef = collection(dayRef, "timeslots");
+
+      if (auth.currentUser) {
+        const q = query(
+          timeslotsRef,
+          where("assignedInstructor.email", "==", email)
+        );
+        const querySnapshot = await getDocs(q);
+
+        const timeslotData = querySnapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+
+        if (timeslotData) {
+          return timeslotData;
+        } else {
+          return console.log("No schedule data");
+        }
+      }
+    } catch (error) {
+      toastMessage("Error in retrieving teacher schedules:", error.message);
+    }
+  };
+
   const subscribeToTimeslotChanges = async (callback, day) => {
     try {
       if (auth.currentUser) {
@@ -569,8 +618,10 @@ export const DBProvider = ({ children }) => {
     getMessages,
     sendMessage,
     getDays,
+    getScheduleDay,
     getTimeslotsForDay,
     getInstructorSchedule,
+    getInstructorTimeslots,
     // updateScheduleData,
     deleteSchedule,
     handleChangeUserProfile,

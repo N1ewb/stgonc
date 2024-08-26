@@ -1,0 +1,80 @@
+.calendar {
+width: 100%;
+display: flex;
+flex-direction: column;
+align-items: center;
+padding: 20px;
+}
+
+.header {
+display: flex;
+justify-content: center;
+margin-bottom: 20px;
+}
+
+.days {
+display: flex;
+justify-content: center;
+margin-bottom: 10px;
+}
+
+.row {
+display: flex;
+}
+
+.col {
+width: 60px;
+padding: 10px;
+text-align: center;
+cursor: pointer;
+}
+
+.cell {
+height: 50px;
+width: 60px !important;
+display: flex;
+justify-content: center;
+align-items: center;
+border: 1px solid #ddd;
+}
+
+.cell.selected {
+    background-color: #790808; 
+    color: #fff; 
+    
+}
+
+.cell.disabled {
+background-color: #f5f5f5;
+cursor: not-allowed;
+color: black !important;
+}
+
+.number {
+font-size: 18px;
+}
+.header {
+display: flex;
+width: 30%;
+justify-content: space-between;
+align-items: center;
+margin-bottom: 10px;
+}
+
+.header button {
+background-color: gray;
+color: white;
+border: none;
+padding: 5px 10px;
+cursor: pointer;
+border-radius: 5px;
+}
+
+.header button:hover {
+background-color: #790808;
+}
+
+.instructor-available {
+    background-color: #1900ff75; 
+    color: white;
+  }
