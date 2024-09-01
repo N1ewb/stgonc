@@ -7,13 +7,14 @@ import { useDB } from "../../context/db/DBContext";
 import { useAuth } from "../../context/auth/AuthContext";
 import toast from "react-hot-toast";
 import Calendar from "../calendar/Calendar";
+import TimeslotRadioInput from "../input/TimeslotRadioInput";
 
 const RequestAppointmentForm = ({
   instructor,
   show,
   toggleShow,
   myInfo,
-  index,
+  appointments,
 }) => {
   const toastMessage = (message) => toast(message);
 
@@ -22,14 +23,60 @@ const RequestAppointmentForm = ({
   };
 
   const db = useDB();
-
+  const [selectedDate, setSelectedDate] = useState(null);
   const [instructorSchedule, setInstructorSchedule] = useState([]);
   const [instructorTimeslots, setInstructorTimeslots] = useState([]);
   const [days, setDays] = useState();
-
   const concernRef = useRef();
   const [appointmentDate, setAppointmentDate] = useState(null);
   const [appointmentTime, setAppointmentTime] = useState(null);
+  const [bookedTimeslots, setBookedTimeslots] = useState([]);
+
+  const handleSetAvailableSchedule = () => {
+    const days = [
+      "Sunday",
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday",
+      "Friday",
+      "Saturday",
+    ];
+
+    if (instructorSchedule && appointments) {
+      const appointmentDatematch = appointments.filter(
+        (appt) => appt.appointmentDate === appointmentDate.dateWithoutTime
+      );
+
+      if (appointmentDatematch.length !== 0) {
+        const matchingTimeslots = appointments.filter(
+          (appointment) =>
+            instructorTimeslots.some((timeslot) =>
+              appointment.appointmentsTime.appointmentStartTime.includes(
+                timeslot.time.startTime.toString()
+              )
+            ) && appointment.appointmentStatus === "Accepted"
+        );
+
+        if (matchingTimeslots.length > 0) {
+          const bookedSlots = matchingTimeslots.map((match) => ({
+            Day: match.appointmentDate,
+            startTime: match.appointmentsTime.appointmentStartTime,
+            endTime: match.appointmentsTime.appointmentEndTime,
+          }));
+          setBookedTimeslots(bookedSlots);
+        }
+      }
+    } else {
+      console.log("Instructor schedule or timeslots are missing.");
+    }
+  };
+
+  useEffect(() => {
+    if (appointmentDate && instructorTimeslots) {
+      handleSetAvailableSchedule();
+    }
+  }, [appointmentDate, show, instructorTimeslots]);
 
   const handleGetInstructorTimeSlots = async (day, email) => {
     try {
@@ -44,8 +91,6 @@ const RequestAppointmentForm = ({
   const handleGetInstructorAvailableDays = async (days, email) => {
     try {
       if (days && days.length !== 0) {
-        console.log("Days: ", days);
-
         const availableDays = [];
 
         for (const day of days) {
@@ -131,6 +176,14 @@ const RequestAppointmentForm = ({
     }
   }, [appointmentDate, instructor]);
 
+  const handleDisableInput = (timeslot) => {
+    return bookedTimeslots.some(
+      (booked) =>
+        appointmentDate.dateWithoutTime === booked.Day &&
+        timeslot.time.startTime.toString() === booked.startTime
+    );
+  };
+
   return (
     <>
       <Modal show={show} onHide={toggleShow}>
@@ -148,6 +201,9 @@ const RequestAppointmentForm = ({
             <Calendar
               setAppointmentDate={setAppointmentDate}
               instructorSchedule={instructorSchedule}
+              appointments={appointments}
+              selectedDate={selectedDate}
+              setSelectedDate={setSelectedDate}
             />
 
             <div className="timeslot-container flex w-full justify-center items-center text-center">
@@ -157,25 +213,19 @@ const RequestAppointmentForm = ({
                   instructorTimeslots.map((timeslot) => (
                     <div
                       key={timeslot.id}
-                      className="timeslot flex flex-row justify-around"
+                      className="timeslot flex flex-col justify-around "
                     >
-                      <input
-                        type="radio"
-                        name="timeslot"
-                        id={`timeslot-${timeslot.id}`}
-                        data-start-time={timeslot.time.startTime}
-                        data-end-time={timeslot.time.endTime}
-                        onChange={(e) => {
-                          setAppointmentTime({
-                            appointmentStartTime: e.target.dataset.startTime,
-                            appointmentEndTime: e.target.dataset.endTime,
-                          });
-                        }}
-                        value={timeslot.id}
-                      />
-                      <label htmlFor={`timeslot-${timeslot.id}`}>
-                        {`${timeslot.time.startTime}:00  - ${timeslot.time.endTime}:00`}
-                      </label>
+                      {!handleDisableInput(timeslot) ? (
+                        <TimeslotRadioInput
+                          timeslot={timeslot}
+                          setAppointmentTime={setAppointmentTime}
+                        />
+                      ) : (
+                        <p className="m-0">
+                          {`${timeslot.time.startTime}:00  - ${timeslot.time.endTime}:00`}{" "}
+                          <span className="bg-red text-red">Booked</span>
+                        </p>
+                      )}
                     </div>
                   ))
                 ) : (

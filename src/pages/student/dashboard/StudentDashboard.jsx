@@ -115,12 +115,15 @@ const StudentDashboard = () => {
             <div className="">No instructors</div>
           )}
         </div>
-        <RequestAppointmentForm
-          instructor={currentInstructor}
-          toggleShow={toggleShow}
-          show={show}
-          myInfo={myInfo}
-        />
+        {appointments && (
+          <RequestAppointmentForm
+            instructor={currentInstructor}
+            toggleShow={toggleShow}
+            show={show}
+            myInfo={myInfo}
+            appointments={appointments}
+          />
+        )}
         <p>Appointments</p>
         <div className="appointment-wrappers">
           {appointments && appointments.length !== 0 ? (
@@ -131,6 +134,10 @@ const StudentDashboard = () => {
                 key={appointment.id}
               >
                 <p>{appointment.appointmentDate}</p>
+                <p>
+                  {`${appointment.appointmentsTime.appointmentStartTime}:00-
+                  ${appointment.appointmentsTime.appointmentEndTime}:00`}
+                </p>
                 <p>{appointment.appointedTeacher.teacherDisplayName}</p>
                 {appointment.appointmentStatus === "Accepted" ? (
                   <>

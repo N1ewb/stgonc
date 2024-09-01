@@ -12,9 +12,13 @@ import {
 
 import "./Calendar.css";
 
-const Calendar = ({ setAppointmentDate, instructorSchedule }) => {
+const Calendar = ({
+  setAppointmentDate,
+  instructorSchedule,
+  selectedDate,
+  setSelectedDate,
+}) => {
   const [currentDate, setCurrentDate] = useState(new Date());
-  const [selectedDate, setSelectedDate] = useState(null);
 
   const daysOfWeek = [
     { short: "Sun", full: "Sunday" },
