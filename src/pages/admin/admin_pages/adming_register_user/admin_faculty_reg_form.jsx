@@ -1,4 +1,5 @@
-import React, { useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
+import { ChromePicker } from "react-color";
 
 import "./admin_faculty_reg_form.css";
 import { AdminCreateFacultyAccount } from "../../../../context/auth/adminCreateAccount";
@@ -6,6 +7,11 @@ import toast from "react-hot-toast";
 
 const RegisterFacultyForm = () => {
   const toastMessage = (message) => toast(message);
+  const [instructorColorCode, setInstructorColorCode] = useState();
+  const [isColorPickerOpen, setIsColorPickerOpen] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const colorPickerRef = useRef(null);
 
   const firstnameRef = useRef();
   const lastnameRef = useRef();
@@ -26,7 +32,11 @@ const RegisterFacultyForm = () => {
   ];
 
   const handleCreateFacultyAccount = async () => {
+    setIsSubmitting(true);
     try {
+      if (!instructorColorCode) {
+        toastMessage("Set your instructor Color Code!!!");
+      }
       await AdminCreateFacultyAccount(
         firstnameRef.current.value,
         lastnameRef.current.value,
@@ -35,17 +45,34 @@ const RegisterFacultyForm = () => {
         facultyIdnumberRef.current.value,
         departmentRef.current.value,
         passwordRef.current.value,
-        confirmpasswordRef.current.value
+        confirmpasswordRef.current.value,
+        instructorColorCode
       );
     } catch (error) {
       toastMessage(error);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (
+        colorPickerRef.current &&
+        !colorPickerRef.current.contains(event.target)
+      ) {
+        setIsColorPickerOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
   return (
-    <div className="register-form-cotnainer">
-      <h2>Faculty Registration Form</h2>
-      <div className="faculty-reg-form">
+    <div className="faculty-register-form-container">
+      <h2 className="text-[#720000]">Faculty Registration Form</h2>
+      <div className="faculty-reg-form [&_input]:border-solid [&_input]:border-[1px] [&_input]:border-[#740000] [&_input]:rounded-[4px]">
         <input
           name="firstname"
           placeholder="First Name"
@@ -71,7 +98,10 @@ const RegisterFacultyForm = () => {
           type="text"
           ref={facultyIdnumberRef}
         />
-        <select ref={departmentRef}>
+        <select
+          className="border-solid border-[1px] border-[#740000] rounded-[4px]"
+          ref={departmentRef}
+        >
           <option name="placeholder" value="">
             Department
           </option>
@@ -85,6 +115,42 @@ const RegisterFacultyForm = () => {
             <option value="">No Department</option>
           )}
         </select>
+        <div
+          onClick={() => setIsColorPickerOpen(true)}
+          className="color-picker-container relative w-full"
+        >
+          {isColorPickerOpen ? (
+            <div
+              className="color-picker-ref absolute top-0 w-fit"
+              ref={colorPickerRef}
+            >
+              <ChromePicker
+                color={instructorColorCode}
+                onChangeComplete={(newColor) =>
+                  setInstructorColorCode(newColor.hex)
+                }
+              />
+            </div>
+          ) : (
+            <input
+              className={`w-full text-${
+                instructorColorCode ? instructorColorCode : "black"
+              }`}
+              style={{
+                "::placeholder": {
+                  color: instructorColorCode ? instructorColorCode : "gray",
+                },
+              }}
+              name="Color"
+              type="text"
+              placeholder={
+                instructorColorCode
+                  ? `Instructor Color code is: ${instructorColorCode}`
+                  : `Select Instructor Color Code`
+              }
+            />
+          )}
+        </div>
         <input
           name="password"
           placeholder="Password"
@@ -97,8 +163,11 @@ const RegisterFacultyForm = () => {
           type="password"
           ref={confirmpasswordRef}
         />
-        <button onClick={() => handleCreateFacultyAccount()}>
-          Register Faculty
+        <button
+          onClick={() => handleCreateFacultyAccount()}
+          disabled={isSubmitting}
+        >
+          {isSubmitting ? "Submitting..." : "Register Faculty"}
         </button>
       </div>
     </div>

@@ -6,6 +6,7 @@ import toast from "react-hot-toast";
 
 const RegisterStudentForm = () => {
   const toastMessage = (message) => toast(message);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const firstnameRef = useRef();
   const lastnameRef = useRef();
@@ -26,6 +27,7 @@ const RegisterStudentForm = () => {
   ];
 
   const handleCreateStudentAccount = async () => {
+    setIsSubmitting(true);
     try {
       await AdminCreateStudentAccount(
         firstnameRef.current.value,
@@ -39,13 +41,15 @@ const RegisterStudentForm = () => {
       );
     } catch (error) {
       toastMessage(error);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   return (
-    <div className="register-form-container">
-      <h2>Student Registration Form</h2>
-      <div className="student-reg-form">
+    <div className="student-register-form-container w-full flex flex-col justify-center items-center">
+      <h2 className="text-[#720000]">Student Registration Form</h2>
+      <div className="student-reg-form w-[90%] flex flex-col  [&_input]:border-solid [&_input]:border-[1px] [&_input]:border-[#740000] [&_input]:rounded-[4px]">
         <input
           name="firstname"
           placeholder="First Name"
@@ -71,7 +75,10 @@ const RegisterStudentForm = () => {
           type="text"
           ref={studentidnumberRef}
         />
-        <select ref={departmentRef}>
+        <select
+          className="border-solid border-[1px] border-[#740000] rounded-[4px]"
+          ref={departmentRef}
+        >
           <option name="placeholder" value=" ">
             Department
           </option>
@@ -97,8 +104,11 @@ const RegisterStudentForm = () => {
           type="password"
           ref={confirmpasswordRef}
         />
-        <button onClick={() => handleCreateStudentAccount()}>
-          Register Student
+        <button
+          onClick={() => handleCreateStudentAccount()}
+          disabled={isSubmitting}
+        >
+          {isSubmitting ? "Submitting..." : "Register Student"}
         </button>
       </div>
     </div>

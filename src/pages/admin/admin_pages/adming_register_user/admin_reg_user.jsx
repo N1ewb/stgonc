@@ -13,10 +13,12 @@ const AdminRegisteruserPage = () => {
   };
 
   return (
-    <div className="admin-register-page-container">
-      <div className="admin-register-page-left-content">
-        <h1>Register User Form</h1>
-        <div className="register-left-buttons">
+    <div className="admin-register-page-container flex flex-row flex-wrap items-center justify-center h-[95%] w-full xl:flex-col text-center">
+      <div className="admin-register-page-left-content flex flex-col items-center w-1/2 lg:w-full">
+        <h1 className="text-6xl font-semibold text-[#740000]">
+          Register User Form
+        </h1>
+        <div className="register-left-buttons [&_button]:text-[#740000] [&_button]:bg-transparent">
           <button onClick={() => handleSetCurrentForm("Faculty")}>
             Faculty Member
           </button>
@@ -25,13 +27,13 @@ const AdminRegisteruserPage = () => {
           </button>
         </div>
       </div>
-      <div className="admin-register-page-right-content">
+      <div className="admin-register-page-right-content w-1/2 lg:w-full">
         {currentForm === "Faculty" ? (
           <RegisterFacultyForm />
         ) : currentForm === "Student" ? (
           <RegisterStudentForm />
         ) : (
-          <div className="no-form-container">
+          <div className="no-form-container ">
             <p>Choose Who you want to register</p>
           </div>
         )}

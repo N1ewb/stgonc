@@ -1,12 +1,11 @@
-import React, {
-  useContext,
-  useState,
-  useEffect,
-  createContext,
-  Children,
-} from "react";
-import { messaging, firestore } from "../../server/firebase";
-import { getToken, onMessage } from "firebase/messaging";
+import React, { createContext, useContext } from "react";
+import { useAuth } from "../auth/AuthContext";
+import { useDB } from "../db/DBContext";
+import { addDoc, collection, serverTimestamp } from "firebase/firestore";
+import { firestore } from "../../server/firebase";
+import emailjs from "@emailjs/browser";
+import toast from "react-hot-toast";
+import { Toast } from "react-bootstrap";
 
 const MessagingContext = createContext();
 
@@ -15,32 +14,87 @@ export function useMessage() {
 }
 
 export const MessagingProvider = ({ children }) => {
-  const generateToken = async () => {
-    const permission = await Notification.requestPermission();
-    console.log(permission);
-    if (permission === "granted") {
-      const token = await getToken(messaging, {
-        vapidKey:
-          "BHQX6XyX9KEnCcLlokftq_ILPPcxK7ObPq3YaMURvhjCUQ-n6cssh8uC9AR5VtyOc0O_9uOf2gTNv97gzNYEIJc",
-      });
+  const auth = useAuth();
+  const db = useDB();
+  const notificationRef = collection(firestore, "Notification");
+  const toastMessage = (message) => toast(message);
 
-      console.log(token);
+  const sendEmail = async (
+    from_name,
+    sender_email,
+    recipient_email,
+    content,
+    subject
+  ) => {
+    const form = document.createElement("form");
+
+    const dummyData = {
+      from_name,
+      to_email: recipient_email,
+      from_email: sender_email,
+      message: content,
+      subject: subject,
+    };
+    Object.keys(dummyData).forEach((key) => {
+      const input = document.createElement("input");
+      input.type = "hidden";
+      input.name = key;
+      input.value = dummyData[key];
+      form.appendChild(input);
+    });
+    try {
+      emailjs
+        .sendForm("service_6ohiq8x", "template_t4nesyk", form, {
+          publicKey: "4rNJQUW9Fyeif9_7A",
+        })
+        .then(
+          () => {
+            toastMessage("SUCCESS!");
+          },
+          (error) => {
+            console.log("FAILED...", error);
+          }
+        );
+    } catch (error) {
+      toastMessage(error.message);
     }
   };
 
-  const OnMessage = onMessage(messaging, (payload) => {
-    console.log(payload);
-  });
+  const storeNotifToDB = async (subject, content, receiver) => {
+    try {
+      if (auth.currentUser) {
+        const newNotification = {
+          subject,
+          content,
+          createAt: serverTimestamp(),
+          read: false,
+          sentBy: auth.currentUser.email,
+          sentTo: receiver,
+          participants: [auth.currentUser.email, receiver],
+        };
+        await addDoc(notificationRef, newNotification);
+        sendEmail(
+          auth.currentUser.displaName,
+          auth.currentUser.email,
+          receiver.email,
+          content,
+          subject
+        );
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   const value = {
-    generateToken,
-    OnMessage,
+    storeNotifToDB,
   };
 
   return (
     <>
       <MessagingContext.Provider value={value}>
         {children}
+        <Toast />
       </MessagingContext.Provider>
     </>
   );

@@ -9,10 +9,12 @@ import RequestAppointmentForm from "../../../components/forms/RequestAppointment
 import { Toaster, toast } from "react-hot-toast";
 import { useCall } from "../../../context/call/CallContext";
 import Profile from "../../../components/userProfile/Profile";
+import { useMessage } from "../../../context/notification/NotificationContext";
 const StudentDashboard = () => {
   const db = useDB();
   const auth = useAuth();
   const call = useCall();
+  const notif = useMessage();
   const navigate = useNavigate();
   const toastMessage = (message) => toast(message);
   const [instructors, setInstructors] = useState();
@@ -86,6 +88,17 @@ const StudentDashboard = () => {
     fetchData();
   }, [call]);
 
+  const handleRequestEmail = async () => {
+    notif
+      .sendEmail()
+      .then((result) => {
+        console.log(result.body);
+      })
+      .catch((err) => {
+        console.log(err.statusCode);
+      });
+  };
+
   return (
     <div className="student-dashboard-container">
       <div className="student-sidebar">
@@ -93,7 +106,9 @@ const StudentDashboard = () => {
       </div>
       <div className="student-main-content">
         <p>Welcome {auth.currentUser && auth.currentUser.displayName}</p>
+
         <div className="CCS-instructors-container">
+          <button onClick={() => handleRequestEmail()}>EMAIL ME</button>
           <p>Department Instructors</p>
           {instructors && instructors.length !== 0 ? (
             instructors.map((instructor, index) => (

@@ -5,6 +5,8 @@ import TeacherDashboard from "../teacher/dashboard/TeacherDashboard";
 import AdminDashboard from "../admin/dashboard/AdminDashboard";
 import { useDB } from "../../context/db/DBContext";
 
+import "./Dashboard.css";
+
 const Dashboard = () => {
   const auth = useAuth();
   const db = useDB();

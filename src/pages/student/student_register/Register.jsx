@@ -76,10 +76,10 @@ const StudentRegister = () => {
   return (
     <>
       <AuthProvider>
-        <div className="signup-container">
-          <div className="content-left">
-            <div className="signin-form-container">
-              <div className="signin-form-container-heading">
+        <div className="signup-container h-screen w-full flex flex-row justify-around items-center">
+          <div className="content-left w-[60%] md:w-full flex flex-row items-center justify-center">
+            <div className="signin-form-container w-[75%] sm:w-[90%] flex flex-col justify-center items-center">
+              <div className="signin-form-container-heading w-[75%] sm:w-[90%]">
                 <h1>Sign Up</h1>
                 <p>
                   Let’s get you all st up so you can access your personal
@@ -87,9 +87,10 @@ const StudentRegister = () => {
                 </p>
               </div>
               <div className="spacer"></div>
-              <div className="signin-form">
-                <div className="fullname">
+              <div className="signin-form flex flex-col items-center justify-center flex-wrap w-[75%]  sm:w-[90%] gap-3 [&_input]:w-[100%] [&_input]:rounded-[4px] [&_input]:border-[1px] [&_input]:border-solid [&_input]:border-[#740000]">
+                <div className="fullname flex flex-row w-full [&_input]:w-[40%] gap-3">
                   <input
+                    className=""
                     ref={firstNameRef}
                     name="First-Name"
                     type="text"
@@ -97,6 +98,7 @@ const StudentRegister = () => {
                   />
 
                   <input
+                    className=""
                     ref={lastNameRef}
                     name="Last-Name"
                     type="text"
@@ -104,7 +106,7 @@ const StudentRegister = () => {
                   />
                 </div>
 
-                <div className="personal-numbers">
+                <div className="personal-numbers flex flex-row w-full [&_input]:w-[40%] gap-3">
                   <input
                     ref={emailRef}
                     type="email"
@@ -129,6 +131,7 @@ const StudentRegister = () => {
                   type="file"
                   name="id-image"
                   placeholder="Picture of your ID"
+                  className="block w-full text-sm text-gray-700 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-[#74000041] file:text-[#740000] hover:file:bg-[#740000] hover:file:text-[#ffffff] file:cursor-pointer"
                 />
 
                 <input
@@ -144,8 +147,12 @@ const StudentRegister = () => {
                   name="confirm-password"
                   placeholder={"Confirm Password"}
                 />
-                <div className="register-sign-in-buttons">
-                  <button type="submit" onClick={() => handleStudentSignUp()}>
+                <div className="register-sign-in-buttons w-full flex flex-col text-center gap-3">
+                  <button
+                    className="w-full bg-[#740000] rounded-[4px]"
+                    type="submit"
+                    onClick={() => handleStudentSignUp()}
+                  >
                     Create account
                   </button>
                   <p>
@@ -158,7 +165,7 @@ const StudentRegister = () => {
               </div>
             </div>
           </div>
-          <div className="content-right">
+          <div className="content-right w-[40%] flex flex-row items-center justify-center md:hidden">
             <img
               src={registerpageimage}
               alt="register-page-image"

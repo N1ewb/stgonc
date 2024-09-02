@@ -1,24 +1,4 @@
-.admin-register-page-container{
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: center;
-    height: 95%;
-    width: 100%;
-}
 
-.admin-register-page-left-content{
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    width: 50%;
-}
-
-.admin-register-page-left-content button{
-    background-color: transparent;
-    color: #740000;
-}
 
 .admin-register-page-left-content button:hover{
     background-color: transparent;

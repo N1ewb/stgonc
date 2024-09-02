@@ -16,7 +16,7 @@ const Profile = () => {
   };
 
   return (
-    <div className="profile-container">
+    <div className="profile-container lg:hidden">
       <Dropdown>
         <Dropdown.Toggle
           variant="success"
@@ -54,10 +54,10 @@ const Profile = () => {
         </Dropdown.Menu>
       </Dropdown>
       <div className="user-display">
-        <p style={{ fontSize: "30px" }}>
+        <p className="text-[30px] m-0">
           {auth.currentUser && auth.currentUser.displayName}
         </p>
-        <p style={{ opacity: "0.8", fontWeight: "200" }}>
+        <p className="m-0" style={{ opacity: "0.8", fontWeight: "200" }}>
           {auth.currentUser && auth.currentUser.email}
         </p>
       </div>

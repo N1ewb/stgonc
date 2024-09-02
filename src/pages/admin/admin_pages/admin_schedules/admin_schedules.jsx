@@ -42,10 +42,6 @@ const AdminSchedulesPage = ({ teachersList, db }) => {
 
   const times = [
     {
-      startTime: 7,
-      endTime: 8,
-    },
-    {
       startTime: 8,
       endTime: 9,
     },
@@ -235,29 +231,46 @@ const AdminSchedulesPage = ({ teachersList, db }) => {
   }, [db]);
 
   return (
-    <div className="admin-schedules-page-container">
-      <h3>College of Computer Studies</h3>
-      <h4>Faculty Consultation Schedule</h4>
-      <div className="schedules-table">
-        <table>
+    <div className="admin-schedules-page-container w-full h-[100%] flex flex-col justify-around items-center gap-[5px]">
+      <div className="admin-schedule-header flex flex-col w-full text-center text-[#740000]">
+        <h1 className="w-[full] font-bold text-3xl">
+          College of Computer Studies
+        </h1>
+        <h3 className="w-full text-xl">Faculty Consultation Schedule</h3>
+      </div>
+      <div className="schedules-table w-full md:w-[90%] mt-[20px] flex flex-col items-center justify-between gap-[5px] ">
+        <table className=" min-w-[50%] border-collapse border-solid border-[1px] border-[#740000] text-center">
           <thead>
-            <tr>
-              <th>Time/Days</th>
+            <tr className="even:bg-[#740000] [&_th]:border-solid [&_th]:border-[1px] [&_th]:border-[#740000] [&_th]:font-bold [&_th]:bg-[#740000] [&_th]:text-white [&_th]:p-[8px] [&_th]:w-[100px] xsm:w-[80px]">
+              <th className="xsm:text-[14px]">Time/Days</th>
               {schedules && schedules.length !== 0
-                ? schedules.map((day) => <th key={day.id}>{day.dayOfWeek}</th>)
+                ? schedules.map((day) => (
+                    <th className="xsm:text-[13px]" key={day.id}>
+                      <span className="block md:hidden">{day.dayOfWeek}</span>
+                      <span className="hidden md:block">{day.shortVer}</span>
+                    </th>
+                  ))
                 : ""}
             </tr>
           </thead>
           <tbody>
             {times.map((time) => (
               <tr key={`${time.startTime}-${time.endTime}`}>
-                <td>{`${time.startTime}:00 ${time.endTime}:00`} </td>
+                <td className="h-[30px] xsm:text-[14px] first:bg-[#740000] text-white border-solid border-[1px] border-[#740000]">
+                  {`${time.startTime}:00 ${time.endTime}:00`}{" "}
+                </td>
                 {schedules && schedules.length !== 0
                   ? schedules.map((day) => (
                       <td
+                        style={{
+                          backgroundColor:
+                            scheduleData[
+                              `${time.startTime}-${time.endTime}-${day.dayOfWeek}`
+                            ]?.instructorColorCode || "",
+                        }}
                         key={`${time.startTime}-${time.endTime}-${day.dayOfWeek}`}
                         onClick={() => handleCellClick(time, day)}
-                        className={
+                        className={`border-solid border-[1px] border-[#740000] ${
                           isEditMode &&
                           choosenCells.some((cell) => {
                             const parsedCell = JSON.parse(cell);
@@ -267,16 +280,12 @@ const AdminSchedulesPage = ({ teachersList, db }) => {
                               parsedCell.day === day.dayOfWeek
                             );
                           })
-                            ? "clickable-cell selected-cell"
+                            ? `bg-[#571010]`
                             : isEditMode
-                            ? "clickable-cell"
+                            ? "bg-[#fca4a4] cursor-pointer hover:bg-[#5f1b24]"
                             : ""
-                        }
-                      >
-                        {scheduleData[
-                          `${time.startTime}-${time.endTime}-${day.dayOfWeek}`
-                        ]?.firstName || ""}
-                      </td>
+                        }`}
+                      ></td>
                     ))
                   : ""}
               </tr>
@@ -294,27 +303,45 @@ const AdminSchedulesPage = ({ teachersList, db }) => {
           />
         )}
         {!isEditMode ? (
-          <button onClick={handleChooseCells}>Edit</button>
+          <button
+            className="bg-[#740000] w-[200px] rounded-[4px] hover:bg-[#641b1b]"
+            onClick={handleChooseCells}
+          >
+            Edit
+          </button>
         ) : (
-          <div>
+          <div className="flex flex-row w-[250px] justify-around [&_button]:bg-[#740000] [&_button]:w-[100px] [&_button]:rounded-[4px]">
             <button onClick={() => toggleShow()}>Select</button>
             <button onClick={() => handleChooseCells()}>Cancel</button>
           </div>
         )}
       </div>
-      <div className="legends-container">
-        <h5>Legend</h5>
-        {teachersList && teachersList.length !== 0 ? (
-          teachersList.map((teacher, index) => (
-            <div key={index} className="teacher-legend">
-              <p>
-                {teacher.firstName} {teacher.lastName}
-              </p>
-            </div>
-          ))
-        ) : (
-          <p>No Instructors</p>
-        )}
+      <div className="legends-container w-full flex flex-col justify-around">
+        <h5 className="text-2xl font-bold text-[#740000]">Legend</h5>
+        <div className="instructors-legend w-full flex flex-row flex-wrap gap-6">
+          {teachersList && teachersList.length !== 0 ? (
+            teachersList.map((teacher, index) => (
+              <div
+                key={index}
+                className="teacher-legend flex flex-row items-center gap-2 w-[100px] "
+              >
+                <p className="m-0 ">{teacher.lastName}</p>
+                <div
+                  style={{
+                    backgroundColor: `${
+                      teacher.instructorColorCode
+                        ? teacher.instructorColorCode
+                        : "gray"
+                    }`,
+                  }}
+                  className={`instructorColorCode p-2`}
+                ></div>
+              </div>
+            ))
+          ) : (
+            <p>No Instructors</p>
+          )}
+        </div>
       </div>
     </div>
   );

@@ -50,6 +50,7 @@ const SchedulesModal = ({
                         userID: teacher.userID,
                         email: teacher.email,
                         phoneNumber: teacher.phoneNumber,
+                        instructorColorCode: teacher.instructorColorCode,
                       })}
                     >
                       {teacher.firstName} {teacher.lastName}

@@ -1,6 +1,6 @@
 import React from "react";
 import "./App.css";
-import { BrowserRouter, Routes, Route, Link, Navigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import LandingPage from "./pages/landingpage/LandingPage";
 import { AuthProvider } from "./context/auth/AuthContext";
 import Dashboard from "./pages/dashboard/Dashboard";
@@ -28,7 +28,7 @@ function App() {
         <CallProvider>
           <MessagingProvider>
             <StorageProvider>
-              <div className="App">
+              <div className="App h-[100%] w-full bg-white">
                 <BrowserRouter>
                   <Navbar />
                   <Routes>

@@ -130,7 +130,8 @@ export const AdminCreateFacultyAccount = async (
   facultyIdnumber,
   department,
   password,
-  confirmPassword
+  confirmPassword,
+  instructorColorCode
 ) => {
   try {
     if (password.length > 6) {
@@ -154,6 +155,7 @@ export const AdminCreateFacultyAccount = async (
           phoneNumber,
           facultyIdnumber,
           department,
+          instructorColorCode,
           role: "Teacher",
           isOnline: false,
           createdAt: Timestamp.now(),

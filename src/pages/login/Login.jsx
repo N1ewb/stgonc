@@ -24,15 +24,15 @@ const LoginPage = () => {
   return (
     <>
       <AuthProvider>
-        <div className="login-container">
-          <div className="login-content-left">
-            <div className="login-form-container">
-              <div className="login-form-container-heading">
+        <div className="login-container w-full h-screen flex flex-row items-center justify-around">
+          <div className="login-content-left w-[60%] md:w-full flex flex-row items-center justify-center">
+            <div className="login-form-container w-[75%] md:w-[90%] flex flex-col justify-center items-center">
+              <div className="login-form-container-heading w-[75%] md:w-[90%]">
                 <h1>Login</h1>
                 <p>Login to access your STGONC account</p>
               </div>
               <div className="spacer"></div>
-              <div className="login-form">
+              <div className="login-form flex flex-col items-center justify-center flex-wrap w-[75%] md:w-[90%] gap-3 [&_input]:w-[100%] [&_input]:rounded-[4px] [&_input]:border-[1px] [&_input]:border-solid [&_input]:border-[#740000]">
                 <input
                   ref={emailRef}
                   type="email"
@@ -46,8 +46,12 @@ const LoginPage = () => {
                   name="password"
                   placeholder={"password"}
                 />
-                <div className="login-buttons">
-                  <button type="submit" onClick={() => handleSignIn()}>
+                <div className="login-buttons w-full flex flex-col text-center gap-3">
+                  <button
+                    className="w-full bg-[#740000] rounded-[4px]"
+                    type="submit"
+                    onClick={() => handleSignIn()}
+                  >
                     {"login"}
                   </button>
                   <p>
@@ -63,7 +67,7 @@ const LoginPage = () => {
               </div>
             </div>
           </div>
-          <div className="content-right"></div>
+          <div className="content-right w-[40%] flex flex-row items-center justify-center md:hidden"></div>
         </div>
       </AuthProvider>
     </>
