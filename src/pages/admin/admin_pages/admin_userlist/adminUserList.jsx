@@ -7,7 +7,7 @@ import MoreDark from "../../../../static/images/more-dark.png";
 import "./adminUserList.css";
 import toast from "react-hot-toast";
 
-const ITEMS_PER_PAGE = 11;
+const ITEMS_PER_PAGE = 8;
 
 const AdminUserList = ({ db, auth }) => {
   const [userList, setUserList] = useState();
@@ -15,6 +15,7 @@ const AdminUserList = ({ db, auth }) => {
   const [error, setError] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [paginationControls, setPaginationControls] = useState();
+  const [currentCharacters ,setcurrentCharacters] = useState()
 
   const toastMessage = (message) => toast(message);
 
@@ -54,6 +55,7 @@ const AdminUserList = ({ db, auth }) => {
         indexOfFirstCharacter,
         indexOfLastCharacter
       );
+      setcurrentCharacters(currentCharacters)
 
       const totalPages = Math.ceil(userList.length / ITEMS_PER_PAGE);
       const controls = Array.from(
@@ -73,6 +75,7 @@ const AdminUserList = ({ db, auth }) => {
 
       setPaginationControls(controls);
     }
+    
   }, [userList, currentPage]);
 
   if (loading) {
@@ -91,11 +94,11 @@ const AdminUserList = ({ db, auth }) => {
           TotalUsers: {userList.length}
         </span>
       </h1>
-      <div className="user-list flex flex-col gap-3 max-h-[95%]">
-        {userList && userList.length !== 0 ? (
-          userList.map((users, index) => (
+      <div className="div flex flex-col w-full h-[100%] justify-between "><div className="user-list flex flex-col gap-3 max-h-[100%] h-[100%]  overflow-hidden">
+        {currentCharacters && currentCharacters.length !== 0 ? (
+          currentCharacters.map((users, index) => (
             <div
-              className="userlist-container w-full flex flex-row justify-between gap-3 items-center [&_p]:m-0 px-8 py-2 rounded-[5px] bg-[#ebeaea] text-[#740000] md:px-3"
+              className="userlist-container w-full flex flex-row gap-3 items-center [&_p]:m-0 px-8 py-2 rounded-[5px] bg-[#ebeaea] text-[#740000] md:px-3 overflow-hidden"
               key={index}
             >
               <img
@@ -129,11 +132,11 @@ const AdminUserList = ({ db, auth }) => {
         <div className="flex flex-row justify-between items-center">
           <p> Page {currentPage}</p>
           {paginationControls && (
-            <div className="pagination-controls">{paginationControls}</div>
+            <div className="pagination-controls flex flex-row gap-2">{paginationControls}</div>
           )}
           <p></p>
         </div>
-      )}
+      )}</div>
     </div>
   );
 };

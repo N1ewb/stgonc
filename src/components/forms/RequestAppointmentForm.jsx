@@ -206,14 +206,14 @@ const RequestAppointmentForm = ({
               setSelectedDate={setSelectedDate}
             />
 
-            <div className="timeslot-container flex w-full justify-center items-center text-center">
+            <div className="timeslot-container flex flex-col w-full justify-center items-center text-center">
               <p>Timeslot</p>
               {appointmentDate ? (
                 instructorTimeslots.length !== 0 ? (
                   instructorTimeslots.map((timeslot) => (
                     <div
                       key={timeslot.id}
-                      className="timeslot flex flex-col justify-around "
+                      className="timeslot flex flex-col "
                     >
                       {!handleDisableInput(timeslot) ? (
                         <TimeslotRadioInput
@@ -229,7 +229,7 @@ const RequestAppointmentForm = ({
                     </div>
                   ))
                 ) : (
-                  <div className="h-[50px] w-[50%] bg-[red] p-5 rounded-lg m-0">
+                  <div className="h-[50px] w-[50%]  p-5 rounded-lg m-0">
                     Instructor not available on this day
                   </div>
                 )

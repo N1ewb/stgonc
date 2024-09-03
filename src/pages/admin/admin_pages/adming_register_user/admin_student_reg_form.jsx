@@ -47,9 +47,9 @@ const RegisterStudentForm = () => {
   };
 
   return (
-    <div className="student-register-form-container w-full flex flex-col justify-center items-center">
+    <div className="student-register-form-container w-full flex flex-col  items-center">
       <h2 className="text-[#720000]">Student Registration Form</h2>
-      <div className="student-reg-form w-[90%] flex flex-col  [&_input]:border-solid [&_input]:border-[1px] [&_input]:border-[#740000] [&_input]:rounded-[4px]">
+      <div className="student-reg-form w-[90%] flex flex-col  [&_input]:border-solid [&_input]:border-[1px] [&_input]:border-[#740000] [&_input]:rounded-[4px] flex flex-col gap-[10px]">
         <input
           name="firstname"
           placeholder="First Name"
@@ -105,6 +105,7 @@ const RegisterStudentForm = () => {
           ref={confirmpasswordRef}
         />
         <button
+        className='bg-[#740000] rounded-[4px]'
           onClick={() => handleCreateStudentAccount()}
           disabled={isSubmitting}
         >
