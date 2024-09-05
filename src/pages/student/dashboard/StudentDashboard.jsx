@@ -133,7 +133,7 @@ const StudentDashboard = () => {
               <div className="spacer h-[20%]"></div>
               <div className="flex flex-col gap-[8px]">
                 <p className="text-[#360000] ">
-                  Department <br></br>
+                  <span>Department</span> <br></br>
                   <span className="font-bold">Instructors</span>{" "}
                 </p>
                 {instructors && instructors.length !== 0 ? (
@@ -178,11 +178,16 @@ const StudentDashboard = () => {
             <div className="appointment-wrappers w-full flex flex-col justify-center h-[100%]">
               {acceptedAppt && acceptedAppt.length !== 0
                 ? acceptedAppt.map((appt) => (
-                    <div className="text-[#360000] flex flex-row items-center [&_p]:m-0 justify-between" >
+                    <div className="text-[#360000] flex flex-row items-center [&_p]:m-0 justify-between">
                       <p className="text-2xl">
                         {appt.appointedTeacher.teacherDisplayName}
                       </p>
-                      <Link className=" text-[#360000] no-underline text-2xl"  to={`/Chatroom?receiver=${appt.appointedTeacher.teacherDisplayName} `}>Chat</Link>
+                      <Link
+                        className=" text-[#360000] no-underline text-2xl"
+                        to={`/Chatroom?receiver=${appt.appointedTeacher.teacherDisplayName} `}
+                      >
+                        Chat
+                      </Link>
                     </div>
                   ))
                 : ""}

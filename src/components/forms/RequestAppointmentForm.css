@@ -1,6 +1,7 @@
 .application-form{
     display: flex;
     flex-direction: column;
+
 }
 
 .modal-dialog {
@@ -8,3 +9,14 @@
     width: 70% !important;
 }
 
+.modal-header{
+    border-bottom: 0 !important;
+}
+.modal-body {
+    border-bottom: 0 !important;
+
+}
+.modal-footer{
+    border-top: 0 !important;
+   background-color:#ECECEC;
+}

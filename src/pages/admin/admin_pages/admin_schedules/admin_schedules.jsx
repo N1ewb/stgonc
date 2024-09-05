@@ -2,10 +2,11 @@ import React, { useEffect, useState } from "react";
 import "./admin_schedules.css";
 import SchedulesModal from "../../../../components/modal/schedules-modal/SchedulesModal";
 import toast from "react-hot-toast";
+import { useAuth } from "../../../../context/auth/AuthContext";
 
 const AdminSchedulesPage = ({ teachersList, db }) => {
   const toastMessage = (message) => toast(message);
-
+  const { currentUser } = useAuth();
   const [show, setShow] = useState(false);
   const [selectedTime, setSelectedTime] = useState(null);
   const [selectedDay, setSelectedDay] = useState(null);
@@ -234,7 +235,7 @@ const AdminSchedulesPage = ({ teachersList, db }) => {
     <div className="admin-schedules-page-container w-full h-[100%] flex flex-col justify-around items-center gap-[5px]">
       <div className="admin-schedule-header flex flex-col w-full text-center text-[#740000]">
         <h1 className="w-[full] font-bold text-3xl">
-          College of Computer Studies
+          {currentUser.department}
         </h1>
         <h3 className="w-full text-xl">Faculty Consultation Schedule</h3>
       </div>

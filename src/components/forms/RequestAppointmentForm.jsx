@@ -4,10 +4,10 @@ import Button from "react-bootstrap/Button";
 
 import "./RequestAppointmentForm.css";
 import { useDB } from "../../context/db/DBContext";
-import { useAuth } from "../../context/auth/AuthContext";
 import toast from "react-hot-toast";
 import Calendar from "../calendar/Calendar";
 import TimeslotRadioInput from "../input/TimeslotRadioInput";
+import CalendarIcon from "../../static/images/Group 1171275864.png";
 
 const RequestAppointmentForm = ({
   instructor,
@@ -187,64 +187,95 @@ const RequestAppointmentForm = ({
   return (
     <>
       <Modal show={show} onHide={toggleShow}>
-        <Modal.Header closeButton>
-          <Modal.Title>Appointment Application Form</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <div className="application-form h-[100%]">
-            <h3>
-              Requesting{" "}
-              {instructor && instructor.firstName + " " + instructor.lastName}
-            </h3>
-            <label htmlFor="concern">Describe your Concerns</label>
-            <input id="concern" name="concern" type="text" ref={concernRef} />
-            <Calendar
-              setAppointmentDate={setAppointmentDate}
-              instructorSchedule={instructorSchedule}
-              appointments={appointments}
-              selectedDate={selectedDate}
-              setSelectedDate={setSelectedDate}
-            />
-
-            <div className="timeslot-container flex flex-col w-full justify-center items-center text-center">
-              <p>Timeslot</p>
-              {appointmentDate ? (
-                instructorTimeslots.length !== 0 ? (
-                  instructorTimeslots.map((timeslot) => (
-                    <div
-                      key={timeslot.id}
-                      className="timeslot flex flex-col "
-                    >
-                      {!handleDisableInput(timeslot) ? (
-                        <TimeslotRadioInput
-                          timeslot={timeslot}
-                          setAppointmentTime={setAppointmentTime}
-                        />
-                      ) : (
-                        <p className="m-0">
-                          {`${timeslot.time.startTime}:00  - ${timeslot.time.endTime}:00`}{" "}
-                          <span className="bg-red text-red">Booked</span>
-                        </p>
-                      )}
-                    </div>
-                  ))
-                ) : (
-                  <div className="h-[50px] w-[50%]  p-5 rounded-lg m-0">
-                    Instructor not available on this day
-                  </div>
-                )
-              ) : (
-                <div className="div"></div>
-              )}
+        <Modal.Header
+          closeButton
+          className=" m-0 items-center bg-[#ECECEC] border-b-0 "
+        >
+          <Modal.Title className="text-[#273240] flex flex-row justify-between w-[95%]">
+            <div className="icon flex flex-row gap-4 m-0">
+              {" "}
+              <img src={CalendarIcon} alt="Calenday" height={30} width={40} />
+              <span className="font-bold m-0">
+                {" "}
+                Appointment <span className="font-light">Application Form</span>
+              </span>
             </div>
+            <h3 className="relative top-4">
+              Requesting{" "}
+              <span className="font-bold text-[#320000]">
+                {instructor && instructor.firstName + " " + instructor.lastName}
+              </span>
+            </h3>
+          </Modal.Title>
+        </Modal.Header>
+        <Modal.Body className="bg-[#ECECEC]">
+          <div className="application-form h-[100%] flex flex-col gap-3">
+            <div className="data-time-container flex flex-row justify-around">
+              <Calendar
+                setAppointmentDate={setAppointmentDate}
+                instructorSchedule={instructorSchedule}
+                appointments={appointments}
+                selectedDate={selectedDate}
+                setSelectedDate={setSelectedDate}
+              />
 
-            <label htmlFor="image">
-              Picture of Yourself right now this moment
-            </label>
-            <input id="image" name="image" type="file" />
+              <div className="timeslot-container w-[45%] flex flex-col items-center text-center bg-white p-4 rounded-[30px] shadow-lg">
+                <p className="text-lg font-semibold mb-4">Timeslot</p>
+                {appointmentDate ? (
+                  instructorTimeslots.length !== 0 ? (
+                    instructorTimeslots.map((timeslot) => (
+                      <div
+                        key={timeslot.id}
+                        className="timeslot w-full flex flex-col items-center py-2 border-b last:border-none"
+                      >
+                        {!handleDisableInput(timeslot) ? (
+                          <TimeslotRadioInput
+                            timeslot={timeslot}
+                            setAppointmentTime={setAppointmentTime}
+                          />
+                        ) : (
+                          <p className="m-0 text-sm text-gray-600">
+                            {`${timeslot.time.startTime}:00 - ${timeslot.time.endTime}:00`}{" "}
+                            <span className="bg-red-100 text-red-600 px-2 py-1 rounded-md">
+                              Booked
+                            </span>
+                          </p>
+                        )}
+                      </div>
+                    ))
+                  ) : (
+                    <div className="h-12 w-full flex items-center justify-center bg-yellow-100 text-yellow-800 p-4 rounded-md">
+                      Instructor not available on this day
+                    </div>
+                  )
+                ) : (
+                  <div className="h-12 w-full"></div>
+                )}
+              </div>
+            </div>
+            <div className="form-group-container flex flex-row w-full justify-around">
+              <div className="form-group w-[35%] flex flex-col bg-[#273240] p-2 rounded-md">
+                <label className="text-white" htmlFor="concern">
+                  Describe your Concerns
+                </label>
+                <textarea
+                  className="min-h-20 rounded-xl"
+                  id="concern"
+                  name="concern"
+                  type="text-fi"
+                  ref={concernRef}
+                ></textarea>
+              </div>
+              <div className="form-group">
+                <label htmlFor="image">
+                  Picture of Yourself right now this moment
+                </label>
+                <input id="image" name="image" type="file" />
+              </div>
+            </div>
           </div>
         </Modal.Body>
-        <Modal.Footer>
+        <Modal.Footer className="">
           <Button variant="secondary" onClick={() => toggleShow()}>
             Close
           </Button>

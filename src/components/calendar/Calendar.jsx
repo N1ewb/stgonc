@@ -118,13 +118,13 @@ const Calendar = ({
       );
       days = [];
     }
-    return <div className="body">{rows}</div>;
+    return <div className="cell-container">{rows}</div>;
   };
 
   return (
     <div className="calendar">
       {renderHeader()}
-      {renderDays()}
+      <div className="days-container">{renderDays()}</div>
       {renderCells()}
     </div>
   );
