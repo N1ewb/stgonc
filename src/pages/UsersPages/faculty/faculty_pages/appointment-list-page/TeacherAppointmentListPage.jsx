@@ -1,15 +1,21 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import "./TeacherAppointmentListPage.css";
 import AppointmentsList from "../../faculty_components/AppointmentsList";
 import AppointmentInfo from "../../faculty_components/AppointmentInfo";
 
-const TeacherAppointmentListPage = ({ acceptedAppointments, auth, db }) => {
-  const [currentAppointment, setCurrentAppointment] = useState();
+const TeacherAppointmentListPage = ({
+  acceptedAppointments,
+  auth,
+  db,
+  currentAppointment,
+  handleSetCurrentAppointment,
+  setCurrentChatReceiver,
+}) => {
+  useEffect(() => {
+    handleSetCurrentAppointment(null);
+  }, []);
 
-  const handleSetCurrentAppointment = (appointment) => {
-    setCurrentAppointment(appointment);
-  };
   return (
     <div className="teacher-appointment-page-list-container w-full flex flex-col">
       <h1 className="text-[#320000]">
@@ -18,7 +24,7 @@ const TeacherAppointmentListPage = ({ acceptedAppointments, auth, db }) => {
         Appoinments
       </h1>
       <div className="appointment-list-main-content w-full flex flex-row justify-between">
-        <div className="appointment-list-container w-[40%] flex flex-col gap-5">
+        <div className="appointment-list-container w-[40%] flex flex-col gap-3">
           {acceptedAppointments && acceptedAppointments.length !== 0 ? (
             acceptedAppointments.map((appointment, index) => (
               <AppointmentsList
@@ -26,6 +32,7 @@ const TeacherAppointmentListPage = ({ acceptedAppointments, auth, db }) => {
                 appointment={appointment}
                 auth={auth}
                 handleSetCurrentAppointment={handleSetCurrentAppointment}
+                setCurrentChatReceiver={setCurrentChatReceiver}
               />
             ))
           ) : (
@@ -45,6 +52,8 @@ const TeacherAppointmentListPage = ({ acceptedAppointments, auth, db }) => {
               <AppointmentInfo
                 currentAppointment={currentAppointment}
                 handleSetCurrentAppointment={handleSetCurrentAppointment}
+                handleAcceptAppointment={() => null}
+                handleDenyAppointment={() => null}
               />
             )}
           </div>

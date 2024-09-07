@@ -7,11 +7,13 @@ import TeacherGraphs from "../faculty_pages/faculty-graphs/TeacherGraphs";
 import TeacherAppointmentListPage from "../faculty_pages/appointment-list-page/TeacherAppointmentListPage";
 import TeacherAppointmentReqPage from "../faculty_pages/appointment-req-page/TeacherAppointmentReqPage";
 import TeacherSchedulePage from "../faculty_pages/schedules-page/TeacherSchedulePage";
+import Chatbox from "../../../../components/Chatsbox/Chatbox";
 
 const TeacherDashboard = () => {
   const db = useDB();
   const auth = useAuth();
-
+  const [currentAppointment, setCurrentAppointment] = useState();
+  const [currentChatReceiver, setCurrentChatReceiver] = useState();
   const [appointments, setAppointments] = useState();
   const [acceptedAppointments, setAcceptedAppointments] = useState();
   const [requestedAppointments, setRequestedAppointments] = useState();
@@ -35,6 +37,10 @@ const TeacherDashboard = () => {
       link: "Schedules",
     },
   ];
+
+  const handleSetCurrentAppointment = (appointment) => {
+    setCurrentAppointment(appointment);
+  };
 
   const handleSetCurrentPage = (pageName) => {
     setCurrentPage(pageName);
@@ -88,12 +94,17 @@ const TeacherDashboard = () => {
               acceptedAppointments={acceptedAppointments}
               db={db}
               auth={auth}
+              handleSetCurrentAppointment={handleSetCurrentAppointment}
+              setCurrentChatReceiver={setCurrentChatReceiver}
+              currentAppointment={currentAppointment}
             />
           ) : currentPage === "AppointmentReq" ? (
             <TeacherAppointmentReqPage
               requestedAppointments={requestedAppointments}
               db={db}
               auth={auth}
+              handleSetCurrentAppointment={handleSetCurrentAppointment}
+              currentAppointment={currentAppointment}
             />
           ) : currentPage === "Schedules" ? (
             <TeacherSchedulePage />
@@ -102,6 +113,14 @@ const TeacherDashboard = () => {
           )}
         </div>
       </div>
+      {currentChatReceiver && (
+        <Chatbox
+          receiver={currentChatReceiver.appointee.name}
+          auth={auth}
+          db={db}
+          setCurrentChatReceiver={setCurrentChatReceiver}
+        />
+      )}
     </div>
   );
 };

@@ -50,7 +50,7 @@ const LandingPage = () => {
               className=" no-underline
               text-white
                w-[160px] p-[10px] group bg-[#360000] hover:bg-white hover:text-[#360000] rounded-[25px] transition-all ease-in-out duration-300"
-              to="/StudentRegister"
+              to="/StudentRegistration"
             >
               <p className="landing-register-button m-0 group-hover:text-[#360000]">
                 REGISTER

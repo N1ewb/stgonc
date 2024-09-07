@@ -31,7 +31,7 @@ const Navbar = () => {
     },
     {
       name: "Register",
-      link: "/StudentRegister",
+      link: "/StudentRegistration",
       inAuthHide: true,
     },
   ];

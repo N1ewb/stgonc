@@ -1,19 +1,11 @@
 import React, { useEffect, useRef, useState } from "react";
+import Chatmessages from "./Chatmessages";
+import Profile from "../../static/images/default-profile.png";
+import Loading from "../Loading/Loading";
 
-import Chatmessages from "../../components/Chatsbox/Chatmessages";
-import { useAuth } from "../../context/auth/AuthContext";
-import { useDB } from "../../context/db/DBContext";
-
-import "./Chatroom.css";
-import { Link } from "react-router-dom";
-
-const Chatroom = () => {
-  const urlParams = new URLSearchParams(window.location.search);
+const Chatbox = ({ auth, db, receiver, setCurrentChatReceiver }) => {
   const dummy = useRef();
-  const auth = useAuth();
-  const db = useDB();
   const formValueRef = useRef();
-  const [receiver, setReceiver] = useState(urlParams.get("receiver"));
   const [messages, setMessages] = useState();
   const [filterbyParticipants, setFilterbyParticipants] = useState();
 
@@ -80,40 +72,61 @@ const Chatroom = () => {
   };
 
   return (
-    <div className="chatroom-container">
-      <Link to="/dashboard">Back to Dashboard</Link>
-      <div className="chat-receiver">{receiver}</div>
-      <div className="messages-wrapper">
+    <div className="absolute bottom-2 right-5 z-50   text-white h-[450px] w-[350px] flex flex-col rounded-t-[10px] shadow-lg">
+      <div className="chatbox-header py-2 px-3 bg-[#320000] flex flex-row w-full justify-between [&_p]:m-0 rounded-t-[10px]">
+        <p className="capitalize flex flex-row gap-1 items-center ">
+          <img
+            className="rounded-full w-[20px] h-[20px]"
+            src={Profile}
+            alt="profile"
+          />{" "}
+          {receiver}
+        </p>
+        <p
+          className="cursor-pointer"
+          onClick={() => setCurrentChatReceiver(null)}
+        >
+          X
+        </p>
+      </div>
+      <div className="chatbox-body h-[90%] max-h-[95%] px-2 overflow-y-auto overflow-x-hidden flex flex-col-reverse">
         <div ref={dummy}></div>
         {filterbyParticipants === undefined ? (
-          <div className="">Loading</div>
+          <Loading />
         ) : (
           filterbyParticipants.length > 0 &&
           filterbyParticipants.map((message) => (
-            <div className="messages-container" key={message.id}>
+            <div className="messages-container  w-[90%]" key={message.id}>
               <Chatmessages message={message} />
             </div>
           ))
         )}
       </div>
-      <form>
-        <input ref={formValueRef} onChange={(e) => e.target.value} />
-        <button
-          type="submit"
-          onClick={(e) => {
-            e.preventDefault();
-            handleSendMessage(
-              formValueRef.current.value,
-              auth.currentUser.uid,
-              receiver
-            );
-          }}
-        >
-          Sends
-        </button>
-      </form>
+      <div className="chatbox-footer w-full flex items-center justify-center p-2">
+        <form className="flex flex-row justify-between w-[95%]">
+          <input
+            className="text-black p-0"
+            ref={formValueRef}
+            onChange={(e) => e.target.value}
+          />
+          <button
+            className="py-1 px-2 rounded-md bg-[#320000]"
+            type="submit"
+            onClick={(e) => {
+              e.preventDefault();
+              handleSendMessage(
+                formValueRef.current.value,
+                auth.currentUser.uid,
+                receiver
+              );
+            }}
+          >
+            Send
+          </button>
+        </form>
+      </div>
     </div>
   );
 };
 
-export default Chatroom;
+export default Chatbox;

@@ -10,6 +10,7 @@ const AppointmentList = ({
   appointment,
   auth,
   handleSetCurrentAppointment,
+  setCurrentChatReceiver,
 }) => {
   return (
     <div className="teacher-appointment-list-table w-full flex flex-row items-center [&_p]:m-0 justify-evenly bg-white p-5 rounded-[30px] shadow-md">
@@ -27,11 +28,12 @@ const AppointmentList = ({
         </span>
       </p>
 
-      <Link
-        to={`/Chatroom?receiver=${appointment && appointment.appointee.name}`}
+      <button
+        className="bg-transparent p-0"
+        onClick={() => setCurrentChatReceiver(appointment)}
       >
         <img src={ChatDark} alt="chat" width={30} height={30} />
-      </Link>
+      </button>
       <Link
         to={`/SendCallReq?receiver=${
           appointment && appointment.appointee.userID

@@ -57,7 +57,7 @@ const LoginPage = () => {
                   <p>
                     Don't have an account?{" "}
                     <Link
-                      to={"/StudentRegister"}
+                      to={"/StudentRegistration"}
                       style={{ textDecoration: "none" }}
                     >
                       <span style={{ color: "#FF8682" }}>{"Sign up"}</span>

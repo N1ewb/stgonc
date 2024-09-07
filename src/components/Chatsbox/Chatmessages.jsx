@@ -10,7 +10,6 @@ const Chatmessages = ({ message }) => {
   return (
     <div className={`message ${messageClass}`}>
       <p>{message.text}</p>
-      <p>Sent by: {message.sentBy}</p>
     </div>
   );
 };

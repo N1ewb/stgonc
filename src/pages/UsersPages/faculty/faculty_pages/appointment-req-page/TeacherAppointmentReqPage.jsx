@@ -1,25 +1,28 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import AppointmentReqList from "../../faculty_components/AppointmentReqList";
 
 import "./TeacherAppointmentReqPage.css";
 import AppointmentInfo from "../../faculty_components/AppointmentInfo";
 
-const TeacherAppointmentReqPage = ({ requestedAppointments, db }) => {
-  const [currentAppointment, setCurrentAppointment] = useState();
-
-  const handleSetCurrentAppointment = (appointment) => {
-    setCurrentAppointment(appointment);
-  };
-
+const TeacherAppointmentReqPage = ({
+  requestedAppointments,
+  db,
+  handleSetCurrentAppointment,
+  currentAppointment,
+}) => {
   const handleAcceptAppointment = async (id) => {
     await db.approveAppointment(id);
+    handleSetCurrentAppointment(null);
   };
 
   const handleDenyAppointment = async (id) => {
     await db.denyAppointment(id);
+    handleSetCurrentAppointment(null);
   };
 
-  // Helper function to convert date to a readable format
+  useEffect(() => {
+    handleSetCurrentAppointment(null);
+  }, []);
 
   return (
     <div className="teacher-appointment-request-container w-full">
@@ -57,6 +60,8 @@ const TeacherAppointmentReqPage = ({ requestedAppointments, db }) => {
               <AppointmentInfo
                 currentAppointment={currentAppointment}
                 handleSetCurrentAppointment={handleSetCurrentAppointment}
+                handleAcceptAppointment={handleAcceptAppointment}
+                handleDenyAppointment={handleDenyAppointment}
               />
             )}
           </div>
