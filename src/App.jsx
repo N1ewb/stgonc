@@ -1,25 +1,26 @@
 import React from "react";
 import "./App.css";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import LandingPage from "./pages/landingpage/LandingPage";
 import { AuthProvider } from "./context/auth/AuthContext";
+import { DBProvider } from "./context/db/DBContext";
+import { PrivateRoutes } from "./utils/protected-routes/routes";
+import { CallProvider } from "./context/call/CallContext";
+import { MessagingProvider } from "./context/notification/NotificationContext";
+import { StorageProvider } from "./context/storage/StorageContext";
+import { Toaster } from "react-hot-toast";
+
+import Chatroom from "./pages/chatroom/Chatroom";
+import LandingPage from "./pages/landingpage/LandingPage";
 import Dashboard from "./pages/dashboard/Dashboard";
 import Navbar from "./components/heading/Navbar";
 import VideoCall from "./pages/videocall/VideoCall";
-import Login from "./pages/login/Login";
-import StudentRegister from "./pages/student/student_register/Register";
-import Userpage from "./pages/Users/Userpage";
-import { DBProvider } from "./context/db/DBContext";
-import Chatroom from "./pages/chatroom/Chatroom";
-import { PrivateRoutes } from "./utils/protected-routes/routes";
-import TeacherRegister from "./pages/teacher/teacher_register/TeacherRegister";
-import { CallProvider } from "./context/call/CallContext";
 import SendCallReq from "./pages/videocall/SendCallReq";
 import ReceiveCallReq from "./pages/videocall/ReceiveCallReq";
-import { MessagingProvider } from "./context/notification/NotificationContext";
-import AdminRegistration from "./pages/admin/admin_register/AdminRegistration";
-import { StorageProvider } from "./context/storage/StorageContext";
-import { Toaster } from "react-hot-toast";
+import AdminRegistration from "./pages/authentication/register/admin_register/AdminRegistration";
+import StudentRegister from "./pages/authentication/register/student_register/Register";
+import TeacherRegister from "./pages/authentication/register/teacher_register/TeacherRegister";
+import Userpage from "./pages/UsersPages/UsersProfile/Userpage";
+import LoginPage from "./pages/authentication/login/Login";
 
 function App() {
   return (
@@ -44,13 +45,13 @@ function App() {
                       <Route path="/Userpage" element={<Userpage />} />
                       <Route path="/Dashboard" element={<Dashboard />} />
                     </Route>
-                    <Route path="/Login" element={<Login />} />
+                    <Route path="/Login" element={<LoginPage />} />
                     <Route
-                      path="/StudentRegister"
+                      path="/StudentRegistration"
                       element={<StudentRegister />}
                     />
                     <Route
-                      path="/TeacherRegister"
+                      path="/FacultyRegistration"
                       element={<TeacherRegister />}
                     />
                     <Route

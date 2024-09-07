@@ -5,7 +5,7 @@ import Button from "react-bootstrap/Button";
 import "./RequestAppointmentForm.css";
 import { useDB } from "../../context/db/DBContext";
 import toast from "react-hot-toast";
-import Calendar from "../calendar/Calendar";
+import Calendar from "../calendar/RequestApptCalendar/RequestApptCalendar";
 import TimeslotRadioInput from "../input/TimeslotRadioInput";
 import CalendarIcon from "../../static/images/Group 1171275864.png";
 
@@ -68,7 +68,7 @@ const RequestAppointmentForm = ({
         }
       }
     } else {
-      console.log("Instructor schedule or timeslots are missing.");
+      toastMessage("Instructor schedule or timeslots are missing.");
     }
   };
 
@@ -101,9 +101,7 @@ const RequestAppointmentForm = ({
           }
         }
         setInstructorSchedule(availableDays);
-        console.log(availableDays);
       }
-      console.log("Instructor Available Days: ", instructorSchedule);
     } catch (error) {
       toastMessage(
         "Error in retreiving instructor available dates: ",
@@ -209,8 +207,8 @@ const RequestAppointmentForm = ({
           </Modal.Title>
         </Modal.Header>
         <Modal.Body className="bg-[#ECECEC]">
-          <div className="application-form h-[100%] flex flex-col gap-3">
-            <div className="data-time-container flex flex-row justify-around">
+          <div className="application-form h-[100%] w-full flex flex-row justify-around gap-3">
+            <div className="data-time-container flex flex-col justify-around w-[45%] gap-5">
               <Calendar
                 setAppointmentDate={setAppointmentDate}
                 instructorSchedule={instructorSchedule}
@@ -218,8 +216,21 @@ const RequestAppointmentForm = ({
                 selectedDate={selectedDate}
                 setSelectedDate={setSelectedDate}
               />
-
-              <div className="timeslot-container w-[45%] flex flex-col items-center text-center bg-white p-4 rounded-[30px] shadow-lg">
+              <div className="form-group w-full flex flex-col bg-[#273240] p-2 rounded-md">
+                <label className="text-white" htmlFor="concern">
+                  Describe your Concerns
+                </label>
+                <textarea
+                  className="min-h-20 rounded-xl"
+                  id="concern"
+                  name="concern"
+                  type="text-fi"
+                  ref={concernRef}
+                ></textarea>
+              </div>
+            </div>
+            <div className="form-group-container flex flex-col w-[50%] justify-around">
+              <div className="timeslot-container w-full flex flex-col items-center text-center bg-white p-4 rounded-[30px] shadow-lg">
                 <p className="text-lg font-semibold mb-4">Timeslot</p>
                 {appointmentDate ? (
                   instructorTimeslots.length !== 0 ? (
@@ -252,53 +263,37 @@ const RequestAppointmentForm = ({
                   <div className="h-12 w-full"></div>
                 )}
               </div>
-            </div>
-            <div className="form-group-container flex flex-row w-full justify-around">
-              <div className="form-group w-[35%] flex flex-col bg-[#273240] p-2 rounded-md">
-                <label className="text-white" htmlFor="concern">
-                  Describe your Concerns
-                </label>
-                <textarea
-                  className="min-h-20 rounded-xl"
-                  id="concern"
-                  name="concern"
-                  type="text-fi"
-                  ref={concernRef}
-                ></textarea>
-              </div>
               <div className="form-group">
                 <label htmlFor="image">
                   Picture of Yourself right now this moment
                 </label>
-                <input id="image" name="image" type="file" />
+                <input className="" id="image" name="image" type="file" />
+                <Button variant="secondary" onClick={() => toggleShow()}>
+                  Close
+                </Button>
+                <Button
+                  onClick={() =>
+                    handleRequestAppointment(
+                      instructor.email,
+                      instructor.firstName,
+                      instructor.lastName,
+                      instructor.phoneNumber,
+                      instructor.userID,
+                      concernRef,
+                      appointmentDate,
+                      appointmentTime,
+                      true,
+                      myInfo.phoneNumber,
+                      myInfo && myInfo.studentIdnumber
+                    )
+                  }
+                >
+                  Submit
+                </Button>
               </div>
             </div>
           </div>
         </Modal.Body>
-        <Modal.Footer className="">
-          <Button variant="secondary" onClick={() => toggleShow()}>
-            Close
-          </Button>
-          <Button
-            onClick={() =>
-              handleRequestAppointment(
-                instructor.email,
-                instructor.firstName,
-                instructor.lastName,
-                instructor.phoneNumber,
-                instructor.userID,
-                concernRef,
-                appointmentDate,
-                appointmentTime,
-                true,
-                myInfo.phoneNumber,
-                myInfo && myInfo.studentIdnumber
-              )
-            }
-          >
-            Submit
-          </Button>
-        </Modal.Footer>
       </Modal>
     </>
   );
