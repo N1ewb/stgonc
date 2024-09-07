@@ -22,7 +22,7 @@ align-items: center;
 }
 
 .header h6 {
-    background-color: black;
+    background-color: #320000;
     padding: 10px 15px 10px 15px;
     border-radius: 6px;
     color: white;
@@ -94,16 +94,18 @@ font-size: 18px;
 
 
 .header button {
-background-color: gray;
-color: white;
+background-color: transparent;
+color: #320000;
 border: none;
 padding: 5px 10px;
 cursor: pointer;
 border-radius: 5px;
+transition: all ease-in-out 200ms;
+scale: 1.5;
 }
 
 .header button:hover {
-background-color: #790808;
+transform: scale(1.5);
 }
 
 .instructor-available {

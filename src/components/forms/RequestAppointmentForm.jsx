@@ -31,6 +31,7 @@ const RequestAppointmentForm = ({
   const [appointmentDate, setAppointmentDate] = useState(null);
   const [appointmentTime, setAppointmentTime] = useState(null);
   const [bookedTimeslots, setBookedTimeslots] = useState([]);
+  const [allAppointments, setAllAppointments] = useState([]);
 
   const handleSetAvailableSchedule = () => {
     const days = [
@@ -43,13 +44,13 @@ const RequestAppointmentForm = ({
       "Saturday",
     ];
 
-    if (instructorSchedule && appointments) {
-      const appointmentDatematch = appointments.filter(
+    if (instructorSchedule && allAppointments) {
+      const appointmentDatematch = allAppointments.filter(
         (appt) => appt.appointmentDate === appointmentDate.dateWithoutTime
       );
 
       if (appointmentDatematch.length !== 0) {
-        const matchingTimeslots = appointments.filter(
+        const matchingTimeslots = allAppointments.filter(
           (appointment) =>
             instructorTimeslots.some((timeslot) =>
               appointment.appointmentsTime.appointmentStartTime.includes(
@@ -109,6 +110,22 @@ const RequestAppointmentForm = ({
       );
     }
   };
+
+  useEffect(() => {
+    if (show) {
+      const handleGetAppointments = async () => {
+        const appointments = await db.getInstructorAppointment(
+          instructor.email
+        );
+        const fitleredAppointments = appointments.filter(
+          (appt) => appt.appointedTeacher.teacheremail === instructor.email
+        );
+        console.log("all appointments", appointments);
+        setAllAppointments(fitleredAppointments);
+      };
+      handleGetAppointments();
+    }
+  }, [show]);
 
   useEffect(() => {
     const handleGetDays = async () => {

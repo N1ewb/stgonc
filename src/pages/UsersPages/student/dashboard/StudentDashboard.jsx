@@ -9,7 +9,7 @@ import { toast } from "react-hot-toast";
 import { useCall } from "../../../../context/call/CallContext";
 import Profile from "../../../../components/userProfile/Profile";
 import { useMessage } from "../../../../context/notification/NotificationContext";
-import More from "../../../../static/images/more.png";
+import More from "../../../../static/images/more-dark.png";
 
 const StudentDashboard = () => {
   const db = useDB();
@@ -176,8 +176,11 @@ const StudentDashboard = () => {
             <h1 className="text-[#360000] text-3xl font-bold">Appointments</h1>
             <div className="appointment-wrappers w-full flex flex-col justify-center h-[100%]">
               {acceptedAppt && acceptedAppt.length !== 0
-                ? acceptedAppt.map((appt) => (
-                    <div className="text-[#360000] flex flex-row items-center [&_p]:m-0 justify-between">
+                ? acceptedAppt.map((appt, index) => (
+                    <div
+                      key={index}
+                      className="text-[#360000] flex flex-row items-center [&_p]:m-0 justify-between"
+                    >
                       <p className="text-2xl">
                         {appt.appointedTeacher.teacherDisplayName}
                       </p>

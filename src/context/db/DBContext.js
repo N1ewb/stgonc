@@ -194,6 +194,30 @@ export const DBProvider = ({ children }) => {
     }
   };
 
+  const getInstructorAppointment = async (email) => {
+    try {
+      if (auth.currentUser) {
+        const q = query(
+          appointmentsRef,
+          where("appointedTeacher.teacheremail", "==", email)
+        );
+        const querySnapshot = await getDocs(q);
+        const appointmentData = querySnapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+
+        if (appointmentData) {
+          return appointmentData;
+        } else {
+          return console.log("Nothing");
+        }
+      }
+    } catch (error) {
+      notifyError(error);
+    }
+  };
+
   const approveAppointment = async (id) => {
     try {
       if (auth.currentUser) {
@@ -390,7 +414,7 @@ export const DBProvider = ({ children }) => {
     }
   };
 
-  //As Admin
+  //General
   const getAppointmentList = async () => {
     try {
       if (auth.currentUser) {
@@ -613,6 +637,7 @@ export const DBProvider = ({ children }) => {
     getAllUsers,
     sendAppointmentRequest,
     getAppointmentRequests,
+    getInstructorAppointment,
     approveAppointment,
     denyAppointment,
     getMessages,

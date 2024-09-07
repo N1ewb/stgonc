@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 
 import defaultProfile from "../../../../../static/images/default-profile.png";
-import More from "../../../../../static/images/more.png";
+import More from "../../../../../static/images/more-dark.png";
 
 import "./adminUserList.css";
 import toast from "react-hot-toast";

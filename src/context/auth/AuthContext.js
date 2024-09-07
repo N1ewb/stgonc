@@ -1,28 +1,13 @@
-import React, {
-  useContext,
-  useState,
-  useEffect,
-  createContext,
-  Children,
-} from "react";
+import React, { useContext, useState, useEffect, createContext } from "react";
 import { auth, firestore } from "../../server/firebase";
 import {
   onAuthStateChanged,
   signOut,
   updateProfile,
-  signInWithPopup,
-  GoogleAuthProvider,
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
 } from "firebase/auth";
-import {
-  addDoc,
-  collection,
-  deleteDoc,
-  doc,
-  setDoc,
-  updateDoc,
-} from "firebase/firestore";
+import { collection, doc, setDoc, updateDoc } from "firebase/firestore";
 import toast from "react-hot-toast";
 import { Toast } from "react-bootstrap";
 
@@ -151,7 +136,6 @@ export const AuthProvider = ({ children }) => {
           updateProfile(user, {
             displayName: `${firstName} ${lastName}`,
           });
-          console.log("Signed upp");
 
           return setDoc(
             doc(collection(firestore, "Users"), userCredential.user.uid),
