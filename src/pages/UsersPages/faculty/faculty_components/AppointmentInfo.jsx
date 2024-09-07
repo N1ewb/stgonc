@@ -17,7 +17,13 @@ const AppointmentInfo = ({
     <div className="appointment-info w-full flex flex-col">
       <div className="appointment-info-header text-[#320000] w-full flex flex-row justify-between items-center p-2 rounded-md border-b-[1px] border-solid border-[#d1d1d1d1] mb-5">
         <h3 className="capitalize m-0">
-          <span className="font-semibold">Request</span>{" "}
+          <span className="font-semibold">
+            {currentAppointment.appointmentStatus === "Accepted"
+              ? "Appointment"
+              : currentAppointment.appointmentStatus === "pending"
+              ? "Request"
+              : "No"}
+          </span>{" "}
           <span className="font-light">Information</span>
         </h3>
         <button
