@@ -3,7 +3,7 @@ import { useAuth } from "../../context/auth/AuthContext";
 
 export const PrivateRoutes = () => {
   const auth = useAuth();
-  return auth.currentUser ? <Outlet /> : <Navigate to="/Login" />;
+  return auth.currentUser ? <Outlet /> : <Navigate to="/auth/Login" />;
 };
 
 // export const StudentRoute = () => {

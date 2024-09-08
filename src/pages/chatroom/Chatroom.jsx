@@ -81,7 +81,7 @@ const Chatroom = () => {
 
   return (
     <div className="chatroom-container">
-      <Link to="/dashboard">Back to Dashboard</Link>
+      <Link to="/auth/Login">Back to Dashboard</Link>
       <div className="chat-receiver">{receiver}</div>
       <div className="messages-wrapper">
         <div ref={dummy}></div>

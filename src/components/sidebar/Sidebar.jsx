@@ -1,13 +1,15 @@
 import React, { useState } from "react";
 import "./Sidebar.css";
 import Profile from "../userProfile/Profile";
+import { useNavigate } from "react-router-dom";
 
-const Sidebar = ({ SidebarLinks, handleSetCurrentPage }) => {
+const Sidebar = ({ SidebarLinks }) => {
+  const navigate = useNavigate();
   const [activeLink, setActiveLink] = useState("Dashboard");
 
   const handleLinkClick = (link) => {
     setActiveLink(link);
-    handleSetCurrentPage(link);
+    navigate(link);
   };
 
   return (

@@ -3,10 +3,13 @@ import "./admin_schedules.css";
 import SchedulesModal from "../../../../../components/modal/schedules-modal/SchedulesModal";
 import toast from "react-hot-toast";
 import { useAuth } from "../../../../../context/auth/AuthContext";
+import { useDB } from "../../../../../context/db/DBContext";
 
-const AdminSchedulesPage = ({ teachersList, db }) => {
+const AdminSchedulesPage = () => {
+  const db = useDB();
   const toastMessage = (message) => toast(message);
   const { currentUser } = useAuth();
+  const [teachersList, setTeachersList] = useState([]);
   const [show, setShow] = useState(false);
   const [selectedTime, setSelectedTime] = useState(null);
   const [selectedDay, setSelectedDay] = useState(null);
@@ -95,6 +98,14 @@ const AdminSchedulesPage = ({ teachersList, db }) => {
   //   { length: endTime - startTime },
   //   (_, i) => `${startTime + i}:00`
   // );
+
+  useEffect(() => {
+    const handleGetTechears = async () => {
+      const teachers = await db.getTeachers();
+      setTeachersList(teachers);
+    };
+    handleGetTechears();
+  }, []);
 
   const toggleShow = () => {
     if (choosenCells.length !== 0) {

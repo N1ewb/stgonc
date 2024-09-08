@@ -50,7 +50,7 @@ const LandingPage = () => {
               className=" no-underline
               text-white
                w-[160px] p-[10px] group bg-[#360000] hover:bg-white hover:text-[#360000] rounded-[25px] transition-all ease-in-out duration-300"
-              to="/StudentRegistration"
+              to="auth/StudentRegistration"
             >
               <p className="landing-register-button m-0 group-hover:text-[#360000]">
                 REGISTER
@@ -58,7 +58,7 @@ const LandingPage = () => {
             </Link>
             <Link
               className="no-underline w-[160px] p-[10px] group text-[#360000] bg-[white] hover:bg-[#360000]  rounded-[25px] transition-all ease-in-out duration-300"
-              to="/Login"
+              to="auth/Login"
             >
               <p className="landing-login-button m-0 group-hover:text-white">
                 LOGIN

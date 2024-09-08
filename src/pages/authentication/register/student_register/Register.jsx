@@ -7,6 +7,7 @@ import registerpageimage from "../../../../static/images/register-page-image.png
 
 import "./Register.css";
 import toast, { Toaster } from "react-hot-toast";
+import { useDB } from "../../../../context/db/DBContext";
 
 const StudentRegister = () => {
   const firstNameRef = useRef();
@@ -18,6 +19,7 @@ const StudentRegister = () => {
   const passwordRef = useRef();
   const passwordConfirmRef = useRef();
   const auth = useAuth();
+  const db = useDB();
   const navigate = useNavigate();
 
   const toastMessage = (message) => toast(message);
@@ -69,9 +71,32 @@ const StudentRegister = () => {
   };
 
   useEffect(() => {
-    if (auth.currentUser) {
-      navigate("/Dashboard");
-    }
+    const fetchUserAndRedirect = async () => {
+      if (auth.currentUser) {
+        try {
+          const user = await db.getUser(auth.currentUser.uid);
+          if (user) {
+            const userRole = user.role;
+            console.log(userRole);
+            if (userRole === "Student") {
+              navigate("/private/student-dashboard");
+            } else if (userRole === "Teacher") {
+              navigate("/private/faculty-dashboard");
+            } else if (userRole === "Admin") {
+              navigate("/private/admin-dashboard");
+            } else {
+              navigate("/");
+            }
+          } else {
+            console.error("User not found or failed to fetch user details.");
+          }
+        } catch (error) {
+          console.error("Error fetching user data:", error);
+        }
+      }
+    };
+
+    fetchUserAndRedirect();
   }, [auth.currentUser, navigate]);
   return (
     <>

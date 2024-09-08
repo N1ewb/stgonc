@@ -26,12 +26,12 @@ const Navbar = () => {
     },
     {
       name: "Login",
-      link: "/Login",
+      link: "/auth/Login",
       inAuthHide: true,
     },
     {
       name: "Register",
-      link: "/StudentRegistration",
+      link: "/auth/StudentRegistration",
       inAuthHide: true,
     },
   ];

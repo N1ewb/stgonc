@@ -3,15 +3,43 @@ import React, { useEffect, useState } from "react";
 import "./TeacherAppointmentListPage.css";
 import AppointmentsList from "../../faculty_components/AppointmentsList";
 import AppointmentInfo from "../../faculty_components/AppointmentInfo";
+import { useDB } from "../../../../../context/db/DBContext";
+import { useAuth } from "../../../../../context/auth/AuthContext";
 
-const TeacherAppointmentListPage = ({
-  acceptedAppointments,
-  auth,
-  db,
-  currentAppointment,
-  handleSetCurrentAppointment,
-  setCurrentChatReceiver,
-}) => {
+const TeacherAppointmentListPage = () => {
+  const db = useDB();
+  const auth = useAuth();
+
+  const [currentAppointment, setCurrentAppointment] = useState();
+  const [currentChatReceiver, setCurrentChatReceiver] = useState();
+  const [acceptedAppointments, setAcceptedAppointments] = useState();
+
+  const handleGetAcceptedAppointment = (appointments) => {
+    return appointments.filter(
+      (appointment) => appointment.appointmentStatus === "Accepted"
+    );
+  };
+
+  const handleSetCurrentAppointment = (appointment) => {
+    setCurrentAppointment(appointment);
+  };
+
+  useEffect(() => {
+    const fetchData = async () => {
+      if (auth.currentUser) {
+        try {
+          const unsubscribe = db.subscribeToAppointmentChanges((callback) => {
+            setAcceptedAppointments(handleGetAcceptedAppointment(callback));
+          });
+          return () => unsubscribe();
+        } catch (error) {
+          console.log(error);
+        }
+      }
+    };
+    fetchData();
+  }, [db]);
+
   useEffect(() => {
     handleSetCurrentAppointment(null);
   }, []);

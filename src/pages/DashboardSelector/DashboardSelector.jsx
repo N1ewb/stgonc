@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { useAuth } from "../../context/auth/AuthContext";
 import { useDB } from "../../context/db/DBContext";
-import "./Dashboard.css";
+import "./DashboardSelector.css";
 import StudentDashboard from "../UsersPages/student/dashboard/StudentDashboard";
 import TeacherDashboard from "../UsersPages/faculty/dashboard/TeacherDashboard";
 import AdminDashboard from "../UsersPages/admin/dashboard/AdminDashboard";
 
-const Dashboard = () => {
+const DashboardSelector = () => {
   const auth = useAuth();
   const db = useDB();
   const [user, setUser] = useState();
@@ -39,4 +39,4 @@ const Dashboard = () => {
   );
 };
 
-export default Dashboard;
+export default DashboardSelector;

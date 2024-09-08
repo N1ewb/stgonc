@@ -5,10 +5,14 @@ import More from "../../../../../static/images/more-dark.png";
 
 import "./adminUserList.css";
 import toast from "react-hot-toast";
+import { useDB } from "../../../../../context/db/DBContext";
+import { useAuth } from "../../../../../context/auth/AuthContext";
 
 const ITEMS_PER_PAGE = 8;
 
-const AdminUserList = ({ db, auth }) => {
+const AdminUserList = () => {
+  const db = useDB();
+  const auth = useAuth();
   const [userList, setUserList] = useState();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);

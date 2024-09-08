@@ -3,13 +3,42 @@ import AppointmentReqList from "../../faculty_components/AppointmentReqList";
 
 import "./TeacherAppointmentReqPage.css";
 import AppointmentInfo from "../../faculty_components/AppointmentInfo";
+import { useDB } from "../../../../../context/db/DBContext";
+import { useAuth } from "../../../../../context/auth/AuthContext";
 
-const TeacherAppointmentReqPage = ({
-  requestedAppointments,
-  db,
-  handleSetCurrentAppointment,
-  currentAppointment,
-}) => {
+const TeacherAppointmentReqPage = () => {
+  const db = useDB();
+  const auth = useAuth();
+
+  const [currentAppointment, setCurrentAppointment] = useState();
+  const [requestedAppointments, setRequestedAppointments] = useState();
+
+  const handleGetRequestedAppointment = (appointments) => {
+    return appointments.filter(
+      (appointment) => appointment.appointmentStatus === "pending"
+    );
+  };
+
+  const handleSetCurrentAppointment = (appointment) => {
+    setCurrentAppointment(appointment);
+  };
+
+  useEffect(() => {
+    const fetchData = async () => {
+      if (auth.currentUser) {
+        try {
+          const unsubscribe = db.subscribeToAppointmentChanges((callback) => {
+            setRequestedAppointments(handleGetRequestedAppointment(callback));
+          });
+          return () => unsubscribe();
+        } catch (error) {
+          console.log(error);
+        }
+      }
+    };
+    fetchData();
+  }, [db]);
+
   const handleAcceptAppointment = async (id) => {
     await db.approveAppointment(id);
     handleSetCurrentAppointment(null);

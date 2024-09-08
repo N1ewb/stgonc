@@ -1,14 +1,36 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
 import "./admin_appointments.css";
+import { useDB } from "../../../../../context/db/DBContext";
+import { useAuth } from "../../../../../context/auth/AuthContext";
 
-const AdminAppointmentPage = ({ appointments, auth, db }) => {
+const AdminAppointmentPage = () => {
+  const db = useDB();
+  const auth = useAuth();
+  const [appointments, setAppointments] = useState();
+
   const handleAcceptAppointment = async (id) => {
     await db.approveAppointment(id);
   };
 
   const handleDenyAppointment = async () => {};
+
+  useEffect(() => {
+    const fetchData = async () => {
+      if (auth.currentUser) {
+        try {
+          const unsubscribe = db.subscribeToAppointmentChanges((callback) => {
+            setAppointments(callback);
+          });
+          return () => unsubscribe();
+        } catch (error) {
+          console.log(error);
+        }
+      }
+    };
+    fetchData();
+  }, [db]);
 
   return (
     <div className="admin-appointments-container">
