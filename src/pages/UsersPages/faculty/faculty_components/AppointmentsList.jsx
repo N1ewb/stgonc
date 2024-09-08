@@ -35,7 +35,7 @@ const AppointmentList = ({
         <img src={ChatDark} alt="chat" width={30} height={30} />
       </button>
       <Link
-        to={`/SendCallReq?receiver=${
+        to={`/private/SendCallReq?receiver=${
           appointment && appointment.appointee.userID
         }&caller=${auth.currentUser.uid}`}
       >

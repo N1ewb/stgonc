@@ -89,7 +89,7 @@ const AdminUserList = () => {
   }
 
   return (
-    <div className="admin-userlist-container w-full min-h-[95%] max-h-[95%] flex flex-col gap-3">
+    <div className="admin-userlist-container w-full min-h-[95%] max-h-[95%] flex flex-col gap-3  shadow-md">
       <h1 className="relative">
         User List{" "}
         <span className="absolute top-0 text-[#323232] font-semibold text-xs">
@@ -101,10 +101,11 @@ const AdminUserList = () => {
           {currentCharacters && currentCharacters.length !== 0 ? (
             currentCharacters.map((users, index) => (
               <div
-                className="userlist-container w-full flex flex-row gap-3 items-center [&_p]:m-0 px-8 py-2 rounded-[5px] bg-[#ebeaea] text-[#740000] md:px-3 overflow-hidden"
+                className="userlist-container w-full flex flex-row gap-3 items-center [&_p]:m-0 px-8 py-2 rounded-[5px] shadow-md  text-[#740000] md:px-3 overflow-hidden"
                 key={index}
               >
                 <img
+                  className="p-1 rounded-full bg-[#720000]"
                   src={
                     (auth.currentUser && auth.currentUser.photoUrl) ||
                     defaultProfile

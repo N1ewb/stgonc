@@ -7,7 +7,6 @@ import { Link, useNavigate } from "react-router-dom";
 import RequestAppointmentForm from "../../../../components/forms/RequestAppointmentForm";
 import { toast } from "react-hot-toast";
 import { useCall } from "../../../../context/call/CallContext";
-import Profile from "../../../../components/userProfile/Profile";
 import { useMessage } from "../../../../context/notification/NotificationContext";
 import More from "../../../../static/images/more-dark.png";
 
@@ -128,8 +127,8 @@ const StudentDashboard = () => {
             <div className="spacer h-[20%]"></div>
             <div className="flex flex-col gap-[8px]">
               <p className="text-[#360000] ">
-                <span>Department</span> <br></br>
-                <span className="font-bold">Instructors</span>{" "}
+                <span>{myInfo && myInfo.department} </span> <br></br>
+                <span className="font-bold">Department Instructors</span>{" "}
               </p>
               {instructors && instructors.length !== 0 ? (
                 instructors.map((instructor, index) => (

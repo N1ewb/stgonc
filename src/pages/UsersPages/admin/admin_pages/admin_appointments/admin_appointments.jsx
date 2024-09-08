@@ -44,11 +44,13 @@ const AdminAppointmentPage = () => {
                 <div key={appointment.id} className="accepted-appointments">
                   <p>{appointment.appointee.name}</p>
                   <p>{appointment.appointmentStatus}</p>
-                  <Link to={`/Chatroom?receiver=${appointment.appointee.name}`}>
+                  <Link
+                    to={`/private/Chatroom?receiver=${appointment.appointee.name}`}
+                  >
                     <p>Chat</p>
                   </Link>
                   <Link
-                    to={`/SendCallReq?receiver=${appointment.appointee.userID}&caller=${auth.currentUser.uid}`}
+                    to={`/private/SendCallReq?receiver=${appointment.appointee.userID}&caller=${auth.currentUser.uid}`}
                   >
                     Call
                   </Link>

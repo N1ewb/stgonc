@@ -1,5 +1,5 @@
 .admin-userlist-container{
-    background-color: #F8F8F8;
+    background-color: #0000001f;
     display: flex;
     flex-direction: column;
     gap: 10px;
@@ -11,7 +11,7 @@
 }
 
 .userlist-container{
-    background-color: rgba(250, 238, 238, 0.603);
+    background-color: white;
     border-radius: 20px;
     display: flex;
     align-items: center;
