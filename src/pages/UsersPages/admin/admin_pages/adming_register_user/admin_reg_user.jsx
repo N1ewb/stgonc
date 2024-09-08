@@ -3,7 +3,6 @@ import React, { useState } from "react";
 import "./admin_reg_user.css";
 import RegisterFacultyForm from "./admin_faculty_reg_form";
 import RegisterStudentForm from "./admin_student_reg_form";
-import { Container } from "lucide-react";
 
 const AdminRegisteruserPage = () => {
   const [currentForm, setCurrentForm] = useState();

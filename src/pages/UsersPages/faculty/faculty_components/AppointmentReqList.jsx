@@ -29,13 +29,25 @@ const AppointmentReqList = ({
 
       <button
         className="bg-transparent p-0"
-        onClick={() => handleAcceptAppointment(appointment.id)}
+        onClick={() =>
+          handleAcceptAppointment(
+            appointment.id,
+            appointment.appointee.email,
+            appointment.appointmentDate
+          )
+        }
       >
         <img src={CheckMarkDark} alt="Accept" height={30} width={30} />
       </button>
       <button
         className="bg-transparent p-0"
-        onClick={() => handleDenyAppointment(appointment.id)}
+        onClick={() =>
+          handleDenyAppointment(
+            appointment.id,
+            appointment.appointee.email,
+            "REASON: BALA KA JAN"
+          )
+        }
       >
         <img src={DenyDark} alt="Deny" height={30} width={30} />
       </button>

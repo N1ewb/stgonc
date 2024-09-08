@@ -70,7 +70,13 @@ const AdminAppointmentPage = () => {
                   <p>{appointment.appointee.name}</p>
                   <p>{appointment.appointmentStatus}</p>
                   <button
-                    onClick={() => handleAcceptAppointment(appointment.id)}
+                    onClick={() =>
+                      handleAcceptAppointment(
+                        appointment.id,
+                        appointment.appointee.email,
+                        appointment.appointmentDate
+                      )
+                    }
                   >
                     Accept
                   </button>

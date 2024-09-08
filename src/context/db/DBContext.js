@@ -2,18 +2,15 @@ import React, { useContext, createContext } from "react";
 import {
   addDoc,
   collection,
-  deleteDoc,
   getDocs,
   onSnapshot,
   doc,
   updateDoc,
-  getDoc,
   serverTimestamp,
   orderBy,
   limit,
   query,
   where,
-  arrayUnion,
   Timestamp,
 } from "firebase/firestore";
 import { firestore, storage } from "../../server/firebase";
@@ -22,7 +19,8 @@ import { useAuth } from "../auth/AuthContext";
 import toast, { Toaster } from "react-hot-toast";
 import { updateProfile } from "firebase/auth";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
-import { useStorage } from "../storage/StorageContext";
+
+import { useMessage } from "../notification/NotificationContext";
 
 const dbContext = createContext();
 
@@ -40,6 +38,7 @@ export const DBProvider = ({ children }) => {
   );
   const schedulesCollectionRef = collection(firestore, "Schedules");
   const auth = useAuth();
+  const notif = useMessage();
 
   const addSuccess = () => toast("Registered Successfuly");
   const toastMessage = (message) => toast(message);
@@ -158,11 +157,17 @@ export const DBProvider = ({ children }) => {
           appointmentsTime: time,
           appointmentStatus: "pending",
           appointmentType: "initial",
-          appointmentDuration: "1 hour", // Adjusted
+          appointmentDuration: "1 hour",
           isOnline: isOnline,
           createdAt: new Date(),
           teacherRemarks: null,
         });
+
+        await notif.storeNotifToDB(
+          "Appointment Request",
+          concern,
+          teacheremail
+        );
       }
     } catch (error) {
       notifyError(error);
@@ -218,28 +223,32 @@ export const DBProvider = ({ children }) => {
     }
   };
 
-  const approveAppointment = async (id) => {
+  const approveAppointment = async (id, receiver, date) => {
     try {
       if (auth.currentUser) {
         const appointmentDocRef = doc(firestore, "Appointments", id);
-
         const updatedAppointmentDocRef = { appointmentStatus: "Accepted" };
-
-        return await updateDoc(appointmentDocRef, updatedAppointmentDocRef);
+        await notif.storeNotifToDB(
+          "Accepted Request",
+          `You appointment Request has been accepted and will be held on ${date}`,
+          receiver
+        );
+        await updateDoc(appointmentDocRef, updatedAppointmentDocRef);
+        toastMessage("Accepted Appointment");
       }
     } catch (error) {
       notifyError(error);
     }
   };
 
-  const denyAppointment = async (id) => {
+  const denyAppointment = async (id, receiver, reason) => {
     try {
       if (auth.currentUser) {
         const appointmentDocRef = doc(firestore, "Appointments", id);
-
         const updatedAppointmentDocRef = { appointmentStatus: "Denied" };
-
-        return await updateDoc(appointmentDocRef, updatedAppointmentDocRef);
+        await notif.storeNotifToDB("Accepted Request", reason, receiver);
+        await updateDoc(appointmentDocRef, updatedAppointmentDocRef);
+        toastMessage("Denied Appointment");
       }
     } catch (error) {
       console.error();
@@ -455,6 +464,11 @@ export const DBProvider = ({ children }) => {
         available: true,
         createdAt: Timestamp.now(),
       });
+      await notif.storeNotifToDB(
+        "Consultation Schedules",
+        `Your consultation hours Schedule has been updated, please proceed to schedules pages to view your new consultation schedules`,
+        assignedInstructor.email
+      );
     } catch (error) {
       toastMessage("Error adding document: ", error.message);
     }

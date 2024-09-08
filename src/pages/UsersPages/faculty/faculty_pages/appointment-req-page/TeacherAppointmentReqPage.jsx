@@ -39,13 +39,13 @@ const TeacherAppointmentReqPage = () => {
     fetchData();
   }, [db]);
 
-  const handleAcceptAppointment = async (id) => {
-    await db.approveAppointment(id);
+  const handleAcceptAppointment = async (id, receiver, date) => {
+    await db.approveAppointment(id, receiver, date);
     handleSetCurrentAppointment(null);
   };
 
-  const handleDenyAppointment = async (id) => {
-    await db.denyAppointment(id);
+  const handleDenyAppointment = async (id, receiver, date) => {
+    await db.denyAppointment(id, receiver, date);
     handleSetCurrentAppointment(null);
   };
 

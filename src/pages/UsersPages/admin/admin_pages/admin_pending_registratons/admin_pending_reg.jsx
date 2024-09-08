@@ -3,26 +3,18 @@ import React, { useEffect, useState } from "react";
 import "./admin_pending_reg.css";
 import toast, { Toaster } from "react-hot-toast";
 import { AdminAccepptStudentAccount } from "../../../../../context/auth/adminCreateAccount";
+import { useAuth } from "../../../../../context/auth/AuthContext";
+import { useDB } from "../../../../../context/db/DBContext";
 
-const AdmingPendingRegPage = ({ db, auth }) => {
+const AdmingPendingRegPage = () => {
+  const auth = useAuth();
+  const db = useDB();
   const [pendingRegistrationList, setPendingRegistrationList] = useState();
   const [loading, setLoading] = useState(true);
   const [show, setShow] = useState(false);
 
   const toastMessage = (message) => toast(message);
   const toggleShow = () => setShow(!show);
-
-  const handleGetPendingRegistrations = async () => {
-    try {
-      const registrations = await db.getPendingRegistrationRequests();
-      console.log(registrations);
-      setPendingRegistrationList(registrations);
-    } catch (error) {
-      console.log(error);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const handleApproveRegistrationRequest = async (
     email,
@@ -49,7 +41,18 @@ const AdmingPendingRegPage = ({ db, auth }) => {
   };
 
   useEffect(() => {
-    if (pendingRegistrationList === undefined) {
+    if (auth.currentUser) {
+      const handleGetPendingRegistrations = async () => {
+        try {
+          const registrations = await db.getPendingRegistrationRequests();
+          console.log(registrations);
+          setPendingRegistrationList(registrations);
+        } catch (error) {
+          console.log(error);
+        } finally {
+          setLoading(false);
+        }
+      };
       handleGetPendingRegistrations();
     }
   }, []);

@@ -1,11 +1,17 @@
 import React, { createContext, useContext } from "react";
 import { useAuth } from "../auth/AuthContext";
 import { useDB } from "../db/DBContext";
-import { addDoc, collection, serverTimestamp } from "firebase/firestore";
+import {
+  addDoc,
+  collection,
+  getDocs,
+  query,
+  serverTimestamp,
+  where,
+} from "firebase/firestore";
 import { firestore } from "../../server/firebase";
 import emailjs from "@emailjs/browser";
-import toast from "react-hot-toast";
-import { Toast } from "react-bootstrap";
+import toast, { Toaster } from "react-hot-toast";
 
 const MessagingContext = createContext();
 
@@ -16,22 +22,17 @@ export function useMessage() {
 export const MessagingProvider = ({ children }) => {
   const auth = useAuth();
   const db = useDB();
-  const notificationRef = collection(firestore, "Notification");
+  const notificationRef = collection(firestore, "Notifications");
   const toastMessage = (message) => toast(message);
 
-  const sendEmail = async (
-    from_name,
-    sender_email,
-    recipient_email,
-    content,
-    subject
-  ) => {
+  const sendEmail = async (recipient_email, content, subject) => {
     const form = document.createElement("form");
 
     const dummyData = {
-      from_name,
+      from_name: "STGONC Team",
+      from_email: "stgoncteam.spc@gmail.com",
       to_email: recipient_email,
-      from_email: sender_email,
+      sender_name: auth.currentUser.displayName,
       message: content,
       subject: subject,
     };
@@ -64,37 +65,65 @@ export const MessagingProvider = ({ children }) => {
     try {
       if (auth.currentUser) {
         const newNotification = {
-          subject,
-          content,
+          subject: subject,
+          content: content,
           createAt: serverTimestamp(),
           read: false,
           sentBy: auth.currentUser.email,
           sentTo: receiver,
           participants: [auth.currentUser.email, receiver],
         };
+
         await addDoc(notificationRef, newNotification);
-        sendEmail(
-          auth.currentUser.displaName,
-          auth.currentUser.email,
-          receiver.email,
-          content,
-          subject
-        );
+
+        // EMAIL NOTIFICATION
+        // await sendEmail(receiver, content, subject);
+
+        return true;
+      } else {
+        throw new Error("User is not authenticated");
       }
     } catch (error) {
-      console.log(error);
+      console.error("Error storing notification or sending email:", error);
+      toastMessage(error.message);
+      return false;
     }
   };
 
+  async function getUserNotifications(email) {
+    try {
+      if (auth.currentUser) {
+        const q = query(
+          notificationRef,
+          where("sentTo", "==", email),
+          where("read", "==", false)
+        );
+
+        const querySnapshot = await getDocs(q);
+        const notifications = querySnapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+
+        return notifications;
+      } else {
+        throw new Error("User is not authenticated");
+      }
+    } catch (error) {
+      throw new Error(`Error in retrieving notifications: ${error.message}`);
+    }
+  }
+
   const value = {
     storeNotifToDB,
+    getUserNotifications,
   };
 
   return (
     <>
       <MessagingContext.Provider value={value}>
         {children}
-        <Toast />
+        <Toaster />
       </MessagingContext.Provider>
     </>
   );

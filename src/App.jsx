@@ -178,18 +178,18 @@ function App() {
 
   return (
     <AuthProvider>
-      <DBProvider>
-        <CallProvider>
-          <MessagingProvider>
+      <MessagingProvider>
+        <DBProvider>
+          <CallProvider>
             <StorageProvider>
               <div className="App h-[100%] w-full bg-white">
                 <RouterProvider router={router} />
                 <Toaster />
               </div>
             </StorageProvider>
-          </MessagingProvider>
-        </CallProvider>
-      </DBProvider>
+          </CallProvider>
+        </DBProvider>
+      </MessagingProvider>
     </AuthProvider>
   );
 }
