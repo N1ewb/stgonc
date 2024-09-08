@@ -46,7 +46,7 @@ export const MessagingProvider = ({ children }) => {
     try {
       emailjs
         .sendForm("service_6ohiq8x", "template_t4nesyk", form, {
-          publicKey: "4rNJQUW9Fyeif9_7A",
+          publicKey: "3kBWbebX9h3kQSvMq",
         })
         .then(
           () => {
