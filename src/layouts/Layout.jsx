@@ -1,13 +1,18 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Outlet, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/auth/AuthContext";
 import Navbar from "../components/heading/Navbar";
 import { useDB } from "../context/db/DBContext";
+import { useChat } from "../context/chatContext/ChatContext";
+import Chatbox from "../components/Chatsbox/Chatbox";
 
 const Layout = () => {
   const auth = useAuth();
   const db = useDB();
+  const chat = useChat();
   const navigate = useNavigate();
+
+  const [currentChatReceiver, setCurrentChatReceiver] = useState();
 
   useEffect(() => {
     const fetchUserAndRedirect = async () => {
@@ -41,12 +46,20 @@ const Layout = () => {
   }, [auth.currentUser, navigate]);
 
   return (
-    <div className="flex flex-col h-screen">
+    <div className="flex flex-col w-full h-auto">
       <Navbar />
       <main>
-        <div className="outlet h-auto">
+        <div className="outlet w-full h-auto">
           <Outlet />
         </div>
+        {chat.currentChatReceiver && (
+          <Chatbox
+            receiver={chat.currentChatReceiver.appointee.name}
+            auth={auth}
+            db={db}
+            setCurrentChatReceiver={chat.setCurrentChatReceiver}
+          />
+        )}
       </main>
     </div>
   );

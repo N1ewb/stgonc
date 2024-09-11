@@ -46,6 +46,7 @@ import TeacherGraphs from "./pages/UsersPages/faculty/faculty_pages/faculty-grap
 import TeacherAppointmentListPage from "./pages/UsersPages/faculty/faculty_pages/appointment-list-page/TeacherAppointmentListPage";
 import TeacherAppointmentReqPage from "./pages/UsersPages/faculty/faculty_pages/appointment-req-page/TeacherAppointmentReqPage";
 import TeacherSchedulePage from "./pages/UsersPages/faculty/faculty_pages/schedules-page/TeacherSchedulePage";
+import { ChatProvider } from "./context/chatContext/ChatContext";
 
 function App() {
   const router = createBrowserRouter([
@@ -182,10 +183,12 @@ function App() {
         <DBProvider>
           <CallProvider>
             <StorageProvider>
-              <div className="App h-[100%] w-full bg-white">
-                <RouterProvider router={router} />
-                <Toaster />
-              </div>
+              <ChatProvider>
+                <div className="App h-[100%] w-full bg-white">
+                  <RouterProvider router={router} />
+                  <Toaster />
+                </div>
+              </ChatProvider>
             </StorageProvider>
           </CallProvider>
         </DBProvider>

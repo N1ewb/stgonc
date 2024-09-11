@@ -45,7 +45,7 @@ const Profile = () => {
             </Dropdown.Item>
           )}
 
-          <Dropdown.Item onClick={() => navigate("/Userpage")}>
+          <Dropdown.Item onClick={() => navigate("/private/Userpage")}>
             Account Settings
           </Dropdown.Item>
 

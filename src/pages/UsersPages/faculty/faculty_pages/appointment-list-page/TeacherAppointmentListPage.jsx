@@ -5,13 +5,13 @@ import AppointmentsList from "../../faculty_components/AppointmentsList";
 import AppointmentInfo from "../../faculty_components/AppointmentInfo";
 import { useDB } from "../../../../../context/db/DBContext";
 import { useAuth } from "../../../../../context/auth/AuthContext";
+import { useChat } from "../../../../../context/chatContext/ChatContext";
 
 const TeacherAppointmentListPage = () => {
   const db = useDB();
   const auth = useAuth();
-
+  const chat = useChat();
   const [currentAppointment, setCurrentAppointment] = useState();
-  const [currentChatReceiver, setCurrentChatReceiver] = useState();
   const [acceptedAppointments, setAcceptedAppointments] = useState();
 
   const handleGetAcceptedAppointment = (appointments) => {
@@ -60,7 +60,7 @@ const TeacherAppointmentListPage = () => {
                 appointment={appointment}
                 auth={auth}
                 handleSetCurrentAppointment={handleSetCurrentAppointment}
-                setCurrentChatReceiver={setCurrentChatReceiver}
+                setCurrentChatReceiver={chat.setCurrentChatReceiver}
               />
             ))
           ) : (

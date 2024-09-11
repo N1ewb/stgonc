@@ -37,7 +37,7 @@ const AppointmentInfo = ({
       </div>
       <div className="appointment-info-body [&_span]:text-[13px]">
         <p>
-          <span className="text-[#7a7a7ad1]">Student Name:</span>{" "}
+          <span className="text-[#7a7a7ad1] capitalize">Student Name:</span>{" "}
           {currentAppointment.appointee.name}
         </p>
         <p>
@@ -78,6 +78,9 @@ const AppointmentInfo = ({
         </div>
       ) : currentAppointment.appointmentStatus === "Accepted" ? (
         <div className="appointment-info-footer w-full flex flex-row items-end justify-end gap-3 ">
+          <button className="m-0 py-2 px-5 bg-[#57a627] rounded-md">
+            Finish
+          </button>
           <button className="m-0 py-2 px-5 bg-[#720000] rounded-md">
             Cancel
           </button>
