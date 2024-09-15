@@ -40,7 +40,6 @@ export const DBProvider = ({ children }) => {
   const auth = useAuth();
   const notif = useMessage();
 
-  const addSuccess = () => toast("Registered Successfuly");
   const toastMessage = (message) => toast(message);
   const notifyError = (error) => toast(error.message);
 
@@ -343,6 +342,44 @@ export const DBProvider = ({ children }) => {
     }
   };
 
+  const subscribeToInstructorChanges = async (callback) => {
+    try {
+      if (auth.currentUser) {
+        const q = query(
+          usersCollectionRef,
+          where("role", "in", ["Teacher", "Admin"])
+        );
+
+        const unsubscribe = onSnapshot(q, (snapshot) => {
+          const data = snapshot.docs.map((doc) => ({
+            id: doc.id,
+            ...doc.data(),
+          }));
+
+          const updatedData = data.filter((user) => user.role !== "moderator");
+          callback(updatedData);
+        });
+
+        return unsubscribe;
+      }
+    } catch (error) {
+      toastMessage("Error subscribing to user changes:", error);
+    }
+  };
+
+  const editInstructorColorCode = async (id, colorHex) => {
+    try {
+      if (auth.currentUser) {
+        const instructorRef = doc(firestore, "Users", id);
+        const updatedInstructorDocRef = { instructorColorCode: colorHex };
+
+        await updateDoc(instructorRef, updatedInstructorDocRef);
+      }
+    } catch (error) {
+      notifyError(error);
+    }
+  };
+
   //As Teacher
   const subscribeToAppointmentChanges = async (callback) => {
     try {
@@ -442,12 +479,19 @@ export const DBProvider = ({ children }) => {
   const getPendingRegistrationRequests = async () => {
     try {
       if (auth.currentUser) {
-        const usersSnapshot = await getDocs(studentRegistrationRequestRef);
-        const pendingRegData = usersSnapshot.docs.map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
-        }));
-        return pendingRegData;
+        const user = await getUser(auth.currentUser.uid);
+        if (user) {
+          const q = query(
+            studentRegistrationRequestRef,
+            where("department", "==", user.department)
+          );
+          const usersSnapshot = await getDocs(q);
+          const pendingRegData = usersSnapshot.docs.map((doc) => ({
+            id: doc.id,
+            ...doc.data(),
+          }));
+          return pendingRegData;
+        }
       }
     } catch (error) {
       notifyError(error);
@@ -654,6 +698,7 @@ export const DBProvider = ({ children }) => {
     getInstructorAppointment,
     approveAppointment,
     denyAppointment,
+    editInstructorColorCode,
     getMessages,
     sendMessage,
     getDays,
@@ -672,6 +717,7 @@ export const DBProvider = ({ children }) => {
     subscribeToMessageChanges,
     subscribeToRequestedAppointmentChanges,
     subscribeToUserChanges,
+    subscribeToInstructorChanges,
     subscribeToSchedulesChanges,
   };
 

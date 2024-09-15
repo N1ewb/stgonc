@@ -1,26 +1,22 @@
 import React, { useEffect, useState } from "react";
-import AppointmentReqList from "../../faculty_components/AppointmentReqList";
-
-import "./TeacherAppointmentReqPage.css";
-import AppointmentInfo from "../../faculty_components/AppointmentInfo";
+import AppointmentReqList from "../../../../../components/appointments/AppointmentReqList";
+import AppointmentInfo from "../../../../../components/appointments/AppointmentInfo";
 import { useDB } from "../../../../../context/db/DBContext";
 import { useAuth } from "../../../../../context/auth/AuthContext";
+
+import "./TeacherAppointmentReqPage.css";
+import { useAppointment } from "../../../../../context/appointmentContext/AppointmentContext";
 
 const TeacherAppointmentReqPage = () => {
   const db = useDB();
   const auth = useAuth();
-
-  const [currentAppointment, setCurrentAppointment] = useState();
+  const { currentAppointment, setCurrentAppointment } = useAppointment();
   const [requestedAppointments, setRequestedAppointments] = useState();
 
   const handleGetRequestedAppointment = (appointments) => {
     return appointments.filter(
       (appointment) => appointment.appointmentStatus === "pending"
     );
-  };
-
-  const handleSetCurrentAppointment = (appointment) => {
-    setCurrentAppointment(appointment);
   };
 
   useEffect(() => {
@@ -41,16 +37,16 @@ const TeacherAppointmentReqPage = () => {
 
   const handleAcceptAppointment = async (id, receiver, date) => {
     await db.approveAppointment(id, receiver, date);
-    handleSetCurrentAppointment(null);
+    setCurrentAppointment(null);
   };
 
   const handleDenyAppointment = async (id, receiver, date) => {
     await db.denyAppointment(id, receiver, date);
-    handleSetCurrentAppointment(null);
+    setCurrentAppointment(null);
   };
 
   useEffect(() => {
-    handleSetCurrentAppointment(null);
+    setCurrentAppointment(null);
   }, []);
 
   return (
@@ -69,7 +65,6 @@ const TeacherAppointmentReqPage = () => {
                 appointment={appointment}
                 handleDenyAppointment={handleDenyAppointment}
                 handleAcceptAppointment={handleAcceptAppointment}
-                handleSetCurrentAppointment={handleSetCurrentAppointment}
               />
             ))
           ) : (
@@ -77,24 +72,21 @@ const TeacherAppointmentReqPage = () => {
           )}
         </div>
 
-        {currentAppointment && (
-          <div
-            className={`w-[50%] bg-white shadow-md rounded-[30px] p-10 transition-all ease-in-out duration-300 ${
-              currentAppointment
-                ? "opacity-100 h-auto translate-y-0"
-                : "opacity-0 h-0 -translate-y-10"
-            }`}
-          >
-            {currentAppointment && (
-              <AppointmentInfo
-                currentAppointment={currentAppointment}
-                handleSetCurrentAppointment={handleSetCurrentAppointment}
-                handleAcceptAppointment={handleAcceptAppointment}
-                handleDenyAppointment={handleDenyAppointment}
-              />
-            )}
-          </div>
-        )}
+        <div
+          className={`w-[50%] bg-white shadow-md rounded-[30px] p-10 transition-all ease-in-out duration-300 ${
+            currentAppointment
+              ? "opacity-100 h-auto translate-y-0"
+              : "opacity-0 h-0 -translate-y-10"
+          }`}
+        >
+          {currentAppointment && (
+            <AppointmentInfo
+              currentAppointment={currentAppointment}
+              handleAcceptAppointment={handleAcceptAppointment}
+              handleDenyAppointment={handleDenyAppointment}
+            />
+          )}
+        </div>
       </div>
     </div>
   );

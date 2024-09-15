@@ -1,16 +1,18 @@
-import React from "react";
+import React, { useEffect } from "react";
 
-import DefaultProfile from "../../../../static/images/default-profile.png";
-import CheckMarkDark from "../../../../static/images/tick-mark-dark.png";
-import DenyDark from "../../../../static/images/delete-dark.png";
-import MoreDark from "../../../../static/images/more-dark.png";
+import DefaultProfile from "../../static/images/default-profile.png";
+import CheckMarkDark from "../../static/images/tick-mark-dark.png";
+import DenyDark from "../../static/images/delete-dark.png";
+import MoreDark from "../../static/images/more-dark.png";
+import { useAppointment } from "../../context/appointmentContext/AppointmentContext";
 
 const AppointmentReqList = ({
   handleAcceptAppointment,
   handleDenyAppointment,
   appointment,
-  handleSetCurrentAppointment,
 }) => {
+  const { setCurrentAppointment } = useAppointment();
+
   return (
     <div className="teacher-appointment-request-table w-full flex flex-row items-center [&_p]:m-0 justify-evenly bg-white p-5 rounded-[30px] shadow-md">
       <img
@@ -53,7 +55,7 @@ const AppointmentReqList = ({
       </button>
       <button
         className="p-0 bg-transparent"
-        onClick={() => handleSetCurrentAppointment(appointment)}
+        onClick={() => setCurrentAppointment(appointment)}
       >
         <img src={MoreDark} alt="more" height={30} width={30} />
       </button>

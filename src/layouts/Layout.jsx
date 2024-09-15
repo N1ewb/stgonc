@@ -48,13 +48,13 @@ const Layout = () => {
   return (
     <div className="flex flex-col w-full h-auto">
       <Navbar />
-      <main>
+      <main className="w-full h-auto">
         <div className="outlet w-full h-auto">
           <Outlet />
         </div>
         {chat.currentChatReceiver && (
           <Chatbox
-            receiver={chat.currentChatReceiver.appointee.name}
+            receiver={chat.currentChatReceiver}
             auth={auth}
             db={db}
             setCurrentChatReceiver={chat.setCurrentChatReceiver}

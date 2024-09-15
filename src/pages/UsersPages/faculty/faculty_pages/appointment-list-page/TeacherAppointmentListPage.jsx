@@ -1,27 +1,24 @@
 import React, { useEffect, useState } from "react";
 
 import "./TeacherAppointmentListPage.css";
-import AppointmentsList from "../../faculty_components/AppointmentsList";
-import AppointmentInfo from "../../faculty_components/AppointmentInfo";
+import AppointmentsList from "../../../../../components/appointments/AppointmentsList";
+import AppointmentInfo from "../../../../../components/appointments/AppointmentInfo";
 import { useDB } from "../../../../../context/db/DBContext";
 import { useAuth } from "../../../../../context/auth/AuthContext";
 import { useChat } from "../../../../../context/chatContext/ChatContext";
+import { useAppointment } from "../../../../../context/appointmentContext/AppointmentContext";
 
 const TeacherAppointmentListPage = () => {
   const db = useDB();
   const auth = useAuth();
   const chat = useChat();
-  const [currentAppointment, setCurrentAppointment] = useState();
+  const { currentAppointment, setCurrentAppointment } = useAppointment();
   const [acceptedAppointments, setAcceptedAppointments] = useState();
 
   const handleGetAcceptedAppointment = (appointments) => {
     return appointments.filter(
       (appointment) => appointment.appointmentStatus === "Accepted"
     );
-  };
-
-  const handleSetCurrentAppointment = (appointment) => {
-    setCurrentAppointment(appointment);
   };
 
   useEffect(() => {
@@ -41,7 +38,7 @@ const TeacherAppointmentListPage = () => {
   }, [db]);
 
   useEffect(() => {
-    handleSetCurrentAppointment(null);
+    setCurrentAppointment(null);
   }, []);
 
   return (
@@ -58,8 +55,6 @@ const TeacherAppointmentListPage = () => {
               <AppointmentsList
                 key={index}
                 appointment={appointment}
-                auth={auth}
-                handleSetCurrentAppointment={handleSetCurrentAppointment}
                 setCurrentChatReceiver={chat.setCurrentChatReceiver}
               />
             ))
@@ -68,24 +63,21 @@ const TeacherAppointmentListPage = () => {
           )}
         </div>
 
-        {currentAppointment && (
-          <div
-            className={`w-[50%] bg-white shadow-md rounded-[30px] p-10 transition-all ease-in-out duration-300 ${
-              currentAppointment
-                ? "opacity-100 h-auto translate-y-0"
-                : "opacity-0 h-0 -translate-y-10"
-            }`}
-          >
-            {currentAppointment && (
-              <AppointmentInfo
-                currentAppointment={currentAppointment}
-                handleSetCurrentAppointment={handleSetCurrentAppointment}
-                handleAcceptAppointment={() => null}
-                handleDenyAppointment={() => null}
-              />
-            )}
-          </div>
-        )}
+        <div
+          className={`w-[50%] bg-white shadow-md rounded-[30px] p-10 transition-all ease-in-out duration-300 ${
+            currentAppointment
+              ? "opacity-100 h-auto translate-y-0"
+              : "opacity-0 h-0 -translate-y-10"
+          }`}
+        >
+          {currentAppointment && (
+            <AppointmentInfo
+              appointment={currentAppointment}
+              handleAcceptAppointment={() => null}
+              handleDenyAppointment={() => null}
+            />
+          )}
+        </div>
       </div>
     </div>
   );

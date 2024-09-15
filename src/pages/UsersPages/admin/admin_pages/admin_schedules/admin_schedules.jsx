@@ -4,6 +4,7 @@ import SchedulesModal from "../../../../../components/modal/schedules-modal/Sche
 import toast from "react-hot-toast";
 import { useAuth } from "../../../../../context/auth/AuthContext";
 import { useDB } from "../../../../../context/db/DBContext";
+import Legends from "../../admin-components/Legends";
 
 const AdminSchedulesPage = () => {
   const db = useDB();
@@ -11,8 +12,7 @@ const AdminSchedulesPage = () => {
   const { currentUser } = useAuth();
   const [teachersList, setTeachersList] = useState([]);
   const [show, setShow] = useState(false);
-  const [selectedTime, setSelectedTime] = useState(null);
-  const [selectedDay, setSelectedDay] = useState(null);
+
   const [scheduleData, setScheduleData] = useState({});
   const [schedules, setSchedules] = useState();
   const [choosenCells, setChoosenCells] = useState([]);
@@ -98,14 +98,6 @@ const AdminSchedulesPage = () => {
   //   { length: endTime - startTime },
   //   (_, i) => `${startTime + i}:00`
   // );
-
-  useEffect(() => {
-    const handleGetTechears = async () => {
-      const teachers = await db.getTeachers();
-      setTeachersList(teachers);
-    };
-    handleGetTechears();
-  }, []);
 
   const toggleShow = () => {
     if (choosenCells.length !== 0) {
@@ -203,6 +195,26 @@ const AdminSchedulesPage = () => {
   };
 
   useEffect(() => {
+    const fetchInstructors = async () => {
+      try {
+        const handleInstructorUpdates = (instrcutorData) => {
+          setTeachersList(instrcutorData);
+        };
+
+        const unsubscribe = db.subscribeToInstructorChanges(
+          handleInstructorUpdates
+        );
+
+        return () => unsubscribe();
+      } catch (error) {
+        toastMessage("Error in fetching instructors:", error.message);
+      }
+    };
+
+    fetchInstructors();
+  }, [db]);
+
+  useEffect(() => {
     const fetchSchedules = async () => {
       try {
         const unsubscribeSchedules = db.subscribeToSchedulesChanges(
@@ -216,7 +228,13 @@ const AdminSchedulesPage = () => {
                 (timeslots) => {
                   timeslots.forEach((timeslot) => {
                     const key = `${timeslot.time.startTime}-${timeslot.time.endTime}-${schedule.dayOfWeek}`;
-                    newScheduleData[key] = timeslot.assignedInstructor;
+
+                    const foundInstructor = teachersList.find(
+                      (instructor) =>
+                        instructor.userID === timeslot.assignedInstructor.userID
+                    );
+
+                    newScheduleData[key] = foundInstructor;
                   });
                   setScheduleData({ ...scheduleData, ...newScheduleData });
                 },
@@ -240,7 +258,7 @@ const AdminSchedulesPage = () => {
     };
 
     fetchSchedules();
-  }, [db]);
+  }, [db, teachersList]);
 
   return (
     <div className="admin-schedules-page-container w-full h-[100%] flex flex-col justify-around items-center gap-[5px]">
@@ -248,17 +266,19 @@ const AdminSchedulesPage = () => {
         <h1 className="w-[full] font-bold text-3xl">
           {currentUser.department}
         </h1>
-        <h3 className="w-full text-xl">Faculty Consultation Schedule</h3>
+        <h3 className="w-full text-2xl font-bold">
+          Faculty Consultation Schedule
+        </h3>
       </div>
-      <div className="schedules-table w-full md:w-[90%] mt-[20px] flex flex-col items-center justify-between gap-[5px] ">
-        <table className=" min-w-[50%] border-collapse border-solid border-[1px] border-[#740000] text-center">
+      <div className="schedules-table  md:w-[90%]  flex flex-col items-center justify-between shadow-md gap-3 p-10 rounded-[30px]">
+        <table className=" min-w-[50%] border-collapse  text-center">
           <thead>
-            <tr className="even:bg-[#740000] [&_th]:border-solid [&_th]:border-[1px] [&_th]:border-[#740000] [&_th]:font-bold [&_th]:bg-[#740000] [&_th]:text-white [&_th]:p-[8px] [&_th]:w-[100px] xsm:w-[80px]">
-              <th className="xsm:text-[14px]">Time/Days</th>
+            <tr className="  [&_th]:border-transparent [&_th]:font-bold [&_th]:text-[#720000] [&_th]:p-[8px] [&_th]:w-[100px] xsm:w-[80px]">
+              <th className="xsm:text-[14px] ">Time/Days</th>
               {schedules && schedules.length !== 0
                 ? schedules.map((day) => (
                     <th className="xsm:text-[13px]" key={day.id}>
-                      <span className="block md:hidden">{day.dayOfWeek}</span>
+                      <span className="block md:hidden ">{day.dayOfWeek}</span>
                       <span className="hidden md:block">{day.shortVer}</span>
                     </th>
                   ))
@@ -268,8 +288,8 @@ const AdminSchedulesPage = () => {
           <tbody>
             {times.map((time) => (
               <tr key={`${time.startTime}-${time.endTime}`}>
-                <td className="h-[30px] xsm:text-[14px] first:bg-[#740000] text-white border-solid border-[1px] border-[#740000]">
-                  {`${time.startTime}:00 ${time.endTime}:00`}{" "}
+                <td className="h-[30px] xsm:text-[14px] ">
+                  {`${time.startTime}:00 ${time.endTime}:00`}
                 </td>
                 {schedules && schedules.length !== 0
                   ? schedules.map((day) => (
@@ -282,7 +302,7 @@ const AdminSchedulesPage = () => {
                         }}
                         key={`${time.startTime}-${time.endTime}-${day.dayOfWeek}`}
                         onClick={() => handleCellClick(time, day)}
-                        className={`border-solid border-[1px] border-[#740000] ${
+                        className={`border-solid border-[1px] border-[#e4e4e4] ${
                           isEditMode &&
                           choosenCells.some((cell) => {
                             const parsedCell = JSON.parse(cell);
@@ -308,7 +328,6 @@ const AdminSchedulesPage = () => {
           <SchedulesModal
             toggleShow={toggleShow}
             show={show}
-            selectedTime={selectedTime}
             teachersList={teachersList}
             toastMessage={toastMessage}
             setTd={setTd}
@@ -328,32 +347,15 @@ const AdminSchedulesPage = () => {
           </div>
         )}
       </div>
-      <div className="legends-container w-full flex flex-col justify-around">
-        <h5 className="text-2xl font-bold text-[#740000]">Legend</h5>
-        <div className="instructors-legend w-full flex flex-row flex-wrap gap-6">
-          {teachersList && teachersList.length !== 0 ? (
-            teachersList.map((teacher, index) => (
-              <div
-                key={index}
-                className="teacher-legend flex flex-row items-center gap-2 w-[100px] "
-              >
-                <p className="m-0 ">{teacher.lastName}</p>
-                <div
-                  style={{
-                    backgroundColor: `${
-                      teacher.instructorColorCode
-                        ? teacher.instructorColorCode
-                        : "gray"
-                    }`,
-                  }}
-                  className={`instructorColorCode p-2`}
-                ></div>
-              </div>
-            ))
-          ) : (
-            <p>No Instructors</p>
-          )}
-        </div>
+      <h5 className="text-2xl font-bold text-[#740000]">Legend</h5>
+      <div className="legends-container relative w-full flex flex-row justify-around">
+        {teachersList && teachersList.length !== 0 ? (
+          teachersList.map((teacher, index) => (
+            <Legends key={index} teacher={teacher} />
+          ))
+        ) : (
+          <p>No Instructors</p>
+        )}
       </div>
     </div>
   );

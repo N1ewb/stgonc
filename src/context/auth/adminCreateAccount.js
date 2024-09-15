@@ -27,10 +27,10 @@ export const AdminAccepptStudentAccount = async (
   lastName,
   phoneNumber,
   studentIdnumber,
+  department,
   requestID
 ) => {
   try {
-    // Create user
     const userCredential = await createUserWithEmailAndPassword(
       secondaryAuth,
       email,
@@ -38,25 +38,23 @@ export const AdminAccepptStudentAccount = async (
     );
     const user = userCredential.user;
 
-    // Update profile
     await updateProfile(user, {
       displayName: `${firstName} ${lastName}`,
     });
 
-    // Update StudentRegistrationRequest
     const docRef = doc(
       collection(firestore, "StudentRegistrationRequest"),
       requestID
     );
     await updateDoc(docRef, { status: "approved" });
 
-    // Create user document
     await setDoc(doc(collection(firestore, "Users"), user.uid), {
       userID: user.uid,
       firstName: firstName,
       lastName: lastName,
       email: email,
       phoneNumber,
+      department,
       studentIdnumber,
       role: "Student",
       isOnline: false,

@@ -1,11 +1,13 @@
 import React from "react";
-import Close from "../../../../static/images/close-dark.png";
+import Close from "../../static/images/close-dark.png";
+import { useAppointment } from "../../context/appointmentContext/AppointmentContext";
+
 const AppointmentInfo = ({
-  currentAppointment,
-  handleSetCurrentAppointment,
   handleAcceptAppointment,
   handleDenyAppointment,
 }) => {
+  const { currentAppointment, setCurrentAppointment } = useAppointment();
+
   const formatDate = (dateString) => {
     const date = new Date(dateString);
     return date.toLocaleDateString("en-US", {
@@ -30,7 +32,7 @@ const AppointmentInfo = ({
         </h3>
         <button
           className="bg-transparent font-bold text-[#320000]"
-          onClick={() => handleSetCurrentAppointment(null)}
+          onClick={() => setCurrentAppointment(null)}
         >
           <img src={Close} alt="close" height={20} width={20} />
         </button>

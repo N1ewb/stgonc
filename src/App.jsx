@@ -37,7 +37,7 @@ import AuthLayout from "./layouts/AuthLayout/AuthLayout";
 import StudentDashboard from "./pages/UsersPages/student/dashboard/StudentDashboard";
 import AdminGraphs from "./pages/UsersPages/admin/admin_pages/admin_graphs/admin_graphs";
 import AdminDashboard from "./pages/UsersPages/admin/dashboard/AdminDashboard";
-import AdminAppointmentPage from "./pages/UsersPages/admin/admin_pages/admin_appointments/admin_appointments";
+import AdminAppointmentListPage from "./pages/UsersPages/admin/admin_pages/admin_appointments/admin_appointments_list";
 import AdmingPendingRegPage from "./pages/UsersPages/admin/admin_pages/admin_pending_registratons/admin_pending_reg";
 import AdminSchedulesPage from "./pages/UsersPages/admin/admin_pages/admin_schedules/admin_schedules";
 import AdminUserList from "./pages/UsersPages/admin/admin_pages/admin_userlist/adminUserList";
@@ -47,6 +47,9 @@ import TeacherAppointmentListPage from "./pages/UsersPages/faculty/faculty_pages
 import TeacherAppointmentReqPage from "./pages/UsersPages/faculty/faculty_pages/appointment-req-page/TeacherAppointmentReqPage";
 import TeacherSchedulePage from "./pages/UsersPages/faculty/faculty_pages/schedules-page/TeacherSchedulePage";
 import { ChatProvider } from "./context/chatContext/ChatContext";
+import { Appointmentprovider } from "./context/appointmentContext/AppointmentContext";
+import AdminAppointmentReqsPage from "./pages/UsersPages/admin/admin_pages/admin_appointment_reqs/AdminAppointmentReqs";
+import PendingReqMessagePage from "./pages/authentication/YourRegReqisPending/PendingReqMessagePage";
 
 function App() {
   const router = createBrowserRouter([
@@ -71,8 +74,12 @@ function App() {
                   element: <AdminGraphs />,
                 },
                 {
-                  path: "/private/admin/dashboard/appointments",
-                  element: <AdminAppointmentPage />,
+                  path: "/private/admin/dashboard/appointments-list",
+                  element: <AdminAppointmentListPage />,
+                },
+                {
+                  path: "/private/admin/dashboard/appointments-requests",
+                  element: <AdminAppointmentReqsPage />,
                 },
                 {
                   path: "/private/admin/dashboard/pending-registrations",
@@ -171,6 +178,10 @@ function App() {
               path: "/auth/AdminRegister",
               element: <AdminRegistration />,
             },
+            {
+              path: "/auth/PendingRequestMessage",
+              element: <PendingReqMessagePage />,
+            },
           ],
         },
       ],
@@ -184,10 +195,12 @@ function App() {
           <CallProvider>
             <StorageProvider>
               <ChatProvider>
-                <div className="App h-[100%] w-full bg-white">
-                  <RouterProvider router={router} />
-                  <Toaster />
-                </div>
+                <Appointmentprovider>
+                  <div className="App h-[100%] w-full bg-white">
+                    <RouterProvider router={router} />
+                    <Toaster />
+                  </div>
+                </Appointmentprovider>
               </ChatProvider>
             </StorageProvider>
           </CallProvider>

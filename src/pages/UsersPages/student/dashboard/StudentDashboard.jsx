@@ -9,12 +9,14 @@ import { toast } from "react-hot-toast";
 import { useCall } from "../../../../context/call/CallContext";
 import { useMessage } from "../../../../context/notification/NotificationContext";
 import More from "../../../../static/images/more-dark.png";
+import { useChat } from "../../../../context/chatContext/ChatContext";
 
 const StudentDashboard = () => {
   const db = useDB();
   const auth = useAuth();
   const call = useCall();
   const notif = useMessage();
+  const chat = useChat();
   const navigate = useNavigate();
   const toastMessage = (message) => toast(message);
   const [instructors, setInstructors] = useState();
@@ -179,12 +181,16 @@ const StudentDashboard = () => {
                     <p className="text-2xl">
                       {appt.appointedTeacher.teacherDisplayName}
                     </p>
-                    <Link
-                      className=" text-[#360000] no-underline text-2xl"
-                      to={`/private/Chatroom?receiver=${appt.appointedTeacher.teacherDisplayName} `}
+                    <button
+                      className=""
+                      onClick={() =>
+                        chat.setCurrentChatReceiver(
+                          appt.appointedTeacher.teacherDisplayName
+                        )
+                      }
                     >
                       Chat
-                    </Link>
+                    </button>
                   </div>
                 ))
               : ""}

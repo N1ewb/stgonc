@@ -56,7 +56,10 @@ const Navbar = () => {
   return (
     <div className="navbar-container bg-[#360000] flex flex-row fixed items-center w-full justify-between z-20 p-[20px]">
       <div className="logo-wrapper w-[40%]">
-        <img src={STGONCLOGO} alt="stgonc-logo" width={40} />
+        <Link to="/auth/Login">
+          {" "}
+          <img src={STGONCLOGO} alt="stgonc-logo" width={40} />
+        </Link>
       </div>
 
       <div className="nav-links flex flex-row justify-around md:hidden w-[30%] xl:w-[50%] items-center">

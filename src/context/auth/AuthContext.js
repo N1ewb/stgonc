@@ -60,7 +60,8 @@ export const AuthProvider = ({ children }) => {
     firstName,
     lastName,
     phoneNumber,
-    studentIdnumber
+    studentIdnumber,
+    department
   ) => {
     try {
       return setDoc(doc(collection(firestore, "StudentRegistrationRequest")), {
@@ -70,6 +71,7 @@ export const AuthProvider = ({ children }) => {
         password,
         phoneNumber,
         studentIdnumber,
+        department,
         role: "Student",
         status: "Pending",
       });

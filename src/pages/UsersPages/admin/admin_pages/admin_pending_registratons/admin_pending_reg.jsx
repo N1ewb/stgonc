@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
 
 import "./admin_pending_reg.css";
-import toast, { Toaster } from "react-hot-toast";
-import { AdminAccepptStudentAccount } from "../../../../../context/auth/adminCreateAccount";
+import { Toaster } from "react-hot-toast";
+
 import { useAuth } from "../../../../../context/auth/AuthContext";
 import { useDB } from "../../../../../context/db/DBContext";
+import RegistrationReqCards from "../../admin-components/RegistrationReqCards";
 
 const AdmingPendingRegPage = () => {
   const auth = useAuth();
@@ -13,32 +14,7 @@ const AdmingPendingRegPage = () => {
   const [loading, setLoading] = useState(true);
   const [show, setShow] = useState(false);
 
-  const toastMessage = (message) => toast(message);
   const toggleShow = () => setShow(!show);
-
-  const handleApproveRegistrationRequest = async (
-    email,
-    password,
-    firstName,
-    lastName,
-    phoneNumber,
-    studentIdnumber,
-    requestID
-  ) => {
-    try {
-      await AdminAccepptStudentAccount(
-        email,
-        password,
-        firstName,
-        lastName,
-        phoneNumber,
-        studentIdnumber,
-        requestID
-      );
-    } catch (error) {
-      toastMessage(error);
-    }
-  };
 
   useEffect(() => {
     if (auth.currentUser) {
@@ -67,32 +43,15 @@ const AdmingPendingRegPage = () => {
 
   return (
     <div className="pending-registrations-container">
+      <h1 className="text-[#320000] text-4xl font-bold">
+        Pending<br></br> <span className="font-light">Registrations</span>
+      </h1>
       {pendingRegistrationList && pendingRegistrationList.length !== 0 ? (
         pendingRegistrationList.map((pendingRegistrations, index) => (
-          <div className="pending-registration-container" key={index}>
-            <p>{pendingRegistrations.firstName}</p>
-            <p>{pendingRegistrations.lastName}</p>
-            <p>{pendingRegistrations.status}</p>
-            {pendingRegistrations.status === "Pending" ? (
-              <button
-                onClick={() =>
-                  handleApproveRegistrationRequest(
-                    pendingRegistrations.email,
-                    pendingRegistrations.password,
-                    pendingRegistrations.firstName,
-                    pendingRegistrations.lastName,
-                    pendingRegistrations.phoneNumber,
-                    pendingRegistrations.studentIdnumber,
-                    pendingRegistrations.id
-                  )
-                }
-              >
-                Approve Request
-              </button>
-            ) : (
-              <p></p>
-            )}
-          </div>
+          <RegistrationReqCards
+            pendingRegistrations={pendingRegistrations}
+            key={index}
+          />
         ))
       ) : (
         <p>No pending Registrations</p>

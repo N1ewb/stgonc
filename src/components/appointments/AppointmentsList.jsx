@@ -1,17 +1,17 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Link } from "react-router-dom";
 
-import DefaultProfile from "../../../../static/images/default-profile.png";
-import ChatDark from "../../../../static/images//chat-dark.png";
-import CallDark from "../../../../static/images/phone-call.png";
-import MoreDark from "../../../../static/images/more-dark.png";
+import DefaultProfile from "../../static/images/default-profile.png";
+import ChatDark from "../../static/images/chat.png";
+import CallDark from "../../static/images/phone-call.png";
+import MoreDark from "../../static/images/more-dark.png";
+import { useAuth } from "../../context/auth/AuthContext";
+import { useAppointment } from "../../context/appointmentContext/AppointmentContext";
 
-const AppointmentList = ({
-  appointment,
-  auth,
-  handleSetCurrentAppointment,
-  setCurrentChatReceiver,
-}) => {
+const AppointmentList = ({ appointment, setCurrentChatReceiver }) => {
+  const { setCurrentAppointment } = useAppointment();
+
+  const auth = useAuth();
   return (
     <div className="teacher-appointment-list-table w-full flex flex-row items-center [&_p]:m-0 justify-evenly bg-white p-5 rounded-[30px] shadow-md">
       <img
@@ -30,7 +30,7 @@ const AppointmentList = ({
 
       <button
         className="bg-transparent p-0"
-        onClick={() => setCurrentChatReceiver(appointment)}
+        onClick={() => setCurrentChatReceiver(appointment.appointee.name)}
       >
         <img src={ChatDark} alt="chat" width={30} height={30} />
       </button>
@@ -43,7 +43,7 @@ const AppointmentList = ({
       </Link>
       <button
         className="p-0 bg-transparent"
-        onClick={() => handleSetCurrentAppointment(appointment)}
+        onClick={() => setCurrentAppointment(appointment)}
       >
         <img src={MoreDark} alt="more" height={40} width={30} />
       </button>
