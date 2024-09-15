@@ -1,25 +1,18 @@
 import React from "react";
 import "./App.css";
-import {
-  BrowserRouter,
-  Routes,
-  Route,
-  Navigate,
-  createBrowserRouter,
-  RouterProvider,
-} from "react-router-dom";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { AuthProvider } from "./context/auth/AuthContext";
 import { DBProvider } from "./context/db/DBContext";
 import { PrivateRoutes } from "./utils/protected-routes/routes";
 import { CallProvider } from "./context/call/CallContext";
 import { MessagingProvider } from "./context/notification/NotificationContext";
 import { StorageProvider } from "./context/storage/StorageContext";
+import { ChatProvider } from "./context/chatContext/ChatContext";
+import { Appointmentprovider } from "./context/appointmentContext/AppointmentContext";
 import { Toaster } from "react-hot-toast";
 
 import Chatroom from "./pages/chatroom/Chatroom";
 import LandingPage from "./pages/landingpage/LandingPage";
-import DashboardSelector from "./pages/DashboardSelector/DashboardSelector";
-import Navbar from "./components/heading/Navbar";
 import VideoCall from "./pages/videocall/VideoCall";
 import SendCallReq from "./pages/videocall/SendCallReq";
 import ReceiveCallReq from "./pages/videocall/ReceiveCallReq";
@@ -36,7 +29,6 @@ import StudentLayout from "./layouts/StudentLayout/StudentLayout";
 import AuthLayout from "./layouts/AuthLayout/AuthLayout";
 import StudentDashboard from "./pages/UsersPages/student/dashboard/StudentDashboard";
 import AdminGraphs from "./pages/UsersPages/admin/admin_pages/admin_graphs/admin_graphs";
-import AdminDashboard from "./pages/UsersPages/admin/dashboard/AdminDashboard";
 import AdminAppointmentListPage from "./pages/UsersPages/admin/admin_pages/admin_appointments/admin_appointments_list";
 import AdmingPendingRegPage from "./pages/UsersPages/admin/admin_pages/admin_pending_registratons/admin_pending_reg";
 import AdminSchedulesPage from "./pages/UsersPages/admin/admin_pages/admin_schedules/admin_schedules";
@@ -46,8 +38,6 @@ import TeacherGraphs from "./pages/UsersPages/faculty/faculty_pages/faculty-grap
 import TeacherAppointmentListPage from "./pages/UsersPages/faculty/faculty_pages/appointment-list-page/TeacherAppointmentListPage";
 import TeacherAppointmentReqPage from "./pages/UsersPages/faculty/faculty_pages/appointment-req-page/TeacherAppointmentReqPage";
 import TeacherSchedulePage from "./pages/UsersPages/faculty/faculty_pages/schedules-page/TeacherSchedulePage";
-import { ChatProvider } from "./context/chatContext/ChatContext";
-import { Appointmentprovider } from "./context/appointmentContext/AppointmentContext";
 import AdminAppointmentReqsPage from "./pages/UsersPages/admin/admin_pages/admin_appointment_reqs/AdminAppointmentReqs";
 import PendingReqMessagePage from "./pages/authentication/YourRegReqisPending/PendingReqMessagePage";
 
