@@ -3,7 +3,7 @@ import React from "react";
 const AccountPage = ({ auth, db, user }) => {
   return (
     <div className="account-page-container shadow-md rounded-[20px] pt-10 pb-5 px-1 bg-[#f4f4f4] w-full flex flex-col gap-2 [&_p]:m-0">
-      <p className="w-full px-3">
+      <p className="w-full px-3 text-2xl">
         General Account Details <br></br>
         <span className="text-[#828282] text-sm">Mange user profile</span>
       </p>

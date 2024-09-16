@@ -50,7 +50,7 @@ const AdminAppointmentReqsPage = () => {
     <div className="admin-appointments-container">
       <div className="appoinments-container">
         <div className="accepted-appointments-container">
-          <h3 className="text-4xl font-bold">Appointment <span className="font-light">Requests</span></h3>
+          <h3 className="text-4xl font-bold">Appointment <br></br> <span className="font-light">Requests</span></h3>
           {appointments && appointments.length ? (
             appointments.map((appointment, index) =>
               appointment.appointmentStatus === "pending" ? (

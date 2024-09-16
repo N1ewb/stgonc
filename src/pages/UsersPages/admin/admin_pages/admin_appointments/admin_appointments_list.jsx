@@ -1,12 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
-
 import "./admin_appointments.css";
 import { useDB } from "../../../../../context/db/DBContext";
 import { useAuth } from "../../../../../context/auth/AuthContext";
 import AppointmentList from "../../../../../components/appointments/AppointmentsList";
 import { useChat } from "../../../../../context/chatContext/ChatContext";
-
 import AppointmentInfo from "../../../../../components/appointments/AppointmentInfo";
 import { useAppointment } from "../../../../../context/appointmentContext/AppointmentContext";
 
@@ -41,7 +38,7 @@ const AdminAppointmentPage = () => {
     <div className="admin-appointments-container">
       <div className="appoinments-container">
         <div className="accepted-appointments-container">
-          <h3 className="text-4xl font-bold text-[#320000]">Appointments <span className="font-light">List</span></h3>
+          <h3 className="text-4xl font-bold text-[#320000]">Appointments <br></br> <span className="font-light">List</span></h3>
           {appointments && appointments.length ? (
             appointments.map((appointment, index) =>
               appointment.appointmentStatus === "Accepted" ? (
@@ -72,35 +69,6 @@ const AdminAppointmentPage = () => {
           )}
         </div>
 
-        {/* <div className="ongoing-requests-container">
-          <h3>Ongoing Appointment Request</h3>
-          {appointments && appointments.length ? (
-            appointments.map((appointment) =>
-              appointment.appointmentStatus === "pending" ? (
-                <div key={appointment.id} className="ongoing-requests">
-                  <p>{appointment.appointee.name}</p>
-                  <p>{appointment.appointmentStatus}</p>
-                  <button
-                    onClick={() =>
-                      handleAcceptAppointment(
-                        appointment.id,
-                        appointment.appointee.email,
-                        appointment.appointmentDate
-                      )
-                    }
-                  >
-                    Accept
-                  </button>
-                  <button onClick={() => handleDenyAppointment(appointment.id)}>
-                    Deny
-                  </button>
-                </div>
-              ) : null
-            )
-          ) : (
-            <p>No appointment requests yet</p>
-          )}
-        </div> */}
       </div>
     </div>
   );
