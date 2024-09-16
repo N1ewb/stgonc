@@ -4,7 +4,7 @@ import { AdminAccepptStudentAccount } from "../../../../context/auth/adminCreate
 import CheckMarkDark from "../../../../static/images/tick-mark-dark.png";
 import DenyDark from "../../../../static/images/delete-dark.png";
 import MoreDark from "../../../../static/images/more-dark.png";
-const RegistrationReqCards = ({ pendingRegistrations }) => {
+const RegistrationReqCards = ({ pendingRegistrations,setCurrentOpenedRegistrationCard }) => {
   const toastMessage = (message) => toast(message);
 
   const handleApproveRegistrationRequest = async (
@@ -33,7 +33,7 @@ const RegistrationReqCards = ({ pendingRegistrations }) => {
     }
   };
   return (
-    <div className="pending-registration-container [&_p]:m-0 flex flex-row items-center justify-between p-10 shadow-md rounded-[30px] w-1/2">
+    <div className="pending-registration-container [&_p]:m-0 flex flex-row items-center justify-between p-10 shadow-md rounded-[30px] w-full">
       <p className="capitalize font-semibold text-[#320000] ">
         {`${pendingRegistrations.firstName} ${pendingRegistrations.lastName}`}
         <br />
@@ -71,7 +71,7 @@ const RegistrationReqCards = ({ pendingRegistrations }) => {
           <button className="">
             <img src={DenyDark} alt="deny" height={35} width={35} />
           </button>
-          <button className="">
+          <button className="" onClick={() => setCurrentOpenedRegistrationCard(pendingRegistrations)}>
             <img src={MoreDark} alt="more" height={35} width={35} />
           </button>
         </div>

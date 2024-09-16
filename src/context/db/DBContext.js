@@ -46,12 +46,16 @@ export const DBProvider = ({ children }) => {
   const getUsers = async () => {
     try {
       if (auth.currentUser) {
-        const usersSnapshot = await getDocs(usersCollectionRef);
+        const userDept = await getUser(auth.currentUser.uid)
+        if(userDept){
+          const q = query(usersCollectionRef, where('department','==', userDept.department))
+        const usersSnapshot = await getDocs(q);
         const usersData = usersSnapshot.docs.map((doc) => ({
           id: doc.id,
           ...doc.data(),
         }));
         return usersData;
+        }
       }
     } catch (error) {
       notifyError(error);
@@ -104,17 +108,17 @@ export const DBProvider = ({ children }) => {
   const getAllUsers = async () => {
     try {
       if (auth.currentUser) {
-        const q = query(usersCollectionRef);
-
-        const querySnapshot = await getDocs(q);
-        const usersData = querySnapshot.docs
-          .map((doc) => ({
-            id: doc.id,
-            ...doc.data(),
-          }))
-          .filter((user) => user.role !== "Moderator");
-
+        const user = await getUser(auth.currentUser.uid)
+        if(user){
+          console.log(user.department)
+          const q = query(usersCollectionRef, where('department','==', user.department))
+        const usersSnapshot = await getDocs(q);
+        const usersData = usersSnapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
         return usersData;
+        }
       }
     } catch (error) {
       notifyError(error);
@@ -327,7 +331,10 @@ export const DBProvider = ({ children }) => {
   const subscribeToUserChanges = async (callback) => {
     try {
       if (auth.currentUser) {
-        const unsubscribe = onSnapshot(usersCollectionRef, (snapshot) => {
+        const user = await getUser(auth.currentUser.uid)
+        if(user){
+          const q = query(usersCollectionRef, where('department', '==', user.department))
+        const unsubscribe = onSnapshot(q, (snapshot) => {
           const data = snapshot.docs.map((doc) => ({
             id: doc.id,
             ...doc.data(),
@@ -336,6 +343,7 @@ export const DBProvider = ({ children }) => {
           callback(updatedData);
         });
         return unsubscribe;
+        }
       }
     } catch (error) {
       toastMessage("Error subscribing to user changes:", error);

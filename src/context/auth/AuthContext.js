@@ -7,7 +7,7 @@ import {
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
 } from "firebase/auth";
-import { collection, doc, setDoc, updateDoc } from "firebase/firestore";
+import { collection, doc, serverTimestamp, setDoc, updateDoc } from "firebase/firestore";
 import toast from "react-hot-toast";
 import { Toast } from "react-bootstrap";
 
@@ -74,6 +74,7 @@ export const AuthProvider = ({ children }) => {
         department,
         role: "Student",
         status: "Pending",
+        createdAt: serverTimestamp()
       });
     } catch (error) {
       toastMessage(error.message);

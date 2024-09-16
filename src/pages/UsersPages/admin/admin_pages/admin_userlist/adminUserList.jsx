@@ -22,17 +22,6 @@ const AdminUserList = () => {
 
   const toastMessage = (message) => toast(message);
 
-  const handleGetAllUsers = async () => {
-    try {
-      const users = await db.getAllUsers();
-      setUserList(users);
-    } catch (error) {
-      setError("Something went wrong while collecting users");
-    } finally {
-      setLoading(false);
-    }
-  };
-
   useEffect(() => {
     const fetchData = async () => {
       if (auth.currentUser) {

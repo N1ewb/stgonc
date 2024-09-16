@@ -6,7 +6,7 @@ import toast from "react-hot-toast";
 const Legends = ({ teacher }) => {
   const db = useDB();
   const toastMessage = (message) => toast(message);
-  const [instructorColorCode, setInstructorColorCode] = useState(
+  const [editedInstructorColorCode, setEditedInstructorColorCode] = useState(
     teacher.instructorColorCode || "gray"
   );
   const [isColorPickerOpen, setIsColorPickerOpen] = useState(false);
@@ -19,9 +19,9 @@ const Legends = ({ teacher }) => {
   };
 
   const confirmColor = async () => {
-    if (instructorColorCode && teacher.userID) {
+    if (editedInstructorColorCode && teacher.userID) {
       try {
-        await db.editInstructorColorCode(teacher.userID, instructorColorCode);
+        await db.editInstructorColorCode(teacher.userID, editedInstructorColorCode);
         toastMessage("Color code changed successfully");
         setIsColorPickerOpen(false);
       } catch (error) {
@@ -55,8 +55,8 @@ const Legends = ({ teacher }) => {
             onClick={(e) => e.stopPropagation()}
           >
             <ChromePicker
-              color={instructorColorCode}
-              onChange={(newColor) => setInstructorColorCode(newColor.hex)}
+              color={editedInstructorColorCode}
+              onChange={(newColor) => setEditedInstructorColorCode(newColor.hex)}
             />
             <button
               className="w-full rounded-md bg-[#720000] text-white py-2 mt-2 hover:bg-[#2b9f4a]"
@@ -75,7 +75,7 @@ const Legends = ({ teacher }) => {
         <p className="m-0">{teacher.lastName}</p>
         <div
           style={{
-            backgroundColor: instructorColorCode,
+            backgroundColor: teacher.instructorColorCode,
           }}
           className="instructorColorCode p-3 rounded-md"
         ></div>
