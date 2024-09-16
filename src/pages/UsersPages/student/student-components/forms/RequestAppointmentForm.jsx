@@ -3,11 +3,12 @@ import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
 
 import "./RequestAppointmentForm.css";
-import { useDB } from "../../context/db/DBContext";
+
 import toast from "react-hot-toast";
-import Calendar from "../calendar/RequestApptCalendar/RequestApptCalendar";
+import CalendarIcon from "../../../../../static/images/Group 1171275864.png";
+import Calendar from "../RequestApptCalendar/RequestApptCalendar";
+import { useDB } from "../../../../../context/db/DBContext";
 import TimeslotRadioInput from "../input/TimeslotRadioInput";
-import CalendarIcon from "../../static/images/Group 1171275864.png";
 
 const RequestAppointmentForm = ({
   instructor,

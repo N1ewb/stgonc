@@ -41,7 +41,7 @@ const AdminAppointmentPage = () => {
     <div className="admin-appointments-container">
       <div className="appoinments-container">
         <div className="accepted-appointments-container">
-          <h3>Appointments List</h3>
+          <h3 className="text-4xl font-bold text-[#320000]">Appointments <span className="font-light">List</span></h3>
           {appointments && appointments.length ? (
             appointments.map((appointment, index) =>
               appointment.appointmentStatus === "Accepted" ? (

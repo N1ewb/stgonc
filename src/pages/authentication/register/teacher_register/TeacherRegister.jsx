@@ -70,7 +70,7 @@ const TeacherRegister = () => {
                   <h1>{"create_new_account"}</h1>
                   <p>
                     {"already_have_account"}{" "}
-                    <Link to={"/LoginPage"} style={{ textDecoration: "none" }}>
+                    <Link to={"/auth/Login"} style={{ textDecoration: "none" }}>
                       <span>{"login"}</span>
                     </Link>
                   </p>
@@ -129,19 +129,7 @@ const TeacherRegister = () => {
                   >
                     {"signup"}
                   </button>
-                  {/* <div
-                      className="with-google"
-                      onClick={() => handleSignInWithGoogle()}
-                    >
-                      <p>
-                        <img
-                          src="https://cdn1.iconfinder.com/data/icons/google-s-logo/150/Google_Icons-09-512.png"
-                          alt="Google Icon"
-                          height="20px"
-                        />{" "}
-                        <span>{"sign-in-with-google"}</span>
-                      </p>
-                    </div> */}
+                 
                 </div>
               </div>
             </div>

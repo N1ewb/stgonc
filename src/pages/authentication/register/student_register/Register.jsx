@@ -217,7 +217,7 @@ const StudentRegister = () => {
                   </button>
                   <p>
                     <b>Already have an account?</b>{" "}
-                    <Link to={"/Login"} style={{ textDecoration: "none" }}>
+                    <Link to={"/auth/Login"} style={{ textDecoration: "none" }}>
                       <span style={{ color: "#FF8682" }}> Login</span>
                     </Link>
                   </p>

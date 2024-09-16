@@ -27,7 +27,7 @@ import GuidanceCounselorLayout from "./layouts/GuidanceCounselorLayout/GuidanceC
 import FacultyLayout from "./layouts/FacultyLayout/FacultyLayout";
 import StudentLayout from "./layouts/StudentLayout/StudentLayout";
 import AuthLayout from "./layouts/AuthLayout/AuthLayout";
-import StudentDashboard from "./pages/UsersPages/student/dashboard/StudentDashboard";
+import StudentDashboard from "./pages/UsersPages/student/student-pages/dashboard/StudentDashboard";
 import AdminGraphs from "./pages/UsersPages/admin/admin_pages/admin_graphs/admin_graphs";
 import AdminAppointmentListPage from "./pages/UsersPages/admin/admin_pages/admin_appointments/admin_appointments_list";
 import AdmingPendingRegPage from "./pages/UsersPages/admin/admin_pages/admin_pending_registratons/admin_pending_reg";

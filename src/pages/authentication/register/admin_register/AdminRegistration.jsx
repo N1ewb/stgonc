@@ -13,19 +13,7 @@ const AdminRegistration = () => {
   const passwordConfirmRef = useRef();
   const auth = useAuth();
   const navigate = useNavigate();
-  // const passwordError = () => toast('Password dont match')
-  // const passwordCharsError = () => toast('Password should be 6 characters or longer')
 
-  //   const handleFileChange = (e) => {
-  //     const file = e.target.files[0];
-  //     if (file) {
-  //       const reader = new FileReader();
-  //       reader.onloadend = () => {
-  //         setIdImage(reader.result); // Set base64 string
-  //       };
-  //       reader.readAsDataURL(file);
-  //     }
-  //   };
 
   const handleAdminSignUp = async (e) => {
     if (passwordRef.current.value.length < 6) {
@@ -49,9 +37,7 @@ const AdminRegistration = () => {
     }
   };
 
-  //   const handleSignInWithGoogle = (e) => {
-  //     auth.SignInWithGoogle();
-  //   };
+
   useEffect(() => {
     if (auth.currentUser) {
       navigate("/Dashboard");
@@ -70,7 +56,7 @@ const AdminRegistration = () => {
                   <h1>{"create_new_account"}</h1>
                   <p>
                     {"already_have_account"}{" "}
-                    <Link to={"/LoginPage"} style={{ textDecoration: "none" }}>
+                    <Link to={"/auth/Login"} style={{ textDecoration: "none" }}>
                       <span>{"login"}</span>
                     </Link>
                   </p>
@@ -129,19 +115,7 @@ const AdminRegistration = () => {
                   >
                     {"signup"}
                   </button>
-                  {/* <div
-                      className="with-google"
-                      onClick={() => handleSignInWithGoogle()}
-                    >
-                      <p>
-                        <img
-                          src="https://cdn1.iconfinder.com/data/icons/google-s-logo/150/Google_Icons-09-512.png"
-                          alt="Google Icon"
-                          height="20px"
-                        />{" "}
-                        <span>{"sign-in-with-google"}</span>
-                      </p>
-                    </div> */}
+                 
                 </div>
               </div>
             </div>

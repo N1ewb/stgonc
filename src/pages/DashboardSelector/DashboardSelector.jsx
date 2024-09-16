@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useAuth } from "../../context/auth/AuthContext";
 import { useDB } from "../../context/db/DBContext";
 import "./DashboardSelector.css";
-import StudentDashboard from "../UsersPages/student/dashboard/StudentDashboard";
+import StudentDashboard from "../UsersPages/student/student-pages/dashboard/StudentDashboard";
 import TeacherDashboard from "../UsersPages/faculty/dashboard/TeacherDashboard";
 import AdminDashboard from "../UsersPages/admin/dashboard/AdminDashboard";
 
