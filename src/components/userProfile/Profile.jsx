@@ -30,10 +30,13 @@ const Profile = () => {
         >
           {auth.currentUser && (
             <img
-              style={{ cursor: "pointer" }}
-              src={auth.currentUser.photoUrl || DefaultProfile}
-              alt="profile"
-              width="80px"
+              className="w-[100px] h-[100px] rounded-full object-cover"
+              src={
+                auth.currentUser?.photoURL
+                  ? auth.currentUser.photoURL
+                  : DefaultProfile
+              }
+              alt="profile picture"
             />
           )}
         </Dropdown.Toggle>

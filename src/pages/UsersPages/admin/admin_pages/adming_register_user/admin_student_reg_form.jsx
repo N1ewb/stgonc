@@ -28,19 +28,45 @@ const RegisterStudentForm = () => {
 
   const handleCreateStudentAccount = async () => {
     setIsSubmitting(true);
+
     try {
+      const fields = {
+        firstname: firstnameRef.current.value,
+        lastname: lastnameRef.current.value,
+        email: emailRef.current.value,
+        phonenumber: phonenumberRef.current.value,
+        studentidnumber: studentidnumberRef.current.value,
+        department: departmentRef.current.value,
+        password: passwordRef.current.value,
+        confirmpassword: confirmpasswordRef.current.value,
+      };
+
+      for (const [key, value] of Object.entries(fields)) {
+        if (!value || value.trim() === "") {
+          toastMessage(`Please fill in the ${key}!`);
+          setIsSubmitting(false);
+          return;
+        }
+      }
+
+      if (fields.password !== fields.confirmpassword) {
+        toastMessage("Passwords do not match!");
+        setIsSubmitting(false);
+        return;
+      }
+
       await AdminCreateStudentAccount(
-        firstnameRef.current.value,
-        lastnameRef.current.value,
-        emailRef.current.value,
-        phonenumberRef.current.value,
-        studentidnumberRef.current.value,
-        departmentRef.current.value,
-        passwordRef.current.value,
-        confirmpasswordRef.current.value
+        fields.firstname,
+        fields.lastname,
+        fields.email,
+        fields.phonenumber,
+        fields.studentidnumber,
+        fields.department,
+        fields.password,
+        fields.confirmpassword
       );
     } catch (error) {
-      toastMessage(error);
+      toastMessage(error.message || "An error occurred!");
     } finally {
       setIsSubmitting(false);
     }

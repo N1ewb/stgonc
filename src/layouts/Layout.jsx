@@ -12,8 +12,6 @@ const Layout = () => {
   const chat = useChat();
   const navigate = useNavigate();
 
-  const [currentChatReceiver, setCurrentChatReceiver] = useState();
-
   useEffect(() => {
     const fetchUserAndRedirect = async () => {
       if (auth.currentUser) {

@@ -52,6 +52,7 @@ export const AdminAccepptStudentAccount = async (
       userID: user.uid,
       firstName: firstName,
       lastName: lastName,
+
       email: email,
       phoneNumber,
       department,
@@ -98,6 +99,7 @@ export const AdminCreateStudentAccount = async (
           firstName: firstName,
           lastName: lastName,
           email: email,
+          photoUrl: user.photoURL,
           phoneNumber,
           studentIdnumber,
           department,

@@ -33,23 +33,47 @@ const RegisterFacultyForm = () => {
 
   const handleCreateFacultyAccount = async () => {
     setIsSubmitting(true);
+
     try {
-      if (!instructorColorCode) {
-        toastMessage("Set your instructor Color Code!!!");
+      const fields = {
+        firstname: firstnameRef.current.value,
+        lastname: lastnameRef.current.value,
+        email: emailRef.current.value,
+        phonenumber: phonenumberRef.current.value,
+        facultyIdnumber: facultyIdnumberRef.current.value,
+        department: departmentRef.current.value,
+        password: passwordRef.current.value,
+        confirmpassword: confirmpasswordRef.current.value,
+        instructorColorCode: instructorColorCode,
+      };
+
+      for (const [key, value] of Object.entries(fields)) {
+        if (!value || value.trim() === "") {
+          toastMessage(`Please fill in the ${key}!`);
+          setIsSubmitting(false);
+          return;
+        }
       }
+
+      if (fields.password !== fields.confirmpassword) {
+        toastMessage("Passwords do not match!");
+        setIsSubmitting(false);
+        return;
+      }
+
       await AdminCreateFacultyAccount(
-        firstnameRef.current.value,
-        lastnameRef.current.value,
-        emailRef.current.value,
-        phonenumberRef.current.value,
-        facultyIdnumberRef.current.value,
-        departmentRef.current.value,
-        passwordRef.current.value,
-        confirmpasswordRef.current.value,
-        instructorColorCode
+        fields.firstname,
+        fields.lastname,
+        fields.email,
+        fields.phonenumber,
+        fields.facultyIdnumber,
+        fields.department,
+        fields.password,
+        fields.confirmpassword,
+        fields.instructorColorCode
       );
     } catch (error) {
-      toastMessage(error);
+      toastMessage(error.message || "An error occurred!");
     } finally {
       setIsSubmitting(false);
     }

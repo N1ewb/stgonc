@@ -3,12 +3,12 @@ import React, { useEffect, useState } from "react";
 import defaultProfile from "../../../../../static/images/default-profile.png";
 import More from "../../../../../static/images/more-dark.png";
 
-import "./adminUserList.css";
 import toast from "react-hot-toast";
 import { useDB } from "../../../../../context/db/DBContext";
 import { useAuth } from "../../../../../context/auth/AuthContext";
+import UserList from "../../admin-components/UserList";
 
-const ITEMS_PER_PAGE = 8;
+const ITEMS_PER_PAGE = 7;
 
 const AdminUserList = () => {
   const db = useDB();
@@ -78,61 +78,33 @@ const AdminUserList = () => {
   }
 
   return (
-    <div className="admin-userlist-container w-full min-h-[95%] max-h-[95%] flex flex-col gap-3  shadow-md">
-      <h1 className="relative">
-        User List{" "}
-        <span className="absolute top-0 text-[#323232] font-semibold text-xs">
-          TotalUsers: {userList.length}
-        </span>
-      </h1>
-      <div className="div flex flex-col w-full h-[100%] justify-between ">
-        <div className="user-list flex flex-col gap-3 max-h-[100%] h-[100%]  overflow-hidden">
-          {currentCharacters && currentCharacters.length !== 0 ? (
-            currentCharacters.map((users, index) => (
-              <div
-                className="userlist-container w-full flex flex-row gap-3 items-center [&_p]:m-0 px-8 py-2 rounded-[5px] shadow-md  text-[#740000] md:px-3 overflow-hidden"
-                key={index}
-              >
-                <img
-                  className="p-1 rounded-full bg-[#720000]"
-                  src={
-                    (auth.currentUser && auth.currentUser.photoUrl) ||
-                    defaultProfile
-                  }
-                  alt="default profile"
-                  width={25}
-                  height={25}
-                />
-                <p className="w-[15%] font-medium xl:w-[30%] md:w-[80%]">
-                  {users.firstName} {users.lastName}
-                </p>
-
-                <p className="w-[20%] xl:w-[30%] md:hidden">{users.email}</p>
-                <p className="w-[15%] xl:hidden">{users.phoneNumber}</p>
-                <p className="w-[8%] xl:w-[10%] lg:hidden">{users.role}</p>
-
-                <div className="more-options cursor-pointer hover:bg-white p-1 rounded-full">
-                  <img src={More} alt="more" width={25} height={25} />
-                </div>
-              </div>
-            ))
-          ) : (
-            <p>No users</p>
-          )}
+    <div className="admin-userlist-container w-full min-h-[100%] max-h-[100%] flex flex-col justify-between p-10 shadow-md rounded-3xl">
+      <div className="flex flex-col items-start w-full">
+        <h1 className="relative ">
+          User List{" "}
+          <span className="absolute top-0 text-[#323232] font-semibold text-xs">
+            TotalUsers: {userList.length}
+          </span>
+        </h1>
+        <div className="div flex flex-col w-full basis-4/5 ">
+          <UserList
+            currentCharacters={currentCharacters}
+            defaultProfile={defaultProfile}
+            More={More}
+          />
         </div>
-
-        {ITEMS_PER_PAGE < userList.length && (
-          <div className="flex flex-row justify-between items-center">
-            <p> Page {currentPage}</p>
-            {paginationControls && (
-              <div className="pagination-controls flex flex-row gap-2">
-                {paginationControls}
-              </div>
-            )}
-            <p></p>
-          </div>
-        )}
       </div>
+      {ITEMS_PER_PAGE < userList.length && (
+        <div className="flex flex-row justify-between items-center">
+          <p> Page {currentPage}</p>
+          {paginationControls && (
+            <div className="pagination-controls flex flex-row gap-2">
+              {paginationControls}
+            </div>
+          )}
+          <p></p>
+        </div>
+      )}
     </div>
   );
 };

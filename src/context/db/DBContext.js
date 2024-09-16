@@ -46,15 +46,18 @@ export const DBProvider = ({ children }) => {
   const getUsers = async () => {
     try {
       if (auth.currentUser) {
-        const userDept = await getUser(auth.currentUser.uid)
-        if(userDept){
-          const q = query(usersCollectionRef, where('department','==', userDept.department))
-        const usersSnapshot = await getDocs(q);
-        const usersData = usersSnapshot.docs.map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
-        }));
-        return usersData;
+        const userDept = await getUser(auth.currentUser.uid);
+        if (userDept) {
+          const q = query(
+            usersCollectionRef,
+            where("department", "==", userDept.department)
+          );
+          const usersSnapshot = await getDocs(q);
+          const usersData = usersSnapshot.docs.map((doc) => ({
+            id: doc.id,
+            ...doc.data(),
+          }));
+          return usersData;
         }
       }
     } catch (error) {
@@ -108,16 +111,19 @@ export const DBProvider = ({ children }) => {
   const getAllUsers = async () => {
     try {
       if (auth.currentUser) {
-        const user = await getUser(auth.currentUser.uid)
-        if(user){
-          console.log(user.department)
-          const q = query(usersCollectionRef, where('department','==', user.department))
-        const usersSnapshot = await getDocs(q);
-        const usersData = usersSnapshot.docs.map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
-        }));
-        return usersData;
+        const user = await getUser(auth.currentUser.uid);
+        if (user) {
+          console.log(user.department);
+          const q = query(
+            usersCollectionRef,
+            where("department", "==", user.department)
+          );
+          const usersSnapshot = await getDocs(q);
+          const usersData = usersSnapshot.docs.map((doc) => ({
+            id: doc.id,
+            ...doc.data(),
+          }));
+          return usersData;
         }
       }
     } catch (error) {
@@ -304,7 +310,7 @@ export const DBProvider = ({ children }) => {
     }
   };
 
-  const handleChangeUserProfile = async (imageFile) => {
+  const changeUserProfile = async (imageFile) => {
     if (auth.currentUser) {
       try {
         const storageRef = ref(
@@ -312,8 +318,12 @@ export const DBProvider = ({ children }) => {
           `profileImages/${auth.currentUser.uid}`
         );
         await uploadBytes(storageRef, imageFile);
+
         const downloadURL = await getDownloadURL(storageRef);
         await updateProfile(auth.currentUser, {
+          photoURL: downloadURL,
+        });
+        await updateDoc(doc(firestore, "Users", auth.currentUser.uid), {
           photoURL: downloadURL,
         });
         console.log("Profile photo updated successfully");
@@ -331,18 +341,23 @@ export const DBProvider = ({ children }) => {
   const subscribeToUserChanges = async (callback) => {
     try {
       if (auth.currentUser) {
-        const user = await getUser(auth.currentUser.uid)
-        if(user){
-          const q = query(usersCollectionRef, where('department', '==', user.department))
-        const unsubscribe = onSnapshot(q, (snapshot) => {
-          const data = snapshot.docs.map((doc) => ({
-            id: doc.id,
-            ...doc.data(),
-          }));
-          const updatedData = data.filter((user) => user.role !== "moderator");
-          callback(updatedData);
-        });
-        return unsubscribe;
+        const user = await getUser(auth.currentUser.uid);
+        if (user) {
+          const q = query(
+            usersCollectionRef,
+            where("department", "==", user.department)
+          );
+          const unsubscribe = onSnapshot(q, (snapshot) => {
+            const data = snapshot.docs.map((doc) => ({
+              id: doc.id,
+              ...doc.data(),
+            }));
+            const updatedData = data.filter(
+              (user) => user.role !== "moderator"
+            );
+            callback(updatedData);
+          });
+          return unsubscribe;
         }
       }
     } catch (error) {
@@ -716,7 +731,7 @@ export const DBProvider = ({ children }) => {
     getInstructorTimeslots,
     // updateScheduleData,
     deleteSchedule,
-    handleChangeUserProfile,
+    changeUserProfile,
     setInstructorSchedule,
     subscribeToTimeslotChanges,
     getAppointmentList,

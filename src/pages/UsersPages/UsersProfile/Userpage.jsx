@@ -64,18 +64,6 @@ const Userpage = () => {
     }
   };
 
-  const handleChangePhoto = async (event) => {
-    const file = event.target.files[0];
-    if (file && auth.currentUser) {
-      try {
-        await db.handleChangeUserProfile(file);
-        console.log("Profile photo updated successfully");
-      } catch (err) {
-        console.error("Error updating profile photo:", err.message);
-      }
-    }
-  };
-
   useEffect(() => {
     if (auth.currentUser) {
       handleGetUser();
@@ -83,7 +71,7 @@ const Userpage = () => {
   }, []);
 
   return (
-    <div className="Userpage-container w-full">
+    <div className="Userpage-container w-full overflow-auto">
       <div className="flex w-full flex-row">
         <div className="account-details-sidebar-container flex flex-col gap-3 basis-1/5  [&_button]:w-[80%] [&_button]:rounded-md text-center ">
           <button
@@ -129,7 +117,7 @@ const Userpage = () => {
         </div>
         <div className="account-details-main-content-container basis-4/5">
           {currentPage === "Account" ? (
-            <AccountPage user={user} auth={auth} db={db} />
+            <AccountPage user={user} useAuth={auth} db={db} />
           ) : currentPage === "Password" ? (
             <PasswordPage />
           ) : currentPage === "Notification" ? (
