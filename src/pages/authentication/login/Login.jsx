@@ -27,12 +27,8 @@ const LoginPage = () => {
           if (user) {
             const userRole = user.role;
             console.log(userRole);
-            if (userRole === "Student") {
-              navigate("/private/student/dashboard");
-            } else if (userRole === "Teacher") {
-              navigate("/private/faculty/dashboard");
-            } else if (userRole === "Admin") {
-              navigate("/private/admin/dashboard");
+            if (userRole) {
+              navigate(`/private/${userRole}/dashboard`)
             } else {
               navigate("/");
             }

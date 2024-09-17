@@ -20,7 +20,7 @@ const Layout = () => {
           if (user) {
             const userRole = user.role;
             console.log(userRole);
-            if (userRole === "Student") {
+            if (userRole) {
               navigate(`/private/${userRole}/dashboard`);
             } else {
               navigate("/");

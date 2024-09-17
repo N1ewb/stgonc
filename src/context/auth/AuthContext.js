@@ -150,7 +150,7 @@ export const AuthProvider = ({ children }) => {
               lastName: lastName,
               email: email,
               phoneNumber,
-              role: "Teacher",
+              role: "Faculty",
               isOnline: true,
               appointments: {},
               schedules: {},

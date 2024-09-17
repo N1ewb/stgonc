@@ -156,7 +156,7 @@ export const AdminCreateFacultyAccount = async (
           facultyIdnumber,
           department,
           instructorColorCode,
-          role: "Teacher",
+          role: "Faculty",
           isOnline: false,
           createdAt: Timestamp.now(),
         });

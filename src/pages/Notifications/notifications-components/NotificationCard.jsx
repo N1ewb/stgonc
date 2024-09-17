@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from "react";
 import DefaultProfile from "../../../static/images/default-profile.png";
 import ClockIcon from '../../../static/images/clock-icon.png'
+import { useMessage } from "../../../context/notification/NotificationContext";
 
 const NotificationCard = ({ currentCategory }) => {
+  const notif = useMessage()
   const [currentColor, setCurrentColor] = useState('#000')
 
   const categoryColor = [
@@ -46,6 +48,21 @@ const NotificationCard = ({ currentCategory }) => {
     }
   }
 
+  const handleMarkNotifRead = async (id) => {
+    try{
+      await notif.MarkNotifRead(id)
+    }catch(error){
+      console.log(`Error in: ${error.message}`)
+    }
+  }
+  const handleDeleteNotifRead = async (id) => {
+    try{
+      await notif.DeleteNotif(id)
+    }catch(error){
+      console.log(`Error in: ${error.message}`)
+    }
+  }
+
   return (
     <div className="div flex flex-col gap-5">
       {currentCategory && currentCategory.length !== 0
@@ -65,10 +82,10 @@ const NotificationCard = ({ currentCategory }) => {
                 </p>
                 <p>{notification.content}</p>
                 <div className="notification-buttons flex flex-row gap-4">
-                  <button className="bg-transparent p-0 text-[#2fa74f]">
+                  <button className="bg-transparent p-0 text-[#2fa74f]" onClick={() => handleMarkNotifRead(notification.id)}>
                     Mark as Read
                   </button>
-                  <button className="bg-transparent p-0 text-[#ae2828]">
+                  <button className="bg-transparent p-0 text-[#ae2828]" onClick={() => handleDeleteNotifRead(notification.id)}>
                     Delete
                   </button>
                 </div>

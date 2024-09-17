@@ -68,7 +68,7 @@ const Profile = () => {
           <Dropdown.Item onClick={() => navigate("/private/Userpage")}>
             Account Settings
           </Dropdown.Item>
-          <Link className="decoration-transparent [&_a]:decoration-transparent p-3 text-black" to={`/private/${user?.role}/notifications`}>Notifications</Link>
+          <Dropdown.Item><Link className="decoration-transparent [&_a]:decoration-transparent text-[#000000d2]" to={`/private/${user?.role}/notifications`}>Notifications</Link></Dropdown.Item>
           <Dropdown.Item href="#/action-2">Give Feedback</Dropdown.Item>
           <Dropdown.Item onClick={() => handleSignout()}>Logout</Dropdown.Item>
         </Dropdown.Menu>

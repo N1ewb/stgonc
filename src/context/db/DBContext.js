@@ -92,7 +92,7 @@ export const DBProvider = ({ children }) => {
       if (auth.currentUser) {
         const q = query(
           usersCollectionRef,
-          where("role", "in", ["Teacher", "Admin"])
+          where("role", "in", ["Faculty", "Admin"])
         );
 
         const querySnapshot = await getDocs(q);
@@ -370,7 +370,7 @@ export const DBProvider = ({ children }) => {
       if (auth.currentUser) {
         const q = query(
           usersCollectionRef,
-          where("role", "in", ["Teacher", "Admin"])
+          where("role", "in", ["Faculty", "Admin"])
         );
 
         const unsubscribe = onSnapshot(q, (snapshot) => {

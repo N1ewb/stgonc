@@ -78,7 +78,7 @@ const Chatbox = ({ auth, db, receiver, setCurrentChatReceiver }) => {
       const participantEmail = getParticipantEmail(receiver);
 
       await db.sendMessage(formValue, uid, participantName);
-      await notif.storeRegistrationNotifToDB(
+      await notif.storeUserNotifToDB(
         auth.currentUser.email,
         participantEmail,
         "Message",

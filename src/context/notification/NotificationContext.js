@@ -1,13 +1,16 @@
 import React, { createContext, useContext } from "react";
 import { useAuth } from "../auth/AuthContext";
-import { useDB } from "../db/DBContext";
+
 import {
   addDoc,
   collection,
+  deleteDoc,
+  doc,
   getDocs,
   onSnapshot,
   query,
   serverTimestamp,
+  updateDoc,
   where,
 } from "firebase/firestore";
 import { firestore } from "../../server/firebase";
@@ -22,7 +25,6 @@ export function useMessage() {
 
 export const MessagingProvider = ({ children }) => {
   const auth = useAuth();
-  const db = useDB();
   const notificationRef = collection(firestore, "Notifications");
   const toastMessage = (message) => toast(message);
 
@@ -98,7 +100,7 @@ export const MessagingProvider = ({ children }) => {
     }
   };
 
-  const storeRegistrationNotifToDB = async (sender, receiver, subject, content) => {
+  const storeUserNotifToDB = async (sender, receiver, subject, content) => {
     try {
       const newNotification = {
         subject: subject,
@@ -204,11 +206,31 @@ export const MessagingProvider = ({ children }) => {
     }
   }
 
+  async function MarkNotifRead(id) {
+    try{
+      const notificationDocsRef = doc(firestore, 'Notifications', id)
+      await updateDoc(notificationDocsRef, {read: true})
+    }catch(error){
+      toastMessage(`Error in marking notification,: ${error.message}`)
+    }
+  }
+
+  async function DeleteNotif(id) {
+    try{
+      const notificationDocsRef = doc(firestore, 'Notifications', id)
+      await deleteDoc(notificationDocsRef)
+    }catch(error){
+      toastMessage(`Error in deleteing notification: ${error.message}`)
+    }
+  }
+
   const value = {
     storeNotifToDB,
-    storeRegistrationNotifToDB,
+    storeUserNotifToDB,
     getUserNotifications,
     subscribeToUserNotifications,
+    MarkNotifRead,
+    DeleteNotif,
   };
 
   return (
