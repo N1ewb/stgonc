@@ -30,7 +30,7 @@ const AppointmentList = ({ appointment, setCurrentChatReceiver }) => {
 
       <button
         className="bg-transparent p-0"
-        onClick={() => setCurrentChatReceiver(appointment.appointee.name)}
+        onClick={() => setCurrentChatReceiver(appointment.appointee)}
       >
         <img src={ChatDark} alt="chat" width={30} height={30} />
       </button>

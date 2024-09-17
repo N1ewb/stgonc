@@ -170,7 +170,7 @@ const StudentDashboard = () => {
                       className=""
                       onClick={() =>
                         chat.setCurrentChatReceiver(
-                          appt.appointedTeacher.teacherDisplayName
+                          appt.appointedTeacher
                         )
                       }
                     >

@@ -2,28 +2,39 @@ import React, { useEffect, useRef, useState } from "react";
 import Chatmessages from "./Chatmessages";
 import Profile from "../../static/images/default-profile.png";
 import Loading from "../Loading/Loading";
+import { useMessage } from "../../context/notification/NotificationContext";
 
 const Chatbox = ({ auth, db, receiver, setCurrentChatReceiver }) => {
+  const notif = useMessage();
   const dummy = useRef();
   const formValueRef = useRef();
   const [messages, setMessages] = useState();
   const [filterbyParticipants, setFilterbyParticipants] = useState();
 
+  // Function to get the correct participant name
+  const getParticipantName = (receiver) => {
+    return receiver?.displayName || receiver?.name || receiver?.teacherDisplayName || receiver?.teacherName || "Unknown";
+  };
+
+  const getParticipantEmail = (receiver) => {
+    return receiver?.email || receiver?.teacheremail || "Unknown";
+  };
+
   const handleGetMessages = async (receiver) => {
-    const messages = await db.getMessages(receiver);
+    const participantName = getParticipantName(receiver);
+    const messages = await db.getMessages(participantName);
     setMessages(messages);
   };
 
   const filterParticipants = async () => {
-    if (auth.currentUser) {
-      if (messages) {
-        const filtered = messages.filter(
-          (message) =>
-            message.participants.includes(auth.currentUser.displayName) &&
-            message.participants.includes(receiver)
-        );
-        setFilterbyParticipants(filtered);
-      }
+    if (auth.currentUser && messages) {
+      const participantName = getParticipantName(receiver);
+      const filtered = messages.filter(
+        (message) =>
+          message.participants.includes(auth.currentUser.displayName) &&
+          message.participants.includes(participantName)
+      );
+      setFilterbyParticipants(filtered);
     }
   };
 
@@ -43,6 +54,7 @@ const Chatbox = ({ auth, db, receiver, setCurrentChatReceiver }) => {
     const fetchData = async () => {
       if (auth.currentUser) {
         try {
+          const participantName = getParticipantName(receiver);
           const unsubscribe = db.subscribeToMessageChanges((newmessages) => {
             setMessages(newmessages);
             setFilterbyParticipants();
@@ -50,7 +62,7 @@ const Chatbox = ({ auth, db, receiver, setCurrentChatReceiver }) => {
             if (dummy.current) {
               dummy.current.scrollIntoView({ behavior: "smooth" });
             }
-          }, receiver);
+          }, participantName);
           return () => unsubscribe();
         } catch (error) {
           console.log(error);
@@ -62,7 +74,16 @@ const Chatbox = ({ auth, db, receiver, setCurrentChatReceiver }) => {
 
   const handleSendMessage = async (formValue, uid, receiver) => {
     if (auth.currentUser) {
-      await db.sendMessage(formValue, uid, receiver);
+      const participantName = getParticipantName(receiver);
+      const participantEmail = getParticipantEmail(receiver);
+
+      await db.sendMessage(formValue, uid, participantName);
+      await notif.storeRegistrationNotifToDB(
+        auth.currentUser.email,
+        participantEmail,
+        "Message",
+        `${auth.currentUser.displayName} has sent you a message!`
+      );
     }
 
     formValueRef.current.value = "";
@@ -80,7 +101,7 @@ const Chatbox = ({ auth, db, receiver, setCurrentChatReceiver }) => {
             src={Profile}
             alt="profile"
           />{" "}
-          {receiver}
+          {getParticipantName(receiver)}
         </p>
         <p
           className="cursor-pointer"
@@ -96,7 +117,7 @@ const Chatbox = ({ auth, db, receiver, setCurrentChatReceiver }) => {
         ) : (
           filterbyParticipants.length > 0 &&
           filterbyParticipants.map((message) => (
-            <div className="messages-container  w-[90%]" key={message.id}>
+            <div className="messages-container w-[90%]" key={message.id}>
               <Chatmessages message={message} />
             </div>
           ))

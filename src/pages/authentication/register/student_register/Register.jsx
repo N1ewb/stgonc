@@ -62,7 +62,7 @@ const StudentRegister = () => {
                 studentIDnumberRef.current.value,
                 departmentRef.current.value
               );
-              const notification = await notif.storeRegistrationNotifToDB(emailRef.current.value, "mellaniegambe@gmail.com")
+              const notification = await notif.storeRegistrationNotifToDB(emailRef.current.value, "mellaniegambe@gmail.com", "Registration","A student has requested to register for an account!")
               if(notification){
                 toastMessage("Registration Request is sent");
                 clearForm();

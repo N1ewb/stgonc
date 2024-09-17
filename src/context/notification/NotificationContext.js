@@ -98,12 +98,12 @@ export const MessagingProvider = ({ children }) => {
     }
   };
 
-  const storeRegistrationNotifToDB = async (sender, receiver) => {
+  const storeRegistrationNotifToDB = async (sender, receiver, subject, content) => {
     try {
       const newNotification = {
-        subject: "Registration",
-        content: "A new student has requested to register for an account",
-        createAt: serverTimestamp(),
+        subject: subject,
+        content: content,
+        createdAt: serverTimestamp(),
         read: false,
         sentBy: sender,
         sentTo: receiver,
@@ -129,7 +129,7 @@ export const MessagingProvider = ({ children }) => {
         const newNotification = {
           subject: subject,
           content: content,
-          createAt: serverTimestamp(),
+          createdAt: serverTimestamp(),
           read: false,
           sentBy: auth.currentUser.email,
           sentTo: receiver,

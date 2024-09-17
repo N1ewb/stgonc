@@ -7,14 +7,35 @@ import NotificationSidebar from "../notifications-components/NotificationSidebar
 const NotificationPage = () => {
   const notif = useMessage();
   const auth = useAuth()
-  const [notificationList, setNotificationList] = useState()
+  const [notificationList, setNotificationList] = useState([])
+  const [currentbutton, setCurrentbutton] = useState('All');
+  const [currentCategory, setCurrentCategory] = useState([])
 
+
+
+    const sortNotifications = (category) => {
+      const sortedNotification = notificationList.filter((notification) => notification.subject === category)
+      return sortedNotification
+    }
+
+    useEffect(() => {
+      if(notificationList){
+       
+          if(currentbutton === "All"){
+            setCurrentCategory(notificationList)
+          } else {
+            setCurrentCategory(sortNotifications(currentbutton))
+          }
+        
+      }
+    },[currentbutton, notificationList])
 
     useEffect(() => {
         const getNotification = async () => {
             try{
                 const unsubscribe = notif.subscribeToUserNotifications(auth.currentUser.email, (newnotifications) => (
                     setNotificationList(newnotifications)
+                    
                 ))
                 return () => unsubscribe()
             }catch(error){
@@ -25,16 +46,14 @@ const NotificationPage = () => {
     },[notif])
     
   return (
-    <div className="">
+    <div className="h-[100%]">
       
-      <div className="notification-body flex flex-row gap-5">
-        <div className="notification-sidebar">
-          <NotificationSidebar />
+      <div className="notification-body h-[100%] flex flex-row gap-5">
+        <div className="notification-sidebar h-[100%]">
+          <NotificationSidebar setCurrentbutton={setCurrentbutton} currentButton={currentbutton} />
         </div>
-        <div className="notification-main">
-            <div className="div">
-                {notificationList && notificationList.length !== 0 ? notificationList.map((notification) => <NotificationCard notification={notification} />) : "No notifications"}
-            </div>
+        <div className="notification-main basis-[80%]">
+            <NotificationCard currentCategory={currentCategory}  />
         </div>
       </div>
     </div>
