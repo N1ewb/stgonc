@@ -21,6 +21,7 @@ export const AuthProvider = ({ children }) => {
   const [currentUser, setCurrentUser] = useState(null);
   const usersCollectionRef = collection(firestore, "Users");
   const [error, setError] = useState();
+  
 
   const studentRegistrationRequestRef = collection(
     firestore,
@@ -64,6 +65,7 @@ export const AuthProvider = ({ children }) => {
     department
   ) => {
     try {
+      
       return setDoc(doc(collection(firestore, "StudentRegistrationRequest")), {
         firstName: firstName,
         lastName: lastName,

@@ -5,6 +5,7 @@ import {
   addDoc,
   collection,
   getDocs,
+  onSnapshot,
   query,
   serverTimestamp,
   where,
@@ -61,6 +62,67 @@ export const MessagingProvider = ({ children }) => {
     }
   };
 
+  const sendEmailRegistrationRequest = async (recipient_email, senderName) => {
+    const form = document.createElement("form");
+
+    const dummyData = {
+      from_name: "STGONC Team",
+      from_email: "stgoncteam.spc@gmail.com",
+      to_email: recipient_email,
+      sender_name: senderName,
+      message: "A new student has requested to register an account",
+      subject: "Registration",
+    };
+    Object.keys(dummyData).forEach((key) => {
+      const input = document.createElement("input");
+      input.type = "hidden";
+      input.name = key;
+      input.value = dummyData[key];
+      form.appendChild(input);
+    });
+    try {
+      emailjs
+        .sendForm("service_6ohiq8x", "template_t4nesyk", form, {
+          publicKey: "3kBWbebX9h3kQSvMq",
+        })
+        .then(
+          () => {
+            toastMessage("SUCCESS!");
+          },
+          (error) => {
+            console.log("FAILED...", error);
+          }
+        );
+    } catch (error) {
+      toastMessage(error.message);
+    }
+  };
+
+  const storeRegistrationNotifToDB = async (sender, receiver) => {
+    try {
+      const newNotification = {
+        subject: "Registration",
+        content: "A new student has requested to register for an account",
+        createAt: serverTimestamp(),
+        read: false,
+        sentBy: sender,
+        sentTo: receiver,
+        participants: [sender, receiver],
+      };
+
+      await addDoc(notificationRef, newNotification);
+
+      // EMAIL NOTIFICATION
+      // await sendEmailRegistrationRequest(receiver, senderName);
+
+      return true;
+    } catch (error) {
+      console.error("Error storing notification or sending email:", error);
+      toastMessage(error.message);
+      return false;
+    }
+  };
+
   const storeNotifToDB = async (subject, content, receiver) => {
     try {
       if (auth.currentUser) {
@@ -90,6 +152,34 @@ export const MessagingProvider = ({ children }) => {
     }
   };
 
+  function subscribeToUserNotifications(email, callback) {
+    if (!auth.currentUser) {
+      throw new Error("User is not authenticated");
+    }
+
+    try {
+      const q = query(
+        notificationRef,
+        where("sentTo", "==", email),
+        where("read", "==", false)
+      );
+
+      const unsubscribe = onSnapshot(q, (querySnapshot) => {
+        const notifications = querySnapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+
+        callback(notifications);
+      });
+
+      return unsubscribe;
+    } catch (error) {
+      console.error(`Error in subscribing to notifications: ${error.message}`);
+      throw error;
+    }
+  }
+
   async function getUserNotifications(email) {
     try {
       if (auth.currentUser) {
@@ -116,7 +206,9 @@ export const MessagingProvider = ({ children }) => {
 
   const value = {
     storeNotifToDB,
+    storeRegistrationNotifToDB,
     getUserNotifications,
+    subscribeToUserNotifications,
   };
 
   return (

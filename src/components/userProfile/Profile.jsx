@@ -1,19 +1,36 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useAuth } from "../../context/auth/AuthContext";
 import DefaultProfile from "../../static/images/default-profile.png";
 import Dropdown from "react-bootstrap/Dropdown";
 import { Link, useNavigate } from "react-router-dom";
 import "./Profile.css";
 import "bootstrap/dist/css/bootstrap.min.css";
+import { useDB } from "../../context/db/DBContext";
 
 const Profile = () => {
   const auth = useAuth();
+  const db = useDB()
   const navigate = useNavigate();
+  const [user, setUser] = useState()
 
   const handleSignout = async () => {
     await auth.SignOut();
     navigate("/");
   };
+
+  useEffect(() => {
+    const handleGetUser = async () => {
+      try{
+        if(auth.currentUser){
+          const user = await db.getUser(auth.currentUser.uid)
+          setUser(user)
+        }
+      }catch(error){
+        console.log(`Error in retreving user: ${error.message}`)
+      }
+    }
+    handleGetUser()
+  },[])
 
   return (
     <div className="profile-container lg:hidden">
@@ -51,7 +68,7 @@ const Profile = () => {
           <Dropdown.Item onClick={() => navigate("/private/Userpage")}>
             Account Settings
           </Dropdown.Item>
-
+          <Link className="decoration-transparent [&_a]:decoration-transparent p-3 text-black" to={`/private/${user?.role}/notifications`}>Notifications</Link>
           <Dropdown.Item href="#/action-2">Give Feedback</Dropdown.Item>
           <Dropdown.Item onClick={() => handleSignout()}>Logout</Dropdown.Item>
         </Dropdown.Menu>

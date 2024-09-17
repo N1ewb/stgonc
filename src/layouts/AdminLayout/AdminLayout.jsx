@@ -6,31 +6,31 @@ const AdminLayout = () => {
   const SidebarLinks = [
     {
       name: "Dashboard",
-      link: "/private/admin/dashboard",
+      link: "/private/Admin/dashboard",
     },
     {
       name: "Pending Regs",
-      link: "/private/admin/dashboard/pending-registrations",
+      link: "/private/Admin/dashboard/pending-registrations",
     },
     {
       name: "Appointments List",
-      link: "/private/admin/dashboard/appointments-list",
+      link: "/private/Admin/dashboard/appointments-list",
     },
     {
       name: "Appointments Requests",
-      link: "/private/admin/dashboard/appointments-requests",
+      link: "/private/Admin/dashboard/appointments-requests",
     },
     {
       name: "Schedules",
-      link: "/private/admin/dashboard/schedules",
+      link: "/private/Admin/dashboard/schedules",
     },
     {
       name: "Register User",
-      link: "/private/admin/dashboard/register-user",
+      link: "/private/Admin/dashboard/register-user",
     },
     {
       name: "User List",
-      link: "/private/admin/dashboard/user-list",
+      link: "/private/Admin/dashboard/user-list",
     },
   ];
 

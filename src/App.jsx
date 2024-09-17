@@ -40,6 +40,7 @@ import TeacherAppointmentReqPage from "./pages/UsersPages/faculty/faculty_pages/
 import TeacherSchedulePage from "./pages/UsersPages/faculty/faculty_pages/schedules-page/TeacherSchedulePage";
 import AdminAppointmentReqsPage from "./pages/UsersPages/admin/admin_pages/admin_appointment_reqs/AdminAppointmentReqs";
 import PendingReqMessagePage from "./pages/authentication/YourRegReqisPending/PendingReqMessagePage";
+import NotificationPage from "./pages/Notifications/notifications-page/NotificationPage";
 
 function App() {
   const router = createBrowserRouter([
@@ -56,36 +57,40 @@ function App() {
           element: <PrivateRoutes />,
           children: [
             {
-              path: "/private/admin",
+              path: "/private/Admin",
               element: <AdminLayout />,
               children: [
                 {
-                  path: "/private/admin/dashboard",
+                  path: "/private/Admin/dashboard",
                   element: <AdminGraphs />,
                 },
                 {
-                  path: "/private/admin/dashboard/appointments-list",
+                  path: "/private/Admin/dashboard/appointments-list",
                   element: <AdminAppointmentListPage />,
                 },
                 {
-                  path: "/private/admin/dashboard/appointments-requests",
+                  path: "/private/Admin/dashboard/appointments-requests",
                   element: <AdminAppointmentReqsPage />,
                 },
                 {
-                  path: "/private/admin/dashboard/pending-registrations",
+                  path: "/private/Admin/dashboard/pending-registrations",
                   element: <AdmingPendingRegPage />,
                 },
                 {
-                  path: "/private/admin/dashboard/schedules",
+                  path: "/private/Admin/dashboard/schedules",
                   element: <AdminSchedulesPage />,
                 },
                 {
-                  path: "/private/admin/dashboard/user-list",
+                  path: "/private/Admin/dashboard/user-list",
                   element: <AdminUserList />,
                 },
                 {
-                  path: "/private/admin/dashboard/register-user",
+                  path: "/private/Admin/dashboard/register-user",
                   element: <AdminRegisteruserPage />,
+                },
+                {
+                  path: "/private/Admin/notifications",
+                  element: <NotificationPage />
                 },
               ],
             },
@@ -95,37 +100,46 @@ function App() {
               children: [],
             },
             {
-              path: "/private/faculty",
+              path: "/private/Faculty",
               element: <FacultyLayout />,
               children: [
                 {
-                  path: "/private/faculty/dashboard",
+                  path: "/private/Faculty/dashboard",
                   element: <TeacherGraphs />,
                 },
                 {
-                  path: "/private/faculty/appointments-list",
+                  path: "/private/Faculty/appointments-list",
                   element: <TeacherAppointmentListPage />,
                 },
                 {
-                  path: "/private/faculty/appointments-request",
+                  path: "/private/Faculty/appointments-request",
                   element: <TeacherAppointmentReqPage />,
                 },
                 {
-                  path: "/private/faculty/schedules",
+                  path: "/private/Faculty/schedules",
                   element: <TeacherSchedulePage />,
+                },
+                {
+                  path: "/private/Faculty/notifications",
+                  element: <NotificationPage />
                 },
               ],
             },
             {
-              path: "/private/student",
+              path: "/private/Student",
               element: <StudentLayout />,
               children: [
                 {
-                  path: "/private/student/dashboard",
+                  path: "/private/Student/dashboard",
                   element: <StudentDashboard />,
+                },
+                {
+                  path: "/private/Student/notifications",
+                  element: <NotificationPage />
                 },
               ],
             },
+            
             {
               path: "/private/VideoCall",
               element: <VideoCall />,

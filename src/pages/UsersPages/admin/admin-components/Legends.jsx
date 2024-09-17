@@ -46,11 +46,11 @@ const Legends = ({ teacher }) => {
   }, []);
 
   return (
-    <div className="instructors-legend w-full flex flex-row flex-wrap gap-6">
-      <div className="color-picker-container w-full">
+    <div className="instructors-legend w-full flex flex-row ">
+      <div className={`color-picker-container  ${!isColorPickerOpen? "w-0" : "w-fit"}`}>
         {isColorPickerOpen && (
           <div
-            className="color-picker-ref absolute bottom-0 w-fit z-50"
+            className={`color-picker-ref absolute bottom-[35%] -right-28 w-fit z-50`}
             ref={colorPickerRef}
             onClick={(e) => e.stopPropagation()}
           >
@@ -70,9 +70,9 @@ const Legends = ({ teacher }) => {
       <div
         ref={pickerButtonRef}
         onClick={handleEditInstructorColor}
-        className="teacher-legend flex flex-row items-center gap-2 w-[100px] cursor-pointer"
+        className="teacher-legend flex flex-row items-center justify-between cursor-pointer"
       >
-        <p className="m-0">{teacher.lastName}</p>
+        <p className="m-0 w-[8rem]">{teacher.lastName}</p>
         <div
           style={{
             backgroundColor: teacher.instructorColorCode,

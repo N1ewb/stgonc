@@ -7,6 +7,7 @@ import "./Register.css";
 import toast, { Toaster } from "react-hot-toast";
 import { useDB } from "../../../../context/db/DBContext";
 import { spcDepartments } from "../../../../lib/global";
+import { useMessage } from "../../../../context/notification/NotificationContext";
 
 const StudentRegister = () => {
   const firstNameRef = useRef();
@@ -21,6 +22,7 @@ const StudentRegister = () => {
   const auth = useAuth();
   const db = useDB();
   const navigate = useNavigate();
+  const notif = useMessage()
 
   const [loading, setLoading] = useState(false);
 
@@ -60,13 +62,20 @@ const StudentRegister = () => {
                 studentIDnumberRef.current.value,
                 departmentRef.current.value
               );
-              toastMessage("Registration Request is sent");
-              clearForm();
-              navigate("/auth/PendingRequestMessage");
+              const notification = await notif.storeRegistrationNotifToDB(emailRef.current.value, "mellaniegambe@gmail.com")
+              if(notification){
+                toastMessage("Registration Request is sent");
+                clearForm();
+                
+                navigate("/auth/PendingRequestMessage");
+              }else {
+                console.log('wa pa')
+              }
             } else {
               toastMessage("Can't prove ID");
             }
           } catch (error) {
+            console.log(error.message)
             toastMessage("Error during registration: " + error.message);
           } finally {
             setLoading(false);

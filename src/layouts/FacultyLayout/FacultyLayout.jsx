@@ -6,19 +6,19 @@ const FacultyLayout = () => {
   const SidebarLinks = [
     {
       name: "Dashboard",
-      link: "/private/faculty/dashboard",
+      link: "/private/Faculty/dashboard",
     },
     {
       name: "Appointment List",
-      link: "/private/faculty/appointments-list",
+      link: "/private/Faculty/appointments-list",
     },
     {
       name: "Appointment Requests",
-      link: "/private/faculty/appointments-request",
+      link: "/private/Faculty/appointments-request",
     },
     {
       name: "Schedules",
-      link: "/private/faculty/schedules",
+      link: "/private/Faculty/schedules",
     },
   ];
 

@@ -270,7 +270,8 @@ const AdminSchedulesPage = () => {
           Faculty Consultation Schedule
         </h3>
       </div>
-      <div className="schedules-table  md:w-[90%]  flex flex-col items-center justify-between shadow-md gap-3 p-10 rounded-[30px]">
+      <div className="div flex flex-row-reverse flex-wrap w-full justify-evenly">
+      <div className="schedules-table basis-[80%]  md:basis-[90%]  flex flex-col items-center justify-between shadow-md gap-3 p-10 rounded-[30px]">
         <table className=" min-w-[50%] border-collapse  text-center">
           <thead>
             <tr className="  [&_th]:border-transparent [&_th]:font-bold [&_th]:text-[#720000] [&_th]:p-[8px] [&_th]:w-[100px] xsm:w-[80px]">
@@ -347,8 +348,9 @@ const AdminSchedulesPage = () => {
           </div>
         )}
       </div>
+      
+      <div className="legends-container relative basis-[20%] md:basis-[90%] flex flex-col justify-start gap-3">
       <h5 className="text-2xl font-bold text-[#740000]">Legend</h5>
-      <div className="legends-container relative w-full flex flex-row justify-around">
         {teachersList && teachersList.length !== 0 ? (
           teachersList.map((teacher, index) => (
             <Legends key={index} teacher={teacher} />
@@ -356,6 +358,7 @@ const AdminSchedulesPage = () => {
         ) : (
           <p>No Instructors</p>
         )}
+      </div>
       </div>
     </div>
   );

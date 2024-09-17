@@ -21,13 +21,7 @@ const Layout = () => {
             const userRole = user.role;
             console.log(userRole);
             if (userRole === "Student") {
-              navigate("/private/student/dashboard");
-            } else if (userRole === "Teacher") {
-              navigate("/private/faculty/dashboard");
-            } else if (userRole === "Admin") {
-              navigate("/private/admin/dashboard");
-            } else if (userRole === "GuidanceCounsellor") {
-              navigate("/private/guidance-counselor/dashboard");
+              navigate(`/private/${userRole}/dashboard`);
             } else {
               navigate("/");
             }

@@ -5,7 +5,7 @@ const genAI = new GoogleGenerativeAI("AIzaSyBN9O2Uu7htpzQ-gG2dMkRGLFct7CzbYM0");
 const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
 function fileToGenerativePart(base64Data, mimeType) {
-  const base64String = base64Data.split(",")[1]; // Remove the base64 prefix
+  const base64String = base64Data.split(",")[1]; 
   return {
     inlineData: {
       data: base64String,
@@ -15,9 +15,22 @@ function fileToGenerativePart(base64Data, mimeType) {
 }
 
 export async function runAiTest(IDImage) {
-  const prompt =
-    "check both if they are similar using the second image as the reference, if the organization name is not the similar then instantly just return is_similar: false, then return a json response with the first image as reference for OragnizationName: , studentIdNumber: , is_student: true or false, firstName:, middleInitial:, lastName:, is_similar: true or false. REMOVE the JSON and the backticks on the output";
-  const imageParts = [
+  const prompt = `
+Check both if they are similar using the second image as the reference. 
+If the organization name is not similar, return {"is_similar": false}. 
+Otherwise, return a valid JSON response with the following structure:
+{
+  "OrganizationName": "",
+  "studentIdNumber": "",
+  "is_student": true or false,
+  "firstName": "",
+  "middleInitial": "",
+  "lastName": "",
+  "is_similar": true or false
+},
+please note to remove the "JSON" word and the unnecessary backticks and qoutation mark in your output
+`
+const imageParts = [
     fileToGenerativePart(IDImage, "image/png"),
     fileToGenerativePart(idRefence, "image/jpeg"),
   ];

@@ -12,6 +12,7 @@ const LoginPage = () => {
   const emailRef = useRef();
   const passwordRef = useRef();
   const navigate = useNavigate();
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
   const handleSignIn = () => {
     auth.SignIn(emailRef.current.value, passwordRef.current.value);
@@ -21,6 +22,7 @@ const LoginPage = () => {
     const fetchUserAndRedirect = async () => {
       if (auth.currentUser) {
         try {
+          setIsSubmitting(true)
           const user = await db.getUser(auth.currentUser.uid);
           if (user) {
             const userRole = user.role;
@@ -39,6 +41,8 @@ const LoginPage = () => {
           }
         } catch (error) {
           console.error("Error fetching user data:", error);
+        } finally{
+          setIsSubmitting(false)
         }
       }
     };
@@ -76,8 +80,9 @@ const LoginPage = () => {
                     className="w-full bg-[#740000] rounded-[4px]"
                     type="submit"
                     onClick={() => handleSignIn()}
+                    disabled={isSubmitting? true : false}
                   >
-                    {"login"}
+                    {!isSubmitting? "Login" : "Submitting"}
                   </button>
                   <p>
                     Don't have an account?{" "}
