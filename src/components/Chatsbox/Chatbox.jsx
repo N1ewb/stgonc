@@ -72,12 +72,12 @@ const Chatbox = ({ auth, db, receiver, setCurrentChatReceiver }) => {
     fetchData();
   }, [receiver, auth.currentUser, db]);
 
-  const handleSendMessage = async (formValue, uid, receiver) => {
+  const handleSendMessage = async (formValue, receiver) => {
     if (auth.currentUser) {
       const participantName = getParticipantName(receiver);
       const participantEmail = getParticipantEmail(receiver);
 
-      await db.sendMessage(formValue, uid, participantName);
+      await db.sendMessage(formValue, auth.currentUser.uid, participantName);
       await notif.storeUserNotifToDB(
         auth.currentUser.email,
         participantEmail,
@@ -137,7 +137,6 @@ const Chatbox = ({ auth, db, receiver, setCurrentChatReceiver }) => {
               e.preventDefault();
               handleSendMessage(
                 formValueRef.current.value,
-                auth.currentUser.uid,
                 receiver
               );
             }}

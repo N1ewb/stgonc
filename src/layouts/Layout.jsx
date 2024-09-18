@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { Outlet, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/auth/AuthContext";
 import Navbar from "../components/heading/Navbar";
@@ -17,6 +17,7 @@ const Layout = () => {
       if (auth.currentUser) {
         try {
           const user = await db.getUser(auth.currentUser.uid);
+         
           if (user) {
             const userRole = user.role;
             console.log(userRole);
@@ -35,7 +36,7 @@ const Layout = () => {
     };
 
     fetchUserAndRedirect();
-  }, [auth.currentUser, navigate]);
+  }, [auth.currentUser, navigate, db]);
 
   return (
     <div className="flex flex-col w-full h-auto">
@@ -44,7 +45,7 @@ const Layout = () => {
         <div className="outlet w-full h-auto">
           <Outlet />
         </div>
-        {chat.currentChatReceiver && (
+        {auth.currentUser && chat.currentChatReceiver && (
           <Chatbox
             receiver={chat.currentChatReceiver}
             auth={auth}

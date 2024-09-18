@@ -6,31 +6,36 @@ import { Link, useNavigate } from "react-router-dom";
 import "./Profile.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { useDB } from "../../context/db/DBContext";
+import { useChat } from "../../context/chatContext/ChatContext";
 
 const Profile = () => {
   const auth = useAuth();
-  const db = useDB()
+  const db = useDB();
+  const chat = useChat();
   const navigate = useNavigate();
-  const [user, setUser] = useState()
+  const [user, setUser] = useState();
 
   const handleSignout = async () => {
-    await auth.SignOut();
-    navigate("/");
+    if (auth.currentUser) {
+      await chat.setCurrentChatReceiver(null);
+      await auth.SignOut();
+      navigate("/");
+    }
   };
 
   useEffect(() => {
     const handleGetUser = async () => {
-      try{
-        if(auth.currentUser){
-          const user = await db.getUser(auth.currentUser.uid)
-          setUser(user)
+      try {
+        if (auth.currentUser) {
+          const user = await db.getUser(auth.currentUser.uid);
+          setUser(user);
         }
-      }catch(error){
-        console.log(`Error in retreving user: ${error.message}`)
+      } catch (error) {
+        console.log(`Error in retreving user: ${error.message}`);
       }
-    }
-    handleGetUser()
-  },[])
+    };
+    handleGetUser();
+  }, []);
 
   return (
     <div className="profile-container lg:hidden">
@@ -68,7 +73,14 @@ const Profile = () => {
           <Dropdown.Item onClick={() => navigate("/private/Userpage")}>
             Account Settings
           </Dropdown.Item>
-          <Dropdown.Item><Link className="decoration-transparent [&_a]:decoration-transparent text-[#000000d2]" to={`/private/${user?.role}/notifications`}>Notifications</Link></Dropdown.Item>
+          <Dropdown.Item>
+            <Link
+              className="decoration-transparent [&_a]:decoration-transparent text-[#000000d2]"
+              to={`/private/${user?.role}/notifications`}
+            >
+              Notifications
+            </Link>
+          </Dropdown.Item>
           <Dropdown.Item href="#/action-2">Give Feedback</Dropdown.Item>
           <Dropdown.Item onClick={() => handleSignout()}>Logout</Dropdown.Item>
         </Dropdown.Menu>
