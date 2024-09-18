@@ -1,5 +1,6 @@
 import React from "react";
 import "./App.css";
+import 'react-tooltip/dist/react-tooltip.css'
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { AuthProvider } from "./context/auth/AuthContext";
 import { DBProvider } from "./context/db/DBContext";
@@ -41,6 +42,7 @@ import TeacherSchedulePage from "./pages/UsersPages/faculty/faculty_pages/schedu
 import AdminAppointmentReqsPage from "./pages/UsersPages/admin/admin_pages/admin_appointment_reqs/AdminAppointmentReqs";
 import PendingReqMessagePage from "./pages/authentication/YourRegReqisPending/PendingReqMessagePage";
 import NotificationPage from "./pages/Notifications/notifications-page/NotificationPage";
+import ExportToPDF from "./ComponentToPDF/ExportComponentToPDF";
 
 function App() {
   const router = createBrowserRouter([
@@ -92,6 +94,10 @@ function App() {
                   path: "/private/Admin/notifications",
                   element: <NotificationPage />
                 },
+                {
+                  path: '/private/Admin/export-components',
+                  element: <ExportToPDF />
+                }
               ],
             },
             {

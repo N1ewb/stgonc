@@ -1,10 +1,16 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import "./admin_schedules.css";
-import SchedulesModal from "../../../../../components/modal/schedules-modal/SchedulesModal";
+
 import toast from "react-hot-toast";
 import { useAuth } from "../../../../../context/auth/AuthContext";
 import { useDB } from "../../../../../context/db/DBContext";
 import Legends from "../../admin-components/Legends";
+import ExportToPDFHOC from "../../../../../ComponentToPDF/ExportHOC";
+import { auth } from "../../../../../server/firebase";
+import Export from "../../../../../static/images/export-file.png";
+import Edit from "../../../../../static/images/pen.png";
+import { Tooltip } from "react-tooltip";
+import SchedulesTable from "../../admin-components/SchedulesTable";
 
 const AdminSchedulesPage = () => {
   const db = useDB();
@@ -18,86 +24,13 @@ const AdminSchedulesPage = () => {
   const [choosenCells, setChoosenCells] = useState([]);
   const [isEditMode, setIsEditMode] = useState(false);
 
-  // const daysOfWeek = [
-  //   "Monday",
-  //   "Tuesday",
-  //   "Wednesday",
-  //   "Thursday",
-  //   "Friday",
-  //   "Saturday",
-  //   "Sunday",
-  // ];
+  const exportPDFRef = useRef();
 
-  // const times = [
-  //   "07:00-08:00",
-  //   "08:00-09:00",
-  //   "09:00-10:00",
-  //   "10:00-11:00",
-  //   "11:00-12:00",
-  //   "12:00-13:00",
-  //   "13:00-14:00",
-  //   "14:00-15:00",
-  //   "15:00-16:00",
-  //   "16:00-17:00",
-  //   "17:00-18:00",
-  //   "18:00-19:00",
-  //   "19:00-20:00",
-  // ];
-
-  const times = [
-    {
-      startTime: 8,
-      endTime: 9,
-    },
-    {
-      startTime: 9,
-      endTime: 10,
-    },
-    {
-      startTime: 10,
-      endTime: 11,
-    },
-    {
-      startTime: 11,
-      endTime: 12,
-    },
-    {
-      startTime: 12,
-      endTime: 13,
-    },
-    {
-      startTime: 13,
-      endTime: 14,
-    },
-    {
-      startTime: 14,
-      endTime: 15,
-    },
-    {
-      startTime: 16,
-      endTime: 17,
-    },
-    {
-      startTime: 17,
-      endTime: 18,
-    },
-    {
-      startTime: 18,
-      endTime: 19,
-    },
-    {
-      startTime: 19,
-      endTime: 20,
-    },
-  ];
-
-  // const startTime = 7;
-  // const endTime = 21;
-
-  // const times = Array.from(
-  //   { length: endTime - startTime },
-  //   (_, i) => `${startTime + i}:00`
-  // );
+  const handleExport = () => {
+    if (exportPDFRef.current) {
+      exportPDFRef.current.exportPDF();
+    }
+  };
 
   const toggleShow = () => {
     if (choosenCells.length !== 0) {
@@ -153,18 +86,7 @@ const AdminSchedulesPage = () => {
     }
   };
 
-  const handleCellClick = (time, day) => {
-    if (isEditMode) {
-      const cellData = { time, day: day.dayOfWeek, fullDay: day };
-      const JsonFormat = JSON.stringify(cellData);
-      console.log(JsonFormat);
-      setChoosenCells((prev) =>
-        prev.includes(JsonFormat)
-          ? prev.filter((cell) => cell !== JsonFormat)
-          : [...prev, JsonFormat]
-      );
-    }
-  };
+  
 
   const handleDeleteSchedulesDoc = async (id) => {
     try {
@@ -261,106 +183,75 @@ const AdminSchedulesPage = () => {
   }, [db, teachersList]);
 
   return (
-    <div className="admin-schedules-page-container w-full h-[100%] flex flex-col justify-around items-center gap-[5px]">
-      <div className="admin-schedule-header flex flex-col w-full text-center text-[#740000]">
-        <h1 className="w-[full] font-bold text-3xl">
-          {currentUser.department}
-        </h1>
-        <h3 className="w-full text-2xl font-bold">
-          Faculty Consultation Schedule
-        </h3>
-      </div>
-      <div className="div flex flex-row-reverse flex-wrap w-full justify-evenly">
-      <div className="schedules-table basis-[80%]  md:basis-[90%]  flex flex-col items-center justify-between shadow-md gap-3 p-10 rounded-[30px]">
-        <table className=" min-w-[50%] border-collapse  text-center">
-          <thead>
-            <tr className="  [&_th]:border-transparent [&_th]:font-bold [&_th]:text-[#720000] [&_th]:p-[8px] [&_th]:w-[100px] xsm:w-[80px]">
-              <th className="xsm:text-[14px] ">Time/Days</th>
-              {schedules && schedules.length !== 0
-                ? schedules.map((day) => (
-                    <th className="xsm:text-[13px]" key={day.id}>
-                      <span className="block md:hidden ">{day.dayOfWeek}</span>
-                      <span className="hidden md:block">{day.shortVer}</span>
-                    </th>
-                  ))
-                : ""}
-            </tr>
-          </thead>
-          <tbody>
-            {times.map((time) => (
-              <tr key={`${time.startTime}-${time.endTime}`}>
-                <td className="h-[30px] xsm:text-[14px] ">
-                  {`${time.startTime}:00 ${time.endTime}:00`}
-                </td>
-                {schedules && schedules.length !== 0
-                  ? schedules.map((day) => (
-                      <td
-                        style={{
-                          backgroundColor:
-                            scheduleData[
-                              `${time.startTime}-${time.endTime}-${day.dayOfWeek}`
-                            ]?.instructorColorCode || "",
-                        }}
-                        key={`${time.startTime}-${time.endTime}-${day.dayOfWeek}`}
-                        onClick={() => handleCellClick(time, day)}
-                        className={`border-solid border-[1px] border-[#e4e4e4] ${
-                          isEditMode &&
-                          choosenCells.some((cell) => {
-                            const parsedCell = JSON.parse(cell);
-                            return (
-                              parsedCell.time.startTime === time.startTime &&
-                              parsedCell.time.endTime === time.endTime &&
-                              parsedCell.day === day.dayOfWeek
-                            );
-                          })
-                            ? `bg-[#571010]`
-                            : isEditMode
-                            ? "bg-[#fca4a4] cursor-pointer hover:bg-[#5f1b24]"
-                            : ""
-                        }`}
-                      ></td>
-                    ))
-                  : ""}
-              </tr>
-            ))}
-          </tbody>
-        </table>
-        {show && (
-          <SchedulesModal
-            toggleShow={toggleShow}
-            show={show}
-            teachersList={teachersList}
-            toastMessage={toastMessage}
-            setTd={setTd}
-          />
-        )}
-        {!isEditMode ? (
-          <button
-            className="bg-[#740000] w-[200px] rounded-[4px] hover:bg-[#641b1b]"
-            onClick={handleChooseCells}
-          >
-            Edit
-          </button>
-        ) : (
-          <div className="flex flex-row w-[250px] justify-around [&_button]:bg-[#740000] [&_button]:w-[100px] [&_button]:rounded-[4px]">
-            <button onClick={() => toggleShow()}>Select</button>
-            <button onClick={() => handleChooseCells()}>Cancel</button>
+    <ExportToPDFHOC
+      fileName={`${auth.currentUser.displayName} Faculty schedule`}
+      ref={exportPDFRef}
+    >
+      <div className="admin-schedules-page-container w-full h-[100%] flex flex-col justify-around items-center gap-[5px]">
+        <div className="admin-schedule-header flex flex-col w-full text-center text-[#740000]">
+          <h1 className="w-[full] font-bold text-3xl">
+            {currentUser.department}
+          </h1>
+          <h3 className="w-full text-2xl font-bold">
+            Faculty Consultation Schedule
+          </h3>
+        </div>
+        <div className="pt-20">
+          <div className="actions-container w-full flex flex-row-reverse gap-3">
+            <button
+              onClick={handleExport}
+              className="export-button bg-transparent  p-0"
+            >
+              <img src={Export} alt="Export" height={27} width={27} />
+            </button>
+            {!isEditMode ? (
+              <button
+                className="edit-button bg-transparent  p-0"
+                onClick={handleChooseCells}
+              >
+                <img src={Edit} alt="Edit" height={25} width={25} />
+              </button>
+            ) : (
+              <div className="flex flex-row w-[250px] justify-around [&_button]:bg-[#740000] [&_button]:w-[100px] [&_button]:rounded-[4px]">
+                <button onClick={() => toggleShow()}>Select</button>
+                <button onClick={() => handleChooseCells()}>Cancel</button>
+              </div>
+            )}
           </div>
-        )}
+          <div className="div flex flex-row-reverse flex-wrap w-full justify-evenly">
+            <SchedulesTable
+              show={show}
+              teachersList={teachersList}
+              setTd={setTd}
+              toggleShow={toggleShow}
+              toastMessage={toastMessage}
+              schedules={schedules}
+              isEditMode={isEditMode}
+              scheduleData={scheduleData}
+              choosenCells={choosenCells}
+              setChoosenCells={setChoosenCells}
+            />
+
+            <div className="legends-container relative basis-[20%] md:basis-[90%] flex flex-col justify-start gap-3">
+              <h5 className="text-2xl font-bold text-[#740000]">Legend</h5>
+              {teachersList && teachersList.length !== 0 ? (
+                teachersList.map((teacher, index) => (
+                  <Legends key={index} teacher={teacher} />
+                ))
+              ) : (
+                <p>No Instructors</p>
+              )}
+            </div>
+          </div>
+        </div>
+        <Tooltip anchorSelect=".export-button" place="top">
+          Export file to PNG
+        </Tooltip>
+        <Tooltip anchorSelect=".edit-button" place="top">
+          Edit Table
+        </Tooltip>
       </div>
-      
-      <div className="legends-container relative basis-[20%] md:basis-[90%] flex flex-col justify-start gap-3">
-      <h5 className="text-2xl font-bold text-[#740000]">Legend</h5>
-        {teachersList && teachersList.length !== 0 ? (
-          teachersList.map((teacher, index) => (
-            <Legends key={index} teacher={teacher} />
-          ))
-        ) : (
-          <p>No Instructors</p>
-        )}
-      </div>
-      </div>
-    </div>
+    </ExportToPDFHOC>
   );
 };
 
