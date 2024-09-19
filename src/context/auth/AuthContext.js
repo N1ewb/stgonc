@@ -7,7 +7,13 @@ import {
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
 } from "firebase/auth";
-import { collection, doc, serverTimestamp, setDoc, updateDoc } from "firebase/firestore";
+import {
+  collection,
+  doc,
+  serverTimestamp,
+  setDoc,
+  updateDoc,
+} from "firebase/firestore";
 import toast from "react-hot-toast";
 import { Toast } from "react-bootstrap";
 
@@ -21,7 +27,6 @@ export const AuthProvider = ({ children }) => {
   const [currentUser, setCurrentUser] = useState(null);
   const usersCollectionRef = collection(firestore, "Users");
   const [error, setError] = useState();
-  
 
   const studentRegistrationRequestRef = collection(
     firestore,
@@ -61,22 +66,21 @@ export const AuthProvider = ({ children }) => {
     firstName,
     lastName,
     phoneNumber,
-    studentIdnumber,
+    studentIDnumber,
     department
   ) => {
     try {
-      
       return setDoc(doc(collection(firestore, "StudentRegistrationRequest")), {
         firstName: firstName,
         lastName: lastName,
         email: email,
         password,
         phoneNumber,
-        studentIdnumber,
+        studentIDnumber,
         department,
         role: "Student",
         status: "Pending",
-        createdAt: serverTimestamp()
+        createdAt: serverTimestamp(),
       });
     } catch (error) {
       toastMessage(error.message);

@@ -13,19 +13,16 @@ const TeacherAppointmentReqPage = () => {
   const { currentAppointment, setCurrentAppointment } = useAppointment();
   const [requestedAppointments, setRequestedAppointments] = useState();
 
-  const handleGetRequestedAppointment = (appointments) => {
-    return appointments.filter(
-      (appointment) => appointment.appointmentStatus === "pending"
-    );
-  };
-
   useEffect(() => {
     const fetchData = async () => {
       if (auth.currentUser) {
         try {
-          const unsubscribe = db.subscribeToAppointmentChanges((callback) => {
-            setRequestedAppointments(handleGetRequestedAppointment(callback));
-          });
+          const unsubscribe = db.subscribeToAppointmentChanges(
+            "pending",
+            (callback) => {
+              setRequestedAppointments(callback);
+            }
+          );
           return () => unsubscribe();
         } catch (error) {
           console.log(error);

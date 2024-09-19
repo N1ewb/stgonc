@@ -1,20 +1,34 @@
-import React, { useRef, forwardRef, useImperativeHandle } from 'react';
-import html2canvas from 'html2canvas';
-import jsPDF from 'jspdf';
+import React, { useRef, forwardRef, useImperativeHandle } from "react";
+import html2canvas from "html2canvas";
+import jsPDF from "jspdf";
 
-// Using forwardRef to allow external reference access
-const ExportToPDFHOC = forwardRef(({ children, fileName }, ref) => {
+const ExportToPDFHOC = forwardRef(({ children, fileName, fileType }, ref) => {
   const componentRef = useRef();
+
+  const ORIENTATION = "landscape";
+  const UNIT = "mm";
+  const FORMAT = "a4";
 
   const handleExport = () => {
     const input = componentRef.current;
-    html2canvas(input).then((canvas) => {
-      const imgData = canvas.toDataURL('image/png');
-      const pdf = new jsPDF('landscape', 'mm', 'a4');
+
+    const canvasOptions = {
+      scale: 3,
+      useCORS: true,
+    };
+
+    html2canvas(input, canvasOptions).then((canvas) => {
+      const imgData = canvas.toDataURL(`image/${fileType}`);
+      const pdf = new jsPDF(ORIENTATION, UNIT, FORMAT);
+
       const pdfWidth = pdf.internal.pageSize.getWidth();
-      const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
-      pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
-      pdf.save(`${fileName}.pdf`); 
+      const pdfHeight = pdf.internal.pageSize.getHeight();
+
+      const imgWidth = pdfWidth;
+      const imgHeight = (canvas.height * imgWidth) / canvas.width;
+
+      pdf.addImage(imgData, fileType.toUpperCase(), 0, 0, imgWidth, imgHeight);
+      pdf.save(`${fileName}.${fileType}`);
     });
   };
 

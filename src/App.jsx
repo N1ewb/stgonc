@@ -1,6 +1,11 @@
 import React from "react";
 import "./App.css";
-import 'react-tooltip/dist/react-tooltip.css'
+import "react-tooltip/dist/react-tooltip.css";
+import "react-confirm-alert/src/react-confirm-alert.css";
+import "primereact/resources/themes/lara-light-cyan/theme.css";
+import "primereact/resources/primereact.min.css";
+import "primeicons/primeicons.css";
+
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { AuthProvider } from "./context/auth/AuthContext";
 import { DBProvider } from "./context/db/DBContext";
@@ -11,6 +16,7 @@ import { StorageProvider } from "./context/storage/StorageContext";
 import { ChatProvider } from "./context/chatContext/ChatContext";
 import { Appointmentprovider } from "./context/appointmentContext/AppointmentContext";
 import { Toaster } from "react-hot-toast";
+import { PrimeReactProvider } from "primereact/api";
 
 import Chatroom from "./pages/chatroom/Chatroom";
 import LandingPage from "./pages/landingpage/LandingPage";
@@ -92,12 +98,12 @@ function App() {
                 },
                 {
                   path: "/private/Admin/notifications",
-                  element: <NotificationPage />
+                  element: <NotificationPage />,
                 },
                 {
-                  path: '/private/Admin/export-components',
-                  element: <ExportToPDF />
-                }
+                  path: "/private/Admin/export-components",
+                  element: <ExportToPDF />,
+                },
               ],
             },
             {
@@ -127,7 +133,7 @@ function App() {
                 },
                 {
                   path: "/private/Faculty/notifications",
-                  element: <NotificationPage />
+                  element: <NotificationPage />,
                 },
               ],
             },
@@ -141,11 +147,11 @@ function App() {
                 },
                 {
                   path: "/private/Student/notifications",
-                  element: <NotificationPage />
+                  element: <NotificationPage />,
                 },
               ],
             },
-            
+
             {
               path: "/private/VideoCall",
               element: <VideoCall />,
@@ -206,10 +212,12 @@ function App() {
             <StorageProvider>
               <ChatProvider>
                 <Appointmentprovider>
-                  <div className="App h-[100%] w-full bg-white">
-                    <RouterProvider router={router} />
-                    <Toaster />
-                  </div>
+                  <PrimeReactProvider>
+                    <div className="App h-[100%] w-full bg-white">
+                      <RouterProvider router={router} />
+                      <Toaster />
+                    </div>
+                  </PrimeReactProvider>
                 </Appointmentprovider>
               </ChatProvider>
             </StorageProvider>

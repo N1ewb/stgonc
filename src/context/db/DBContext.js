@@ -172,11 +172,7 @@ export const DBProvider = ({ children }) => {
           teacherRemarks: null,
         });
 
-        await notif.storeNotifToDB(
-          "Appointment Request",
-          concern,
-          teacheremail
-        );
+        await notif.storeNotifToDB("Appointment", concern, teacheremail);
       }
     } catch (error) {
       notifyError(error);
@@ -243,7 +239,7 @@ export const DBProvider = ({ children }) => {
           receiver
         );
         await updateDoc(appointmentDocRef, updatedAppointmentDocRef);
-        toastMessage("Accepted Appointment");
+        toastMessage("Appointment Accepted");
       }
     } catch (error) {
       notifyError(error);
@@ -257,7 +253,7 @@ export const DBProvider = ({ children }) => {
         const updatedAppointmentDocRef = { appointmentStatus: "Denied" };
         await notif.storeNotifToDB("Accepted Request", reason, receiver);
         await updateDoc(appointmentDocRef, updatedAppointmentDocRef);
-        toastMessage("Denied Appointment");
+        toastMessage("Appointment Denied");
       }
     } catch (error) {
       console.error();
@@ -404,13 +400,18 @@ export const DBProvider = ({ children }) => {
   };
 
   //As Teacher
-  const subscribeToAppointmentChanges = async (callback) => {
+  const subscribeToAppointmentChanges = async (status, callback) => {
     try {
       if (auth.currentUser) {
         const unsubscribe = onSnapshot(
           query(
             appointmentsRef,
-            where("appointedTeacher.teacheremail", "==", auth.currentUser.email)
+            where(
+              "appointedTeacher.teacheremail",
+              "==",
+              auth.currentUser.email
+            ),
+            where("appointmentStatus", "==", status)
           ),
           (snapshot) => {
             const data = snapshot.docs.map((doc) => ({

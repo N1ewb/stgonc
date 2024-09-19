@@ -169,9 +169,7 @@ const StudentDashboard = () => {
                     <button
                       className=""
                       onClick={() =>
-                        chat.setCurrentChatReceiver(
-                          appt.appointedTeacher
-                        )
+                        chat.setCurrentChatReceiver(appt.appointedTeacher)
                       }
                     >
                       Chat

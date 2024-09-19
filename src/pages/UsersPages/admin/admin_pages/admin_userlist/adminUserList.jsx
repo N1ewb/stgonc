@@ -1,12 +1,11 @@
 import React, { useEffect, useState } from "react";
+import { useDB } from "../../../../../context/db/DBContext";
+import { useAuth } from "../../../../../context/auth/AuthContext";
 
 import defaultProfile from "../../../../../static/images/default-profile.png";
 import More from "../../../../../static/images/more-dark.png";
-
-import toast from "react-hot-toast";
-import { useDB } from "../../../../../context/db/DBContext";
-import { useAuth } from "../../../../../context/auth/AuthContext";
 import UserList from "../../admin-components/UserList";
+import AdminSearchBar from "../../admin-components/AdminSearchBar";
 
 const ITEMS_PER_PAGE = 7;
 
@@ -19,8 +18,7 @@ const AdminUserList = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [paginationControls, setPaginationControls] = useState();
   const [currentCharacters, setcurrentCharacters] = useState();
-
-  const toastMessage = (message) => toast(message);
+  const [temp, setTemp] = useState();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -29,6 +27,7 @@ const AdminUserList = () => {
           const unsubscribe = db.subscribeToUserChanges((newUserList) => {
             setUserList(newUserList);
             setLoading(false);
+            setTemp(newUserList);
           });
           return () => unsubscribe();
         } catch (error) {
@@ -79,14 +78,17 @@ const AdminUserList = () => {
 
   return (
     <div className="admin-userlist-container w-full min-h-[100%] max-h-[100%] flex flex-col justify-between p-10 shadow-md rounded-3xl">
-      <div className="flex flex-col items-start w-full">
-        <h1 className="relative ">
-          User List{" "}
-          <span className="absolute top-0 text-[#323232] font-semibold text-xs">
-            TotalUsers: {userList.length}
-          </span>
-        </h1>
-        <div className="div flex flex-col w-full basis-4/5 ">
+      <div className="flex flex-col items-start w-full ">
+        <div className="admin-userlist-header w-full flex flex-row justify-between items-end">
+          <h1 className="relative text-[#320000] font-semibold">
+            User List{" "}
+            <span className="absolute top-0 text-[#720000] font-semibold text-xs w-full">
+              TotalUsers: {temp.length}
+            </span>
+          </h1>
+          <AdminSearchBar datas={userList} setData={setUserList} temp={temp} />
+        </div>
+        <div className="div flex flex-col w-full basis-4/5 px-5">
           <UserList
             currentCharacters={currentCharacters}
             defaultProfile={defaultProfile}

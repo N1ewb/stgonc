@@ -15,19 +15,16 @@ const TeacherAppointmentListPage = () => {
   const { currentAppointment, setCurrentAppointment } = useAppointment();
   const [acceptedAppointments, setAcceptedAppointments] = useState();
 
-  const handleGetAcceptedAppointment = (appointments) => {
-    return appointments.filter(
-      (appointment) => appointment.appointmentStatus === "Accepted"
-    );
-  };
-
   useEffect(() => {
     const fetchData = async () => {
       if (auth.currentUser) {
         try {
-          const unsubscribe = db.subscribeToAppointmentChanges((callback) => {
-            setAcceptedAppointments(handleGetAcceptedAppointment(callback));
-          });
+          const unsubscribe = db.subscribeToAppointmentChanges(
+            "Accepted",
+            (callback) => {
+              setAcceptedAppointments(callback);
+            }
+          );
           return () => unsubscribe();
         } catch (error) {
           console.log(error);
