@@ -17,7 +17,7 @@ const AdminUserList = () => {
   const [paginationControls, setPaginationControls] = useState();
   const [currentCharacters, setcurrentCharacters] = useState();
   const [temp, setTemp] = useState();
-  const [ITEMS_PER_PAGE, setITEMS_PER_PAGE] = useState(6);
+  const [ITEMS_PER_PAGE, setITEMS_PER_PAGE] = useState(10);
   useEffect(() => {
     const fetchData = async () => {
       if (auth.currentUser) {
@@ -91,7 +91,7 @@ const AdminUserList = () => {
             setCurrentPage={setCurrentPage}
           />
         </div>
-        <div className="div flex flex-col w-1/2 h-[80%] max-h-[80%] p-0 m-0">
+        <div className="div flex flex-col w-1/2 h-[80%] max-h-[90%] p-0 m-0">
           <UserList
             currentCharacters={currentCharacters}
             defaultProfile={defaultProfile}
@@ -114,10 +114,10 @@ const AdminUserList = () => {
             className="rows-per-page border-transparent focus:outline-none focus:ring-0"
             onChange={(e) => setITEMS_PER_PAGE(Number(e.target.value))}
           >
-            <option value="6">6</option>
-            <option value="15">15</option>
-            <option value="30">30</option>
+            <option value="10">10</option>
+            <option value="25">25</option>
             <option value="50">50</option>
+            <option value="100">100</option>
           </select>
         </div>
       </div>

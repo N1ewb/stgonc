@@ -49,6 +49,10 @@ import AdminAppointmentReqsPage from "./pages/UsersPages/admin/admin_pages/admin
 import PendingReqMessagePage from "./pages/authentication/YourRegReqisPending/PendingReqMessagePage";
 import NotificationPage from "./pages/Notifications/notifications-page/NotificationPage";
 import ExportToPDF from "./ComponentToPDF/ExportComponentToPDF";
+import AdminWalkins from "./pages/UsersPages/admin/admin_pages/admin_walkins/AdminWalkins";
+import StudentAppointments from "./pages/UsersPages/student/student-pages/student-appointments/StudentAppointments";
+import StudentPendingAppointments from "./pages/UsersPages/student/student-pages/student-pending-appointments/StudentPendingAppointments";
+import StudentApptArchive from "./pages/UsersPages/student/student-pages/student-appointments-archive/StudentApptArchive";
 
 function App() {
   const router = createBrowserRouter([
@@ -71,6 +75,10 @@ function App() {
                 {
                   path: "/private/Admin/dashboard",
                   element: <AdminGraphs />,
+                },
+                {
+                  path: "/private/Admin/dashboard/walkins",
+                  element: <AdminWalkins />,
                 },
                 {
                   path: "/private/Admin/dashboard/appointments-list",
@@ -144,6 +152,18 @@ function App() {
                 {
                   path: "/private/Student/dashboard",
                   element: <StudentDashboard />,
+                },
+                {
+                  path: "/private/Student/dashboard/appointments",
+                  element : <StudentAppointments /> 
+                },
+                {
+                  path: "/private/Student/dashboard/pending-appointments",
+                  element: <StudentPendingAppointments />
+                },
+                {
+                  path: "/private/Student/dashboard/appointments-archive",
+                  element: <StudentApptArchive /> 
                 },
                 {
                   path: "/private/Student/notifications",

@@ -69,14 +69,14 @@ const AdminAppointmentReqsPage = () => {
             appointments.map((appointment, index) =>
               appointment.appointmentStatus === "pending" ? (
                 <AppointmentReqList
-                  key={index}
+                  handleAcceptAppointment={handleAcceptAppointment}
+                  handleDenyAppointment={handleDenyAppointment}
                   appointment={appointment}
-                  setCurrentChatReceiver={chat.setCurrentChatReceiver}
                 />
               ) : null
             )
           ) : (
-            <p>No accepted appointments yet</p>
+            <p>No appointments requests</p>
           )}
         </div>
 

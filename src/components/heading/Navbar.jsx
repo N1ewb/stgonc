@@ -51,7 +51,7 @@ const Navbar = () => {
     if (user === null || user === undefined) {
       handleGetUser();
     }
-  });
+  },[auth.currentUser]);
 
   return (
     <div className="navbar-container bg-[#360000] flex flex-row fixed items-center w-full justify-between z-20 p-[20px]">
@@ -73,25 +73,6 @@ const Navbar = () => {
                 </Link>
               </React.Fragment>
             ))}
-
-        {/* <Link className="no-underline text-white" to="#">
-          <p className="m-0">About Us</p>
-        </Link>
-        <Link className="no-underline text-white" to="#">
-          <p className="m-0">Contact Us</p>
-        </Link>
-        {!auth.currentUser ? (
-          <>
-            <Link className="no-underline text-white" to="#">
-              <p className="m-0">Login</p>
-            </Link>
-            <Link className="no-underline text-white" to="#">
-              <p className="m-0">Register</p>
-            </Link>
-          </>
-        ) : (
-          ""
-        )} */}
       </div>
       <div className="mobile-nav-links hidden md:flex flex-col ">
         <img

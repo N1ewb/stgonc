@@ -14,8 +14,6 @@ const RequestAppointmentForm = ({
   instructor,
   show,
   toggleShow,
-  myInfo,
-  appointments,
 }) => {
   const toastMessage = (message) => toast(message);
 
@@ -29,6 +27,8 @@ const RequestAppointmentForm = ({
   const [instructorTimeslots, setInstructorTimeslots] = useState([]);
   const [days, setDays] = useState();
   const concernRef = useRef();
+  const formatRef = useRef();
+  const typeRef = useRef();
   const [appointmentDate, setAppointmentDate] = useState(null);
   const [appointmentTime, setAppointmentTime] = useState(null);
   const [bookedTimeslots, setBookedTimeslots] = useState([]);
@@ -145,36 +145,28 @@ const RequestAppointmentForm = ({
   }, [show]);
 
   const handleRequestAppointment = async (
-    teacheruid,
-    teacherFirstName,
-    teacherLastName,
-    teacherPhoneno,
-    teacheruserID,
+    facultyEmail,
+    facultyUID,
     concern,
-    date,
-    time,
-    isOnline,
-    phoneno,
-    studentIDnumber
+    format,
+    type
   ) => {
     try {
       if (
         concernRef.current.value &&
         appointmentTime &&
-        appointmentDate.dateWithoutTime
+        appointmentDate.dateWithoutTime &&
+        formatRef.current.value &&
+        typeRef.current.value
       ) {
         await db.sendAppointmentRequest(
-          teacheruid,
-          teacherFirstName,
-          teacherLastName,
-          teacherPhoneno,
-          teacheruserID,
-          concern.current.value,
+          facultyEmail,
+          facultyUID,
+          concern,
           appointmentDate.dateWithoutTime,
           appointmentTime,
-          isOnline,
-          phoneno,
-          studentIDnumber
+          format,
+          type
         );
         toastMessage("Appointment request sent");
         handleToggleShow();
@@ -230,7 +222,6 @@ const RequestAppointmentForm = ({
               <Calendar
                 setAppointmentDate={setAppointmentDate}
                 instructorSchedule={instructorSchedule}
-                appointments={appointments}
                 selectedDate={selectedDate}
                 setSelectedDate={setSelectedDate}
               />
@@ -281,6 +272,22 @@ const RequestAppointmentForm = ({
                   <div className="h-12 w-full"></div>
                 )}
               </div>
+              <div className="group-container flex flex-row justify-around items-center">
+                <div className="group">
+                  <select name="" id="" className="" ref={formatRef}>
+                    <option value="">Select Format</option>
+                    <option value="F2F">Face to Face</option>
+                    <option value="Online">Online</option>
+                  </select>
+                </div>
+                <div className="group">
+                  <select name="" id="" className="" ref={typeRef}>
+                    <option value="">Select Type</option>
+                    <option value="Academic">Academic</option>
+                    <option value="Personal">Personal</option>
+                  </select>
+                </div>
+              </div>
               <div className="form-group">
                 <label htmlFor="image">
                   Picture of Yourself right now this moment
@@ -293,16 +300,10 @@ const RequestAppointmentForm = ({
                   onClick={() =>
                     handleRequestAppointment(
                       instructor.email,
-                      instructor.firstName,
-                      instructor.lastName,
-                      instructor.phoneNumber,
                       instructor.userID,
-                      concernRef,
-                      appointmentDate,
-                      appointmentTime,
-                      true,
-                      myInfo.phoneNumber,
-                      myInfo && myInfo.studentIdnumber
+                      concernRef.current.value,
+                      formatRef.current.value,
+                      typeRef.current.value
                     )
                   }
                 >

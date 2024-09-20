@@ -1,12 +1,33 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Close from "../../static/images/close-dark.png";
 import { useAppointment } from "../../context/appointmentContext/AppointmentContext";
+import { useDB } from "../../context/db/DBContext";
 
 const AppointmentInfo = ({
   handleAcceptAppointment,
   handleDenyAppointment,
 }) => {
+  const db = useDB()
   const { currentAppointment, setCurrentAppointment } = useAppointment();
+  const [appointee, setAppointee] = useState(null);
+
+  
+  const handleGetUser = async (uid) => {
+    try {
+      const user = await db.getUser(uid);
+      setAppointee(user);
+    } catch (error) {
+      console.log(`Error in retrieving user data: ${error.message}`);
+    }
+  };
+
+  
+  useEffect(() => {
+    if (currentAppointment.appointee) {
+      handleGetUser(currentAppointment.appointee);
+    }
+  }, [currentAppointment.appointee]);
+
 
   const formatDate = (dateString) => {
     const date = new Date(dateString);
@@ -37,10 +58,10 @@ const AppointmentInfo = ({
           <img src={Close} alt="close" height={20} width={20} />
         </button>
       </div>
-      <div className="appointment-info-body [&_span]:text-[13px]">
+      <div className="appointment-info-body [&_span]:text-[13px] capitalize">
         <p>
-          <span className="text-[#7a7a7ad1] capitalize">Student Name:</span>{" "}
-          {currentAppointment.appointee.name}
+          <span className="text-[#7a7a7ad1] ">Student Name:</span>{" "}
+          {`${appointee?.firstName} ${appointee?.lastName} `}
         </p>
         <p>
           <span className="text-[#7a7a7ad1]">Student Concern:</span>

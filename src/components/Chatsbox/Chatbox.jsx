@@ -13,7 +13,7 @@ const Chatbox = ({ auth, db, receiver, setCurrentChatReceiver }) => {
 
   // Function to get the correct participant name
   const getParticipantName = (receiver) => {
-    return receiver?.displayName || receiver?.name || receiver?.teacherDisplayName || receiver?.teacherName || "Unknown";
+    return receiver?.displayName || `${receiver?.firstName} ${receiver?.lastName}` || receiver?.teacherDisplayName || receiver?.teacherName || "Unknown";
   };
 
   const getParticipantEmail = (receiver) => {

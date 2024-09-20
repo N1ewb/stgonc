@@ -12,6 +12,7 @@ import DefaultProfile from "../../../../../static/images/default-profile.png";
 import { useChat } from "../../../../../context/chatContext/ChatContext";
 import RequestAppointmentForm from "../../student-components/forms/RequestAppointmentForm";
 import InstructorsList from "../../student-components/InstructorsList";
+import InstructorInfo from "../../student-components/InstructorInfo";
 
 const StudentDashboard = () => {
   const db = useDB();
@@ -20,12 +21,9 @@ const StudentDashboard = () => {
   const notif = useMessage();
   const chat = useChat();
   const navigate = useNavigate();
-  const toastMessage = (message) => toast(message);
   const [instructors, setInstructors] = useState();
   const [currentInstructor, setCurrentInstructor] = useState();
-  const [appointments, setAppointments] = useState();
-  const [acceptedAppt, setAcceptedAppt] = useState();
-  const [deniedAppt, setDeniedAppt] = useState();
+  const [instructorInfo, setInstructorInfo] = useState(null);
   const [myInfo, setMyInfo] = useState();
   const [show, setShow] = useState(false);
 
@@ -34,7 +32,7 @@ const StudentDashboard = () => {
     setCurrentInstructor(instructor);
   };
 
-  const handleGetUser = async () => {
+  const handleGetMyinfo = async () => {
     if (auth.currentUser) {
       const me = await db.getUser(auth.currentUser.uid);
       setMyInfo(me);
@@ -48,7 +46,7 @@ const StudentDashboard = () => {
 
   useEffect(() => {
     if (myInfo === undefined) {
-      handleGetUser();
+      handleGetMyinfo();
     }
   });
 
@@ -57,24 +55,6 @@ const StudentDashboard = () => {
       handleGetTeachers();
     }
   });
-
-  useEffect(() => {
-    const fetchData = async () => {
-      if (auth.currentUser) {
-        try {
-          const unsubscribe = db.subscribeToRequestedAppointmentChanges(
-            (newAppointment) => {
-              setAppointments(newAppointment);
-            }
-          );
-          return () => unsubscribe();
-        } catch (error) {
-          console.log(error);
-        }
-      }
-    };
-    fetchData();
-  }, [db]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -94,92 +74,41 @@ const StudentDashboard = () => {
     fetchData();
   }, [call]);
 
-  const handleRequestEmail = async () => {
-    notif
-      .sendEmail()
-      .then((result) => {
-        console.log(result.body);
-      })
-      .catch((err) => {
-        console.log(err.statusCode);
-      });
-  };
-
-  useEffect(() => {
-    if (appointments) {
-      const acceptedAppt = appointments.filter(
-        (appointment) => appointment.appointmentStatus === "Accepted"
-      );
-      const deniedAppt = appointments.filter(
-        (appointment) => appointment.appointmentStatus === "Denied"
-      );
-      setAcceptedAppt(acceptedAppt);
-      setDeniedAppt(deniedAppt);
-    }
-  }, [appointments]);
-
   return (
-    <div className="h-[100%] flex flex-col gap-10 w-full">
-      {/* <p className="text-[#360000] capitalize text-4xl">
-        <span className="font-bold ">Welcome </span>{" "}
-        {auth.currentUser && auth.currentUser.displayName}
-      </p> */}
-      <div className="flex flex-row w-full h-[100%]">
-        <div className="CCS-instructors-container text-4xl flex flex-col gap-[10px]  w-[50%]">
-          {/* <button onClick={() => handleRequestEmail()}>EMAIL ME</button> */}
-          <div className="flex flex-col h-[100%] w-full ">
-            <div className="flex flex-col gap-[8px]">
-              <p className="text-[#360000] ">
-                <span>{myInfo && myInfo.department} </span> <br></br>
-                <span className="font-bold">Department Instructors</span>{" "}
-              </p>
-              <div className="main">
-                <InstructorsList
-                  instructors={instructors}
-                  toggleShow={toggleShow}
-                  More={More}
-                  DefaultProfile={DefaultProfile}
-                />
-              </div>
-            </div>
-          </div>
-        </div>
-        {appointments && (
-          <RequestAppointmentForm
-            instructor={currentInstructor}
-            toggleShow={toggleShow}
-            show={show}
-            myInfo={myInfo}
-            appointments={appointments}
+    <div className="h-[100%] flex flex-col gap-10  w-full">
+      <h1 className="text-[#360000] ">
+        <span className="font-bold">{myInfo && myInfo.department} </span>{" "}
+        <br></br>
+        <span>Department Instructors</span>{" "}
+      </h1>
+      <div className="flex flex-row w-full h-[100%] justify-between">
+        <div className="main h-[85%] w-1/2 ">
+          <InstructorsList
+            instructors={instructors} 
+            More={More}
+            DefaultProfile={DefaultProfile}
+            setInstructorInfo={setInstructorInfo}
           />
-        )}
-
-        <div className="flex flex-col w-[50%] p-10 bg-[#F2F2F2] rounded-[30px] h-[30vh] ">
-          <h1 className="text-[#360000] text-3xl font-bold">Appointments</h1>
-          <div className="appointment-wrappers w-full flex flex-col justify-center h-[100%]">
-            {acceptedAppt && acceptedAppt.length !== 0
-              ? acceptedAppt.map((appt, index) => (
-                  <div
-                    key={index}
-                    className="text-[#360000] flex flex-row items-center [&_p]:m-0 justify-between"
-                  >
-                    <p className="text-2xl">
-                      {appt.appointedTeacher.teacherDisplayName}
-                    </p>
-                    <button
-                      className=""
-                      onClick={() =>
-                        chat.setCurrentChatReceiver(appt.appointedTeacher)
-                      }
-                    >
-                      Chat
-                    </button>
-                  </div>
-                ))
-              : ""}
-          </div>
+        </div>
+        <div
+          className={`instructor-info-container w-[45%] transition-all ease-in-out duration-300 ${
+            instructorInfo
+              ? "opacity-100 h-auto translate-y-0"
+              : "opacity-0 h-0 -translate-y-10"
+          }`}
+        >
+          {instructorInfo && (
+            <InstructorInfo toggleShow={toggleShow} currentInstructor={instructorInfo} setInstructorInfo={setInstructorInfo} />
+          )}
         </div>
       </div>
+
+      <RequestAppointmentForm
+        instructor={currentInstructor}
+        toggleShow={toggleShow} 
+        show={show}
+        myInfo={myInfo}
+      />
     </div>
   );
 };

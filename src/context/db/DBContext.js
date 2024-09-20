@@ -36,6 +36,7 @@ export const DBProvider = ({ children }) => {
     firestore,
     "StudentRegistrationRequest"
   );
+  const walkingCollectionRef = collection(firestore, 'WalkinAppointments')
   const schedulesCollectionRef = collection(firestore, "Schedules");
   const auth = useAuth();
   const notif = useMessage();
@@ -134,50 +135,58 @@ export const DBProvider = ({ children }) => {
   //As Student
   const sendAppointmentRequest = async (
     teacheremail,
-    firstName,
-    lastName,
-    teacherPhoneno,
-    teacheruserUID,
+    facultyUID,
     concern,
     date,
     time,
-    isOnline,
-    phoneNumber,
-    studentIDnumber
+    format,
+    type,
   ) => {
     try {
       if (auth.currentUser) {
         await addDoc(appointmentsRef, {
-          appointedTeacher: {
-            teacheremail: teacheremail,
-            teacherDisplayName: firstName + " " + lastName,
-            teacherPhoneno: teacherPhoneno,
-            teacheruserID: teacheruserUID,
-          },
-          appointee: {
-            name: auth.currentUser.displayName,
-            email: auth.currentUser.email,
-            phoneNumber: phoneNumber,
-            studentIDnumber: studentIDnumber,
-            userID: auth.currentUser.uid,
-          },
+          appointedFaculty: facultyUID,
+          appointee: auth.currentUser.uid,
           appointmentConcern: concern,
           appointmentDate: date,
           appointmentsTime: time,
           appointmentStatus: "pending",
-          appointmentType: "initial",
-          appointmentDuration: "1 hour",
-          isOnline: isOnline,
+          appointmentFormat: format,
+          appointmentType: type,
+          appointmentDuration: 1,
           createdAt: new Date(),
           teacherRemarks: null,
         });
 
-        await notif.storeNotifToDB("Appointment", concern, teacheremail);
+        await notif.storeNotifToDB("Appointment Request", concern, teacheremail);
       }
     } catch (error) {
       notifyError(error);
     }
   };
+
+  //As Admin
+  const walkinAppointment = async (firstName, lastName, appointeeType, concern, date, duration, remarks) => {
+    try{
+      if(auth.currentUser){
+        const q = query(walkingCollectionRef)
+        await addDoc(q, {
+          firstName,
+          lastName,
+          appointeeType,
+          concern,
+          date,
+          duration,
+          remarks,
+          createdAt: serverTimestamp(),
+          appointedFaculty: auth.currentUser.uid
+        })
+        toastMessage("Submitted Succesfuly")
+      }
+    }catch(error){
+      toastMessage(`Error in storing data to database, ${error.message}`)
+    }
+  }
 
   //As teacher
   const getAppointmentRequests = async () => {
@@ -185,7 +194,7 @@ export const DBProvider = ({ children }) => {
       if (auth.currentUser) {
         const q = query(
           appointmentsRef,
-          where("appointedTeacher.teacheremail", "==", auth.currentUser.email)
+          where("appointedFaculty", "==", auth.currentUser.uid)
         );
         const querySnapshot = await getDocs(q);
         const appointmentData = querySnapshot.docs.map((doc) => ({
@@ -204,12 +213,12 @@ export const DBProvider = ({ children }) => {
     }
   };
 
-  const getInstructorAppointment = async (email) => {
+  const getInstructorAppointment = async (uid) => {
     try {
       if (auth.currentUser) {
         const q = query(
           appointmentsRef,
-          where("appointedTeacher.teacheremail", "==", email)
+          where("appointedFaculty", "==", uid)
         );
         const querySnapshot = await getDocs(q);
         const appointmentData = querySnapshot.docs.map((doc) => ({
@@ -407,9 +416,9 @@ export const DBProvider = ({ children }) => {
           query(
             appointmentsRef,
             where(
-              "appointedTeacher.teacheremail",
+              "appointedFaculty",
               "==",
-              auth.currentUser.email
+              auth.currentUser.uid
             ),
             where("appointmentStatus", "==", status)
           ),
@@ -429,7 +438,37 @@ export const DBProvider = ({ children }) => {
     }
   };
 
-  const subscribeToMessageChanges = async (callback, receiver) => {
+  //As admin
+  const subscribeToWalkinAppointmentChanges = async (callback) => {
+    try {
+      if (auth.currentUser) {
+        const unsubscribe = onSnapshot(
+          query(
+            walkingCollectionRef,
+            where("appointedFaculty", "==", auth.currentUser.uid)
+          ),
+          (snapshot) => {
+            const data = snapshot.docs.map((doc) => ({
+              id: doc.id,
+              ...doc.data(),
+            }));
+  
+            callback(data);
+          }
+        );
+        return unsubscribe;
+      } else {
+        console.warn("No current user found.");
+        return () => {}; 
+      }
+    } catch (error) {
+      console.error("Error in subscribing to walk-in appointment changes:", error);
+      return () => {}; 
+    }
+  };
+  
+
+  const subscribeToMessageChanges = async (callback) => {
     if (auth.currentUser) {
       const unsubscribe = onSnapshot(
         query(
@@ -460,13 +499,14 @@ export const DBProvider = ({ children }) => {
   };
 
   //As student
-  const subscribeToRequestedAppointmentChanges = async (callback) => {
+  const subscribeToRequestedAppointmentChanges = async (status,callback) => {
     try {
       if (auth.currentUser) {
         const unsubscribe = onSnapshot(
           query(
             appointmentsRef,
-            where("appointee.email", "==", auth.currentUser.email)
+            where("appointee", "==", auth.currentUser.uid),
+            where('appointmentStatus', '==', status)
           ),
           (snapshot) => {
             const data = snapshot.docs.map((doc) => ({
@@ -718,6 +758,8 @@ export const DBProvider = ({ children }) => {
     getTeachers,
     getAllUsers,
     sendAppointmentRequest,
+    walkinAppointment,
+    subscribeToWalkinAppointmentChanges,
     getAppointmentRequests,
     getInstructorAppointment,
     approveAppointment,

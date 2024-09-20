@@ -9,6 +9,10 @@ const AdminLayout = () => {
       link: "/private/Admin/dashboard",
     },
     {
+      name: "Walkins",
+      link: "/private/Admin/dashboard/walkins",
+    },
+    {
       name: "Pending Regs",
       link: "/private/Admin/dashboard/pending-registrations",
     },

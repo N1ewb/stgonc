@@ -1,17 +1,37 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 
 import DefaultProfile from "../../static/images/default-profile.png";
 import CheckMarkDark from "../../static/images/tick-mark-dark.png";
 import DenyDark from "../../static/images/delete-dark.png";
 import MoreDark from "../../static/images/more-dark.png";
 import { useAppointment } from "../../context/appointmentContext/AppointmentContext";
+import { useDB } from "../../context/db/DBContext";
 
 const AppointmentReqList = ({
   handleAcceptAppointment,
   handleDenyAppointment,
   appointment,
 }) => {
+  const db = useDB();
   const { setCurrentAppointment } = useAppointment();
+  const [appointee, setAppointee] = useState(null);
+
+  
+  const handleGetUser = async (uid) => {
+    try {
+      const user = await db.getUser(uid);
+      setAppointee(user);
+    } catch (error) {
+      console.log(`Error in retrieving user data: ${error.message}`);
+    }
+  };
+
+  
+  useEffect(() => {
+    if (appointment.appointee) {
+      handleGetUser(appointment.appointee);
+    }
+  }, [appointment]);
 
   return (
     <div className="teacher-appointment-request-table w-full flex flex-row items-center [&_p]:m-0 justify-evenly bg-white p-5 rounded-[30px] shadow-md">
@@ -23,9 +43,9 @@ const AppointmentReqList = ({
         className="rounded-full bg-[#320000] p-1"
       />
       <p className="capitalize font-semibold text-[#320000] w-[60%]">
-        {appointment.appointee.name} <br />
+        {appointee ? `${appointee.firstName} ${appointee.lastName}` : "Loading..."} <br />
         <span className="text-[13px] text-[#969696] font-light normal-case">
-          {appointment.appointee.email}
+          {appointee ? appointee.email : ""}
         </span>
       </p>
 
@@ -34,7 +54,7 @@ const AppointmentReqList = ({
         onClick={() =>
           handleAcceptAppointment(
             appointment.id,
-            appointment.appointee.email,
+            appointee.userID, 
             appointment.appointmentDate
           )
         }
@@ -46,7 +66,7 @@ const AppointmentReqList = ({
         onClick={() =>
           handleDenyAppointment(
             appointment.id,
-            appointment.appointee.email,
+            appointee.userID, 
             "REASON: BALA KA JAN"
           )
         }
