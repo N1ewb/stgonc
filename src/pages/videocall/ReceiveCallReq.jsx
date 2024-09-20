@@ -34,8 +34,12 @@ const ReceiveCallReq = () => {
 
   const handleAnswerCall = async () => {
     if (newCalloffer) {
-      await call.updateCallOffer(newCalloffer.id);
-      navigate(`/VideoCall?receiver=${receiver}&caller=${caller}`);
+      try {
+        await call.updateCallOffer(newCalloffer.id);
+        navigate(`/private/VideoCall?receiver=${receiver}&caller=${caller}`);
+      } catch (error) {
+        console.error("Error answering the call:", error);
+      }
     }
   };
 

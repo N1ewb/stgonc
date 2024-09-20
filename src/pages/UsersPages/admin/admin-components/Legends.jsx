@@ -2,6 +2,7 @@ import React, { useRef, useState, useEffect } from "react";
 import { ChromePicker } from "react-color";
 import { useDB } from "../../../../context/db/DBContext";
 import toast from "react-hot-toast";
+import { Tooltip } from "react-tooltip";
 
 const Legends = ({ teacher }) => {
   const db = useDB();
@@ -21,7 +22,10 @@ const Legends = ({ teacher }) => {
   const confirmColor = async () => {
     if (editedInstructorColorCode && teacher.userID) {
       try {
-        await db.editInstructorColorCode(teacher.userID, editedInstructorColorCode);
+        await db.editInstructorColorCode(
+          teacher.userID,
+          editedInstructorColorCode
+        );
         toastMessage("Color code changed successfully");
         setIsColorPickerOpen(false);
       } catch (error) {
@@ -47,16 +51,22 @@ const Legends = ({ teacher }) => {
 
   return (
     <div className="instructors-legend w-full flex flex-row ">
-      <div className={`color-picker-container  ${!isColorPickerOpen? "w-0" : "w-fit"}`}>
+      <div
+        className={`color-picker-container  ${
+          !isColorPickerOpen ? "w-0" : "w-fit"
+        }`}
+      >
         {isColorPickerOpen && (
           <div
-            className={`color-picker-ref absolute bottom-[35%] -right-28 w-fit z-50`}
+            className={`color-picker-ref absolute top-[10%] -right-48 w-fit z-50`}
             ref={colorPickerRef}
             onClick={(e) => e.stopPropagation()}
           >
             <ChromePicker
               color={editedInstructorColorCode}
-              onChange={(newColor) => setEditedInstructorColorCode(newColor.hex)}
+              onChange={(newColor) =>
+                setEditedInstructorColorCode(newColor.hex)
+              }
             />
             <button
               className="w-full rounded-md bg-[#720000] text-white py-2 mt-2 hover:bg-[#2b9f4a]"
@@ -80,6 +90,9 @@ const Legends = ({ teacher }) => {
           className="instructorColorCode p-3 rounded-md"
         ></div>
       </div>
+      <Tooltip anchorSelect=".instructorColorCode" place="top">
+        Edit Color Code
+      </Tooltip>
     </div>
   );
 };

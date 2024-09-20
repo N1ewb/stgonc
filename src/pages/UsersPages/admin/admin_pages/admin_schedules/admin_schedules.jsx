@@ -85,14 +85,6 @@ const AdminSchedulesPage = () => {
 
         <div className="pt-20">
           <div className="actions-container w-full flex flex-row-reverse gap-3">
-            {dialogVisible && (
-              <ConfirmDialogComponent
-                setFiletype={setFiletype}
-                exportPDFRef={exportPDFRef}
-                toastMessage={toastMessage}
-                setDialogVisible={setDialogVisible}
-              />
-            )}
             <button
               onClick={() => setDialogVisible(true)}
               className="export-button bg-transparent  p-0"
@@ -111,6 +103,14 @@ const AdminSchedulesPage = () => {
                 <button onClick={() => toggleShow()}>Select</button>
                 <button onClick={() => handleChooseCells()}>Cancel</button>
               </div>
+            )}
+            {dialogVisible && (
+              <ConfirmDialogComponent
+                setFiletype={setFiletype}
+                exportPDFRef={exportPDFRef}
+                toastMessage={toastMessage}
+                setDialogVisible={setDialogVisible}
+              />
             )}
           </div>
           <div className="div flex flex-row-reverse flex-wrap w-full justify-evenly">

@@ -52,7 +52,7 @@ const AdminAppointmentReqsPage = () => {
   }, []);
 
   return (
-    <div className="admin-appointments-container w-full flex flex-col">
+    <div className="admin-appointments-container w-full flex flex-col h-[100%]">
       <div className="admin-appointment-request-header flex flex-row w-1/2 justify-between items-end">
         <h3 className="text-4xl font-bold">
           Appointment <br></br> <span className="font-light">Requests</span>
@@ -63,8 +63,8 @@ const AdminAppointmentReqsPage = () => {
           temp={temp}
         />
       </div>
-      <div className="w-full flex flex-row justify-between items-start">
-        <div className="w-1/2">
+      <div className="w-full flex flex-row justify-between items-start h-[100%]">
+        <div className="w-1/2 max-h-[90%] overflow-auto pb-3">
           {appointments && appointments.length ? (
             appointments.map((appointment, index) =>
               appointment.appointmentStatus === "pending" ? (

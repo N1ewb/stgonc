@@ -82,7 +82,7 @@ const StudentDashboard = () => {
         const unsubscribe = call.subscribeToCallOfferChanges(
           (newcalloffers) => {
             navigate(
-              `/ReceiveCallReq?receiver=${auth.currentUser.uid}&caller=${newcalloffers.caller}`
+              `/private/ReceiveCallReq?receiver=${auth.currentUser.uid}&caller=${newcalloffers.caller}`
             );
           }
         );

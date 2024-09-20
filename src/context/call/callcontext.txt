@@ -41,6 +41,12 @@ export const CallProvider = ({ children }) => {
   const [localStream, setLocalStream] = useState();
   const [remoteStream, setRemoteStream] = useState(new MediaStream());
 
+  useEffect(() => {
+    return () => {
+      if (pc) pc.close();
+    };
+  }, [pc]);
+
   const resetStreams = () => {
     if (localStream) {
       localStream.getTracks().forEach((track) => track.stop());
@@ -76,9 +82,15 @@ export const CallProvider = ({ children }) => {
     return localStream;
   };
 
-  const WebcamOn = () => {
-    if (localVideoRef.current) {
-      localVideoRef.current.srcObject = localStream || null;
+  const WebcamOn = async () => {
+    try {
+      if (!localVideoRef.current.srcObject) {
+        localVideoRef.current.srcObject = localStream;
+      } else {
+        localVideoRef.current.srcObject = null;
+      }
+    } catch (error) {
+      console.log("camera error", error);
     }
   };
 
@@ -88,17 +100,8 @@ export const CallProvider = ({ children }) => {
       const getLocalStream = await handleWaitForLocalStream();
       setLocalStream(getLocalStream);
 
-      // Get existing senders
-      const existingSenders = pc.getSenders();
-
       getLocalStream.getTracks().forEach((track) => {
-        // Check if a sender for this track already exists
-        const existingSender = existingSenders.find(
-          (sender) => sender.track === track
-        );
-        if (!existingSender) {
-          pc.addTrack(track, getLocalStream);
-        }
+        pc.addTrack(track, getLocalStream);
       });
 
       pc.ontrack = (event) => {
@@ -111,12 +114,20 @@ export const CallProvider = ({ children }) => {
         }
       };
 
-      localVideoRef.current.srcObject = getLocalStream;
+      try {
+        while (remoteStream.active === false) {
+          remoteVideoRef.current.srcObject = remoteStream;
+          break;
+        }
+        localVideoRef.current.srcObject = getLocalStream;
 
-      console.log("remote stream", remoteStream);
-      console.log("local stream", getLocalStream);
+        console.log("remote stream", remoteStream);
+        console.log("local stream", getLocalStream);
+      } catch (error) {
+        console.log("Video Refs Error", error);
+      }
     } catch (error) {
-      console.log("Track initialization error", error);
+      console.log("Track nasad piss tea", error);
     }
   };
 
@@ -223,7 +234,6 @@ export const CallProvider = ({ children }) => {
 
   const hangUp = async (newCalloffer) => {
     try {
-      resetStreams();
       const callId = callInput.current.value;
       const callDoc = doc(collection(firestore, "calls"), callId);
       const callOfferDoc = doc(collection(firestore, "CallOffers"), callId);

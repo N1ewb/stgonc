@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 
-const AdminSearchBar = ({ datas, setData, temp }) => {
+const AdminSearchBar = ({ datas, setData, temp, setCurrentPage }) => {
   const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
@@ -16,6 +16,7 @@ const AdminSearchBar = ({ datas, setData, temp }) => {
           );
         });
         setData(foundData);
+        setCurrentPage(1);
       }
     } else {
       setData(temp);

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useCall } from "../../context/call/CallContext";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 import Profile from "../../static/images/default-profile.png";
 import Camera from "../../static/images/icons8-camera-64.png";
@@ -13,6 +13,7 @@ import { useAuth } from "../../context/auth/AuthContext";
 const SendCallReq = () => {
   const auth = useAuth();
   const location = useLocation();
+  const navigate = useNavigate();
   const queryParams = new URLSearchParams(location.search);
   const receiver = queryParams.get("receiver");
   const caller = queryParams.get("caller");
@@ -40,6 +41,7 @@ const SendCallReq = () => {
   const handlehangUp = async (newCalloffer) => {
     try {
       await call.hangUp(newCalloffer);
+      navigate("/auth/Login");
     } catch (error) {
       console.log(error.message);
     }

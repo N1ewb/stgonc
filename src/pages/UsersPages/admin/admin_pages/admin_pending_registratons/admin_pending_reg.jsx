@@ -44,7 +44,7 @@ const AdmingPendingRegPage = () => {
   }
 
   return (
-    <div className="pending-registrations-container w-full">
+    <div className="pending-registrations-container h-[100%] w-full">
       <div className="pending-registrations-header flex flex-row justify-between w-1/2 items-end">
         <h1 className="text-[#320000] text-4xl font-bold">
           Pending<br></br> <span className="font-light">Registrations</span>
@@ -55,8 +55,8 @@ const AdmingPendingRegPage = () => {
           temp={temp}
         />
       </div>
-      <div className="pending-regitrations-content-container flex flex-row justify-between w-full">
-        <div className="pending-registration-list-container w-1/2">
+      <div className="pending-regitrations-content-container flex flex-row justify-between h-[100%] w-full">
+        <div className="pending-registration-list-container w-1/2 max-h-[90%] overflow-auto pb-3">
           {pendingRegistrationList && pendingRegistrationList.length !== 0 ? (
             pendingRegistrationList.map((pendingRegistrations, index) => (
               <RegistrationReqCards
