@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useDB } from '../../../../context/db/DBContext';
+import More from '../../../../static/images/more-light.png'
 
-const WalkinApptList = () => {
+const WalkinApptList = ({setCurrentWalkin, currentWalkin}) => {
   const db = useDB();
   const [walkinAppointmentList, setWalkinAppointmentList] = useState([]);
 
@@ -27,11 +28,11 @@ const WalkinApptList = () => {
       <div className="walkin-appointment-list-content h-[100%] text-black">
         {walkinAppointmentList.length > 0 ? (
           walkinAppointmentList.map((appointment) => (
-            <div key={appointment.id} className='flex flex-row shadow-md rounded-3xl p-5 justify-between'>
+            <div key={appointment.id} className='flex flex-row shadow-md items-center rounded-3xl p-5 justify-between'>
               <p className='capitalize'>Name: {appointment.firstName} {appointment.lastName}</p>
               
               <p>Date: {appointment.date}</p>
-            
+              <button className='bg-transparent hover:bg-transparent p-0 m-0' onClick={() => setCurrentWalkin(currentWalkin ? null : appointment)}><img src={More} alt='info' height={25} width={25} /></button>
             </div>
           ))
         ) : (

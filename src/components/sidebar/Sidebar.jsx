@@ -13,7 +13,7 @@ const Sidebar = ({ SidebarLinks }) => {
   };
 
   return (
-    <div className="Sidebar-container h-screen w-full flex flex-col justify-center items-center">
+    <div className="Sidebar-container h-screen w-full flex flex-col justify-center items-center z-10">
       <div className="Sidebar-Links h-[80%] w-full flex flex-col gap-4 pl-10 1xl:pl-5 ">
         <Profile />
         {SidebarLinks.map((SidebarLink, index) => (
