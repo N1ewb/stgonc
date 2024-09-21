@@ -33,13 +33,15 @@ const StudentAppointments = () => {
   return (
     <div className="div">
       <div className="div-header">
-        <h1>Your Appointment</h1>
+        <h1 className="font-light text-[#720000]">Your <span className="font-bold">Appointments</span></h1>
       </div>
+      <div className="div w-1/2">
       {appointments && appointments.length !== 0
         ? appointments.map((appointment) => (
             <StudentAppointmentCard appointment={appointment} />
           ))
         : ""}
+      </div>
     </div>
   );
 };

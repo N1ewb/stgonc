@@ -31,7 +31,7 @@ const StudentPendingAppointments = ({ appt }) => {
     }, [db]);
   return (
     <div>
-      <div className="student-pending-appointment-header">
+      <div className="student-pending-appointment-header w-1/2">
         <h1>Pending Appointment</h1>
       </div>
       <div className="student-pending-appointment-content">
