@@ -18,7 +18,7 @@ const TeacherAppointmentReqPage = () => {
       if (auth.currentUser) {
         try {
           const unsubscribe = db.subscribeToAppointmentChanges(
-            "pending",
+            "Pending",
             (callback) => {
               setRequestedAppointments(callback);
             }

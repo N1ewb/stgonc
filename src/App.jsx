@@ -53,6 +53,7 @@ import AdminWalkins from "./pages/UsersPages/admin/admin_pages/admin_walkins/Adm
 import StudentAppointments from "./pages/UsersPages/student/student-pages/student-appointments/StudentAppointments";
 import StudentPendingAppointments from "./pages/UsersPages/student/student-pages/student-pending-appointments/StudentPendingAppointments";
 import StudentApptArchive from "./pages/UsersPages/student/student-pages/student-appointments-archive/StudentApptArchive";
+import Chatslist from "./pages/messages/Messages";
 
 function App() {
   const router = createBrowserRouter([
@@ -112,6 +113,10 @@ function App() {
                   path: "/private/Admin/export-components",
                   element: <ExportToPDF />,
                 },
+                {
+                  path: "/private/Admin/messages",
+                  element: <Chatslist />,
+                },
               ],
             },
             {
@@ -143,6 +148,10 @@ function App() {
                   path: "/private/Faculty/notifications",
                   element: <NotificationPage />,
                 },
+                {
+                  path: "/private/Faculty/messages",
+                  element: <Chatslist />,
+                },
               ],
             },
             {
@@ -168,6 +177,10 @@ function App() {
                 {
                   path: "/private/Student/notifications",
                   element: <NotificationPage />,
+                },
+                {
+                  path: "/private/Student/messages",
+                  element: <Chatslist />,
                 },
               ],
             },

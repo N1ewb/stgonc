@@ -32,7 +32,7 @@ const AdminAppointmentReqsPage = () => {
       if (auth.currentUser) {
         try {
           const unsubscribe = db.subscribeToAppointmentChanges(
-            "pending",
+            "Pending",
             (callback) => {
               setAppointments(callback);
               setTemp(callback);
@@ -67,7 +67,7 @@ const AdminAppointmentReqsPage = () => {
         <div className="w-1/2 max-h-[90%] overflow-auto pb-3">
           {appointments && appointments.length ? (
             appointments.map((appointment, index) =>
-              appointment.appointmentStatus === "pending" ? (
+              appointment.appointmentStatus === "Pending" ? (
                 <AppointmentReqList
                   handleAcceptAppointment={handleAcceptAppointment}
                   handleDenyAppointment={handleDenyAppointment}

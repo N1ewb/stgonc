@@ -208,36 +208,55 @@ const SchedulesTable = ({
           {times.map((time) => (
             <tr key={`${time.startTime}-${time.endTime}`}>
               <td className="h-[30px] xsm:text-[14px] ">
-                {`${time.startTime}:00 ${time.endTime}:00`}
+                {`${time.startTime}:00 - ${time.endTime}:00`}
               </td>
               {schedules && schedules.length !== 0
-                ? schedules.map((day) => (
-                    <td
-                      style={{
-                        backgroundColor:
-                          scheduleData[
-                            `${time.startTime}-${time.endTime}-${day.dayOfWeek}`
-                          ]?.instructorColorCode || "",
-                      }}
-                      key={`${time.startTime}-${time.endTime}-${day.dayOfWeek}`}
-                      onClick={() => handleCellClick(time, day)}
-                      className={`border-solid border-[1px] border-[#e4e4e4] ${
-                        isEditMode &&
-                        choosenCells.some((cell) => {
-                          const parsedCell = JSON.parse(cell);
-                          return (
-                            parsedCell.time.startTime === time.startTime &&
-                            parsedCell.time.endTime === time.endTime &&
-                            parsedCell.day === day.dayOfWeek
-                          );
-                        })
-                          ? `bg-[#571010]`
-                          : isEditMode
-                          ? "bg-[#fca4a4] cursor-pointer hover:bg-[#5f1b24]"
-                          : ""
-                      }`}
-                    ></td>
-                  ))
+                ? schedules.map((day) => {
+                    const cellKey = `${time.startTime}-${time.endTime}-${day.dayOfWeek}`;
+                    const cellValue = scheduleData[cellKey];
+                    const isCellClickable = !cellValue;
+                    return (
+                      <td
+                        style={{
+                          backgroundColor: cellValue?.instructorColorCode || "",
+                        }}
+                        key={cellKey}
+                        onClick={
+                          isCellClickable
+                            ? () => handleCellClick(time, day)
+                            : undefined
+                        }
+                        className={`border-solid border-[1px] border-[#e4e4e4] ${
+                          isEditMode &&
+                          choosenCells.some((cell) => {
+                            const parsedCell = JSON.parse(cell);
+                            return (
+                              parsedCell.time.startTime === time.startTime &&
+                              parsedCell.time.endTime === time.endTime &&
+                              parsedCell.day === day.dayOfWeek
+                            );
+                          })
+                            ? `bg-[#571010]`
+                            : isEditMode
+                            ? "bg-[#fca4a4] cursor-pointer hover:bg-[#5f1b24]"
+                            : ""
+                        } ${
+                          cellValue && isEditMode ? "cursor-not-allowed " : ""
+                        }`}
+                      >
+                        {cellValue && isEditMode ? (
+                          <div className="flex flex-row w-full justify-between">
+                            <div className="spacer"></div>
+                          <button className="p-1" onClick={() => console.log("cell is delted")}>
+                            X
+                          </button>
+                          </div>
+                        ) : (
+                          ""
+                        )}
+                      </td>
+                    );
+                  })
                 : ""}
             </tr>
           ))}

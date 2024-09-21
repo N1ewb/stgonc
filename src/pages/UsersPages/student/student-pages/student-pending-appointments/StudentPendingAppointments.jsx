@@ -16,7 +16,7 @@ const StudentPendingAppointments = ({ appt }) => {
         if (auth.currentUser) {
           try {
             const unsubscribe = db.subscribeToRequestedAppointmentChanges(
-              "pending",
+              "Pending",
               (newAppointment) => {
                 setAppointments(newAppointment);
               }

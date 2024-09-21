@@ -80,6 +80,16 @@ const Profile = () => {
             >
               Notifications
             </Link>
+            
+          </Dropdown.Item>
+          <Dropdown.Item>
+            <Link
+              className="decoration-transparent [&_a]:decoration-transparent text-[#000000d2]"
+              to={`/private/${user?.role}/messages`}
+            >
+              Messages
+            </Link>
+            
           </Dropdown.Item>
           <Dropdown.Item href="#/action-2">Give Feedback</Dropdown.Item>
           <Dropdown.Item onClick={() => handleSignout()}>Logout</Dropdown.Item>

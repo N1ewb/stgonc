@@ -1,4 +1,4 @@
-import React, { useContext, createContext } from "react";
+import React, { useContext, createContext, useEffect, useState } from "react";
 import {
   addDoc,
   collection,
@@ -36,22 +36,31 @@ export const DBProvider = ({ children }) => {
     firestore,
     "StudentRegistrationRequest"
   );
-  const walkingCollectionRef = collection(firestore, 'WalkinAppointments')
+  const walkingCollectionRef = collection(firestore, "WalkinAppointments");
   const schedulesCollectionRef = collection(firestore, "Schedules");
   const auth = useAuth();
   const notif = useMessage();
-
+  const [user, setUser] = useState(undefined);
   const toastMessage = (message) => toast(message);
   const notifyError = (error) => toast(error.message);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      if (auth.currentUser) {
+        const user = await getUser(auth.currentUser.uid);
+        setUser(user);
+      }
+    };
+    fetchData();
+  }, [auth.currentUser]);
 
   const getUsers = async () => {
     try {
       if (auth.currentUser) {
-        const userDept = await getUser(auth.currentUser.uid);
-        if (userDept) {
+        if (user) {
           const q = query(
             usersCollectionRef,
-            where("department", "==", userDept.department)
+            where("department", "==", user.department)
           );
           const usersSnapshot = await getDocs(q);
           const usersData = usersSnapshot.docs.map((doc) => ({
@@ -93,7 +102,8 @@ export const DBProvider = ({ children }) => {
       if (auth.currentUser) {
         const q = query(
           usersCollectionRef,
-          where("role", "in", ["Faculty", "Admin"])
+          where("role", "in", ["Faculty", "Admin"]),
+          where('department', '==', user.department)
         );
 
         const querySnapshot = await getDocs(q);
@@ -112,7 +122,6 @@ export const DBProvider = ({ children }) => {
   const getAllUsers = async () => {
     try {
       if (auth.currentUser) {
-        const user = await getUser(auth.currentUser.uid);
         if (user) {
           console.log(user.department);
           const q = query(
@@ -140,7 +149,7 @@ export const DBProvider = ({ children }) => {
     date,
     time,
     format,
-    type,
+    type
   ) => {
     try {
       if (auth.currentUser) {
@@ -150,7 +159,7 @@ export const DBProvider = ({ children }) => {
           appointmentConcern: concern,
           appointmentDate: date,
           appointmentsTime: time,
-          appointmentStatus: "pending",
+          appointmentStatus: "Pending",
           appointmentFormat: format,
           appointmentType: type,
           appointmentDuration: 1,
@@ -158,7 +167,11 @@ export const DBProvider = ({ children }) => {
           teacherRemarks: null,
         });
 
-        await notif.storeNotifToDB("Appointment Request", concern, teacheremail);
+        await notif.storeNotifToDB(
+          "Appointment Request",
+          concern,
+          teacheremail
+        );
       }
     } catch (error) {
       notifyError(error);
@@ -166,10 +179,18 @@ export const DBProvider = ({ children }) => {
   };
 
   //As Admin
-  const walkinAppointment = async (firstName, lastName, appointeeType, concern, date, duration, remarks) => {
-    try{
-      if(auth.currentUser){
-        const q = query(walkingCollectionRef)
+  const walkinAppointment = async (
+    firstName,
+    lastName,
+    appointeeType,
+    concern,
+    date,
+    duration,
+    remarks
+  ) => {
+    try {
+      if (auth.currentUser) {
+        const q = query(walkingCollectionRef);
         await addDoc(q, {
           firstName,
           lastName,
@@ -179,14 +200,14 @@ export const DBProvider = ({ children }) => {
           duration,
           remarks,
           createdAt: serverTimestamp(),
-          appointedFaculty: auth.currentUser.uid
-        })
-        toastMessage("Submitted Succesfuly")
+          appointedFaculty: auth.currentUser.uid,
+        });
+        toastMessage("Submitted Succesfuly");
       }
-    }catch(error){
-      toastMessage(`Error in storing data to database, ${error.message}`)
+    } catch (error) {
+      toastMessage(`Error in storing data to database, ${error.message}`);
     }
-  }
+  };
 
   //As teacher
   const getAppointmentRequests = async () => {
@@ -216,10 +237,7 @@ export const DBProvider = ({ children }) => {
   const getInstructorAppointment = async (uid) => {
     try {
       if (auth.currentUser) {
-        const q = query(
-          appointmentsRef,
-          where("appointedFaculty", "==", uid)
-        );
+        const q = query(appointmentsRef, where("appointedFaculty", "==", uid));
         const querySnapshot = await getDocs(q);
         const appointmentData = querySnapshot.docs.map((doc) => ({
           id: doc.id,
@@ -346,7 +364,6 @@ export const DBProvider = ({ children }) => {
   const subscribeToUserChanges = async (callback) => {
     try {
       if (auth.currentUser) {
-        const user = await getUser(auth.currentUser.uid);
         if (user) {
           const q = query(
             usersCollectionRef,
@@ -375,7 +392,8 @@ export const DBProvider = ({ children }) => {
       if (auth.currentUser) {
         const q = query(
           usersCollectionRef,
-          where("role", "in", ["Faculty", "Admin"])
+          where("role", "in", ["Faculty", "Admin"]),
+          where('department','==', user.department)
         );
 
         const unsubscribe = onSnapshot(q, (snapshot) => {
@@ -408,19 +426,15 @@ export const DBProvider = ({ children }) => {
     }
   };
 
-  //As Teacher
   const subscribeToAppointmentChanges = async (status, callback) => {
     try {
       if (auth.currentUser) {
+        const statusArray = Array.isArray(status) ? status : [status];
         const unsubscribe = onSnapshot(
           query(
             appointmentsRef,
-            where(
-              "appointedFaculty",
-              "==",
-              auth.currentUser.uid
-            ),
-            where("appointmentStatus", "==", status)
+            where("appointedFaculty", "==", auth.currentUser.uid),
+            where("appointmentStatus", "in", statusArray)
           ),
           (snapshot) => {
             const data = snapshot.docs.map((doc) => ({
@@ -452,21 +466,23 @@ export const DBProvider = ({ children }) => {
               id: doc.id,
               ...doc.data(),
             }));
-  
+
             callback(data);
           }
         );
         return unsubscribe;
       } else {
         console.warn("No current user found.");
-        return () => {}; 
+        return () => {};
       }
     } catch (error) {
-      console.error("Error in subscribing to walk-in appointment changes:", error);
-      return () => {}; 
+      console.error(
+        "Error in subscribing to walk-in appointment changes:",
+        error
+      );
+      return () => {};
     }
   };
-  
 
   const subscribeToMessageChanges = async (callback) => {
     if (auth.currentUser) {
@@ -499,14 +515,15 @@ export const DBProvider = ({ children }) => {
   };
 
   //As student
-  const subscribeToRequestedAppointmentChanges = async (status,callback) => {
+  const subscribeToRequestedAppointmentChanges = async (status, callback) => {
     try {
       if (auth.currentUser) {
+        const statusArray = Array.isArray(status) ? status : [status];
         const unsubscribe = onSnapshot(
           query(
             appointmentsRef,
             where("appointee", "==", auth.currentUser.uid),
-            where('appointmentStatus', '==', status)
+            where("appointmentStatus", "in", statusArray)
           ),
           (snapshot) => {
             const data = snapshot.docs.map((doc) => ({
@@ -543,7 +560,6 @@ export const DBProvider = ({ children }) => {
   const getPendingRegistrationRequests = async () => {
     try {
       if (auth.currentUser) {
-        const user = await getUser(auth.currentUser.uid);
         if (user) {
           const q = query(
             studentRegistrationRequestRef,

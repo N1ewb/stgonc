@@ -54,9 +54,9 @@ const WalkinForm = ({ setIsFormOpen }) => {
       action="post"
       className="form-group flex flex-col items-center justify-center w-full md:w-3/4 lg:w-1/2 max-h-screen shadow-md rounded-3xl p-4 md:p-8 overflow-y-auto"
     >
-      <div className="form-header w-full flex flex-row justify-between">
-        <h3 className="text-[#720000]">Input Walkin Details</h3>
-        <button onClick={() => setIsFormOpen(false)} className="text-xl">
+      <div className="form-header w-full flex flex-row justify-between items-center">
+        <h3 className="text-[#720000]">Input Walk-in Details</h3>
+        <button onClick={() => setIsFormOpen(false)} className="text-xl text-[#720000] bg-transparent hover:bg-transparent p-0">
           X
         </button>
       </div>

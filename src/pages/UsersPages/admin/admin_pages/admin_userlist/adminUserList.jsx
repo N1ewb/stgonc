@@ -112,7 +112,7 @@ const AdminUserList = () => {
             id="rows-per-page"
             name="rows-per-page"
             className="rows-per-page border-transparent focus:outline-none focus:ring-0"
-            onChange={(e) => setITEMS_PER_PAGE(Number(e.target.value))}
+            onChange={(e) => setITEMS_PER_PAGE(Number(e.target.value), setCurrentPage(1))}
           >
             <option value="10">10</option>
             <option value="25">25</option>

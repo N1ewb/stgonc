@@ -32,7 +32,7 @@ const WalkinApptList = ({setCurrentWalkin, currentWalkin}) => {
               <p className='capitalize'>Name: {appointment.firstName} {appointment.lastName}</p>
               
               <p>Date: {appointment.date}</p>
-              <button className='bg-transparent hover:bg-transparent p-0 m-0' onClick={() => setCurrentWalkin(currentWalkin ? null : appointment)}><img src={More} alt='info' height={25} width={25} /></button>
+              <button className='bg-transparent hover:bg-transparent p-0 m-0' onClick={() => setCurrentWalkin(currentWalkin && currentWalkin == appointment ? null  : appointment)}><img src={More} alt='info' height={25} width={25} /></button>
             </div>
           ))
         ) : (

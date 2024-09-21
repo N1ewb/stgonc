@@ -140,7 +140,7 @@ const AdminSchedulesPage = () => {
           </div>
         </div>
         <Tooltip anchorSelect=".export-button" place="top">
-          Export file to PNG
+          Export file 
         </Tooltip>
         <Tooltip anchorSelect=".edit-button" place="top">
           Edit Table
