@@ -2,18 +2,27 @@ import React, { useEffect, useRef, useState } from "react";
 import Chatmessages from "./Chatmessages";
 import Profile from "../../static/images/default-profile.png";
 import Loading from "../Loading/Loading";
+import AttachFile from "../../static/images/attach-file.png";
 import { useMessage } from "../../context/notification/NotificationContext";
+import toast from "react-hot-toast";
 
 const Chatbox = ({ auth, db, receiver, setCurrentChatReceiver }) => {
   const notif = useMessage();
   const dummy = useRef();
   const formValueRef = useRef();
+  const toastMessage = (message) => toast(message)
   const [messages, setMessages] = useState();
   const [filterbyParticipants, setFilterbyParticipants] = useState();
 
-  // Function to get the correct participant name
+ 
   const getParticipantName = (receiver) => {
-    return receiver?.displayName || `${receiver?.firstName} ${receiver?.lastName}` || receiver?.teacherDisplayName || receiver?.teacherName || "Unknown";
+    return (
+      receiver?.displayName ||
+      `${receiver?.firstName} ${receiver?.lastName}` ||
+      receiver?.teacherDisplayName ||
+      receiver?.teacherName ||
+      "Unknown"
+    );
   };
 
   const getParticipantEmail = (receiver) => {
@@ -26,23 +35,22 @@ const Chatbox = ({ auth, db, receiver, setCurrentChatReceiver }) => {
     setMessages(messages);
   };
 
-  const filterParticipants = async () => {
-    if (auth.currentUser && messages) {
-      const participantName = getParticipantName(receiver);
-      const filtered = messages.filter(
-        (message) =>
-          message.participants.includes(auth.currentUser.displayName) &&
-          message.participants.includes(participantName)
-      );
-      setFilterbyParticipants(filtered);
-    }
-  };
+  
 
   useEffect(() => {
-    if (filterbyParticipants === undefined) {
-      filterParticipants();
-    }
-  });
+    const filterParticipants = async () => {
+      if (auth.currentUser && messages) {
+        const participantName = getParticipantName(receiver);
+        const filtered = messages.filter(
+          (message) =>
+            message.participants.includes(auth.currentUser.displayName) &&
+            message.participants.includes(participantName)
+        );
+        setFilterbyParticipants(filtered);
+      }
+    };
+    filterParticipants()
+  },[messages]);
 
   useEffect(() => {
     if (messages === undefined) {
@@ -58,7 +66,7 @@ const Chatbox = ({ auth, db, receiver, setCurrentChatReceiver }) => {
           const unsubscribe = db.subscribeToMessageChanges((newmessages) => {
             setMessages(newmessages);
             setFilterbyParticipants();
-            filterParticipants();
+            
             if (dummy.current) {
               dummy.current.scrollIntoView({ behavior: "smooth" });
             }
@@ -92,6 +100,25 @@ const Chatbox = ({ auth, db, receiver, setCurrentChatReceiver }) => {
     }
   };
 
+  const handleAttachFile = async (e) => {
+    const file = e.target.files[0]
+    try{
+      if(file && auth.currentUser){
+        const participantName = getParticipantName(receiver);
+        const participantEmail = getParticipantEmail(receiver);
+        await db.attachFile(file, auth.currentUser.uid, participantName )
+        await notif.storeUserNotifToDB(
+          auth.currentUser.email,
+          participantEmail,
+          "Message",
+          `${auth.currentUser.displayName} has sent you an attachment!`
+        );
+      }
+    }catch(error){
+      toastMessage("Error in attaching file", error.message)
+    }
+  }
+
   return (
     <div className="absolute bottom-2 right-5 z-50 bg-white text-white h-[450px] w-[350px] flex flex-col rounded-t-[10px] shadow-lg ">
       <div className="chatbox-header py-2 px-3 bg-[#320000] flex flex-row w-full justify-between [&_p]:m-0 rounded-t-[10px]">
@@ -124,6 +151,15 @@ const Chatbox = ({ auth, db, receiver, setCurrentChatReceiver }) => {
         )}
       </div>
       <div className="chatbox-footer w-full flex items-center justify-center p-2">
+        <label className="cursor-pointer flex items-center">
+          <img src={AttachFile} alt="attach file" className="w-6 h-6 mr-2" />
+          <input
+            type="file"
+            className="hidden" 
+            onChange={(e) => handleAttachFile(e)} 
+          />
+        </label>
+
         <form className="flex flex-row justify-between w-[95%]">
           <input
             className="text-black p-0"
@@ -135,10 +171,7 @@ const Chatbox = ({ auth, db, receiver, setCurrentChatReceiver }) => {
             type="submit"
             onClick={(e) => {
               e.preventDefault();
-              handleSendMessage(
-                formValueRef.current.value,
-                receiver
-              );
+              handleSendMessage(formValueRef.current.value, receiver);
             }}
           >
             Send

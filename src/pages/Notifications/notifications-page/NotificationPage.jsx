@@ -52,7 +52,7 @@ const NotificationPage = () => {
             currentButton={currentbutton}
           />
         </div>
-        <div className="notification-main basis-[80%]">
+        <div className="notification-main basis-[80%] h-[100%]">
           <NotificationCard currentCategory={currentCategory} />
         </div>
       </div>

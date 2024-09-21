@@ -65,7 +65,7 @@ const NotificationCard = ({ currentCategory }) => {
   };
 
   return (
-    <div className="div flex flex-col gap-5">
+    <div className="div flex flex-col gap-5 max-h-[100%] overflow-auto">
       {currentCategory && currentCategory.length !== 0
         ? currentCategory.map((notification) => (
             <div className="flex flex-row w-full justify-between">

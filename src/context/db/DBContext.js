@@ -214,24 +214,20 @@ export const DBProvider = ({ children }) => {
   const uploadESignature = async (imageFile) => {
     try {
       if (auth.currentUser) {
-        const storageRef = ref(
-          storage,
-          `eSignatures/${auth.currentUser.uid}`
-        );
-  
+        const storageRef = ref(storage, `eSignatures/${auth.currentUser.uid}`);
+
         await uploadBytes(storageRef, imageFile);
         const downloadURL = await getDownloadURL(storageRef);
-  
+
         const userDocRef = doc(usersCollectionRef, auth.currentUser.uid);
         await updateDoc(userDocRef, { eSignature: downloadURL });
-  
-        toastMessage('E-signature uploaded successfully!');
+
+        toastMessage("E-signature uploaded successfully!");
       }
     } catch (error) {
       toastMessage(`Error in uploading E-signature: ${error.message}`);
     }
   };
-  
 
   //As teacher
   const getAppointmentRequests = async () => {
@@ -345,6 +341,41 @@ export const DBProvider = ({ children }) => {
       if (auth.currentUser) {
         await addDoc(messagesRef, {
           text: formValue,
+          createAt: serverTimestamp(),
+          uid,
+          sentBy: auth.currentUser.displayName,
+          sentTo: receiver,
+          participants: [auth.currentUser.displayName, receiver],
+        });
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const attachFile = async (file, uid, receiver) => {
+    const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    const generateRandomString = () => {
+      const length = Math.floor(Math.random() * 10) + 1;
+      let result = "";
+      for (let i = 0; i < length; i++) {
+        const randomIndex = Math.floor(Math.random() * characters.length);
+        result += characters[randomIndex];
+      }
+      return (result);
+    };
+    try {
+      if (auth.currentUser) {
+        const storageRef = ref(
+          storage,
+          `messageAttachments/${auth.currentUser.uid}-${generateRandomString()}-${file.name}`
+        );
+        await uploadBytes(storageRef, file);
+
+        const downloadURL = await getDownloadURL(storageRef);
+        const fileType = file.type;
+        await addDoc(messagesRef, {
+          file: { fileAttachment: downloadURL, fileType },
           createAt: serverTimestamp(),
           uid,
           sentBy: auth.currentUser.displayName,
@@ -688,7 +719,7 @@ export const DBProvider = ({ children }) => {
   const deleteSchedule = async (timeslotID, day) => {
     try {
       if (auth.currentUser) {
-        const dayRef = doc(firestore, "Schedules", day.id); 
+        const dayRef = doc(firestore, "Schedules", day.id);
         const timeslotsCollectionRef = collection(dayRef, "timeslots");
         const timeslotDocRef = doc(timeslotsCollectionRef, timeslotID);
         await deleteDoc(timeslotDocRef);
@@ -805,6 +836,7 @@ export const DBProvider = ({ children }) => {
     editInstructorColorCode,
     getMessages,
     sendMessage,
+    attachFile,
     getDays,
     getScheduleDay,
     getTimeslotsForDay,

@@ -73,3 +73,11 @@
     margin-top: -10px;
     margin-left: -10px;
 }
+
+.message-image {
+    max-width: 100%;
+    height: auto;
+    border-radius: 4px; /* optional for rounded corners */
+    margin: 8px 0; /* space around the image */
+  }
+  
