@@ -7,13 +7,16 @@ import "./Profile.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { useDB } from "../../context/db/DBContext";
 import { useChat } from "../../context/chatContext/ChatContext";
+import { useMessage } from "../../context/notification/NotificationContext";
 
 const Profile = () => {
   const auth = useAuth();
   const db = useDB();
   const chat = useChat();
+  const notif = useMessage();
   const navigate = useNavigate();
   const [user, setUser] = useState();
+  const [notifications, setNotifications] = useState([]);
 
   const handleSignout = async () => {
     if (auth.currentUser) {
@@ -22,6 +25,21 @@ const Profile = () => {
       navigate("/");
     }
   };
+
+  useEffect(() => {
+    async function handleGetNotifications() {
+      if (auth.currentUser) {
+        const unsubscribe = notif.subscribeToUserNotifications(
+          auth.currentUser.email,
+          (newNotifications) => {
+            setNotifications(newNotifications);
+          }
+        );
+        return () => unsubscribe();
+      }
+    }
+    handleGetNotifications();
+  }, [notif, auth.currentUser]);
 
   useEffect(() => {
     const handleGetUser = async () => {
@@ -40,29 +58,40 @@ const Profile = () => {
   return (
     <div className="profile-container lg:hidden">
       <Dropdown>
-        <Dropdown.Toggle
-          variant="success"
-          id="dropdown-basic"
-          style={{
-            backgroundColor: "transparent",
-            border: "none",
-            display: "flex",
-            alignItems: "center",
-          }}
-        >
-          {auth.currentUser && (
-            <img
-              className="w-[100px] h-[100px] rounded-full object-cover"
-              src={
-                auth.currentUser?.photoURL
-                  ? auth.currentUser.photoURL
-                  : DefaultProfile
-              }
-              alt="profile picture"
-            />
-          )}
-        </Dropdown.Toggle>
-
+        <div className="div relative">
+          <Dropdown.Toggle
+            variant="success"
+            id="dropdown-basic"
+            style={{
+              backgroundColor: "transparent",
+              border: "none",
+              display: "flex",
+              alignItems: "center",
+            }}
+          >
+            <div className="relative ">
+              {auth.currentUser && (
+                <img
+                  className="w-[100px] h-[100px] rounded-full object-cover"
+                  src={
+                    auth.currentUser?.photoURL
+                      ? auth.currentUser.photoURL
+                      : DefaultProfile
+                  }
+                  alt="profile picture"
+                />
+              )}
+            </div>
+          </Dropdown.Toggle>
+          <Link
+            className={`notif-block absolute -top-[5%] left-[36%] h-8 w-8 rounded-full bg-red-800 ${
+              notifications.length !== 0 ? "flex" : "hidden "
+            } items-center justify-center text-white decoration-transparent `}
+            to={`/private/${user?.role}/notifications`}
+          >
+            {notifications.length}
+          </Link>
+        </div>
         <Dropdown.Menu>
           {auth.currentUser && (
             <Dropdown.Item href="#/action-1">
@@ -80,7 +109,6 @@ const Profile = () => {
             >
               Notifications
             </Link>
-            
           </Dropdown.Item>
           <Dropdown.Item>
             <Link
@@ -89,7 +117,6 @@ const Profile = () => {
             >
               Messages
             </Link>
-            
           </Dropdown.Item>
           <Dropdown.Item href="#/action-2">Give Feedback</Dropdown.Item>
           <Dropdown.Item onClick={() => handleSignout()}>Logout</Dropdown.Item>

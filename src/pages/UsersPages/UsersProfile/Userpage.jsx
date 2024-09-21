@@ -71,8 +71,8 @@ const Userpage = () => {
   }, []);
 
   return (
-    <div className="Userpage-container w-full overflow-auto">
-      <div className="flex w-full flex-row">
+    <div className="Userpage-container w-full overflow-auto h-[100%]">
+      <div className="flex w-full flex-row h-[100%]">
         <div className="account-details-sidebar-container flex flex-col gap-3 basis-1/5  [&_button]:w-[80%] [&_button]:rounded-md text-center ">
           <button
             className={`hover:bg-[#320000] hover:text-white ${
@@ -115,7 +115,7 @@ const Userpage = () => {
             Help
           </button>
         </div>
-        <div className="account-details-main-content-container basis-4/5">
+        <div className="account-details-main-content-container h-[100%] basis-4/5">
           {currentPage === "Account" ? (
             <AccountPage user={user} useAuth={auth} db={db} />
           ) : currentPage === "Password" ? (

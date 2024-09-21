@@ -34,7 +34,7 @@ const StudentPendingAppointments = ({ appt }) => {
       <div className="student-pending-appointment-header w-1/2">
         <h1>Pending Appointment</h1>
       </div>
-      <div className="student-pending-appointment-content">
+      <div className="student-pending-appointment-content w-1/2">
         {appointments && appointments.length !== 0 ? appointments.map((appointment) => <PendingApptointmentsCard appointment={appointment} />) : ""}
       </div>
     </div>

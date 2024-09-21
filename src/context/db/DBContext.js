@@ -12,6 +12,7 @@ import {
   query,
   where,
   Timestamp,
+  deleteDoc,
 } from "firebase/firestore";
 import { firestore, storage } from "../../server/firebase";
 import { useAuth } from "../auth/AuthContext";
@@ -103,7 +104,7 @@ export const DBProvider = ({ children }) => {
         const q = query(
           usersCollectionRef,
           where("role", "in", ["Faculty", "Admin"]),
-          where('department', '==', user.department)
+          where("department", "==", user.department)
         );
 
         const querySnapshot = await getDocs(q);
@@ -208,6 +209,29 @@ export const DBProvider = ({ children }) => {
       toastMessage(`Error in storing data to database, ${error.message}`);
     }
   };
+
+  //As dean
+  const uploadESignature = async (imageFile) => {
+    try {
+      if (auth.currentUser) {
+        const storageRef = ref(
+          storage,
+          `eSignatures/${auth.currentUser.uid}`
+        );
+  
+        await uploadBytes(storageRef, imageFile);
+        const downloadURL = await getDownloadURL(storageRef);
+  
+        const userDocRef = doc(usersCollectionRef, auth.currentUser.uid);
+        await updateDoc(userDocRef, { eSignature: downloadURL });
+  
+        toastMessage('E-signature uploaded successfully!');
+      }
+    } catch (error) {
+      toastMessage(`Error in uploading E-signature: ${error.message}`);
+    }
+  };
+  
 
   //As teacher
   const getAppointmentRequests = async () => {
@@ -393,7 +417,7 @@ export const DBProvider = ({ children }) => {
         const q = query(
           usersCollectionRef,
           where("role", "in", ["Faculty", "Admin"]),
-          where('department','==', user.department)
+          where("department", "==", user.department)
         );
 
         const unsubscribe = onSnapshot(q, (snapshot) => {
@@ -661,24 +685,21 @@ export const DBProvider = ({ children }) => {
     }
   };
 
-  const deleteSchedule = async (scheduleID) => {
-    //   try {
-    //     if (auth.currentUser) {
-    //       const scheduleDoc = doc(collection(firestore, "Schedules"), scheduleID);
-    //       await deleteDoc(scheduleDoc);
-    //     }
-    //   } catch (error) {
-    //     toastMessage("Error in updating Schedule:", error.message);
-    //   }
-    // };
-    // const updateScheduleData = async (instructor, id) => {
-    //   try {
-    //     const schedulesDocRef = doc(firestore, "Schedule", id);
-    //     const updatedSchedulesDocRef = { assignedInstructor: instructor };
-    //     return await updateDoc(schedulesDocRef, updatedSchedulesDocRef);
-    //   } catch (error) {
-    //     toastMessage(error.message);
-    //   }
+  const deleteSchedule = async (timeslotID, day) => {
+    try {
+      if (auth.currentUser) {
+        const dayRef = doc(firestore, "Schedules", day.id); 
+        const timeslotsCollectionRef = collection(dayRef, "timeslots");
+        const timeslotDocRef = doc(timeslotsCollectionRef, timeslotID);
+        await deleteDoc(timeslotDocRef);
+        console.log("Timeslot deleted successfully");
+      } else {
+        console.log("No authenticated user");
+      }
+    } catch (error) {
+      console.error("Error in deleting schedule:", error);
+      toastMessage("Error in deleting schedule", error.message);
+    }
   };
 
   const subscribeToSchedulesChanges = async (callback) => {
@@ -775,6 +796,7 @@ export const DBProvider = ({ children }) => {
     getAllUsers,
     sendAppointmentRequest,
     walkinAppointment,
+    uploadESignature,
     subscribeToWalkinAppointmentChanges,
     getAppointmentRequests,
     getInstructorAppointment,

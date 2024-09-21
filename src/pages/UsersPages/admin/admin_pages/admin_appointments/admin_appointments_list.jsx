@@ -70,8 +70,8 @@ const AdminAppointmentPage = () => {
         <div
           className={`w-[45%] bg-white shadow-md rounded-[30px] p-10 transition-all ease-in-out duration-300 ${
             currentAppointment
-              ? "opacity-100 h-auto translate-y-0"
-              : "opacity-0 h-0 -translate-y-10"
+              ? "opacity-100 h-auto translate-x-0"
+              : "opacity-0 h-0 -translate-x-10"
           }`}
         >
           {currentAppointment && (

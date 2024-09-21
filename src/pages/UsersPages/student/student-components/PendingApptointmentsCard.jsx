@@ -24,18 +24,19 @@ const PendingApptointmentsCard = ({ appointment }) => {
   }, [appointment]);
   return (
     <div>
-      <div className="text-[#360000] w-full flex flex-row items-center [&_p]:m-0 justify-between shadow-md rounded-3xl p-4">
+      {faculty && <div className="text-[#360000] w-full flex flex-row items-center [&_p]:m-0 justify-between shadow-md rounded-3xl p-4">
         <div className="flex flex-row items-center gap-3">
           <img
             className="w-[80px] p-[2px] bg-[#320000] h-[80px] rounded-full object-cover"
-            src={faculty?.photoURL ? faculty?.photoURL : DefaultProfile}
+            src={faculty.photoURL ? faculty.photoURL : DefaultProfile}
             alt="profile"
           />
-          <p className="text-2xl">
-            {faculty?.firstName + " " + faculty?.lastName}
+          <p className="text-xl flex flex-col">
+            <span>{faculty.firstName + " " + faculty.lastName}</span>
+            <span className="text-[#d4d4d4] text-base">{faculty.email}</span>
           </p>
         </div>
-      </div>
+      </div>}
     </div>
   );
 };

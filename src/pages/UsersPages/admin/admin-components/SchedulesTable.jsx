@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import SchedulesModal from "../../../../components/modal/schedules-modal/SchedulesModal";
 import { useDB } from "../../../../context/db/DBContext";
+import { Tooltip } from "react-bootstrap";
 
 const SchedulesTable = ({
   show,
@@ -111,20 +112,6 @@ const SchedulesTable = ({
 
       choosenCells.forEach(async (cell) => {
         const { time, day, fullDay } = JSON.parse(cell);
-
-        const matchingSchedules = schedules.filter(
-          (schedule) =>
-            schedule.day === day &&
-            schedule.time.startTime === time.startTime &&
-            schedule.time.endTime === time.endTime
-        );
-
-        if (matchingSchedules.length > 0) {
-          matchingSchedules.forEach(async (matchingSchedule) => {
-            console.log("Deleted", matchingSchedule.id);
-            await handleDeleteSchedulesDoc(matchingSchedule.id);
-          });
-        }
 
         updatedScheduleData[`${time.startTime}-${time.endTime}-${day}`] = value;
         await db.setInstructorSchedule(
@@ -247,7 +234,7 @@ const SchedulesTable = ({
                         {cellValue && isEditMode ? (
                           <div className="flex flex-row w-full justify-between">
                             <div className="spacer"></div>
-                          <button className="p-1" onClick={() => console.log("cell is delted")}>
+                          <button className="x-button p-1 bg-transparent hover:bg-transparent " onClick={() => handleDeleteSchedulesDoc(cellValue.id, day)}>
                             X
                           </button>
                           </div>
@@ -271,6 +258,9 @@ const SchedulesTable = ({
           setTd={setTd}
         />
       )}
+       <Tooltip anchorSelect=".x-button" place="top">
+          Delete cell
+        </Tooltip>
     </div>
   );
 };

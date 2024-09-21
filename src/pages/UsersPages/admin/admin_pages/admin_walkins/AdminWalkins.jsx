@@ -46,8 +46,8 @@ const AdminWalkins = () => {
         </div>
 
         <div
-          className={`transition-all duration-500 ease-in-out pb-5 px-2 ${
-            currentWalkin && !isFormOpen ? "w-1/2 mx-3"  : "w-0"
+          className={`transition-transform duration-500 ease-in-out pb-5 px-2 ${
+            currentWalkin && !isFormOpen ? "w-1/2 mx-3 translate-x-0"  : "w-0 translate-x-[100%]"
           } overflow-hidden`}
         >
           {currentWalkin && !isFormOpen && (
