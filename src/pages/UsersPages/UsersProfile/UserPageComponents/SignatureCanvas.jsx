@@ -4,7 +4,7 @@ import { useAuth } from "../../../../context/auth/AuthContext";
 import { useDB } from "../../../../context/db/DBContext";
 import toast from "react-hot-toast";
 
-const SignatureCanvasComponent = ({ setCanvasOpen }) => {
+const SignatureCanvasComponent = ({ setCanvasOpen, setEsignature }) => {
   const auth = useAuth();
   const db = useDB();
   const toastMessage = (message) => toast(message);
@@ -23,6 +23,7 @@ const SignatureCanvasComponent = ({ setCanvasOpen }) => {
 
         await db.uploadESignature(file);
         toastMessage("E signature successfully uploaded!");
+        setEsignature(signatureDataUrl)
         setCanvasOpen(false);
       } catch (error) {
         toastMessage(`Error uploading signature: ${error.message}`);

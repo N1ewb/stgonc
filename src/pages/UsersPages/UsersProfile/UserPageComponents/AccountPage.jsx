@@ -7,6 +7,7 @@ import SignatureCanvasComponent from "./SignatureCanvas";
 
 const AccountPage = ({ useAuth, db, user }) => {
   const [photoURL, setPhotoURL] = useState("");
+  const [eSignature, setEsignature] = useState("")
   const [isCanvasOpen, setCanvasOpen] = useState(false);
   const toastMessage = (message) => toast(message);
 
@@ -33,6 +34,12 @@ const AccountPage = ({ useAuth, db, user }) => {
     });
     return () => unsubscribe();
   }, [photoURL]);
+
+  useEffect(() => {
+    if(user){
+      setEsignature(user.eSignature)
+    }
+  },[user])
 
   return (
     <div className="account-page-container max-h-[100%] shadow-md rounded-[20px] pt-10 pb-5 px-1 bg-[#f4f4f4] w-full flex flex-col gap-2 [&_p]:m-0 overflow-auto">
@@ -117,7 +124,7 @@ const AccountPage = ({ useAuth, db, user }) => {
         {user?.role === "Admin" && (
           <div className="flex flex-col justify-center items-center w-[44%] relative">
             <img
-              src={user?.eSignature}
+              src={eSignature}
               alt="e-signature"
               className="h-28 w-auto"
             />
@@ -132,7 +139,7 @@ const AccountPage = ({ useAuth, db, user }) => {
             </p>
 
             <div className="w-1/2">{isCanvasOpen && (
-              <SignatureCanvasComponent setCanvasOpen={setCanvasOpen} />
+              <SignatureCanvasComponent setCanvasOpen={setCanvasOpen}  setEsignature={setEsignature}/>
             )}</div>
           </div>
         )}
