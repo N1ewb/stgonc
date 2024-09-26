@@ -38,7 +38,7 @@ const StudentAppointments = () => {
       <div className="div w-1/2">
       {appointments && appointments.length !== 0
         ? appointments.map((appointment) => (
-            <StudentAppointmentCard appointment={appointment} />
+            <StudentAppointmentCard key={appointment.id} appointment={appointment} />
           ))
         : ""}
       </div>

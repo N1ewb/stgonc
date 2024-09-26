@@ -1,6 +1,6 @@
-import React, { useRef, useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useCall } from "../../context/call/CallContext";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 import Profile from "../../static/images/default-profile.png";
 import Camera from "../../static/images/icons8-camera-64.png";
@@ -11,25 +11,19 @@ import "./VideoCall.css";
 
 const VideoCall = () => {
   const location = useLocation();
+  const navigate = useNavigate();
   const queryParams = new URLSearchParams(location.search);
   const receiver = queryParams.get("receiver");
   const caller = queryParams.get("caller");
   const [newCalloffer, setNewCallOffer] = useState(null);
-  const [localVideoRef, setLocalVideoRef] = useState();
-  const [remoteVideoRef, setRemoteVideoRef] = useState();
-  const [callAnswered, setCallAnswered] = useState(false); 
 
   const call = useCall();
-  const callInput = call.callInput;
+  const { callState, answerCallOffer, AnswerCall, hangUp, toggleCamera, toggleMic, localVideoRef, remoteVideoRef, callInput } = call;
 
   const handleAnswerCall = async () => {
-    if (newCalloffer) { 
+    if (newCalloffer && callState !== 'connected') {
       try {
-        console.log(`Answering call offer: ${newCalloffer}`);
-
-        await call.answerCallOffer(newCalloffer);
-        await call.AnswerCall();
-        
+        await answerCallOffer(newCalloffer);
       } catch (error) {
         console.log("Error answering call offer:", error.message);
       }
@@ -38,37 +32,26 @@ const VideoCall = () => {
 
   const handleHangUp = async () => {
     if (newCalloffer !== null) {
-      await call.hangUp(newCalloffer);
+      console.log("calloffer: ", newCalloffer);
+      await hangUp(newCalloffer);
+      if (caller) {
+        navigate(`/private/Endcallpage?caller=${caller}`);
+      }
     } else {
       console.log("Error: newCalloffer is null.");
     }
   };
 
   useEffect(() => {
-    setLocalVideoRef(call.localVideoRef);
-    setRemoteVideoRef(call.remoteVideoRef);
-  }, [call.localVideoRef, call.remoteVideoRef]);
-
-  useEffect(() => {
-    const answerCallOnce = async () => {
-      if (newCalloffer && call.remoteStream && !callAnswered) {
-        setCallAnswered(true); 
-        console.log('Remote stream called in video call: ',call.remoteStream)
-        await handleAnswerCall(); 
-      }
-    };
-    answerCallOnce();
-}, [newCalloffer, call.remoteStream]);
-
-
-  useEffect(() => {
     const fetchData = async () => {
       try {
-        const unsubscribe = call.subscribeToRespondedCallChanges(
+        const unsubscribe = await call.subscribeToRespondedCallChanges(
           (newCallOffers) => {
             if (newCallOffers) {
-              callInput.current.value = newCallOffers.callID;
-              setNewCallOffer(newCallOffers.id);
+              if (callInput.current) {
+                callInput.current.value = newCallOffers.callID;
+                setNewCallOffer(newCallOffers.id);
+              }
             }
           }
         );
@@ -80,6 +63,12 @@ const VideoCall = () => {
     fetchData();
   }, [call]);
 
+  useEffect(() => {
+    if (newCalloffer && callState === 'idle') {
+      handleAnswerCall();
+    }
+  }, [newCalloffer, callState]);
+
   return (
     <>
       <div className="home-container">
@@ -90,7 +79,7 @@ const VideoCall = () => {
           <video ref={remoteVideoRef} autoPlay />
         </div>
         <div className="call-buttons">
-          <button onClick={call.toggleCamera}>
+          <button onClick={toggleCamera}>
             <img src={Camera} alt="camera" width="30px" />
           </button>
           <input
@@ -99,11 +88,13 @@ const VideoCall = () => {
             ref={callInput}
             placeholder="Call Input"
           />
-          <button onClick={call.toggleMic}>Mute</button>
+          <button onClick={toggleMic}>Mute</button>
           <button onClick={handleHangUp}>
             <img src={HangUp} alt="hang up" width="30px" />
           </button>
-          <button onClick={handleAnswerCall}>Answer Call</button>
+          <button onClick={handleAnswerCall} disabled={callState === 'connecting' || callState === 'connected'}>
+            {callState === 'connecting' ? 'Connecting...' : callState === 'connected' ? 'Connected' : 'Answer Call'}
+          </button>
         </div>
       </div>
     </>

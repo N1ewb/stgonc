@@ -39,6 +39,7 @@ export const DBProvider = ({ children }) => {
   );
   const walkingCollectionRef = collection(firestore, "WalkinAppointments");
   const schedulesCollectionRef = collection(firestore, "Schedules");
+  const consultationReportRef = collection(firestore, "ConsultationReports");
   const auth = useAuth();
   const notif = useMessage();
   const [user, setUser] = useState(undefined);
@@ -275,6 +276,27 @@ export const DBProvider = ({ children }) => {
     }
   };
 
+  const getAppointment = async (id) => {
+    try {
+      if (auth.currentUser) {
+        const q = query(appointmentsRef, where("id", "==", id));
+        const querySnapshot = await getDocs(q);
+        const appointmentData = querySnapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+
+        if (appointmentData) {
+          return appointmentData;
+        } else {
+          return console.log("Nothing");
+        }
+      }
+    } catch (error) {
+      notifyError(error);
+    }
+  };
+
   const approveAppointment = async (id, receiver, date) => {
     try {
       if (auth.currentUser) {
@@ -304,6 +326,38 @@ export const DBProvider = ({ children }) => {
       }
     } catch (error) {
       console.error();
+    }
+  };
+
+  const makeReport = async (
+    remarks,
+    date,
+    duration,
+    mode,
+    radio,
+    agenda,
+    summary,
+    receiver
+  ) => {
+    try {
+      if (auth.currentUser) {
+        const q = query(consultationReportRef);
+        await addDoc(q, {
+          remarks,
+          date,
+          duration,
+          mode,
+          radio,
+          agenda,
+          summary,
+          receiver,
+          ReportBy: auth.currentUser.uid,
+          createdAt: serverTimestamp(),
+        });
+        
+      }
+    } catch (error) {
+      toastMessage("Error in making report: ", error.message);
     }
   };
 
@@ -354,7 +408,8 @@ export const DBProvider = ({ children }) => {
   };
 
   const attachFile = async (file, uid, receiver) => {
-    const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    const characters =
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
     const generateRandomString = () => {
       const length = Math.floor(Math.random() * 10) + 1;
       let result = "";
@@ -362,13 +417,15 @@ export const DBProvider = ({ children }) => {
         const randomIndex = Math.floor(Math.random() * characters.length);
         result += characters[randomIndex];
       }
-      return (result);
+      return result;
     };
     try {
       if (auth.currentUser) {
         const storageRef = ref(
           storage,
-          `messageAttachments/${auth.currentUser.uid}-${generateRandomString()}-${file.name}`
+          `messageAttachments/${
+            auth.currentUser.uid
+          }-${generateRandomString()}-${file.name}`
         );
         await uploadBytes(storageRef, file);
 
@@ -826,6 +883,7 @@ export const DBProvider = ({ children }) => {
     getTeachers,
     getAllUsers,
     sendAppointmentRequest,
+    getAppointment,
     walkinAppointment,
     uploadESignature,
     subscribeToWalkinAppointmentChanges,
@@ -833,6 +891,7 @@ export const DBProvider = ({ children }) => {
     getInstructorAppointment,
     approveAppointment,
     denyAppointment,
+    makeReport,
     editInstructorColorCode,
     getMessages,
     sendMessage,

@@ -1,4 +1,9 @@
-import React, { useContext, createContext, useEffect } from "react";
+import React, {
+  useContext,
+  createContext,
+  useEffect,
+  useCallback,
+} from "react";
 
 import { useRef, useState } from "react";
 import { firestore, servers } from "../../server/firebase";
@@ -40,6 +45,7 @@ export const CallProvider = ({ children }) => {
 
   const [localStream, setLocalStream] = useState();
   const [remoteStream, setRemoteStream] = useState(new MediaStream());
+  const [callState, setCallState] = useState("idle");
 
   const resetStreams = () => {
     if (localStream) {
@@ -85,7 +91,6 @@ export const CallProvider = ({ children }) => {
   const toggleCamera = async () => {
     try {
       if (!localStream) {
-        // If localStream doesn't exist, initialize it
         const stream = await handleWaitForLocalStream();
         setLocalStream(stream);
         pc.getSenders().forEach((sender) => {
@@ -100,11 +105,9 @@ export const CallProvider = ({ children }) => {
       const videoTrack = localStream.getVideoTracks()[0];
 
       if (videoTrack.enabled) {
-        // Turn off the camera
         videoTrack.enabled = false;
         console.log("Camera turned off");
       } else {
-        // Turn on the camera
         videoTrack.enabled = true;
         console.log("Camera turned on");
       }
@@ -117,10 +120,9 @@ export const CallProvider = ({ children }) => {
   const toggleMic = async () => {
     try {
       if (!localStream) {
-        // Initialize the localStream if it doesn't exist
         const stream = await handleWaitForLocalStream();
         setLocalStream(stream);
-        // Set the audio track for the peer connection
+
         const audioTrack = stream.getAudioTracks()[0];
         pc.getSenders().forEach((sender) => {
           if (sender.track.kind === "audio") {
@@ -134,24 +136,20 @@ export const CallProvider = ({ children }) => {
 
       if (audioTrack) {
         if (audioTrack.enabled) {
-          // Disable the audio track
-          audioTrack.enabled = false; // Disable the track instead of stopping
+          audioTrack.enabled = false;
           console.log("Microphone turned off");
         } else {
-          // Restart the microphone
           const stream = await navigator.mediaDevices.getUserMedia({
             audio: true,
           });
           const newAudioTrack = stream.getAudioTracks()[0];
 
-          // Replace the old audio track with the new one in the peer connection
           pc.getSenders().forEach((sender) => {
             if (sender.track.kind === "audio") {
               sender.replaceTrack(newAudioTrack);
             }
           });
 
-          // Update the local stream to include the new track
           const newStream = new MediaStream([
             ...localStream.getVideoTracks(),
             newAudioTrack,
@@ -172,11 +170,9 @@ export const CallProvider = ({ children }) => {
       const getLocalStream = await handleWaitForLocalStream();
       setLocalStream(getLocalStream);
 
-      // Get existing senders
       const existingSenders = pc.getSenders();
 
       getLocalStream.getTracks().forEach((track) => {
-        // Check if a sender for this track already exists
         const existingSender = existingSenders.find(
           (sender) => sender.track === track
         );
@@ -204,7 +200,6 @@ export const CallProvider = ({ children }) => {
     }
   };
 
-  //Create Offer
   const CallButton = async () => {
     try {
       PcState();
@@ -251,105 +246,157 @@ export const CallProvider = ({ children }) => {
     }
   };
 
-  const AnswerCall = async () => {
-    try {
-      if (!localStream || !remoteStream) {
-        PcState();
-        await InitializeStreams();
-      }
+  const AnswerCall = useCallback(async () => {
+    if (callState !== "idle" && callState !== "failed") return;
 
-      const callId = callInput.current.value;
-      const callDoc = doc(collection(firestore, "calls"), callId);
-      const answerCandidates = collection(callDoc, "answerCandidates");
-      const offerCandidates = collection(callDoc, "offerCandidates");
+    setCallState("connecting");
+    let retries = 3;
 
-      pc.onicecandidate = async (event) => {
-        if (event.candidate) {
-          await addDoc(answerCandidates, event.candidate.toJSON());
+    while (retries > 0) {
+      try {
+        if (!localStream || !remoteStream) {
+          PcState();
+          await InitializeStreams();
         }
-      };
 
-      let callData = (await getDoc(callDoc)).data();
+        const callId = callInput.current.value;
+        const callDoc = doc(collection(firestore, "calls"), callId);
+        const answerCandidates = collection(callDoc, "answerCandidates");
+        const offerCandidates = collection(callDoc, "offerCandidates");
 
-      while (!callData?.offer || !callData.offer.type) {
-        await new Promise((resolve) => setTimeout(resolve, 100));
-        callData = (await getDoc(callDoc)).data();
+        pc.onicecandidate = async (event) => {
+          if (event.candidate) {
+            await addDoc(answerCandidates, event.candidate.toJSON());
+          }
+        };
+
+        let callData = (await getDoc(callDoc)).data();
+
+        while (!callData?.offer || !callData.offer.type) {
+          await new Promise((resolve) => setTimeout(resolve, 1000));
+          callData = (await getDoc(callDoc)).data();
+        }
+
+        const offerDescription = new RTCSessionDescription(callData.offer);
+        await pc.setRemoteDescription(offerDescription);
+
+        const answerDescription = await pc.createAnswer();
+        await pc.setLocalDescription(answerDescription);
+
+        const answer = {
+          type: answerDescription.type,
+          sdp: answerDescription.sdp,
+        };
+
+        await updateDoc(callDoc, { answer });
+
+        onSnapshot(offerCandidates, (snapshot) => {
+          snapshot.docChanges().forEach((change) => {
+            if (change.type === "added") {
+              const candidateData = change.doc.data();
+              const candidate = new RTCIceCandidate(candidateData);
+              pc.addIceCandidate(candidate).catch(console.error);
+            }
+          });
+        });
+
+        // Wait for ICE connection to be established
+        await new Promise((resolve, reject) => {
+          pc.oniceconnectionstatechange = () => {
+            console.log('ICE Connection State:', pc.iceConnectionState);
+            if (pc.iceConnectionState === "connected" || pc.iceConnectionState === "completed") {
+              resolve(); // ICE connection is established
+            } else if (pc.iceConnectionState === "failed") {
+              reject(new Error("ICE connection failed")); // ICE connection failed
+            }
+          };
+        
+          // Add a timeout to prevent the promise from hanging indefinitely
+          setTimeout(() => {
+            if (pc.iceConnectionState !== "connected" && pc.iceConnectionState !== "completed") {
+              reject(new Error("ICE connection timed out"));
+            }
+          }, 3  000); // 10 second timeout (adjust as needed)
+        });
+        
+        setCallState("connected");
+        console.log("Call connected successfully");
+        return;
+      } catch (error) {
+        console.error("Error in AnswerCall:", error);
+        retries--;
+        if (retries === 0) {
+          setCallState("failed");
+          toastMessage("Failed to establish call after multiple attempts");
+          throw error;
+        }
+        await new Promise((resolve) => setTimeout(resolve, 2000)); // Wait before retrying
+      }
+    }
+  }, [
+    callState,
+    localStream,
+    remoteStream,
+    PcState,
+    InitializeStreams,
+    pc,
+    callInput,
+    toastMessage,
+  ]);
+
+  const hangUp = async (newCallOffer) => {
+    try {
+      await disconnectAllDevices();
+
+      const callOfferDoc = doc(firestore, "CallOffers", newCallOffer);
+
+      if (pc.signalingState !== "closed") {
+        pc.close();
+        pc.onicecandidate = null;
+        setPc(new RTCPeerConnection(servers));
       }
 
-      const offerDescription = new RTCSessionDescription(callData.offer);
-      await pc.setRemoteDescription(offerDescription);
-
-      const answerDescription = await pc.createAnswer();
-      await pc.setLocalDescription(answerDescription);
-
-      const answer = {
-        type: answerDescription.type,
-        sdp: answerDescription.sdp,
-      };
-
-      await updateDoc(callDoc, { answer });
-
-      onSnapshot(offerCandidates, (snapshot) => {
-        snapshot.docChanges().forEach((change) => {
-          if (change.type === "added") {
-            const candidateData = change.doc.data();
-            const candidate = new RTCIceCandidate(candidateData);
-            pc.addIceCandidate(candidate).catch(console.error);
-          }
-        });
-      });
-      console.log("Remote Video Track", remoteVideoRef.current.srcObject);
-      console.log("Remote stream tracks:", remoteStream.getTracks());
-      console.log("PeerConnection state:", pc.connectionState);
-      console.log("ICE connection state:", pc.iceConnectionState);
+      if (newCallOffer) {
+        const updateCallOffer = { status: "ended" };
+        await updateDoc(callOfferDoc, updateCallOffer);
+      }
     } catch (error) {
+      console.error("Error during hangup:", error);
       toastMessage(error.message);
     }
   };
 
-  const hangUp = async (newCallOffer) => {
+  const disconnectAllDevices = async () => {
     try {
-      const callId = callInput.current.value;
-      const callDoc = doc(collection(firestore, "calls"), callId);
-      const callOfferDoc = doc(firestore, "CallOffers", newCallOffer);
-
-      // Stop and close the local stream
       if (localStream) {
-        localStream.getTracks().forEach((track) => track.stop());
+        localStream.getTracks().forEach((track) => {
+          track.stop();
+        });
         setLocalStream(null);
       }
 
-      // Stop and close the remote stream
       if (remoteStream) {
-        remoteStream.getTracks().forEach((track) => track.stop());
+        remoteStream.getTracks().forEach((track) => {
+          track.stop();
+        });
         setRemoteStream(new MediaStream());
       }
 
-      // Clear video elements
-      if (localVideoRef.current) localVideoRef.current.srcObject = null;
-      if (remoteVideoRef.current) remoteVideoRef.current.srcObject = null;
+      if (localVideoRef.current) {
+        localVideoRef.current.srcObject = null;
+      }
+      if (remoteVideoRef.current) {
+        remoteVideoRef.current.srcObject = null;
+      }
 
-      // Close the peer connection if not already closed
       if (pc.signalingState !== "closed") {
         pc.close();
-        pc.onicecandidate = null;
-        setPc(new RTCPeerConnection(servers)); // Reset PeerConnection
+        setPc(new RTCPeerConnection(servers));
       }
 
-      if (callId) {
-        const updateCallOffer = { status: "ended" };
-        await updateDoc(callOfferDoc, updateCallOffer);
-      }
-      // Delete the call document and call offer document from Firestore
-      // await Promise.all([
-      //   updateDoc(doc(firestore, "CallOffers", newCallOffer), {
-      //     status: "ended",
-      //   }),
-      //   deleteDoc(callDoc),
-      //   deleteDoc(callOfferDoc),
-      // ]);
+      console.log("Disconnected all devices");
     } catch (error) {
-      console.error("Error during hangup:", error);
+      console.error("Error disconnecting all devices:", error);
       toastMessage(error.message);
     }
   };
@@ -378,18 +425,23 @@ export const CallProvider = ({ children }) => {
     }
   };
 
-  const answerCallOffer = async (offerID) => {
-    if (auth.currentUser) {
-      try {
-        PcState();
-        const callofferdocref = doc(firestore, "CallOffers", offerID);
-        const updateCallOffer = { status: "answered" };
-        await updateDoc(callofferdocref, updateCallOffer);
-      } catch (error) {
-        console.log("Error in answering call offer", error.message);
+  const answerCallOffer = useCallback(
+    async (offerID) => {
+      if (auth.currentUser) {
+        try {
+          PcState();
+          const callofferdocref = doc(firestore, "CallOffers", offerID);
+          const updateCallOffer = { status: "answered" };
+          await updateDoc(callofferdocref, updateCallOffer);
+          await AnswerCall();
+        } catch (error) {
+          console.log("Error in answering call offer", error.message);
+          setCallState("failed");
+        }
       }
-    }
-  };
+    },
+    [auth.currentUser, PcState, AnswerCall]
+  );
 
   const subscribeToAnsweredOfferChanges = async (callback) => {
     try {
@@ -447,7 +499,7 @@ export const CallProvider = ({ children }) => {
           },
           (error) => {
             console.error("Error fetching call offers:", error);
-          } 
+          }
         );
         return unsubscribe;
       } else {
@@ -489,6 +541,39 @@ export const CallProvider = ({ children }) => {
     }
   };
 
+  const subscribeToEndCallChanges = async (caller, callback) => {
+    try {
+      if (auth.currentUser) {
+        const unsubscribe = onSnapshot(
+          query(
+            callOffersRef,
+            where("receiver", "in", [auth.currentUser.uid, caller]),
+            where("caller", "in", [auth.currentUser.uid, caller]),
+            where("status", "==", "ended"),
+            orderBy("createdAt", "desc"),
+            limit(1)
+          ),
+          (snapshot) => {
+            snapshot.docChanges().forEach((change) => {
+              if (change.type === "added") {
+                const doc = change.doc;
+                const data = {
+                  id: doc.id,
+                  ...doc.data(),
+                };
+
+                callback(data);
+              }
+            });
+          }
+        );
+        return unsubscribe;
+      }
+    } catch (error) {
+      console.log("Error subscribing to call end changes:", error);
+    }
+  };
+
   const value = {
     PcState,
     WebcamOn,
@@ -497,6 +582,7 @@ export const CallProvider = ({ children }) => {
     CallButton,
     AnswerCall,
     hangUp,
+    disconnectAllDevices,
     localVideoRef,
     remoteVideoRef,
     callInput,
@@ -506,8 +592,10 @@ export const CallProvider = ({ children }) => {
     subscribeToAnsweredOfferChanges,
     subscribeToCallOfferChanges,
     subscribeToRespondedCallChanges,
+    subscribeToEndCallChanges,
     remoteStream,
     localStream,
+    callState,
   };
 
   return (

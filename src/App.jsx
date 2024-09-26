@@ -54,6 +54,8 @@ import StudentAppointments from "./pages/UsersPages/student/student-pages/studen
 import StudentPendingAppointments from "./pages/UsersPages/student/student-pages/student-pending-appointments/StudentPendingAppointments";
 import StudentApptArchive from "./pages/UsersPages/student/student-pages/student-appointments-archive/StudentApptArchive";
 import Chatslist from "./pages/messages/Messages";
+import EndCallPage from "./pages/videocall/EndCallPage";
+import FacultyEndCallPage from "./pages/videocall/FacultyEndCallPage";
 
 function App() {
   const router = createBrowserRouter([
@@ -117,6 +119,7 @@ function App() {
                   path: "/private/Admin/messages",
                   element: <Chatslist />,
                 },
+               
               ],
             },
             {
@@ -182,6 +185,7 @@ function App() {
                   path: "/private/Student/messages",
                   element: <Chatslist />,
                 },
+                
               ],
             },
 
@@ -205,6 +209,14 @@ function App() {
               path: "/private/Userpage",
               element: <Userpage />,
             },
+            {
+              path: '/private/end-call-page',
+              element : <FacultyEndCallPage />
+            },
+            {
+              path: '/private/Endcallpage',
+              element: <EndCallPage />
+            }
           ],
         },
         {

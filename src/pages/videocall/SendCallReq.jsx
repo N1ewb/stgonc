@@ -8,31 +8,43 @@ import HangUp from "../../static/images/icons8-hang-up-48.png";
 
 import "./SendCallReq.css";
 import { useAuth } from "../../context/auth/AuthContext";
+import { useDB } from "../../context/db/DBContext";
 
 const SendCallReq = () => {
   const auth = useAuth();
+  const db = useDB();
   const location = useLocation();
   const navigate = useNavigate();
   const queryParams = new URLSearchParams(location.search);
   const receiver = queryParams.get("receiver");
   const caller = queryParams.get("caller");
 
-  const [newCallOffer, setNewCallOffer] = useState();
+  const [newCallOffer, setNewCallOffer] = useState(null);
   const [localVideoRef, setLocalVideoRef] = useState(null);
   const [remoteVideoRef, setRemoteVideoRef] = useState(null);
   const [connecting, setConnecting] = useState(false);
+  const [user, setUser] = useState();
 
   const call = useCall();
   const callInput = call.callInput;
 
-  // Track if a call has already been initiated to prevent multiple offers
   const callInitiatedRef = useRef(false);
 
+  useEffect(() => {
+    const handleGetUser = async () => {
+      if (auth.currentUser) {
+        const user = await db.getUser(auth.currentUser.uid);
+        setUser(user);
+      }
+    };
+    handleGetUser();
+  }, [auth.currentUser]);
+
   const handleCallButton = async () => {
-    if (callInitiatedRef.current) return;  // Prevent multiple calls
+    if (callInitiatedRef.current) return;
     try {
       setConnecting(true);
-      callInitiatedRef.current = true;  // Mark that the call is initiated
+      callInitiatedRef.current = true;
       console.log("pressed call button");
 
       await call.CallButton();
@@ -47,8 +59,8 @@ const SendCallReq = () => {
   const handleHangUp = async (newCallOffer) => {
     try {
       await call.hangUp(newCallOffer);
-      callInitiatedRef.current = false; 
-      navigate("/auth/Login");
+      callInitiatedRef.current = false;
+      navigate(`/private/end-call-page?receiver=${receiver}`);
     } catch (error) {
       console.log(error.message);
     }
@@ -64,7 +76,9 @@ const SendCallReq = () => {
       try {
         const unsubscribe = call.subscribeToCallOfferChanges(
           (newCallOffers) => {
-            callInput.current.value = newCallOffers.callID;
+            if (newCallOffer === null) {
+              callInput.current.value = newCallOffers.callID;
+            }
           }
         );
         return () => unsubscribe();
@@ -97,7 +111,6 @@ const SendCallReq = () => {
     fetchData();
   }, [call]);
 
-  // Auto-call once on load if receiver exists and call hasn't been initiated
   useEffect(() => {
     if (receiver && !callInitiatedRef.current) {
       handleCallButton();
