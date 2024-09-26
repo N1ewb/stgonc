@@ -316,7 +316,7 @@ export const CallProvider = ({ children }) => {
             if (pc.iceConnectionState !== "connected" && pc.iceConnectionState !== "completed") {
               reject(new Error("ICE connection timed out"));
             }
-          }, 3  000); // 10 second timeout (adjust as needed)
+          }, 2000); // 10 second timeout (adjust as needed)
         });
         
         setCallState("connected");
