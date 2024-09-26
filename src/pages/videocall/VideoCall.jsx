@@ -17,29 +17,26 @@ const VideoCall = () => {
   const [newCalloffer, setNewCallOffer] = useState(null);
   const [localVideoRef, setLocalVideoRef] = useState();
   const [remoteVideoRef, setRemoteVideoRef] = useState();
+  const [callAnswered, setCallAnswered] = useState(false); 
 
   const call = useCall();
-
   const callInput = call.callInput;
 
-  const handleWebcamOn = async () => {
-    await call.WebcamOn();
-  };
-
   const handleAnswerCall = async () => {
-    console.log("Pressed answer call");
-    if (newCalloffer !== null) {
+    if (newCalloffer) { 
       try {
-        console.log(`Call offer ${newCalloffer}`);
+        console.log(`Answering call offer: ${newCalloffer}`);
+
         await call.answerCallOffer(newCalloffer);
         await call.AnswerCall();
+        
       } catch (error) {
-        console.log("Call offer is null:", error.message);
+        console.log("Error answering call offer:", error.message);
       }
     }
   };
 
-  const handlehangUp = async () => {
+  const handleHangUp = async () => {
     if (newCalloffer !== null) {
       await call.hangUp(newCalloffer);
     } else {
@@ -50,11 +47,19 @@ const VideoCall = () => {
   useEffect(() => {
     setLocalVideoRef(call.localVideoRef);
     setRemoteVideoRef(call.remoteVideoRef);
-  }, [remoteVideoRef, localVideoRef]);
+  }, [call.localVideoRef, call.remoteVideoRef]);
 
   useEffect(() => {
-    handleAnswerCall();
-  }, []);
+    const answerCallOnce = async () => {
+      if (newCalloffer && call.remoteStream && !callAnswered) {
+        setCallAnswered(true); 
+        console.log('Remote stream called in video call: ',call.remoteStream)
+        await handleAnswerCall(); 
+      }
+    };
+    answerCallOnce();
+}, [newCalloffer, call.remoteStream]);
+
 
   useEffect(() => {
     const fetchData = async () => {
@@ -85,7 +90,7 @@ const VideoCall = () => {
           <video ref={remoteVideoRef} autoPlay />
         </div>
         <div className="call-buttons">
-          <button onClick={() => handleWebcamOn()}>
+          <button onClick={call.toggleCamera}>
             <img src={Camera} alt="camera" width="30px" />
           </button>
           <input
@@ -94,10 +99,11 @@ const VideoCall = () => {
             ref={callInput}
             placeholder="Call Input"
           />
-          <button onClick={() => handleAnswerCall()}>Answer Call</button>
-          <button onClick={() => handlehangUp()}>
-            <img src={HangUp} alt="camera" width="30px" />
+          <button onClick={call.toggleMic}>Mute</button>
+          <button onClick={handleHangUp}>
+            <img src={HangUp} alt="hang up" width="30px" />
           </button>
+          <button onClick={handleAnswerCall}>Answer Call</button>
         </div>
       </div>
     </>

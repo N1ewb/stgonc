@@ -1,10 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useCall } from "../../context/call/CallContext";
 import { useLocation, useNavigate } from "react-router-dom";
 
 import Profile from "../../static/images/default-profile.png";
 import Camera from "../../static/images/icons8-camera-64.png";
-import CallButton from "../../static/images/icons8-call-64-white.png";
 import HangUp from "../../static/images/icons8-hang-up-48.png";
 
 import "./SendCallReq.css";
@@ -17,30 +16,38 @@ const SendCallReq = () => {
   const queryParams = new URLSearchParams(location.search);
   const receiver = queryParams.get("receiver");
   const caller = queryParams.get("caller");
-  const [newCalloffer, setNewCallOffer] = useState();
+
+  const [newCallOffer, setNewCallOffer] = useState();
   const [localVideoRef, setLocalVideoRef] = useState(null);
   const [remoteVideoRef, setRemoteVideoRef] = useState(null);
+  const [connecting, setConnecting] = useState(false);
 
   const call = useCall();
   const callInput = call.callInput;
 
-  const handleWebcamOn = async () => {
-    await call.WebcamOn();
-  };
+  // Track if a call has already been initiated to prevent multiple offers
+  const callInitiatedRef = useRef(false);
 
-  const handleCallButton = async (receiver, caller) => {
+  const handleCallButton = async () => {
+    if (callInitiatedRef.current) return;  // Prevent multiple calls
     try {
+      setConnecting(true);
+      callInitiatedRef.current = true;  // Mark that the call is initiated
       console.log("pressed call button");
+
       await call.CallButton();
       await call.offerCall(receiver, caller, callInput.current.value);
     } catch (error) {
       console.log(error.message);
+    } finally {
+      setConnecting(false);
     }
   };
 
-  const handlehangUp = async (newCalloffer) => {
+  const handleHangUp = async (newCallOffer) => {
     try {
-      await call.hangUp(newCalloffer);
+      await call.hangUp(newCallOffer);
+      callInitiatedRef.current = false; 
       navigate("/auth/Login");
     } catch (error) {
       console.log(error.message);
@@ -50,7 +57,7 @@ const SendCallReq = () => {
   useEffect(() => {
     setLocalVideoRef(call.localVideoRef);
     setRemoteVideoRef(call.remoteVideoRef);
-  }, [remoteVideoRef, localVideoRef]);
+  }, [call.localVideoRef, call.remoteVideoRef]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -90,6 +97,13 @@ const SendCallReq = () => {
     fetchData();
   }, [call]);
 
+  // Auto-call once on load if receiver exists and call hasn't been initiated
+  useEffect(() => {
+    if (receiver && !callInitiatedRef.current) {
+      handleCallButton();
+    }
+  }, [receiver]);
+
   return (
     <>
       <div className="home-container">
@@ -97,7 +111,7 @@ const SendCallReq = () => {
           className="remote-cam-display"
           style={{
             display:
-              newCalloffer && newCalloffer.status === "answered"
+              newCallOffer && newCallOffer.status === "answered"
                 ? "flex"
                 : "none",
           }}
@@ -109,27 +123,30 @@ const SendCallReq = () => {
           className="caller-details"
           style={{
             display:
-              newCalloffer && newCalloffer.status === "answered"
+              newCallOffer && newCallOffer.status === "answered"
                 ? "none"
                 : "flex",
           }}
         >
           <img src={Profile} alt="profile" height="70px" />
           <h4>{auth.currentUser?.displayName}</h4>
-          <p>Calling...</p>
+          {connecting ? <p>Connecting to network</p> : <p>Dialing the user</p>}
         </div>
 
         <div className="local-cam-display">
           <video ref={localVideoRef} autoPlay muted />
         </div>
+
         <div className="action-buttons">
-          <button onClick={() => handleWebcamOn()}>
+          <button onClick={() => call.toggleCamera()}>
             <img src={Camera} alt="camera" width="30px" />
           </button>
-          <button onClick={() => handleCallButton(receiver, caller)}>
-            <img src={CallButton} alt="call button" width="30px" />
-          </button>
-          <button onClick={() => handlehangUp()}>
+          {newCallOffer && newCallOffer.status === "answered" ? (
+            <button onClick={() => call.toggleMic()}>Mute</button>
+          ) : (
+            ""
+          )}
+          <button onClick={() => handleHangUp(newCallOffer)}>
             <img src={HangUp} alt="hang up" width="30px" />
           </button>
           <input

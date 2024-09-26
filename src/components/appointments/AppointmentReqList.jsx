@@ -38,9 +38,9 @@ const AppointmentReqList = ({
       <img
         src={DefaultProfile}
         alt="profile"
-        height={40}
-        width={40}
-        className="rounded-full bg-[#320000] p-1"
+        height={80}
+        width={80}
+        className="rounded-full object-cover p-1 bg-[#320000] "
       />
       <p className="capitalize font-semibold text-[#320000] w-[60%]">
         {appointee ? `${appointee.firstName} ${appointee.lastName}` : "Loading..."} <br />

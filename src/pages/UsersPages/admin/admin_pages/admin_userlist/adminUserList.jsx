@@ -99,7 +99,7 @@ const AdminUserList = () => {
           />
         </div>
       </div>
-      <div className="flex flex-row w-[95%] justify-between items-center absolute bottom-1 [&_p]:m-0 ">
+      <div className="flex flex-row w-[95%] justify-between items-center absolute bottom-2 [&_p]:m-0 ">
         <p> Page {currentPage}</p>
         {ITEMS_PER_PAGE < userList.length && paginationControls && (
           <div className="pagination-controls flex flex-row gap-2">

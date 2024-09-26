@@ -82,6 +82,90 @@ export const CallProvider = ({ children }) => {
     }
   };
 
+  const toggleCamera = async () => {
+    try {
+      if (!localStream) {
+        // If localStream doesn't exist, initialize it
+        const stream = await handleWaitForLocalStream();
+        setLocalStream(stream);
+        pc.getSenders().forEach((sender) => {
+          if (sender.track.kind === "video") {
+            sender.replaceTrack(stream.getVideoTracks()[0]);
+          }
+        });
+        WebcamOn();
+        return;
+      }
+
+      const videoTrack = localStream.getVideoTracks()[0];
+
+      if (videoTrack.enabled) {
+        // Turn off the camera
+        videoTrack.enabled = false;
+        console.log("Camera turned off");
+      } else {
+        // Turn on the camera
+        videoTrack.enabled = true;
+        console.log("Camera turned on");
+      }
+    } catch (error) {
+      console.error("Error toggling camera:", error);
+      toastMessage("Failed to toggle camera");
+    }
+  };
+
+  const toggleMic = async () => {
+    try {
+      if (!localStream) {
+        // Initialize the localStream if it doesn't exist
+        const stream = await handleWaitForLocalStream();
+        setLocalStream(stream);
+        // Set the audio track for the peer connection
+        const audioTrack = stream.getAudioTracks()[0];
+        pc.getSenders().forEach((sender) => {
+          if (sender.track.kind === "audio") {
+            sender.replaceTrack(audioTrack);
+          }
+        });
+        return;
+      }
+
+      const audioTrack = localStream.getAudioTracks()[0];
+
+      if (audioTrack) {
+        if (audioTrack.enabled) {
+          // Disable the audio track
+          audioTrack.enabled = false; // Disable the track instead of stopping
+          console.log("Microphone turned off");
+        } else {
+          // Restart the microphone
+          const stream = await navigator.mediaDevices.getUserMedia({
+            audio: true,
+          });
+          const newAudioTrack = stream.getAudioTracks()[0];
+
+          // Replace the old audio track with the new one in the peer connection
+          pc.getSenders().forEach((sender) => {
+            if (sender.track.kind === "audio") {
+              sender.replaceTrack(newAudioTrack);
+            }
+          });
+
+          // Update the local stream to include the new track
+          const newStream = new MediaStream([
+            ...localStream.getVideoTracks(),
+            newAudioTrack,
+          ]);
+          setLocalStream(newStream);
+          console.log("Microphone turned on");
+        }
+      }
+    } catch (error) {
+      console.error("Error toggling microphone:", error);
+      toastMessage("Failed to toggle microphone");
+    }
+  };
+
   const InitializeStreams = async () => {
     try {
       PcState();
@@ -169,8 +253,10 @@ export const CallProvider = ({ children }) => {
 
   const AnswerCall = async () => {
     try {
-      PcState();
-      await InitializeStreams();
+      if (!localStream || !remoteStream) {
+        PcState();
+        await InitializeStreams();
+      }
 
       const callId = callInput.current.value;
       const callDoc = doc(collection(firestore, "calls"), callId);
@@ -221,46 +307,47 @@ export const CallProvider = ({ children }) => {
     }
   };
 
-  const hangUp = async (newCalloffer) => {
+  const hangUp = async (newCallOffer) => {
     try {
-      resetStreams();
       const callId = callInput.current.value;
       const callDoc = doc(collection(firestore, "calls"), callId);
-      const callOfferDoc = doc(collection(firestore, "CallOffers"), callId);
+      const callOfferDoc = doc(firestore, "CallOffers", newCallOffer);
 
+      // Stop and close the local stream
+      if (localStream) {
+        localStream.getTracks().forEach((track) => track.stop());
+        setLocalStream(null);
+      }
+
+      // Stop and close the remote stream
+      if (remoteStream) {
+        remoteStream.getTracks().forEach((track) => track.stop());
+        setRemoteStream(new MediaStream());
+      }
+
+      // Clear video elements
+      if (localVideoRef.current) localVideoRef.current.srcObject = null;
+      if (remoteVideoRef.current) remoteVideoRef.current.srcObject = null;
+
+      // Close the peer connection if not already closed
       if (pc.signalingState !== "closed") {
         pc.close();
         pc.onicecandidate = null;
-
-        if (localStream) {
-          localStream.getTracks().forEach((track) => track.stop());
-          setLocalStream(null);
-        }
-
-        if (localVideoRef.current) localVideoRef.current.srcObject = null;
-        if (remoteVideoRef.current) remoteVideoRef.current.srcObject = null;
-
-        setRemoteStream(new MediaStream());
-
-        await Promise.all([
-          updateDoc(doc(firestore, "CallOffers", newCalloffer), {
-            status: "ended",
-          }),
-          deleteDoc(callDoc),
-          deleteDoc(callOfferDoc),
-        ]);
-      } else {
-        if (localStream) {
-          localStream.getTracks().forEach((track) => track.stop());
-          setLocalStream(null);
-        }
-        setRemoteStream(new MediaStream());
-
-        localVideoRef.current.srcObject = null;
-        remoteVideoRef.current.srcObject = null;
-        setLocalStream(null);
-        setRemoteStream(null);
+        setPc(new RTCPeerConnection(servers)); // Reset PeerConnection
       }
+
+      if (callId) {
+        const updateCallOffer = { status: "ended" };
+        await updateDoc(callOfferDoc, updateCallOffer);
+      }
+      // Delete the call document and call offer document from Firestore
+      // await Promise.all([
+      //   updateDoc(doc(firestore, "CallOffers", newCallOffer), {
+      //     status: "ended",
+      //   }),
+      //   deleteDoc(callDoc),
+      //   deleteDoc(callOfferDoc),
+      // ]);
     } catch (error) {
       console.error("Error during hangup:", error);
       toastMessage(error.message);
@@ -357,12 +444,17 @@ export const CallProvider = ({ children }) => {
                 callback(data);
               }
             });
-          }
+          },
+          (error) => {
+            console.error("Error fetching call offers:", error);
+          } 
         );
         return unsubscribe;
+      } else {
+        console.warn("No authenticated user found.");
       }
     } catch (error) {
-      console.log(error);
+      console.error("Error subscribing to call offers:", error);
     }
   };
 
@@ -400,6 +492,8 @@ export const CallProvider = ({ children }) => {
   const value = {
     PcState,
     WebcamOn,
+    toggleCamera,
+    toggleMic,
     CallButton,
     AnswerCall,
     hangUp,
@@ -412,6 +506,8 @@ export const CallProvider = ({ children }) => {
     subscribeToAnsweredOfferChanges,
     subscribeToCallOfferChanges,
     subscribeToRespondedCallChanges,
+    remoteStream,
+    localStream,
   };
 
   return (
