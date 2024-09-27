@@ -5,6 +5,7 @@ const WalkinForm = ({ setIsFormOpen }) => {
   const db = useDB();
   const appointeeFirstNameRef = useRef();
   const appointeeLastNameRef = useRef();
+  const emailRef = useRef();
   const appointeeTypeRef = useRef();
   const concernRef = useRef();
   const dateRef = useRef();
@@ -19,15 +20,18 @@ const WalkinForm = ({ setIsFormOpen }) => {
       if (
         appointeeFirstNameRef.current.value &&
         appointeeLastNameRef.current.value &&
+        emailRef.current.value &&
         appointeeTypeRef.current.value &&
         concernRef.current.value &&
         dateRef.current.value &&
-        durationRef.current.value && durationRef.current.value > 0 &&
+        durationRef.current.value &&
+        durationRef.current.value > 0 &&
         remarksRef.current.value
       ) {
         await db.walkinAppointment(
           appointeeFirstNameRef.current.value,
           appointeeLastNameRef.current.value,
+          emailRef.current.value,
           appointeeTypeRef.current.value,
           concernRef.current.value,
           dateRef.current.value,
@@ -37,6 +41,7 @@ const WalkinForm = ({ setIsFormOpen }) => {
       }
       appointeeFirstNameRef.current.value = "";
       appointeeLastNameRef.current.value = "";
+      emailRef.current.value = "";
       appointeeTypeRef.current.value = undefined;
       concernRef.current.value = "";
       dateRef.current.value = "";
@@ -56,7 +61,10 @@ const WalkinForm = ({ setIsFormOpen }) => {
     >
       <div className="form-header w-full flex flex-row justify-between items-center">
         <h3 className="text-[#720000]">Input Walk-in Details</h3>
-        <button onClick={() => setIsFormOpen(false)} className="text-xl text-[#720000] bg-transparent hover:bg-transparent p-0">
+        <button
+          onClick={() => setIsFormOpen(false)}
+          className="text-xl text-[#720000] bg-transparent hover:bg-transparent p-0"
+        >
           X
         </button>
       </div>
@@ -73,6 +81,15 @@ const WalkinForm = ({ setIsFormOpen }) => {
           type="text"
           ref={appointeeLastNameRef}
           placeholder="Last Name"
+        />
+      </div>
+
+      <div className="email-group">
+        <input
+          className="border border-gray-300 rounded-lg p-2 w-full md:full focus:ring-2 focus:ring-indigo-400"
+          type="text"
+          ref={emailRef}
+          placeholder="Email"
         />
       </div>
 

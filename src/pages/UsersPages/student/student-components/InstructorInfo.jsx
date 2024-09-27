@@ -89,7 +89,7 @@ const InstructorInfo = ({
             <div className="stars-wrapper w-full bg-[#d4d4d4] relative">
               <div
                 className="stars-progress h-[100%] bg-yellow-400 absolute top-0 left-0 z-10"
-                style={{ width: `${(facultyRating / 5) * 103.5}%`, maxWidth: '250px' }}
+                style={{ width: `${(facultyRating / 5) * 100}%`, maxWidth: '250px' }}
               ></div>
               <img
                 src={Stars}

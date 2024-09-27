@@ -168,6 +168,7 @@ export const DBProvider = ({ children }) => {
           appointmentDuration: 1,
           createdAt: new Date(),
           teacherRemarks: null,
+          department: user.department,
         });
 
         await notif.storeNotifToDB(
@@ -185,6 +186,7 @@ export const DBProvider = ({ children }) => {
   const walkinAppointment = async (
     firstName,
     lastName,
+    email,
     appointeeType,
     concern,
     date,
@@ -193,15 +195,21 @@ export const DBProvider = ({ children }) => {
   ) => {
     try {
       if (auth.currentUser) {
-        const q = query(walkingCollectionRef);
+        const q = query(appointmentsRef);
         await addDoc(q, {
-          firstName,
-          lastName,
+          appointee: {
+            firstName,
+            lastName,
+            email,
+            department: user.department,
+            role: appointeeType,
+          },
           appointeeType,
-          concern,
-          date,
-          duration,
-          remarks,
+          appointmentConcern: concern,
+          appointmentDate: date,
+          appointmentDuration: duration,
+          teacherRemarks: remarks,
+          appointmentFormat: 'Walkin',
           createdAt: serverTimestamp(),
           appointedFaculty: auth.currentUser.uid,
         });
@@ -579,6 +587,30 @@ export const DBProvider = ({ children }) => {
             appointmentsRef,
             where("appointedFaculty", "==", auth.currentUser.uid),
             where("appointmentStatus", "in", statusArray)
+          ),
+          (snapshot) => {
+            const data = snapshot.docs.map((doc) => ({
+              id: doc.id,
+              ...doc.data(),
+            }));
+
+            callback(data);
+          }
+        );
+        return unsubscribe;
+      }
+    } catch (error) {
+      console.error();
+    }
+  };
+
+  const subscribeToAllAppointmentChanges = async (callback) => {
+    try {
+      if (auth.currentUser) {
+        const unsubscribe = onSnapshot(
+          query(
+            appointmentsRef,
+            where("department", "==", user.department)
           ),
           (snapshot) => {
             const data = snapshot.docs.map((doc) => ({
@@ -992,6 +1024,7 @@ export const DBProvider = ({ children }) => {
     getAppointmentList,
     getPendingRegistrationRequests,
     subscribeToAppointmentChanges,
+    subscribeToAllAppointmentChanges,
     subscribeToMessageChanges,
     subscribeToRequestedAppointmentChanges,
     subscribeToUserChanges,

@@ -14,13 +14,13 @@ const LoginPage = () => {
   const navigate = useNavigate();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleSignIn = () => {
+  const handleSignIn = (e) => {
+    e.preventDefault()
     auth.SignIn(emailRef.current.value, passwordRef.current.value);
   };
 
   useEffect(() => {
     const fetchUserAndRedirect = async () => {
-      
       if (auth.currentUser) {
         setIsSubmitting(true);
         try {
@@ -58,7 +58,10 @@ const LoginPage = () => {
                 <p>Login to access your STGONC account</p>
               </div>
               <div className="spacer"></div>
-              <div className="login-form flex flex-col items-center justify-center flex-wrap w-[75%] md:w-[90%] gap-3 [&_input]:w-[100%] [&_input]:rounded-[4px] [&_input]:border-[1px] [&_input]:border-solid [&_input]:border-[#740000]">
+              <form
+                onSubmit={handleSignIn}
+                className="login-form flex flex-col items-center justify-center flex-wrap w-[75%] md:w-[90%] gap-3 [&_input]:w-[100%] [&_input]:rounded-[4px] [&_input]:border-[1px] [&_input]:border-solid [&_input]:border-[#740000]"
+              >
                 <input
                   ref={emailRef}
                   type="email"
@@ -76,7 +79,6 @@ const LoginPage = () => {
                   <button
                     className="w-full bg-[#740000] rounded-[4px]"
                     type="submit"
-                    onClick={() => handleSignIn()}
                     disabled={isSubmitting ? true : false}
                   >
                     {!isSubmitting ? "Login" : "Submitting"}
@@ -91,7 +93,7 @@ const LoginPage = () => {
                     </Link>
                   </p>
                 </div>
-              </div>
+              </form>
             </div>
           </div>
           <div className="content-right w-[40%] flex flex-row items-center justify-center md:hidden"></div>
