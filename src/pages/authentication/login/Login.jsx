@@ -12,7 +12,7 @@ const LoginPage = () => {
   const emailRef = useRef();
   const passwordRef = useRef();
   const navigate = useNavigate();
-  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleSignIn = () => {
     auth.SignIn(emailRef.current.value, passwordRef.current.value);
@@ -20,15 +20,16 @@ const LoginPage = () => {
 
   useEffect(() => {
     const fetchUserAndRedirect = async () => {
+      
       if (auth.currentUser) {
+        setIsSubmitting(true);
         try {
-          setIsSubmitting(true)
           const user = await db.getUser(auth.currentUser.uid);
           if (user) {
             const userRole = user.role;
             console.log(userRole);
             if (userRole) {
-              navigate(`/private/${userRole}/dashboard`)
+              navigate(`/private/${userRole}/dashboard`);
             } else {
               navigate("/");
             }
@@ -37,8 +38,8 @@ const LoginPage = () => {
           }
         } catch (error) {
           console.error("Error fetching user data:", error);
-        } finally{
-          setIsSubmitting(false)
+        } finally {
+          setIsSubmitting(false);
         }
       }
     };
@@ -76,9 +77,9 @@ const LoginPage = () => {
                     className="w-full bg-[#740000] rounded-[4px]"
                     type="submit"
                     onClick={() => handleSignIn()}
-                    disabled={isSubmitting? true : false}
+                    disabled={isSubmitting ? true : false}
                   >
-                    {!isSubmitting? "Login" : "Submitting"}
+                    {!isSubmitting ? "Login" : "Submitting"}
                   </button>
                   <p>
                     Don't have an account?{" "}

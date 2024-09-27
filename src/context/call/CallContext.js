@@ -316,7 +316,7 @@ export const CallProvider = ({ children }) => {
             if (pc.iceConnectionState !== "connected" && pc.iceConnectionState !== "completed") {
               reject(new Error("ICE connection timed out"));
             }
-          }, 2000); // 10 second timeout (adjust as needed)
+          }, 2000); 
         });
         
         setCallState("connected");
@@ -401,10 +401,11 @@ export const CallProvider = ({ children }) => {
     }
   };
 
-  const offerCall = async (receiver, caller, callID) => {
+  const offerCall = async (receiver, caller, callID, appointmentID) => {
     try {
       if (auth.currentUser) {
         await addDoc(callOffersRef, {
+          appointment: appointmentID,
           receiver: receiver,
           caller: caller,
           callID: callID,

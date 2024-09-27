@@ -15,6 +15,7 @@ const VideoCall = () => {
   const queryParams = new URLSearchParams(location.search);
   const receiver = queryParams.get("receiver");
   const caller = queryParams.get("caller");
+  const appointmentID = queryParams.get("appointment")
   const [newCalloffer, setNewCallOffer] = useState(null);
 
   const call = useCall();
@@ -35,7 +36,7 @@ const VideoCall = () => {
       console.log("calloffer: ", newCalloffer);
       await hangUp(newCalloffer);
       if (caller) {
-        navigate(`/private/Endcallpage?caller=${caller}`);
+        navigate(`/private/Endcallpage?appointment=${appointmentID}&caller=${caller}`);
       }
     } else {
       console.log("Error: newCalloffer is null.");

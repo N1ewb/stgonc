@@ -18,6 +18,7 @@ const SendCallReq = () => {
   const queryParams = new URLSearchParams(location.search);
   const receiver = queryParams.get("receiver");
   const caller = queryParams.get("caller");
+  const appointment = queryParams.get("appointment")
 
   const [newCallOffer, setNewCallOffer] = useState(null);
   const [localVideoRef, setLocalVideoRef] = useState(null);
@@ -48,7 +49,7 @@ const SendCallReq = () => {
       console.log("pressed call button");
 
       await call.CallButton();
-      await call.offerCall(receiver, caller, callInput.current.value);
+      await call.offerCall(receiver, caller, callInput.current.value, appointment);
     } catch (error) {
       console.log(error.message);
     } finally {

@@ -13,6 +13,7 @@ import {
   where,
   Timestamp,
   deleteDoc,
+  setDoc,
 } from "firebase/firestore";
 import { firestore, storage } from "../../server/firebase";
 import { useAuth } from "../auth/AuthContext";
@@ -354,10 +355,41 @@ export const DBProvider = ({ children }) => {
           ReportBy: auth.currentUser.uid,
           createdAt: serverTimestamp(),
         });
-        
       }
     } catch (error) {
       toastMessage("Error in making report: ", error.message);
+    }
+  };
+
+  const rateExperiences = async (
+    fid,
+    facultyRating,
+    facultyfeedback,
+    aid,
+    consultationRating,
+    consultationfeedback
+  ) => {
+    try {
+      const userDocRef = doc(usersCollectionRef, fid);
+
+      const facultyRatingRef = collection(userDocRef, "FacultyRating");
+
+      const appointmentRatingRef = collection(firestore, "AppointmentRating");
+
+      if (auth.currentUser) {
+        await addDoc(facultyRatingRef, {
+          facultyRating,
+          facultyfeedback,
+        });
+
+        await addDoc(appointmentRatingRef, {
+          appointmentID: aid,
+          consultationRating,
+          consultationfeedback,
+        });
+      }
+    } catch (error) {
+      toastMessage("Error in sending rating: ", error.message);
     }
   };
 
@@ -856,6 +888,54 @@ export const DBProvider = ({ children }) => {
     }
   };
 
+  const getFacultyRatings = async (id) => {
+    if (auth.currentUser) {
+      try {
+        const userRef = doc(firestore, "Users", id);
+        const userRatingRef = collection(userRef, "FacultyRating");
+
+        if (auth.currentUser) {
+          const q = query(userRatingRef);
+          const querySnapshot = await getDocs(q);
+
+          const ratingData = querySnapshot.docs.map((doc) => ({
+            id: doc.id,
+            ...doc.data(),
+          }));
+
+          if (ratingData) {
+            return ratingData;
+          } else {
+            return console.log("No schedule data");
+          }
+        }
+      } catch (error) {
+        toastMessage("Error in fetching ratings: ", error.message);
+      }
+    }
+  };
+
+  const subscribeToRatingChanges = async (callback, id) => {
+    try {
+      if (auth.currentUser) {
+        const userRef = doc(firestore, "Users", id);
+        const userRatingRef = collection(userRef, "FacultyRating");
+
+        const unsubscribe = onSnapshot(userRatingRef, (snapshot) => {
+          const ratingData = snapshot.docs.map((doc) => ({
+            id: doc.id,
+            ...doc.data(),
+          }));
+
+          callback(ratingData);
+        });
+        return unsubscribe;
+      }
+    } catch (error) {
+      toastMessage("Error subscribing to timeslot changes:", error);
+    }
+  };
+
   const subscribeToTimeslotChanges = async (callback, day) => {
     try {
       if (auth.currentUser) {
@@ -892,6 +972,7 @@ export const DBProvider = ({ children }) => {
     approveAppointment,
     denyAppointment,
     makeReport,
+    rateExperiences,
     editInstructorColorCode,
     getMessages,
     sendMessage,
@@ -901,6 +982,8 @@ export const DBProvider = ({ children }) => {
     getTimeslotsForDay,
     getInstructorSchedule,
     getInstructorTimeslots,
+    getFacultyRatings,
+    subscribeToRatingChanges,
     // updateScheduleData,
     deleteSchedule,
     changeUserProfile,

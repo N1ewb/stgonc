@@ -15,6 +15,7 @@ const ReceiveCallReq = () => {
   const queryParams = new URLSearchParams(location.search);
   const receiver = queryParams.get("receiver");
   const caller = queryParams.get("caller");
+  const appointment = queryParams.get("appointment")
   const navigate = useNavigate();
   const call = useCall();
   const callInput = call.callInput;
@@ -36,7 +37,7 @@ const ReceiveCallReq = () => {
     if (newCalloffer) {
       try {
         await call.updateCallOffer(newCalloffer.id);
-        navigate(`/private/VideoCall?receiver=${receiver}&caller=${caller}`);
+        navigate(`/private/VideoCall?appointment=${appointment}&receiver=${receiver}&caller=${caller}`);
       } catch (error) {
         console.error("Error answering the call:", error);
       }

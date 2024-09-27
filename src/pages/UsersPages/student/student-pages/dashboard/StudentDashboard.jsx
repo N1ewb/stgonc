@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 
 import { useDB } from "../../../../../context/db/DBContext";
 import { useAuth } from "../../../../../context/auth/AuthContext";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 import { toast } from "react-hot-toast";
 import { useCall } from "../../../../../context/call/CallContext";
@@ -62,7 +62,7 @@ const StudentDashboard = () => {
         const unsubscribe = call.subscribeToCallOfferChanges(
           (newcalloffers) => {
             navigate(
-              `/private/ReceiveCallReq?receiver=${auth.currentUser.uid}&caller=${newcalloffers.caller}`
+              `/private/ReceiveCallReq?appointment=${newcalloffers.appointment}&receiver=${auth.currentUser.uid}&caller=${newcalloffers.caller}`
             );
           }
         );
@@ -81,6 +81,7 @@ const StudentDashboard = () => {
         <br></br>
         <span>Department Instructors</span>{" "}
       </h1>
+      <Link to='/private/Endcallpage'>Go to end call page</Link>
       <div className="flex flex-row w-full h-[100%] justify-between">
         <div className="main h-[85%] w-1/2 ">
           <InstructorsList

@@ -12,10 +12,9 @@ import { useDB } from "../../context/db/DBContext";
 const AppointmentList = ({ appointment, setCurrentChatReceiver }) => {
   const { setCurrentAppointment } = useAppointment();
   const auth = useAuth();
-  const db = useDB()
+  const db = useDB();
   const [appointee, setAppointee] = useState(null);
 
-  
   const handleGetUser = async (uid) => {
     try {
       const user = await db.getUser(uid);
@@ -25,7 +24,6 @@ const AppointmentList = ({ appointment, setCurrentChatReceiver }) => {
     }
   };
 
-  
   useEffect(() => {
     if (appointment.appointee) {
       handleGetUser(appointment.appointee);
@@ -41,7 +39,8 @@ const AppointmentList = ({ appointment, setCurrentChatReceiver }) => {
         className="rounded-full object-cover bg-[#320000] p-1"
       />
       <p className="capitalize font-semibold text-[#320000] w-[60%]">
-        {appointee?.firstName} {appointee?.lastName}<br />
+        {appointee?.firstName} {appointee?.lastName}
+        <br />
         <span className="text-[13px] text-[#969696] font-light normal-case">
           {appointee?.email}
         </span>
@@ -49,17 +48,20 @@ const AppointmentList = ({ appointment, setCurrentChatReceiver }) => {
 
       <button
         className="bg-transparent p-0"
-        onClick={() => setCurrentChatReceiver(appointee && appointee)}  
+        onClick={() => setCurrentChatReceiver(appointee && appointee)}
       >
         <img src={ChatDark} alt="chat" width={30} height={30} />
       </button>
-      <Link
-        to={`/private/SendCallReq?receiver=${
-          appointment && appointment.appointee
-        }&caller=${auth.currentUser.uid}`}
-      >
-        <img src={CallDark} alt="chat" width={30} height={30} />
-      </Link>
+      {appointment && (
+        <Link
+          to={`/private/SendCallReq?appointment=${appointment.id}&receiver=${
+            appointment.appointee || ""
+          }&caller=${auth.currentUser.uid}`}
+        >
+          <img src={CallDark} alt="call" width={30} height={30} />
+        </Link>
+      )}
+
       <button
         className="p-0 bg-transparent"
         onClick={() => setCurrentAppointment(appointment)}

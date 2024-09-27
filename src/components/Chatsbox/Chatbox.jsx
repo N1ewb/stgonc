@@ -162,7 +162,7 @@ const Chatbox = ({ auth, db, receiver, setCurrentChatReceiver }) => {
 
         <form className="flex flex-row justify-between w-[95%]">
           <input
-            className="text-black p-0"
+            className="text-black p-2]"
             ref={formValueRef}
             onChange={(e) => e.target.value}
           />
