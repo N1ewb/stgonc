@@ -82,15 +82,12 @@ const TopThree = ({ topInstructors }) => {
 const TopInstructors = ({ topInstructors }) => {
   return (
     <div className="w-full flex flex-row  justify-center gap-1 text-[#320000] border-2 border-solid border-[#c5c5c5] rounded-lg p-3">
-      {topInstructors && (
-        <>
-          <TopTWo topInstructors={topInstructors} />
-          <TopOne topInstructors={topInstructors} />
-          <TopThree topInstructors={topInstructors} />
-        </>
-      )}
+      {topInstructors.length > 0 && <TopOne topInstructors={topInstructors} />}
+      {topInstructors.length > 1 && <TopTWo topInstructors={topInstructors} />}
+      {topInstructors.length > 2 && <TopThree topInstructors={topInstructors} />}
     </div>
   );
 };
+
 
 export default TopInstructors;

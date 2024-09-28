@@ -53,7 +53,7 @@ const Leaderboard = ({ insList }) => {
 
   return (
     <div className="leaderboard-container">
-      {allRating && <InsRatingCard allRating={allRating} />}
+      {allRating && allRating.length > 0 &&<InsRatingCard allRating={allRating} />}
     </div>
   );
 };
