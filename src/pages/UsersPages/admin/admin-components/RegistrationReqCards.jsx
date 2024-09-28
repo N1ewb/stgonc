@@ -60,7 +60,7 @@ const RegistrationReqCards = ({ pendingRegistrations,setCurrentOpenedRegistratio
                 pendingRegistrations.firstName,
                 pendingRegistrations.lastName,
                 pendingRegistrations.phoneNumber,
-                pendingRegistrations.studentIdnumber,
+                pendingRegistrations.studentIDnumber,
                 pendingRegistrations.department,
                 pendingRegistrations.id
               )

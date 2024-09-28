@@ -80,7 +80,7 @@ const InstructorInfo = ({
         <div className="faculty-profile w-[47%] h-[100%] flex flex-col items-start justify-center rounded-md p-[2px]">
           <div className="profile-wrapper flex items-center justify-center w-[250px] h-[250px] bg-[#320000] rounded-md">
             <img
-              className="h-auto max-h-[100%] w-full object-cover"
+              className="h-[100%] max-h-[100%] w-full object-cover object-center"
               src={currentInstructor.photoURL}
               alt="Faculty Profile"
             />

@@ -1,4 +1,5 @@
 import React, { useContext, createContext, useEffect, useState } from "react";
+import { startOfDay, endOfDay } from "date-fns";
 import {
   addDoc,
   collection,
@@ -209,7 +210,7 @@ export const DBProvider = ({ children }) => {
           appointmentDate: date,
           appointmentDuration: duration,
           teacherRemarks: remarks,
-          appointmentFormat: 'Walkin',
+          appointmentFormat: "Walkin",
           createdAt: serverTimestamp(),
           appointedFaculty: auth.currentUser.uid,
         });
@@ -608,10 +609,7 @@ export const DBProvider = ({ children }) => {
     try {
       if (auth.currentUser) {
         const unsubscribe = onSnapshot(
-          query(
-            appointmentsRef,
-            where("department", "==", user.department)
-          ),
+          query(appointmentsRef, where("department", "==", user.department)),
           (snapshot) => {
             const data = snapshot.docs.map((doc) => ({
               id: doc.id,
@@ -627,6 +625,50 @@ export const DBProvider = ({ children }) => {
       console.error();
     }
   };
+
+  const subscribeToTodayAppointmentChanges = async (callback) => {
+    try {
+      if (auth.currentUser) {
+        const today = new Date();
+        const startStr = formatDate(startOfDay(today));
+        const endStr = formatDate(endOfDay(today));
+  
+        const unsubscribe = onSnapshot(
+          query(
+            appointmentsRef,
+            where("department", "==", user.department),
+            where("appointmentDate", ">=", startStr),
+            where("appointmentDate", "<=", endStr)
+          ),
+          (snapshot) => {
+            const data = snapshot.docs.map((doc) => ({
+              id: doc.id,
+              ...doc.data(),
+            }));
+  
+            callback(data);
+          }
+        );
+        return unsubscribe;
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  function formatDate(date) {
+    const options = {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      hour: 'numeric',
+      minute: 'numeric',
+      second: 'numeric',
+      timeZone: 'UTC',
+      hour12: false
+    };
+    return date.toLocaleString('en-US', options) + ' UTC+8';
+  }
 
   //As admin
   const subscribeToWalkinAppointmentChanges = async (callback) => {
@@ -739,7 +781,8 @@ export const DBProvider = ({ children }) => {
         if (user) {
           const q = query(
             studentRegistrationRequestRef,
-            where("department", "==", user.department)
+            where("department", "==", user.department),
+            where('status','==','Pending')
           );
           const usersSnapshot = await getDocs(q);
           const pendingRegData = usersSnapshot.docs.map((doc) => ({
@@ -753,6 +796,37 @@ export const DBProvider = ({ children }) => {
       notifyError(error);
     }
   };
+
+  const denyRegistration = async () => {
+    try{
+
+    }catch(error){
+      console.error(error)
+    }
+  }
+
+  const subscribetoPendingRegistration = async (callback) => {
+    try{
+      if(auth.currentUser){
+        const q = query(
+          studentRegistrationRequestRef,
+          where("department", "==", user.department),
+          where('status','==','Pending')
+        );
+        const unsubscribe = onSnapshot(q, (snapshot) => {
+          const pendingRegData = snapshot.docs.map((doc) => ({
+            id: doc.id,
+            ...doc.data(),
+          }));
+
+          callback(pendingRegData);
+        });
+        return unsubscribe;
+      }
+    }catch(error){
+      console.error(error)
+    }
+  }
 
   const setInstructorSchedule = async (day, timeslot, assignedInstructor) => {
     try {
@@ -1023,8 +1097,10 @@ export const DBProvider = ({ children }) => {
     subscribeToTimeslotChanges,
     getAppointmentList,
     getPendingRegistrationRequests,
+    subscribetoPendingRegistration,
     subscribeToAppointmentChanges,
     subscribeToAllAppointmentChanges,
+    subscribeToTodayAppointmentChanges,
     subscribeToMessageChanges,
     subscribeToRequestedAppointmentChanges,
     subscribeToUserChanges,

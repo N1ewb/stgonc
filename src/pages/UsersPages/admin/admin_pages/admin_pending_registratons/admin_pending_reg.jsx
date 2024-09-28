@@ -22,9 +22,11 @@ const AdmingPendingRegPage = () => {
     if (auth.currentUser) {
       const handleGetPendingRegistrations = async () => {
         try {
-          const registrations = await db.getPendingRegistrationRequests();
-          setPendingRegistrationList(registrations);
-          setTemp(registrations);
+          const unsubscribe = await db.subscribetoPendingRegistration((callback) => {
+            setPendingRegistrationList(callback);
+            setTemp(callback);
+          });
+          return () => unsubscribe()
         } catch (error) {
           console.log(error);
         } finally {
@@ -33,7 +35,7 @@ const AdmingPendingRegPage = () => {
       };
       handleGetPendingRegistrations();
     }
-  }, []);
+  }, [db]);
 
   if (loading) {
     return (

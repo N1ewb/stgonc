@@ -4,17 +4,32 @@ import PeopleIcon from "../../../../../static/images/people.png";
 const TodayInfo = ({ apptList }) => {
   const [walkins, setWalkins] = useState([]);
   const [apptToday, setApptToday] = useState([]);
-  useEffect(() => {
-    const findApptsToday = () => {
-      const today = new Date().toISOString().split("T")[0];
-      const filterApptList = apptList.filter(
-        (appt) => appt.appointmentDate === today
-      );
-      setApptToday(filterApptList);
-    };
+  const [ongoingAppt, setOngoingAppt] = useState([])
 
-    findApptsToday();
+  const handleGetOngoingAppt = async (apptList) => {
+    if(apptList){
+      const filteredApptList = apptList.filter((appt) => 
+        appt.appointmentStatus === "Accepted"
+      )
+      setOngoingAppt(filteredApptList) 
+    }
+  }
+  const handlefindApptsToday = () => {
+    const today = new Date().toISOString().split("T")[0];
+    const filterApptList = apptList.filter(
+      (appt) => appt.appointmentDate === today
+    );
+    setApptToday(filterApptList);
+    
+  };
+
+  useEffect(() => {
+    handlefindApptsToday();
   }, [apptList]);
+
+  useEffect(() => {
+    handleGetOngoingAppt(apptToday)
+  },[apptToday])
 
   useEffect(() => {
     const fetchData = async () => {
@@ -51,6 +66,15 @@ const TodayInfo = ({ apptList }) => {
             <p>Total Walk-ins</p>
           </div>
           <span>{walkins && walkins.length}</span>
+        </div>
+        <div className="total-ongoing flex flex-row items-center justify-between p-2">
+          <div className="flex flex-row items-center gap-3">
+            <div className="img-wrapper flex items-center justify-center rounded-full p-1 bg-[#FFC107] h-[50px] w-[50px]">
+              <img src={PeopleIcon} alt="people" />
+            </div>
+            <p>Total Ongoing Appointments</p>
+          </div>
+          <span>{ongoingAppt && ongoingAppt.length}</span>
         </div>
         
       </div>

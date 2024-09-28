@@ -52,7 +52,6 @@ export const AdminAccepptStudentAccount = async (
       userID: user.uid,
       firstName: firstName,
       lastName: lastName,
-
       email: email,
       phoneNumber,
       department,

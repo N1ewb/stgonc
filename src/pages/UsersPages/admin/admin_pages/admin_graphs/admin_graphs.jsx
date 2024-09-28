@@ -1,6 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import FacultyOfTheMonth from "../../admin-components/FacultyOfTheMonth";
+import FacultyLeaderboard from "../../admin-components/leaderboard/FacultyLeaderboard";
 import TotalAppointments from "../../admin-components/graphs/TotalAppointments";
 
 const AdminGraphs = () => {
@@ -13,8 +13,8 @@ const AdminGraphs = () => {
         <div className="appointments-info w-1/2">
           <TotalAppointments />
         </div>
-        <div className="faculty-of-the-month">
-          <FacultyOfTheMonth />
+        <div className="faculty-of-the-month h-[100%] w-[45%]">
+          <FacultyLeaderboard />
         </div>
       </div>
     </div>
