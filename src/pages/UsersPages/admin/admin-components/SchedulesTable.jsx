@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import SchedulesModal from "../../../../components/modal/schedules-modal/SchedulesModal";
 import { useDB } from "../../../../context/db/DBContext";
 import { Tooltip } from "react-bootstrap";
+import Loading from "../../../../components/Loading/Loading";
 
 const SchedulesTable = ({
   show,
@@ -17,6 +18,7 @@ const SchedulesTable = ({
 }) => {
   const db = useDB();
   const [scheduleData, setScheduleData] = useState({});
+  const [loading, setLoading] = useState(true)
 
   const times = [
     {
@@ -131,6 +133,7 @@ const SchedulesTable = ({
 
   useEffect(() => {
     const fetchSchedules = async () => {
+      setLoading(true)
       try {
         const unsubscribeSchedules = db.subscribeToSchedulesChanges(
           async (schedules) => {
@@ -169,11 +172,17 @@ const SchedulesTable = ({
         );
       } catch (error) {
         toastMessage("Error fetching schedules: " + error.message);
+      }finally{
+        setLoading(false)
       }
     };
 
     fetchSchedules();
   }, [db, teachersList]);
+
+  if(loading){
+    return <Loading />
+  }
 
   return (
     <div className="schedules-table basis-[80%]  md:basis-[90%]  flex flex-col items-center justify-between shadow-md gap-3 p-10 rounded-[30px]">

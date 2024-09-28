@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useCall } from "../../context/call/CallContext";
 import { useLocation, useNavigate } from "react-router-dom";
 
@@ -13,16 +13,26 @@ const VideoCall = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const queryParams = new URLSearchParams(location.search);
-  const receiver = queryParams.get("receiver");
+  // const receiver = queryParams.get("receiver");
   const caller = queryParams.get("caller");
-  const appointmentID = queryParams.get("appointment")
+  const appointmentID = queryParams.get("appointment");
   const [newCalloffer, setNewCallOffer] = useState(null);
+  const [isCallEnded, setIsCallEnded] = useState(false);
 
   const call = useCall();
-  const { callState, answerCallOffer, AnswerCall, hangUp, toggleCamera, toggleMic, localVideoRef, remoteVideoRef, callInput } = call;
+  const {
+    callState,
+    answerCallOffer,
+    hangUp,
+    toggleCamera,
+    toggleMic,
+    localVideoRef,
+    remoteVideoRef,
+    callInput,
+  } = call;
 
   const handleAnswerCall = async () => {
-    if (newCalloffer && callState !== 'connected') {
+    if (newCalloffer && callState !== "connected") {
       try {
         await answerCallOffer(newCalloffer);
       } catch (error) {
@@ -32,30 +42,46 @@ const VideoCall = () => {
   };
 
   const handleHangUp = async () => {
-    if (newCalloffer !== null) {
-      console.log("calloffer: ", newCalloffer);
-      await hangUp(newCalloffer);
-      if (caller) {
-        navigate(`/private/Endcallpage?appointment=${appointmentID}&caller=${caller}`);
+    if (newCalloffer ) {
+      console.log("Ending call for offer:", newCalloffer);
+      try {
+        await hangUp(newCalloffer);
+        console.log("Call ended successfully");
+        setIsCallEnded(true);
+        console.log('Call state: ', call.callState)
+        if (caller) {
+          navigate(
+            `/private/Endcallpage?appointment=${appointmentID}&caller=${caller}`
+          );
+        }
+      } catch (error) {
+        console.error("Error hanging up the call:", error.message);
       }
-    } else {
-      console.log("Error: newCalloffer is null.");
     }
   };
 
   useEffect(() => {
+    console.log("call.callState changed:", call.callState);
+    if (call.callState === 'disconnected') {
+      async function hangup() {
+        await handleHangUp();
+      }
+      hangup();
+    }
+  }, [call.callState]);
+  
+
+  useEffect(() => {
     const fetchData = async () => {
       try {
-        const unsubscribe = await call.subscribeToRespondedCallChanges(
-          (newCallOffers) => {
-            if (newCallOffers) {
-              if (callInput.current) {
-                callInput.current.value = newCallOffers.callID;
-                setNewCallOffer(newCallOffers.id);
-              }
+        const unsubscribe = await call.subscribeToCallChanges((callback) => {
+          if (callback) {
+            if (callInput.current) {
+              callInput.current.value = callback.callID;
+              setNewCallOffer(callback.id);
             }
           }
-        );
+        }, "responded");
         return () => unsubscribe();
       } catch (error) {
         console.log(error);
@@ -65,7 +91,7 @@ const VideoCall = () => {
   }, [call]);
 
   useEffect(() => {
-    if (newCalloffer && callState === 'idle') {
+    if (newCalloffer && callState === "idle") {
       handleAnswerCall();
     }
   }, [newCalloffer, callState]);
@@ -93,8 +119,15 @@ const VideoCall = () => {
           <button onClick={handleHangUp}>
             <img src={HangUp} alt="hang up" width="30px" />
           </button>
-          <button onClick={handleAnswerCall} disabled={callState === 'connecting' || callState === 'connected'}>
-            {callState === 'connecting' ? 'Connecting...' : callState === 'connected' ? 'Connected' : 'Answer Call'}
+          <button
+            onClick={handleAnswerCall}
+            disabled={callState === "connecting" || callState === "connected"}
+          >
+            {callState === "connecting"
+              ? "Connecting..."
+              : callState === "connected"
+              ? "Connected"
+              : "Answer Call"}
           </button>
         </div>
       </div>

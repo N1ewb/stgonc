@@ -18,7 +18,7 @@ const SendCallReq = () => {
   const queryParams = new URLSearchParams(location.search);
   const receiver = queryParams.get("receiver");
   const caller = queryParams.get("caller");
-  const appointment = queryParams.get("appointment")
+  const appointment = queryParams.get("appointment");
 
   const [newCallOffer, setNewCallOffer] = useState(null);
   const [localVideoRef, setLocalVideoRef] = useState(null);
@@ -49,7 +49,12 @@ const SendCallReq = () => {
       console.log("pressed call button");
 
       await call.CallButton();
-      await call.offerCall(receiver, caller, callInput.current.value, appointment);
+      await call.offerCall(
+        receiver,
+        caller,
+        callInput.current.value,
+        appointment
+      );
     } catch (error) {
       console.log(error.message);
     } finally {
@@ -57,15 +62,27 @@ const SendCallReq = () => {
     }
   };
 
-  const handleHangUp = async (newCallOffer) => {
+  const handleHangUp = async () => {
     try {
-      await call.hangUp(newCallOffer);
-      callInitiatedRef.current = false;
-      navigate(`/private/end-call-page?receiver=${receiver}`);
+      if (newCallOffer) {
+        await call.hangUp(newCallOffer.id);
+        callInitiatedRef.current = false;
+        navigate(`/private/end-call-page?receiver=${receiver}`);
+      }
     } catch (error) {
       console.log(error.message);
     }
   };
+
+  useEffect(() => {
+    console.log("call.callState changed:", call.callState);
+    if (call.callState === "disconnected") {
+      async function hangup() {
+        await handleHangUp();
+      }
+      hangup();
+    }
+  }, [call.callState]);
 
   useEffect(() => {
     setLocalVideoRef(call.localVideoRef);
@@ -94,11 +111,12 @@ const SendCallReq = () => {
     const fetchData = async () => {
       try {
         const unsubscribe = call.subscribeToAnsweredOfferChanges(
-          async (newCallOffers) => {
-            if (newCallOffers) {
-              setNewCallOffer(newCallOffers);
+          async (callback) => {
+            if (callback) {
+              setNewCallOffer(callback);
+
               const timeoutId = setTimeout(async () => {
-                await call.updateCallOffer(newCallOffers.id);
+                await call.updateCallOffer(callback.id);
               }, 3000);
               return () => clearTimeout(timeoutId);
             }
@@ -160,7 +178,7 @@ const SendCallReq = () => {
           ) : (
             ""
           )}
-          <button onClick={() => handleHangUp(newCallOffer)}>
+          <button onClick={handleHangUp}>
             <img src={HangUp} alt="hang up" width="30px" />
           </button>
           <input

@@ -94,7 +94,7 @@ const Profile = () => {
         </div>
         <Dropdown.Menu>
           {auth.currentUser && (
-            <Dropdown.Item href="#/action-1">
+            <Dropdown.Item href="#/action-1" onClick={() => navigate("/private/Userpage")}>
               {auth.currentUser.displayName}
             </Dropdown.Item>
           )}

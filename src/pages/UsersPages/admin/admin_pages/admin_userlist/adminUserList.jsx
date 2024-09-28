@@ -6,6 +6,7 @@ import defaultProfile from "../../../../../static/images/default-profile.png";
 import More from "../../../../../static/images/more-dark.png";
 import UserList from "../../admin-components/UserList";
 import AdminSearchBar from "../../admin-components/AdminSearchBar";
+import Loading from "../../../../../components/Loading/Loading";
 
 const AdminUserList = () => {
   const db = useDB();
@@ -67,7 +68,7 @@ const AdminUserList = () => {
   }, [userList, currentPage, ITEMS_PER_PAGE]);
 
   if (loading) {
-    return <div className="loading-screen">Loading Users...</div>;
+    return <Loading />
   }
 
   if (error) {

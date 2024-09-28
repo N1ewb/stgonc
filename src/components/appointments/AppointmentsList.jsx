@@ -8,19 +8,25 @@ import MoreDark from "../../static/images/more-dark.png";
 import { useAuth } from "../../context/auth/AuthContext";
 import { useAppointment } from "../../context/appointmentContext/AppointmentContext";
 import { useDB } from "../../context/db/DBContext";
+import Loading from "../Loading/Loading";
 
 const AppointmentList = ({ appointment, setCurrentChatReceiver }) => {
   const { setCurrentAppointment } = useAppointment();
   const auth = useAuth();
   const db = useDB();
   const [appointee, setAppointee] = useState(null);
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(false)
 
   const handleGetUser = async (uid) => {
+    setLoading(true)
     try {
       const user = await db.getUser(uid);
       setAppointee(user);
     } catch (error) {
-      console.log(`Error in retrieving user data: ${error.message}`);
+      setError(true)
+    }finally{
+      setLoading(false)
     }
   };
 
@@ -29,10 +35,19 @@ const AppointmentList = ({ appointment, setCurrentChatReceiver }) => {
       handleGetUser(appointment.appointee);
     }
   }, [appointment]);
+
+  if(loading){
+    return <Loading />
+  }
+
+  if(error){
+    return <div className="div h-screen w-full justify-center items-center">Error Occured</div>
+  }
+
   return (
     <div className="teacher-appointment-list-table w-full flex flex-row items-center [&_p]:m-0 justify-evenly bg-white p-5 rounded-[30px] shadow-md">
       <img
-        src={DefaultProfile}
+        src={appointee?.photoURL ? appointee.photoURL : DefaultProfile}
         alt="profile"
         height={80}
         width={80}

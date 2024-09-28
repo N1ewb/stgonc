@@ -59,12 +59,12 @@ const StudentDashboard = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const unsubscribe = call.subscribeToCallOfferChanges(
+        const unsubscribe = call.subscribeToCallChanges(
           (newcalloffers) => {
             navigate(
               `/private/ReceiveCallReq?appointment=${newcalloffers.appointment}&receiver=${auth.currentUser.uid}&caller=${newcalloffers.caller}`
             );
-          }
+          }, "calling"
         );
         return () => unsubscribe();
       } catch (error) {

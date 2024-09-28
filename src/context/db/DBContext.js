@@ -676,8 +676,8 @@ export const DBProvider = ({ children }) => {
       if (auth.currentUser) {
         const unsubscribe = onSnapshot(
           query(
-            walkingCollectionRef,
-            where("appointedFaculty", "==", auth.currentUser.uid)
+            appointmentsRef,
+            where("appointmentFormat", "==", 'Walkin')
           ),
           (snapshot) => {
             const data = snapshot.docs.map((doc) => ({

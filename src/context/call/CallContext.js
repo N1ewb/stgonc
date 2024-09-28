@@ -300,25 +300,34 @@ export const CallProvider = ({ children }) => {
           });
         });
 
-        // Wait for ICE connection to be established
         await new Promise((resolve, reject) => {
           pc.oniceconnectionstatechange = () => {
-            console.log('ICE Connection State:', pc.iceConnectionState);
-            if (pc.iceConnectionState === "connected" || pc.iceConnectionState === "completed") {
-              resolve(); // ICE connection is established
+            console.log("ICE Connection State:", pc.iceConnectionState);
+            if (
+              pc.iceConnectionState === "connected" ||
+              pc.iceConnectionState === "completed"
+            ) {
+              resolve();
             } else if (pc.iceConnectionState === "failed") {
-              reject(new Error("ICE connection failed")); // ICE connection failed
+              reject(new Error("ICE connection failed"));
+            } else if (
+              pc.iceConnectionState === "disconnected" ||
+              pc.connectionState === "disconnected"
+            ) {
+              setCallState("disconnected");
             }
           };
-        
-          // Add a timeout to prevent the promise from hanging indefinitely
+
           setTimeout(() => {
-            if (pc.iceConnectionState !== "connected" && pc.iceConnectionState !== "completed") {
+            if (
+              pc.iceConnectionState !== "connected" &&
+              pc.iceConnectionState !== "completed"
+            ) {
               reject(new Error("ICE connection timed out"));
             }
-          }, 2000); 
+          }, 2000);
         });
-        
+
         setCallState("connected");
         console.log("Call connected successfully");
         return;
@@ -330,7 +339,7 @@ export const CallProvider = ({ children }) => {
           toastMessage("Failed to establish call after multiple attempts");
           throw error;
         }
-        await new Promise((resolve) => setTimeout(resolve, 2000)); // Wait before retrying
+        await new Promise((resolve) => setTimeout(resolve, 2000));
       }
     }
   }, [
@@ -346,14 +355,13 @@ export const CallProvider = ({ children }) => {
 
   const hangUp = async (newCallOffer) => {
     try {
+      setCallState('disconnected')
       await disconnectAllDevices();
-
       const callOfferDoc = doc(firestore, "CallOffers", newCallOffer);
 
-      if (pc.signalingState !== "closed") {
+      if (pc && pc.signalingState !== "closed") {
         pc.close();
-        pc.onicecandidate = null;
-        setPc(new RTCPeerConnection(servers));
+        setPc(null);
       }
 
       if (newCallOffer) {
@@ -389,9 +397,9 @@ export const CallProvider = ({ children }) => {
         remoteVideoRef.current.srcObject = null;
       }
 
-      if (pc.signalingState !== "closed") {
+      if (pc && pc.signalingState !== "closed") {
         pc.close();
-        setPc(new RTCPeerConnection(servers));
+        setPc(null);
       }
 
       console.log("Disconnected all devices");
@@ -542,18 +550,42 @@ export const CallProvider = ({ children }) => {
     }
   };
 
-  const subscribeToEndCallChanges = async (caller, callback) => {
+  const subscribeToCallChanges = async (callback, status) => {
     try {
       if (auth.currentUser) {
         const unsubscribe = onSnapshot(
           query(
             callOffersRef,
-            where("receiver", "in", [auth.currentUser.uid, caller]),
-            where("caller", "in", [auth.currentUser.uid, caller]),
-            where("status", "==", "ended"),
+            where("receiver", "==", auth.currentUser.uid),
+            where("status", "==", status),
             orderBy("createdAt", "desc"),
             limit(1)
           ),
+          (snapshot) => {
+            snapshot.docChanges().forEach((change) => {
+              if (change.type === "added") {
+                const doc = change.doc;
+                const data = {
+                  id: doc.id,
+                  ...doc.data(),
+                };
+                callback(data);
+              }
+            });
+          }
+        );
+        return unsubscribe;
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const subscribeToEndCallChanges = async (callback, id) => {
+    try {
+      if (auth.currentUser) {
+        const unsubscribe = onSnapshot(
+          query(callOffersRef, where("id", "==", id)),
           (snapshot) => {
             snapshot.docChanges().forEach((change) => {
               if (change.type === "added") {
@@ -575,6 +607,46 @@ export const CallProvider = ({ children }) => {
     }
   };
 
+  const ConnectionStateHandler = useCallback(() => {
+    if (pc == null) return;
+
+    const handleConnectionStateChange = () => {
+      console.log("Connection State:", pc.connectionState);
+
+      if (
+        pc.connectionState === "disconnected" ||
+        pc.iceConnectionState === "disconnected"
+      ) {
+        setCallState("disconnected");
+        console.log("Call disconnected");
+
+        return;
+      }
+
+      if (pc.connectionState === "connected" || pc.iceConnectionState === 'connected') {
+        setCallState("connected");
+        console.log("Call is connected");
+      }
+
+      if (pc.connectionState === "connecting" || pc.iceConnectionState === 'connecting' ) {
+        setCallState("connecting");
+        console.log("Reconnecting...");
+      }
+    };
+
+    pc.onconnectionstatechange = handleConnectionStateChange;
+
+    return () => {
+      pc.onconnectionstatechange = null;
+    };
+  }, [callState, pc]);
+
+  useEffect(() => {
+    if (callState) {
+      ConnectionStateHandler();
+    }
+  }, [callState, ConnectionStateHandler]);
+
   const value = {
     PcState,
     WebcamOn,
@@ -590,6 +662,7 @@ export const CallProvider = ({ children }) => {
     offerCall,
     updateCallOffer,
     answerCallOffer,
+    subscribeToCallChanges,
     subscribeToAnsweredOfferChanges,
     subscribeToCallOfferChanges,
     subscribeToRespondedCallChanges,

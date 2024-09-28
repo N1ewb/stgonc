@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useDB } from "../../../../../context/db/DBContext";
 import { useAuth } from "../../../../../context/auth/AuthContext";
-import Topone from "./Topone";
-import Topnext from "./TopInstructors";
+import TopInstructors from "./TopInstructors";
 import Leaderboard from "./Leaderboard";
 import Loading from "../../../../../components/Loading/Loading";
 
@@ -71,8 +70,7 @@ const FacultyLeaderboard = () => {
       </h5>
       {topInstructors.length > 0 ? (
         <div className="top-instructors flex flex-col gap-5">
-          {/* <Topone topInstructors={topInstructors} /> */}
-          <Topnext topInstructors={topInstructors} />
+          <TopInstructors topInstructors={topInstructors} />
           <Leaderboard insList={insList} />
         </div>
       ) : (

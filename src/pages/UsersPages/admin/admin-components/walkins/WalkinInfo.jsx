@@ -13,12 +13,12 @@ const WalkinInfo = ({ currentWalkin, setCurrentWalkin }) => {
         </button>
       </div>
       <div className="current-walking-info-content flex flex-col gap-3 [&_p]:m-0">
-        <p><span>Name: </span> {currentWalkin.firstName} {currentWalkin.lastName}</p>
+        <p><span>Name: </span> {currentWalkin.appointee.firstName} {currentWalkin.appointee.lastName}</p>
         <p><span>Appointee Type: </span>{currentWalkin.appointeeType}</p>
-        <p><span>Concern: </span> {currentWalkin.concern}</p>
-        <p><span>Remarks: </span> {currentWalkin.remarks }</p>
+        <p><span>Concern: </span> {currentWalkin.appointmentConcern}</p>
+        <p><span>Remarks: </span> {currentWalkin.teacherRemarks }</p>
         <div className="group flex flex-row justify-between items-center">
-        <p><span>Date: </span> {currentWalkin.date}</p>
+        <p><span>Date: </span> {currentWalkin.appointmentDate}</p>
         <button className="bg-[#720000] rounded-md px-5 py-2">Edit</button>
         </div>
       </div>

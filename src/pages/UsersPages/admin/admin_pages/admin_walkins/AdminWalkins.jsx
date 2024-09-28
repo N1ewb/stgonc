@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
-import WalkinForm from "../../admin-components/WalkinForm";
-import WalkinApptList from "../../admin-components/WalkinApptList";
-import WalkinInfo from "../../admin-components/WalkinInfo";
+import WalkinForm from "../../admin-components/walkins/WalkinForm";
+import WalkinApptList from "../../admin-components/walkins/WalkinApptList";
+import WalkinInfo from "../../admin-components/walkins/WalkinInfo";
 
 const AdminWalkins = () => {
   const [currentWalkin, setCurrentWalkin] = useState(null);

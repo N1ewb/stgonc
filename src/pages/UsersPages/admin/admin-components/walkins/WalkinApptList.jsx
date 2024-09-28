@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { useDB } from '../../../../context/db/DBContext';
-import More from '../../../../static/images/more-light.png'
+import { useDB } from '../../../../../context/db/DBContext';
+import More from '../../../../../static/images/more-light.png'
 
 const WalkinApptList = ({setCurrentWalkin, currentWalkin}) => {
   const db = useDB();
@@ -29,9 +29,9 @@ const WalkinApptList = ({setCurrentWalkin, currentWalkin}) => {
         {walkinAppointmentList.length > 0 ? (
           walkinAppointmentList.map((appointment) => (
             <div key={appointment.id} className='flex flex-row shadow-md items-center rounded-3xl p-5 justify-between'>
-              <p className='capitalize'>Name: {appointment.firstName} {appointment.lastName}</p>
+              <p className='capitalize'>Name: {appointment.appointee.firstName} {appointment.appointee.lastName}</p>
               
-              <p>Date: {appointment.date}</p>
+              <p>Date: {appointment.appointmentDate}</p>
               <button className='bg-transparent hover:bg-transparent p-0 m-0' onClick={() => setCurrentWalkin(currentWalkin && currentWalkin == appointment ? null  : appointment)}><img src={More} alt='info' height={25} width={25} /></button>
             </div>
           ))
