@@ -827,9 +827,10 @@ export const DBProvider = ({ children }) => {
       console.error(error)
     }
   }
-
+  const [notifSent, setNotifSent] = useState(false)
   const setInstructorSchedule = async (day, timeslot, assignedInstructor) => {
     try {
+      
       const dayRef = doc(firestore, "Schedules", day.id);
 
       await addDoc(collection(dayRef, "timeslots"), {
@@ -838,13 +839,17 @@ export const DBProvider = ({ children }) => {
         available: true,
         createdAt: Timestamp.now(),
       });
-      await notif.storeNotifToDB(
-        "Consultation Schedules",
-        `Your consultation hours Schedule has been updated, please proceed to schedules pages to view your new consultation schedules`,
-        assignedInstructor.email
-      );
+      if(!notifSent){
+        await notif.storeNotifToDB(
+          "Schedules",
+          `Your consultation hours Schedule has been updated, please proceed to schedules pages to view your new consultation schedules`,
+          assignedInstructor.email
+        );
+      }
+      setNotifSent(true)
     } catch (error) {
       toastMessage("Error adding document: ", error.message);
+      setNotifSent(false)
     }
   };
 
@@ -914,17 +919,15 @@ export const DBProvider = ({ children }) => {
   const deleteSchedule = async (timeslotID, day) => {
     try {
       if (auth.currentUser) {
-        const dayRef = doc(firestore, "Schedules", day.id);
+        const dayRef = doc(firestore, "Schedules", day);
         const timeslotsCollectionRef = collection(dayRef, "timeslots");
         const timeslotDocRef = doc(timeslotsCollectionRef, timeslotID);
         await deleteDoc(timeslotDocRef);
-        console.log("Timeslot deleted successfully");
       } else {
         console.log("No authenticated user");
       }
     } catch (error) {
-      console.error("Error in deleting schedule:", error);
-      toastMessage("Error in deleting schedule", error.message);
+      console.error("Error in deleting schedule", error.message);
     }
   };
 
@@ -1106,6 +1109,7 @@ export const DBProvider = ({ children }) => {
     subscribeToUserChanges,
     subscribeToInstructorChanges,
     subscribeToSchedulesChanges,
+    setNotifSent,
   };
 
   return (

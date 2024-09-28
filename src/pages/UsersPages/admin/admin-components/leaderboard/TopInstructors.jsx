@@ -33,7 +33,7 @@ const TopTWo = ({ topInstructors }) => {
         className="object-cover object-center h-[100px] w-[100px] rounded-full border-2 border-solid border-[#320000] bg-[#320000]"
         src={topInstructors[1].ins.photoURL}
         alt="profile"
-        ƒ
+        
       />
       <p className="w-full font-medium ">{topInstructors[1].ins.firstName}</p>
       <div
@@ -82,8 +82,8 @@ const TopThree = ({ topInstructors }) => {
 const TopInstructors = ({ topInstructors }) => {
   return (
     <div className="w-full flex flex-row  justify-center gap-1 text-[#320000] border-2 border-solid border-[#c5c5c5] rounded-lg p-3">
-      {topInstructors.length > 0 && <TopOne topInstructors={topInstructors} />}
       {topInstructors.length > 1 && <TopTWo topInstructors={topInstructors} />}
+      {topInstructors.length > 0 && <TopOne topInstructors={topInstructors} />}
       {topInstructors.length > 2 && <TopThree topInstructors={topInstructors} />}
     </div>
   );

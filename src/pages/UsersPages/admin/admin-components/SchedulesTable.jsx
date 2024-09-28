@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import SchedulesModal from "../../../../components/modal/schedules-modal/SchedulesModal";
 import { useDB } from "../../../../context/db/DBContext";
 import { Tooltip } from "react-bootstrap";
 import Loading from "../../../../components/Loading/Loading";
+import toast from "react-hot-toast";
 
 const SchedulesTable = ({
   show,
@@ -18,7 +19,8 @@ const SchedulesTable = ({
 }) => {
   const db = useDB();
   const [scheduleData, setScheduleData] = useState({});
-  const [loading, setLoading] = useState(true)
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(true);
 
   const times = [
     {
@@ -67,13 +69,22 @@ const SchedulesTable = ({
     },
   ];
 
-  const handleDeleteSchedulesDoc = async (id) => {
+  const handleDeleteSchedulesDoc = useCallback(async (value, day) => {
     try {
-      await db.deleteSchedule(id);
+      setError(false);
+      await db.deleteSchedule(value.timeslot.id, day.id);
+      const key = `${value.timeslot.time.startTime}-${value.timeslot.time.endTime}-${day.dayOfWeek}`;
+      setScheduleData(prevData => {
+        const newData = { ...prevData };
+        delete newData[key];
+        return newData;
+      });
+      toastMessage("Deleted Successfully");
     } catch (error) {
-      toastMessage("Error in updating schedule", error.message);
+      setError(true);
+      toastMessage("Error in deleting schedule ...");
     }
-  };
+  }, [db, toastMessage]);
 
   useEffect(() => {
     const handleGetDays = async () => {
@@ -123,7 +134,7 @@ const SchedulesTable = ({
         );
         console.log(`${time.startTime}-${time.endTime}-${day}`);
       });
-
+      db.setNotifSent(false)
       setChoosenCells([]);
       setIsEditMode(false);
     } catch (error) {
@@ -133,7 +144,7 @@ const SchedulesTable = ({
 
   useEffect(() => {
     const fetchSchedules = async () => {
-      setLoading(true)
+      setLoading(true);
       try {
         const unsubscribeSchedules = db.subscribeToSchedulesChanges(
           async (schedules) => {
@@ -152,7 +163,7 @@ const SchedulesTable = ({
                         instructor.userID === timeslot.assignedInstructor.userID
                     );
 
-                    newScheduleData[key] = foundInstructor;
+                    newScheduleData[key] = { foundInstructor, timeslot };
                   });
                   setScheduleData({ ...scheduleData, ...newScheduleData });
                 },
@@ -165,23 +176,23 @@ const SchedulesTable = ({
             return () => {
               unsubscribeSchedules();
               unsubscribeTimeslotCallbacks.forEach((unsubscribe) =>
-                unsubscribe()
+                () => unsubscribe()
               );
             };
           }
         );
       } catch (error) {
         toastMessage("Error fetching schedules: " + error.message);
-      }finally{
-        setLoading(false)
+      } finally {
+        setLoading(false);
       }
     };
 
     fetchSchedules();
   }, [db, teachersList]);
 
-  if(loading){
-    return <Loading />
+  if (loading) {
+    return <Loading />;
   }
 
   return (
@@ -214,7 +225,9 @@ const SchedulesTable = ({
                     return (
                       <td
                         style={{
-                          backgroundColor: cellValue?.instructorColorCode || "",
+                          backgroundColor:
+                            cellValue?.foundInstructor?.instructorColorCode ||
+                            "",
                         }}
                         key={cellKey}
                         onClick={
@@ -243,9 +256,14 @@ const SchedulesTable = ({
                         {cellValue && isEditMode ? (
                           <div className="flex flex-row w-full justify-between">
                             <div className="spacer"></div>
-                          <button className="x-button p-1 bg-transparent hover:bg-transparent " onClick={() => handleDeleteSchedulesDoc(cellValue.id, day)}>
-                            X
-                          </button>
+                            <button
+                              className="x-button p-1 bg-transparent hover:bg-transparent "
+                              onClick={() =>
+                                handleDeleteSchedulesDoc(cellValue, day)
+                              }
+                            >
+                              X
+                            </button>
                           </div>
                         ) : (
                           ""
@@ -267,9 +285,9 @@ const SchedulesTable = ({
           setTd={setTd}
         />
       )}
-       <Tooltip anchorSelect=".x-button" place="top">
-          Delete cell
-        </Tooltip>
+      <Tooltip data-anchorselect=".x-button" place="top">
+        Delete cell
+      </Tooltip>
     </div>
   );
 };
