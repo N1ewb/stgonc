@@ -53,10 +53,9 @@ const Leaderboard = ({ insList }) => {
 
   return (
     <div className="leaderboard-container">
-      <InsRatingCard allRating={allRating} />
+      {allRating && <InsRatingCard allRating={allRating} />}
     </div>
   );
 };
 
 export default Leaderboard;
-

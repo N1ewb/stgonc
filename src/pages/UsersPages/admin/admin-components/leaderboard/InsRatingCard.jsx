@@ -14,7 +14,7 @@ const InsRatingCard = ({ allRating }) => {
       <div className="overflow-y-auto flex-grow">
         <table className="w-full">
           <tbody>
-            {allRating.map((item, index) => (
+            {allRating && allRating.map((item, index) => (
               <tr
                 key={index}
                 className="grid grid-cols-6 w-full py-2 items-center border-solid border-b-2 border-b-[#cacaca]"

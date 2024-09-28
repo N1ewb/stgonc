@@ -80,14 +80,15 @@ const TopThree = ({ topInstructors }) => {
 };
 
 const TopInstructors = ({ topInstructors }) => {
-
-  
-
   return (
     <div className="w-full flex flex-row  justify-center gap-1 text-[#320000] border-2 border-solid border-[#c5c5c5] rounded-lg p-3">
-      <TopTWo topInstructors={topInstructors} />
-      <TopOne topInstructors={topInstructors} />
-      <TopThree topInstructors={topInstructors} />
+      {topInstructors && (
+        <>
+          <TopTWo topInstructors={topInstructors} />
+          <TopOne topInstructors={topInstructors} />
+          <TopThree topInstructors={topInstructors} />
+        </>
+      )}
     </div>
   );
 };
