@@ -122,8 +122,8 @@ export const CallProvider = ({ children }) => {
       if (!localStream) {
         const stream = await handleWaitForLocalStream();
         setLocalStream(stream);
-
         const audioTrack = stream.getAudioTracks()[0];
+
         pc.getSenders().forEach((sender) => {
           if (sender.track.kind === "audio") {
             sender.replaceTrack(audioTrack);
@@ -139,22 +139,7 @@ export const CallProvider = ({ children }) => {
           audioTrack.enabled = false;
           console.log("Microphone turned off");
         } else {
-          const stream = await navigator.mediaDevices.getUserMedia({
-            audio: true,
-          });
-          const newAudioTrack = stream.getAudioTracks()[0];
-
-          pc.getSenders().forEach((sender) => {
-            if (sender.track.kind === "audio") {
-              sender.replaceTrack(newAudioTrack);
-            }
-          });
-
-          const newStream = new MediaStream([
-            ...localStream.getVideoTracks(),
-            newAudioTrack,
-          ]);
-          setLocalStream(newStream);
+          audioTrack.enabled = true;
           console.log("Microphone turned on");
         }
       }
@@ -355,7 +340,7 @@ export const CallProvider = ({ children }) => {
 
   const hangUp = async (newCallOffer) => {
     try {
-      setCallState('disconnected')
+      setCallState("disconnected");
       await disconnectAllDevices();
       const callOfferDoc = doc(firestore, "CallOffers", newCallOffer);
 
@@ -623,12 +608,18 @@ export const CallProvider = ({ children }) => {
         return;
       }
 
-      if (pc.connectionState === "connected" || pc.iceConnectionState === 'connected') {
+      if (
+        pc.connectionState === "connected" ||
+        pc.iceConnectionState === "connected"
+      ) {
         setCallState("connected");
         console.log("Call is connected");
       }
 
-      if (pc.connectionState === "connecting" || pc.iceConnectionState === 'connecting' ) {
+      if (
+        pc.connectionState === "connecting" ||
+        pc.iceConnectionState === "connecting"
+      ) {
         setCallState("connecting");
         console.log("Reconnecting...");
       }

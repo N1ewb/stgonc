@@ -63,6 +63,10 @@ const FacultyLeaderboard = () => {
     fetchRatings();
   }, [insList, db]);
 
+  if(loading){
+    return <Loading />
+  }
+
   return (
     <div className="h-[100%] w-full flex flex-col justify-start">
       <h5 className="text-[#320000] font-light">
