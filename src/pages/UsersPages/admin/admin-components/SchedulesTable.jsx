@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import SchedulesModal from "../../../../components/modal/schedules-modal/SchedulesModal";
 import { useDB } from "../../../../context/db/DBContext";
 import { Tooltip } from "react-bootstrap";
@@ -19,6 +19,7 @@ const SchedulesTable = ({
 }) => {
   const db = useDB();
   const [scheduleData, setScheduleData] = useState({});
+  const deletedCells = useRef(new Set());
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(true);
 
@@ -69,22 +70,26 @@ const SchedulesTable = ({
     },
   ];
 
-  const handleDeleteSchedulesDoc = useCallback(async (value, day) => {
-    try {
-      setError(false);
-      await db.deleteSchedule(value.timeslot.id, day.id);
-      const key = `${value.timeslot.time.startTime}-${value.timeslot.time.endTime}-${day.dayOfWeek}`;
-      setScheduleData(prevData => {
-        const newData = { ...prevData };
-        delete newData[key];
-        return newData;
-      });
-      toastMessage("Deleted Successfully");
-    } catch (error) {
-      setError(true);
-      toastMessage("Error in deleting schedule ...");
-    }
-  }, [db, toastMessage]);
+  const handleDeleteSchedulesDoc = useCallback(
+    async (value, day) => {
+      try {
+        setError(false);
+        await db.deleteSchedule(value.timeslot.id, day.id);
+        const key = `${value.timeslot.time.startTime}-${value.timeslot.time.endTime}-${day.dayOfWeek}`;
+        deletedCells.current.add(key);
+        setScheduleData((prevData) => {
+          const newData = { ...prevData };
+          delete newData[key];
+          return newData;
+        });
+        toastMessage("Deleted Successfully");
+      } catch (error) {
+        setError(true);
+        toastMessage("Error in deleting schedule ...");
+      }
+    },
+    [db, toastMessage]
+  );
 
   useEffect(() => {
     const handleGetDays = async () => {
@@ -134,7 +139,7 @@ const SchedulesTable = ({
         );
         console.log(`${time.startTime}-${time.endTime}-${day}`);
       });
-      db.setNotifSent(false)
+      db.setNotifSent(false);
       setChoosenCells([]);
       setIsEditMode(false);
     } catch (error) {
@@ -149,7 +154,6 @@ const SchedulesTable = ({
         const unsubscribeSchedules = db.subscribeToSchedulesChanges(
           async (schedules) => {
             const unsubscribeTimeslotCallbacks = [];
-
             const newScheduleData = {};
 
             schedules.forEach((schedule) => {
@@ -158,14 +162,25 @@ const SchedulesTable = ({
                   timeslots.forEach((timeslot) => {
                     const key = `${timeslot.time.startTime}-${timeslot.time.endTime}-${schedule.dayOfWeek}`;
 
-                    const foundInstructor = teachersList.find(
-                      (instructor) =>
-                        instructor.userID === timeslot.assignedInstructor.userID
-                    );
+                    if (!deletedCells.current.has(key)) {
+                      const foundInstructor = teachersList.find(
+                        (instructor) =>
+                          instructor.userID ===
+                          timeslot.assignedInstructor.userID
+                      );
 
-                    newScheduleData[key] = { foundInstructor, timeslot };
+                      newScheduleData[key] = { foundInstructor, timeslot };
+                    }
                   });
-                  setScheduleData({ ...scheduleData, ...newScheduleData });
+
+                  setScheduleData((prevData) => {
+                    const updatedData = { ...prevData, ...newScheduleData };
+
+                    deletedCells.current.forEach((key) => {
+                      delete updatedData[key];
+                    });
+                    return updatedData;
+                  });
                 },
                 schedule
               );
@@ -176,7 +191,7 @@ const SchedulesTable = ({
             return () => {
               unsubscribeSchedules();
               unsubscribeTimeslotCallbacks.forEach((unsubscribe) =>
-                () => unsubscribe()
+                unsubscribe()
               );
             };
           }
@@ -189,7 +204,7 @@ const SchedulesTable = ({
     };
 
     fetchSchedules();
-  }, [db, teachersList]);
+  }, [db, teachersList, toastMessage]);
 
   if (loading) {
     return <Loading />;

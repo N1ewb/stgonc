@@ -34,39 +34,46 @@ const RequestAppointmentForm = ({ instructor, show, toggleShow }) => {
 
   const handleSetAvailableSchedule = () => {
     if (instructorSchedule && allAppointments) {
-        const appointmentDatematch = allAppointments.filter(
-            (appt) => appt.appointmentDate === appointmentDate.dateWithoutTime
-        );
+      const appointmentDatematch = allAppointments.filter(
+        (appt) => appt.appointmentDate === appointmentDate.dateWithoutTime
+      );
 
-        if (appointmentDatematch.length !== 0) {
-            const matchingTimeslots = appointmentDatematch.filter((appointment) => {
-                const { appointmentsTime } = appointment;
-                
-                // Ensure appointmentsTime exists and is an object
-                if (appointmentsTime && typeof appointmentsTime === 'object') {
-                    return instructorTimeslots.some((timeslot) => 
-                        appointmentsTime.appointmentStartTime.includes(timeslot.time.startTime.toString())
-                    ) && (appointment.appointmentStatus === "Accepted" || appointment.appointmentStatus === "Followup");
-                } else {
-                    console.warn("appointmentsTime is undefined or not an object for appointment:", appointment);
-                    return false; // Exclude this appointment from matching
-                }
-            });
+      if (appointmentDatematch.length !== 0) {
+        const matchingTimeslots = appointmentDatematch.filter((appointment) => {
+          const { appointmentsTime } = appointment;
 
-            if (matchingTimeslots.length > 0) {
-                const bookedSlots = matchingTimeslots.map((match) => ({
-                    Day: match.appointmentDate,
-                    startTime: match.appointmentsTime.appointmentStartTime,
-                    endTime: match.appointmentsTime.appointmentEndTime,
-                }));
-                setBookedTimeslots(bookedSlots);
-            }
+          if (appointmentsTime && typeof appointmentsTime === "object") {
+            return (
+              instructorTimeslots.some((timeslot) =>
+                appointmentsTime.appointmentStartTime.includes(
+                  timeslot.time.startTime.toString()
+                )
+              ) &&
+              (appointment.appointmentStatus === "Accepted" ||
+                appointment.appointmentStatus === "Followup")
+            );
+          } else {
+            console.warn(
+              "appointmentsTime is undefined or not an object for appointment:",
+              appointment
+            );
+            return false;
+          }
+        });
+
+        if (matchingTimeslots.length > 0) {
+          const bookedSlots = matchingTimeslots.map((match) => ({
+            Day: match.appointmentDate,
+            startTime: match.appointmentsTime.appointmentStartTime,
+            endTime: match.appointmentsTime.appointmentEndTime,
+          }));
+          setBookedTimeslots(bookedSlots);
         }
+      }
     } else {
-        toastMessage("Instructor schedule or timeslots are missing.");
+      toastMessage("Instructor schedule or timeslots are missing.");
     }
-};
-
+  };
 
   useEffect(() => {
     if (appointmentDate && instructorTimeslots) {

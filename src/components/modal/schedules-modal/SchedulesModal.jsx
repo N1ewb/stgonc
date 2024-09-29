@@ -26,7 +26,7 @@ const SchedulesModal = ({
 
   return (
     <div>
-      <Modal show={show} onHide={toggleShow}>
+      <Modal show={show} onHide={toggleShow} className="w-1/2 modal-dialog-centered">
         <Modal.Header closeButton>
           <Modal.Title>Set Schedule </Modal.Title>
         </Modal.Header>
@@ -39,7 +39,7 @@ const SchedulesModal = ({
                 onChange={(e) => setSelectedTeacher(e.target.value)}
                 required
               >
-                <option value=""></option>
+                <option value="">Select Instructor to Assign</option>
                 {teachersList && teachersList.length !== 0 ? (
                   teachersList.map((teacher, index) => (
                     <option
