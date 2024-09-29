@@ -21,7 +21,7 @@ justify-content: space-around;
 align-items: center;
 }
 
-.header h6 {
+.header p {
     background-color: #320000;
     padding: 10px 15px 10px 15px;
     border-radius: 6px;

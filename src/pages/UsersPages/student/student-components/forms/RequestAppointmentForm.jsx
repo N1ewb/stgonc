@@ -8,13 +8,10 @@ import toast from "react-hot-toast";
 import CalendarIcon from "../../../../../static/images/Group 1171275864.png";
 import Calendar from "../RequestApptCalendar/RequestApptCalendar";
 import { useDB } from "../../../../../context/db/DBContext";
-import TimeslotRadioInput from "../input/TimeslotRadioInput";
+import TimeslotRadioInput from "../timeslots/TimeslotRadioInput";
+import Timeslot from "../timeslots/Timeslot";
 
-const RequestAppointmentForm = ({
-  instructor,
-  show,
-  toggleShow,
-}) => {
+const RequestAppointmentForm = ({ instructor, show, toggleShow }) => {
   const toastMessage = (message) => toast(message);
 
   const handleToggleShow = () => {
@@ -33,6 +30,7 @@ const RequestAppointmentForm = ({
   const [appointmentTime, setAppointmentTime] = useState(null);
   const [bookedTimeslots, setBookedTimeslots] = useState([]);
   const [allAppointments, setAllAppointments] = useState([]);
+  const calendarRef = useRef(null);
 
   const handleSetAvailableSchedule = () => {
     const days = [
@@ -115,11 +113,9 @@ const RequestAppointmentForm = ({
   useEffect(() => {
     if (show) {
       const handleGetAppointments = async () => {
-        const appointments = await db.getInstructorAppointment(
-          instructor.email
-        );
+        const appointments = await db.getInstructorAppointment(instructor.id);
         const fitleredAppointments = appointments.filter(
-          (appt) => appt.appointedTeacher.teacheremail === instructor.email
+          (appt) => appt.appointedFaculty === instructor.id
         );
         console.log("all appointments", appointments);
         setAllAppointments(fitleredAppointments);
@@ -192,6 +188,26 @@ const RequestAppointmentForm = ({
     );
   };
 
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (calendarRef.current && !calendarRef.current.contains(event.target)) {
+        setSelectedDate(null);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [setSelectedDate]);
+
+  useEffect(() => {
+    if (!selectedDate) {
+      setInstructorTimeslots([]);
+    }
+  }, [selectedDate]);
+
   return (
     <>
       <Modal show={show} onHide={toggleShow}>
@@ -216,7 +232,7 @@ const RequestAppointmentForm = ({
             </h3>
           </Modal.Title>
         </Modal.Header>
-        <Modal.Body className="bg-[#ECECEC]">
+        <Modal.Body className="bg-[#ECECEC]" ref={calendarRef}>
           <div className="application-form h-[100%] w-full flex flex-row justify-around gap-3">
             <div className="data-time-container flex flex-col justify-around w-[45%] gap-5">
               <Calendar
@@ -224,6 +240,7 @@ const RequestAppointmentForm = ({
                 instructorSchedule={instructorSchedule}
                 selectedDate={selectedDate}
                 setSelectedDate={setSelectedDate}
+                calendarRef={calendarRef}
               />
               <div className="form-group w-full flex flex-col bg-[#273240] p-2 rounded-md">
                 <label className="text-white" htmlFor="concern">
@@ -239,39 +256,13 @@ const RequestAppointmentForm = ({
               </div>
             </div>
             <div className="form-group-container flex flex-col w-[50%] justify-around">
-              <div className="timeslot-container w-full flex flex-col items-center text-center bg-white p-4 rounded-[30px] shadow-lg">
-                <p className="text-lg font-semibold mb-4">Timeslot</p>
-                {appointmentDate ? (
-                  instructorTimeslots.length !== 0 ? (
-                    instructorTimeslots.map((timeslot) => (
-                      <div
-                        key={timeslot.id}
-                        className="timeslot w-full flex flex-col items-center py-2 border-b last:border-none"
-                      >
-                        {!handleDisableInput(timeslot) ? (
-                          <TimeslotRadioInput
-                            timeslot={timeslot}
-                            setAppointmentTime={setAppointmentTime}
-                          />
-                        ) : (
-                          <p className="m-0 text-sm text-gray-600">
-                            {`${timeslot.time.startTime}:00 - ${timeslot.time.endTime}:00`}{" "}
-                            <span className="bg-red-100 text-red-600 px-2 py-1 rounded-md">
-                              Booked
-                            </span>
-                          </p>
-                        )}
-                      </div>
-                    ))
-                  ) : (
-                    <div className="h-12 w-full flex items-center justify-center bg-yellow-100 text-yellow-800 p-4 rounded-md">
-                      Instructor not available on this day
-                    </div>
-                  )
-                ) : (
-                  <div className="h-12 w-full"></div>
-                )}
-              </div>
+              <Timeslot
+                calendarRef={calendarRef}
+                setAppointmentTime={setAppointmentTime}
+                appointmentDate={appointmentDate}
+                instructorTimeslots={instructorTimeslots}
+                bookedTimeslots={bookedTimeslots}
+              />
               <div className="group-container flex flex-row justify-around items-center">
                 <div className="group">
                   <select name="" id="" className="" ref={formatRef}>

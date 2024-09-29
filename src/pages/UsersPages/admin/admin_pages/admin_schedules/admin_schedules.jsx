@@ -139,10 +139,10 @@ const AdminSchedulesPage = () => {
             </div>
           </div>
         </div>
-        <Tooltip anchorSelect=".export-button" place="top">
+        <Tooltip data-anchorselect=".export-button" place="top">
           Export file 
         </Tooltip>
-        <Tooltip anchorSelect=".edit-button" place="top">
+        <Tooltip data-anchorselect=".edit-button" place="top">
           Edit Table
         </Tooltip>
       </div>

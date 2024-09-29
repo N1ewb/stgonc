@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   startOfMonth,
   endOfMonth,
@@ -17,8 +17,10 @@ const Calendar = ({
   instructorSchedule,
   selectedDate,
   setSelectedDate,
+  calendarRef
 }) => {
   const [currentDate, setCurrentDate] = useState(new Date());
+ 
 
   const daysOfWeek = [
     { short: "Sun", full: "Sunday" },
@@ -46,12 +48,17 @@ const Calendar = ({
   const renderHeader = () => {
     return (
       <div className="header">
-        <button onClick={handlePrevMonth}>&lt;</button>
-        <h6>{format(currentDate, "MMMM yyyy")}</h6>
-        <button onClick={handleNextMonth}>&gt;</button>
+        <button type="button" onClick={handlePrevMonth}>
+          &lt;
+        </button>
+        <p className="">{format(currentDate, "MMMM yyyy")}</p>
+        <button type="button" onClick={handleNextMonth}>
+          &gt;
+        </button>
       </div>
     );
   };
+
 
   const renderDays = () => {
     return (
@@ -122,7 +129,7 @@ const Calendar = ({
   };
 
   return (
-    <div className="calendar">
+    <div className="calendar" ref={calendarRef}>
       {renderHeader()}
       <div className="days-container">{renderDays()}</div>
       {renderCells()}

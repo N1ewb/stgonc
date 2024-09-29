@@ -4,60 +4,13 @@ import { useAuth } from "../../context/auth/AuthContext";
 import { useLocation } from "react-router-dom";
 import toast from "react-hot-toast";
 
-const ConsultationReport = () => {
-  const db = useDB();
-  const auth = useAuth();
-  const location = useLocation();
-  const queryParams = new URLSearchParams(location.search);
-  const receiver = queryParams.get("receiver");
-  const toastMessage = (message) => toast(message)
-  const [submitting, setSubmitting] = useState(false);
-  const remarksRef = useRef();
-  const dateRef = useRef();
-  const durationRef = useRef();
-  const modeRef = useRef();
-  const radioRef = useRef();
-  const agendaRef = useRef();
-  const summaryRef = useRef();
 
-  const submitForm = async (e) => {
-    e.preventDefault()
-    setSubmitting(true);
-    const remarks = remarksRef.current.value;
-    const date = dateRef.current.value;
-    const duration = durationRef.current.value;
-    const mode = modeRef.current.value;
-    const radio = radioRef.current.value;
-    const agenda = agendaRef.current.value;
-    const summary = summaryRef.current.value;
-    if ((remarks, date, duration, mode, radio, agenda, summary)) {
-      try {
-        if (auth.currentUser) {
-          await db.makeReport(
-            remarks,
-            date,
-            duration,
-            mode,
-            radio,
-            agenda,
-            summary,
-            receiver
-          );
-          toastMessage("Report made successfuly!")
-        }
-      } catch (error) {
-        console.error("Error in:", error);
-      } finally {
-        setSubmitting(false);
-      }
-    } else {
-      console.log("failed");
-    }
-  };
+const ConsultationReport = ({submitForm, remarksRef, dateRef, durationRef, modeRef, agendaRef, summaryRef, isResolved, setIsResolved, submitting, setIsFollowupFormOpen}) => {
+
   return (
     <form
       onSubmit={submitForm}
-      className="w-1/2 p-10 rounded-3xl shadow-lg flex-col flex gap-4 items-center [&_div]:w-full mt-10"
+      className="w-full p-10 rounded-3xl shadow-lg flex-col flex gap-4 items-center [&_div]:w-full mt-10"
     >
       <h1 className="text-[#720000] ">Consultation Report</h1>
       <div className="group-details flex flex-col gap-4">
@@ -67,7 +20,12 @@ const ConsultationReport = () => {
         </div>
         <div className="detail-group flex flex-col">
           <label htmlFor="duration">Duration (In hours)</label>
-          <input type="number" id="duration" ref={durationRef} />
+          <input type="number" list="durations" id="duration" ref={durationRef} />
+          <datalist id="durations">
+            <option value={1}>1 Hour</option>
+            <option value={2}>2 Hours</option>
+            <option value={3}>3 Hours</option>
+          </datalist>
         </div>
         <p>Mode of Consultation</p>
         <div className="detail-group flex flex-row gap-5">
@@ -113,7 +71,7 @@ const ConsultationReport = () => {
           <div className="flex flex-row">
             <label htmlFor="yes">Yes</label>
             <input
-              ref={radioRef}
+              onChange={(e) => setIsResolved(e.target.value)}
               type="radio"
               name="radio"
               id="yes"
@@ -123,7 +81,7 @@ const ConsultationReport = () => {
           <div className="flex flex-row">
             <label htmlFor="no">No</label>
             <input
-              ref={radioRef}
+              onChange={(e) => setIsResolved(e.target.value)}
               type="radio"
               name="radio"
               id="no"
@@ -141,12 +99,33 @@ const ConsultationReport = () => {
           ref={remarksRef}
         />
       </div>
-      <button
-        type="submit"
-        className="px-5 py-2 rounded-sm bg-[#720000] hover:bg-[#320000]"
-      >
-        {submitting ? "Submitting..." : "Submit"}
-      </button>
+      <div className="buttons flex flex-row w-full justify-around">
+        {isResolved ? isResolved === "Yes" ? (
+          <button
+            type="submit"
+            className="px-5 py-2 rounded-sm bg-[#1ca32c] hover:bg-[#1c7d27]"
+          >
+            {submitting ? "Submitting..." : "Mark Finished"}
+          </button>
+        ) : (
+          <div className=" w-full flex flex-row justify-around">
+            {" "}
+            <button
+              type="submit"
+              className="px-5 py-2 rounded-sm bg-[#1ca32c] hover:bg-[#1c7d27]"
+            >
+              {submitting ? "Submitting..." : "Mark Finished Anyway"}
+            </button>
+            <button
+              type="button"
+              onClick={() => setIsFollowupFormOpen(true)}
+              className="px-5 py-2 rounded-sm bg-[#720000] hover:bg-[#320000]"
+            >
+              {submitting ? "Submitting..." : "Finish and Schedule Follow Up"}
+            </button>
+          </div>
+        ) : ""}
+      </div>
     </form>
   );
 };

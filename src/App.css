@@ -31,3 +31,7 @@
   scrollbar-width: thin; /* Makes the scrollbar thin */
   scrollbar-color: rgba(0, 0, 0, 0.3) rgba(0, 0, 0, 0.1); /* Thumb color and track color */
 }
+
+h1,h2,h3,h4,h5,h6 {
+  color: #320000 !important;
+}

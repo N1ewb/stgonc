@@ -7,7 +7,7 @@ const AdminGraphs = () => {
   return (
     <div className="h-[100%] w-full flex flex-col">
       <div className="admin-dashboard-header">
-        {/* <Link to='/private/end-call-page'>End page access</Link> */}
+        <Link to='/private/end-call-page'>End page access</Link>
       </div>
       <div className="admin-dashboard-content flex flex-row w-full justify-between lg:flex-wrap lg:justify-center lg:gap-10">
         <div className="appointments-info w-1/2">

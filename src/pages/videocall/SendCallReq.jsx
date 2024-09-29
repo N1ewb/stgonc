@@ -67,7 +67,7 @@ const SendCallReq = () => {
       if (newCallOffer) {
         await call.hangUp(newCallOffer.id);
         callInitiatedRef.current = false;
-        navigate(`/private/end-call-page?receiver=${receiver}`);
+        navigate(`/private/end-call-page?appointment=${appointment}&receiver=${receiver}`);
       }
     } catch (error) {
       console.log(error.message);
