@@ -350,13 +350,11 @@ export const DBProvider = ({ children }) => {
     try {
       if (auth.currentUser) {
         const recevingUser = await getUser(receiver);
-        const appointmentDocRef = doc(firestore, "Appointments", id);
-        const followupApptRef = collection(appointmentDocRef, "Followup");
 
         const updatedAppointmentDocRef = { appointmentStatus: "Followup" };
-        await updateDoc(appointmentDocRef, updatedAppointmentDocRef);
+        await updateDoc(appointmentsRef, updatedAppointmentDocRef);
 
-        await addDoc(followupApptRef, {
+        await addDoc(appointmentsRef, {
           precedingAppt: id,
           appointee: receiver,
           appointedFaculty: auth.currentUser.uid,

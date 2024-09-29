@@ -96,30 +96,42 @@ const useFollowupAppointment = (isFollowupFormOpen) => {
   }, [isFollowupFormOpen, auth.currentUser, db]);
 
   const setAvailableSchedule = () => {
-    if (
-      instructorSchedule.length &&
-      allAppointments.length &&
-      appointmentDate
-    ) {
-      const appointmentsOnDate = allAppointments.filter(
+    if (instructorSchedule && allAppointments) {
+      const appointmentDatematch = allAppointments.filter(
         (appt) => appt.appointmentDate === appointmentDate.dateWithoutTime
       );
 
-      if (appointmentsOnDate.length > 0) {
-        const bookedSlots = appointmentsOnDate
-          .filter((appt) =>
-            instructorTimeslots.some((slot) =>
-              appt.appointmentsTime.appointmentStartTime.includes(
-                slot.time.startTime.toString()
-              )
-            )
-          )
-          .map((match) => ({
-            day: match.appointmentDate,
+      if (appointmentDatematch.length !== 0) {
+        const matchingTimeslots = appointmentDatematch.filter((appointment) => {
+          const { appointmentsTime } = appointment;
+
+          if (appointmentsTime && typeof appointmentsTime === "object") {
+            return (
+              instructorTimeslots.some((timeslot) =>
+                appointmentsTime.appointmentStartTime.includes(
+                  timeslot.time.startTime.toString()
+                )
+              ) &&
+              (appointment.appointmentStatus === "Accepted" ||
+                appointment.appointmentStatus === "Followup")
+            );
+          } else {
+            console.warn(
+              "appointmentsTime is undefined or not an object for appointment:",
+              appointment
+            );
+            return false;
+          }
+        });
+
+        if (matchingTimeslots.length > 0) {
+          const bookedSlots = matchingTimeslots.map((match) => ({
+            Day: match.appointmentDate,
             startTime: match.appointmentsTime.appointmentStartTime,
             endTime: match.appointmentsTime.appointmentEndTime,
           }));
-        setBookedTimeslots(bookedSlots);
+          setBookedTimeslots(bookedSlots);
+        }
       }
     } else {
       toastMessage("Instructor schedule or timeslots are missing.");
