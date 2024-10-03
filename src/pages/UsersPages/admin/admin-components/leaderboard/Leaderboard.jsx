@@ -52,7 +52,7 @@ const Leaderboard = ({ insList }) => {
   }
 
   return (
-    <div className="leaderboard-container">
+    <div className="leaderboard-container basis-[25%] max-h-[25%] overflow-auto" >
       {allRating && allRating.length > 0 &&<InsRatingCard allRating={allRating} />}
     </div>
   );

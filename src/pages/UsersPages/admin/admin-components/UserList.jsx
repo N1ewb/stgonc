@@ -9,13 +9,11 @@ const UserList = ({ currentCharacters, defaultProfile, More }) => {
             className="userlist-container w-full flex flex-row gap-3 items-center justify-between [&_p]:m-0 px-8 py-2 shadow-md rounded-md  text-[#740000] md:px-3 "
             key={index}
           >
-            <div className="flex flex-row gap-3 w-[40%]">
+            <div className="flex flex-row items-center gap-3 w-[40%]">
               <img
-                className=" bg-[#720000] w-[50px] h-[50px] rounded-full object-cover"
+                className=" bg-[#720000] max-w-[50px] min-w-[50px] min-h-[50px] max-h-[50px] rounded-full object-center object-cover"
                 src={users.photoURL || defaultProfile}
                 alt="default profile"
-                width={25}
-                height={25}
               />
               <p className=" font-medium  capitalize">
                 {users.firstName} {users.lastName}

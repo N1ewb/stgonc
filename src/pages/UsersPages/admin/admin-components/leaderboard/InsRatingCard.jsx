@@ -1,7 +1,7 @@
 
 const InsRatingCard = ({ allRating }) => {
   return (
-    <div className="w-full h-full overflow-hidden flex flex-col">
+    <div className="w-full h-full flex flex-col">
       <table className="w-full">
         <thead>
           <tr className="grid grid-cols-6 w-full">

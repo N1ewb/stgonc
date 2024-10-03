@@ -3,6 +3,14 @@ import React, { useEffect, useState } from "react";
 const AdminSearchBar = ({ datas, setData, temp, setCurrentPage }) => {
   const [searchQuery, setSearchQuery] = useState("");
 
+  const handleChangePange = () => {
+    try{
+      setCurrentPage(1)
+    }catch(error){
+      return null
+    }
+  }
+
   useEffect(() => {
     if (searchQuery) {
       if (datas) {
@@ -16,7 +24,7 @@ const AdminSearchBar = ({ datas, setData, temp, setCurrentPage }) => {
           );
         });
         setData(foundData);
-        setCurrentPage(1);
+        handleChangePange()
       }
     } else {
       setData(temp);

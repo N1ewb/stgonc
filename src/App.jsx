@@ -56,6 +56,14 @@ import StudentApptArchive from "./pages/UsersPages/student/student-pages/student
 import Chatslist from "./pages/messages/Messages";
 import EndCallPage from "./pages/videocall/EndCallPage";
 import FacultyEndCallPage from "./pages/videocall/FacultyEndCallPage";
+import StudentCounselingServices from "./pages/UsersPages/GuidanceCounselor/GuidancePages/StudentCounselingServices/StudentCounselingServices";
+import GuidanceRegister from "./pages/authentication/register/guidance_register/GuidanceRegister";
+import GuidanceDashboard from "./pages/UsersPages/GuidanceCounselor/GuidancePages/GuidanceDashboard";
+import GuidanceAppointments from "./pages/UsersPages/GuidanceCounselor/GuidancePages/GuidanceAppointments";
+import GuidanceAppointmentReq from "./pages/UsersPages/GuidanceCounselor/GuidancePages/GuidanceAppointmentReq";
+import GuidanceSchedules from "./pages/UsersPages/GuidanceCounselor/GuidancePages/GuidanceSchedules";
+import Referal from "./pages/UsersPages/GuidanceCounselor/GuidancePages/StudentCounselingServices/Referal";
+import Walkin from "./pages/UsersPages/GuidanceCounselor/GuidancePages/StudentCounselingServices/Walkin";
 
 function App() {
   const router = createBrowserRouter([
@@ -119,13 +127,47 @@ function App() {
                   path: "/private/Admin/messages",
                   element: <Chatslist />,
                 },
-               
               ],
             },
             {
-              path: "/private/guidance-counselor/dashboard",
+              path: "/private/Guidance",
               element: <GuidanceCounselorLayout />,
-              children: [],
+              children: [
+                {
+                  path: "/private/Guidance/dashboard",
+                  element: <GuidanceDashboard />,
+                },
+                {
+                  path: "/private/Guidance/student-counseling-services",
+                  element: <StudentCounselingServices />,
+                  children: [
+                    {
+                      path: "/private/Guidance/student-counseling-services",
+                      element: <StudentCounselingServices />,
+                    },
+                    {
+                      path: "/private/Guidance/student-counseling-services/Walkin",
+                      element: <Walkin />,
+                    },
+                    {
+                      path: "/private/Guidance/student-counseling-services/Referal",
+                      element: <Referal />,
+                    },
+                  ],
+                },
+                {
+                  path: "/private/Guidance/appointments-list",
+                  element: <GuidanceAppointments />,
+                },
+                {
+                  path: "/private/Guidance/appointments-request",
+                  element: <GuidanceAppointmentReq />,
+                },
+                {
+                  path: "/private/Guidance/schedules",
+                  element: <GuidanceSchedules />,
+                },
+              ],
             },
             {
               path: "/private/Faculty",
@@ -167,15 +209,15 @@ function App() {
                 },
                 {
                   path: "/private/Student/dashboard/appointments",
-                  element : <StudentAppointments /> 
+                  element: <StudentAppointments />,
                 },
                 {
                   path: "/private/Student/dashboard/pending-appointments",
-                  element: <StudentPendingAppointments />
+                  element: <StudentPendingAppointments />,
                 },
                 {
                   path: "/private/Student/dashboard/appointments-archive",
-                  element: <StudentApptArchive /> 
+                  element: <StudentApptArchive />,
                 },
                 {
                   path: "/private/Student/notifications",
@@ -185,7 +227,6 @@ function App() {
                   path: "/private/Student/messages",
                   element: <Chatslist />,
                 },
-                
               ],
             },
 
@@ -210,13 +251,13 @@ function App() {
               element: <Userpage />,
             },
             {
-              path: '/private/end-call-page',
-              element : <FacultyEndCallPage />
+              path: "/private/end-call-page",
+              element: <FacultyEndCallPage />,
             },
             {
-              path: '/private/Endcallpage',
-              element: <EndCallPage />
-            }
+              path: "/private/Endcallpage",
+              element: <EndCallPage />,
+            },
           ],
         },
         {
@@ -238,6 +279,10 @@ function App() {
             {
               path: "/auth/AdminRegister",
               element: <AdminRegistration />,
+            },
+            {
+              path: "/auth/GuidanceRegister",
+              element: <GuidanceRegister />,
             },
             {
               path: "/auth/PendingRequestMessage",

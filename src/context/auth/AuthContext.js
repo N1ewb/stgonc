@@ -87,56 +87,6 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  // const AdminCreateStudentAccount = (
-  //   email,
-  //   password,
-  //   firstName,
-  //   lastName,
-  //   phoneNumber,
-  //   studentIdnumber,
-  //   requestID,
-  //   passwordRef
-  // ) => {
-  //   if (currentUser) {
-  //     return createUserWithEmailAndPassword(auth, email, password)
-  //       .then(async (userCredential) => {
-  //         const user = userCredential.user;
-  //         await updateProfile(user, {
-  //           displayName: `${firstName} ${lastName}`,
-  //         });
-
-  //         const docRef = doc(
-  //           collection(firestore, "StudentRegistrationRequest"),
-  //           requestID
-  //         );
-
-  //         await updateDoc(docRef, { status: "approved" });
-
-  //         await setDoc(doc(collection(firestore, "Users"), user.uid), {
-  //           userID: user.uid,
-  //           firstName: firstName,
-  //           lastName: lastName,
-  //           email: email,
-  //           phoneNumber,
-  //           studentIdnumber,
-  //           role: "Student",
-  //           isOnline: false,
-  //         });
-  //         await signOut(auth);
-
-  //         await signInWithEmailAndPassword(
-  //           auth,
-  //           auth.currentUser.email,
-  //           passwordRef
-  //         );
-  //         toastMessage("Student Account Created Successfully");
-  //       })
-  //       .catch((error) => {
-  //         toastMessage(error.message);
-  //       });
-  //   }
-  // };
-
   const TeacherSignUp = (email, password, firstName, lastName, phoneNumber) => {
     if (!currentUser) {
       return createUserWithEmailAndPassword(auth, email, password)
@@ -201,6 +151,46 @@ export const AuthProvider = ({ children }) => {
       return console.log("logout first");
     }
   };
+  const CreateGuidanceAccount = (
+    email,
+    password,
+    firstName,
+    lastName,
+    phoneNumber,
+    guidanceIDnumber
+  ) => {
+    if (!currentUser) {
+      return createUserWithEmailAndPassword(auth, email, password)
+        .then((userCredential) => {
+          const user = userCredential.user;
+          updateProfile(user, {
+            displayName: `${firstName} ${lastName}`,
+          });
+          console.log("Signed upp");
+
+          return setDoc(
+            doc(collection(firestore, "Users"), userCredential.user.uid),
+            {
+              userID: userCredential.user.uid,
+              firstName: firstName,
+              lastName: lastName,
+              email: email,
+              phoneNumber,
+              role: "Guidance",
+              guidanceIDnumber,
+              isOnline: true,
+              appointments: {},
+              schedules: {},
+            }
+          );
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    } else {
+      return console.log("logout first");
+    }
+  };
 
   const SignOut = async () => {
     const uid = auth.currentUser.uid;
@@ -230,6 +220,7 @@ export const AuthProvider = ({ children }) => {
     StudentSignUpRequest,
     TeacherSignUp,
     AdminSignUp,
+    CreateGuidanceAccount,
   };
 
   return (
