@@ -117,7 +117,7 @@ const AccountPage = ({ useAuth, db, user }) => {
           <div className="school-id-number">
             <p>SPC ID Number</p>
             <p className="text-sm border-solid border-[#bbbaba] border-[1px] rounded-md py-1 px-3">
-              {user?.facultyIdnumber || user?.studentIdnumber}
+              {user?.facultyIdnumber || user?.studentIdnumber || user?.guidanceIDnumber}
             </p>
           </div>
         </div>

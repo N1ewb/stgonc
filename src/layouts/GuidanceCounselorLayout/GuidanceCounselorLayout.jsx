@@ -22,16 +22,16 @@ const GuidanceCounselorLayout = () => {
     },
     {
       name: "Student Counseling Services",
-      link: "/private/Guidance/student-counseling-services",
+      link: "/private/Guidance/student-counseling-services/Dashboard",
     },
-    {
-      name: "Referal",
-      link: "/private/Guidance/student-counseling-services/Referal",
-    },
-    {
-      name: "Walkin",
-      link: "/private/Guidance/student-counseling-services/Walkin",
-    },
+    // {
+    //   name: "Referal",
+    //   link: "/private/Guidance/student-counseling-services/Referal",
+    // },
+    // {
+    //   name: "Walkin",
+    //   link: "/private/Guidance/student-counseling-services/Walkin",
+    // },
   ]
   return (
     <div className="guidance-dashboard-container bg-[#360000] w-full h-screen flex flex-row items-center justify-center">

@@ -2,9 +2,8 @@ import React, { useEffect, useRef, useState } from "react";
 import { useDB } from "../../context/db/DBContext";
 import toast from "react-hot-toast";
 import Calendar from "../../pages/UsersPages/student/student-components/RequestApptCalendar/RequestApptCalendar";
-import { useAuth } from "../../context/auth/AuthContext";
 import Timeslot from "../../pages/UsersPages/student/student-components/timeslots/Timeslot";
-import useFollowupAppointment from "../../hooks/useFollowupAppointment";
+import useScheduleAppointment from "../../hooks/useScheduleAppointment";
 
 const FollowupAppointment = ({
   isFollowupFormOpen,
@@ -23,9 +22,7 @@ const FollowupAppointment = ({
     appointmentTime,
     setAppointmentTime,
     bookedTimeslots,
-    allAppointments,
-    availableDays,
-  } = useFollowupAppointment(isFollowupFormOpen);
+  } = useScheduleAppointment(isFollowupFormOpen);
   const db = useDB();
   const toastMessage = (message) => toast(message);
   const [apptFormat, setApptFormat] = useState(null);
@@ -38,11 +35,11 @@ const FollowupAppointment = ({
     e.preventDefault();
     try {
       if (
-        (appointment,
-        receiver,
-        apptFormat,
-        appointmentDate,
-        appointmentTime,
+        (appointment &&
+        receiver &&
+        apptFormat &&
+        appointmentDate &&
+        appointmentTime &&
         location)
       ) {
         await db.followupAppointment(
@@ -154,11 +151,6 @@ const FollowupAppointment = ({
                       <option value="CCS Faculty Office">
                         CCS Faculty Office
                       </option>
-                      <option value="Deans Office">Deans Office</option>
-                      <option value="A201">A201</option>
-                      <option value="A202">A202</option>
-                      <option value="A203">A203</option>
-                      <option value="A204">A204</option>
                     </datalist>
                   </div>
                 )}

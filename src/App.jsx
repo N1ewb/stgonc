@@ -49,7 +49,6 @@ import AdminAppointmentReqsPage from "./pages/UsersPages/admin/admin_pages/admin
 import PendingReqMessagePage from "./pages/authentication/YourRegReqisPending/PendingReqMessagePage";
 import NotificationPage from "./pages/Notifications/notifications-page/NotificationPage";
 import ExportToPDF from "./ComponentToPDF/ExportComponentToPDF";
-import AdminWalkins from "./pages/UsersPages/admin/admin_pages/admin_walkins/AdminWalkins";
 import StudentAppointments from "./pages/UsersPages/student/student-pages/student-appointments/StudentAppointments";
 import StudentPendingAppointments from "./pages/UsersPages/student/student-pages/student-pending-appointments/StudentPendingAppointments";
 import StudentApptArchive from "./pages/UsersPages/student/student-pages/student-appointments-archive/StudentApptArchive";
@@ -64,6 +63,12 @@ import GuidanceAppointmentReq from "./pages/UsersPages/GuidanceCounselor/Guidanc
 import GuidanceSchedules from "./pages/UsersPages/GuidanceCounselor/GuidancePages/GuidanceSchedules";
 import Referal from "./pages/UsersPages/GuidanceCounselor/GuidancePages/StudentCounselingServices/Referal";
 import Walkin from "./pages/UsersPages/GuidanceCounselor/GuidancePages/StudentCounselingServices/Walkin";
+import AdminWalkinLayout from "./pages/UsersPages/admin/admin_pages/admin_walkins/AdminWalkinLayout";
+import WalkinApptList from "./pages/UsersPages/admin/admin_pages/admin_walkins/walkin-pages/WalkinApptList";
+import WalkinForm from "./pages/UsersPages/admin/admin_pages/admin_walkins/walkin-pages/WalkinForm";
+import WalkinScheduleAppt from "./pages/UsersPages/admin/admin_pages/admin_walkins/walkin-pages/WalkinScheduleAppt";
+import WalkinPendingAppointment from "./pages/UsersPages/admin/admin_pages/admin_walkins/walkin-pages/WalkinPendingAppointment";
+import SCSDashboard from "./pages/UsersPages/GuidanceCounselor/GuidancePages/StudentCounselingServices/SCSDashboard";
 
 function App() {
   const router = createBrowserRouter([
@@ -89,7 +94,25 @@ function App() {
                 },
                 {
                   path: "/private/Admin/dashboard/walkins",
-                  element: <AdminWalkins />,
+                  element: <AdminWalkinLayout />,
+                  children: [
+                    {
+                      path: '/private/Admin/dashboard/walkins',
+                      element: <WalkinApptList />
+                    },
+                    {
+                      path: '/private/Admin/dashboard/walkins/data-form',
+                      element: <WalkinForm />
+                    },
+                    {
+                      path: '/private/Admin/dashboard/walkins/schedule-form',
+                      element: <WalkinScheduleAppt />
+                    },
+                    {
+                      path: '/private/Admin/dashboard/walkins/pending-walkin-appointments',
+                      element: <WalkinPendingAppointment />
+                    },
+                  ]
                 },
                 {
                   path: "/private/Admin/dashboard/appointments-list",
@@ -142,8 +165,8 @@ function App() {
                   element: <StudentCounselingServices />,
                   children: [
                     {
-                      path: "/private/Guidance/student-counseling-services",
-                      element: <StudentCounselingServices />,
+                      path: "/private/Guidance/student-counseling-services/Dashboard",
+                      element: <SCSDashboard />,
                     },
                     {
                       path: "/private/Guidance/student-counseling-services/Walkin",
@@ -167,6 +190,10 @@ function App() {
                   path: "/private/Guidance/schedules",
                   element: <GuidanceSchedules />,
                 },
+                {
+                  path: "/private/Guidance/notifications",
+                  element: <NotificationPage />,
+                }
               ],
             },
             {

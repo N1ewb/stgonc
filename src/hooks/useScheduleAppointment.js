@@ -4,7 +4,7 @@ import toast from "react-hot-toast";
 import { useDB } from "../context/db/DBContext";
 import { useAuth } from "../context/auth/AuthContext";
 
-const useFollowupAppointment = (isFollowupFormOpen) => {
+const useScheduleAppointment = (isFormOpen) => {
   const db = useDB();
   const auth = useAuth();
   const [selectedDate, setSelectedDate] = useState(null);
@@ -22,7 +22,7 @@ const useFollowupAppointment = (isFollowupFormOpen) => {
     const fetchAvailableDays = async () => {
       try {
         setInstructorSchedule([]);
-        if (isFollowupFormOpen) {
+        if (isFormOpen) {
           const days = await db.getDays();
           setAvailableDays(days);
           fetchInstructorAvailableDays(days);
@@ -32,8 +32,8 @@ const useFollowupAppointment = (isFollowupFormOpen) => {
       }
     };
 
-    if (isFollowupFormOpen) fetchAvailableDays();
-  }, [isFollowupFormOpen, db]);
+    if (isFormOpen) fetchAvailableDays();
+  }, [isFormOpen, db]);
 
   useEffect(() => {
     if (appointmentDate && auth.currentUser) {
@@ -77,7 +77,7 @@ const useFollowupAppointment = (isFollowupFormOpen) => {
   };
 
   useEffect(() => {
-    if (isFollowupFormOpen) {
+    if (isFormOpen) {
       const fetchAppointments = async () => {
         try {
           const appointments = await db.getInstructorAppointment(
@@ -93,7 +93,7 @@ const useFollowupAppointment = (isFollowupFormOpen) => {
       };
       fetchAppointments();
     }
-  }, [isFollowupFormOpen, auth.currentUser, db]);
+  }, [isFormOpen, auth.currentUser, db]);
 
   const setAvailableSchedule = () => {
     if (instructorSchedule && allAppointments) {
@@ -165,4 +165,4 @@ const useFollowupAppointment = (isFollowupFormOpen) => {
   };
 };
 
-export default useFollowupAppointment;
+export default useScheduleAppointment;

@@ -14,7 +14,7 @@ import {
   where,
   Timestamp,
   deleteDoc,
-  setDoc,
+  
 } from "firebase/firestore";
 import { firestore, storage } from "../../server/firebase";
 import { useAuth } from "../auth/AuthContext";
@@ -39,7 +39,7 @@ export const DBProvider = ({ children }) => {
     firestore,
     "StudentRegistrationRequest"
   );
-  const walkingCollectionRef = collection(firestore, "WalkinAppointments");
+
   const schedulesCollectionRef = collection(firestore, "Schedules");
   const consultationReportRef = collection(firestore, "ConsultationReports");
   const auth = useAuth();
@@ -382,6 +382,33 @@ export const DBProvider = ({ children }) => {
     }
   };
 
+  const walkinScheduleAppointment = async (
+    firstName,
+    lastName,
+    email,
+    date,
+    time,
+    type
+  ) => {
+    try {
+      if (auth.currentUser) {
+        await addDoc(appointmentsRef, {
+          appointee: { firstName, lastName, email, department: user.department, appointeeType: type},
+          appointedFaculty: auth.currentUser.uid,
+          appointmentDate: date.dateWithoutTime,
+          appointmentsTime: time,
+          createdAt: serverTimestamp(),
+          department: user.department,  
+          appointmentFormat: "Walkin",
+          appointmentStatus: "Pending",
+          appointmentType: type,
+        });
+      }
+    } catch (error) {
+      notifyError(`Error scheduling walkin appointment: ${error.message}`);
+    }
+  };
+
   const finishAppointment = async (id, receiver) => {
     try {
       if (auth.currentUser) {
@@ -652,7 +679,8 @@ export const DBProvider = ({ children }) => {
           query(
             appointmentsRef,
             where("appointedFaculty", "==", auth.currentUser.uid),
-            where("appointmentStatus", "in", statusArray)
+            where("appointmentStatus", "in", statusArray),
+            where("appointmentFormat", "!=", "Walkin")
           ),
           (snapshot) => {
             const data = snapshot.docs.map((doc) => ({
@@ -736,11 +764,16 @@ export const DBProvider = ({ children }) => {
   }
 
   //As admin
-  const subscribeToWalkinAppointmentChanges = async (callback) => {
+  const subscribeToWalkinAppointmentChanges = async (status, callback) => {
     try {
       if (auth.currentUser) {
+        const statusArray = Array.isArray(status) ? status : [status];
         const unsubscribe = onSnapshot(
-          query(appointmentsRef, where("appointmentFormat", "==", "Walkin")),
+          query(
+            appointmentsRef,
+            where("appointmentFormat", "==", "Walkin"),
+            where('appointmentStatus', 'in', statusArray)
+          ),
           (snapshot) => {
             const data = snapshot.docs.map((doc) => ({
               id: doc.id,
@@ -1125,6 +1158,26 @@ export const DBProvider = ({ children }) => {
       toastMessage("Error subscribing to timeslot changes:", error);
     }
   };
+  const subscribeToGuidanceTimeslotChanges = async (callback, day) => {
+    try {
+      if (auth.currentUser) {
+        const dayRef = doc(firestore, "Schedules", day.id);
+        const timeslotsCollectionRef = collection(dayRef, "timeslots");
+        const q = query(timeslotsCollectionRef, where('assignedInstructor.userID', '==', auth.currentUser.uid))
+        const unsubscribe = onSnapshot(q, (snapshot) => {
+          const timeslotsData = snapshot.docs.map((doc) => ({
+            id: doc.id,
+            ...doc.data(),
+          }));
+
+          callback(timeslotsData);
+        });
+        return unsubscribe;
+      }
+    } catch (error) {
+      toastMessage("Error subscribing to timeslot changes:", error);
+    }
+  };
 
   const value = {
     getUsers,
@@ -1141,6 +1194,7 @@ export const DBProvider = ({ children }) => {
     approveAppointment,
     denyAppointment,
     followupAppointment,
+    walkinScheduleAppointment,
     finishAppointment,
     makeReport,
     rateExperiences,
@@ -1172,6 +1226,7 @@ export const DBProvider = ({ children }) => {
     subscribeToInstructorChanges,
     subscribeToSchedulesChanges,
     setNotifSent,
+    subscribeToGuidanceTimeslotChanges,
   };
 
   return (

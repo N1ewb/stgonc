@@ -1,14 +1,27 @@
 import React from "react";
-import { Outlet } from "react-router-dom";
+import { Link, Outlet } from "react-router-dom";
 
 const StudentCounselingServices = () => {
+  // {
+  //   name: "Referal",
+  //   link: "/private/Guidance/student-counseling-services/Referal",
+  // },
+  // {
+  //   name: "Walkin",
+  //   link: "/private/Guidance/student-counseling-services/Walkin",
+  // },
   return (
     <div className="w-full h-[100%] flex flex-col gap-5">
-      <div className="scs-header">Student Counseling Services</div>
+      <div className="scs-header flex flex-row items-center justify-between w-full">
+        <h1 className=""><span className="font-light">Student </span>Counseling Services</h1>{" "}
+        <div className="flex flex-row gap-5 justify-end">
+          <Link to='/private/Guidance/student-counseling-services/Dashboard'>SCS Dashboard</Link>
+          <Link to='/private/Guidance/student-counseling-services/Referal'>Referals</Link>
+          <Link to='/private/Guidance/student-counseling-services/Walkin'>Walk-ins</Link>
+        </div>
+      </div>
       <div className="scs-content">
-        <main>
-          <Outlet />
-        </main>
+        <Outlet />
       </div>
     </div>
   );

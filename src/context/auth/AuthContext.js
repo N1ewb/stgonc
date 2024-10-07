@@ -10,9 +10,12 @@ import {
 import {
   collection,
   doc,
+  getDocs,
   serverTimestamp,
   setDoc,
   updateDoc,
+  where,
+  query,
 } from "firebase/firestore";
 import toast from "react-hot-toast";
 import { Toast } from "react-bootstrap";
@@ -28,10 +31,6 @@ export const AuthProvider = ({ children }) => {
   const usersCollectionRef = collection(firestore, "Users");
   const [error, setError] = useState();
 
-  const studentRegistrationRequestRef = collection(
-    firestore,
-    "StudentRegistrationRequest"
-  );
   const toastMessage = (message) => toast(message);
 
   const SignIn = async (email, password) => {
@@ -203,10 +202,53 @@ export const AuthProvider = ({ children }) => {
       .catch((error) => toastMessage(error.message));
   };
 
+  const getUser = async (UID) => {
+    try {
+      const q = query(usersCollectionRef, where("userID", "==", UID));
+
+      const querySnapshot = await getDocs(q);
+      const userDoc = querySnapshot.docs[0];
+
+      if (userDoc) {
+        return userDoc.data();
+      } else {
+        return null;
+      }
+    } catch (error) {
+      throw new Error(`Error in retreving user, ${error.message}`);
+    }
+  };
+
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      setCurrentUser(user);
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        const firestoreUserData = await getUser(user.uid);
+        const userData = {
+          uid: user.uid,
+          email: user.email,
+          displayName: user.displayName,
+          phoneNumber: user.phoneNumber,
+          photoURL: user.photoURL,
+          emailVerified: user.emailVerified,
+          firstName: firestoreUserData?.firstName || "",
+          lastName: firestoreUserData?.lastName || "",
+          role: firestoreUserData?.role || "",
+          isOnline: firestoreUserData?.isOnline || false,
+          schedules: firestoreUserData?.schedules || {},
+          instructorColorCode: firestoreUserData?.instructorColorCode || "#323232",
+          department: firestoreUserData?.department || "",
+          facultyIdnumber: firestoreUserData?.facultyIdnumber,
+          studentIdnumber: firestoreUserData?.studentIdnumber,
+          guidanceIdnumber: firestoreUserData?.guidanceIdnumber,
+
+        };
+
+        setCurrentUser(userData);
+      } else {
+        setCurrentUser(null);
+      }
     });
+
     return () => {
       unsubscribe();
     };

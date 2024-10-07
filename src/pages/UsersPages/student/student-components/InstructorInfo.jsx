@@ -34,9 +34,9 @@ const InstructorInfo = ({
         0
       );
 
-      const averageRating = totalRatings / ratingList.length;
-
-      setFacultyRating(Math.min(Number(averageRating), 5));
+      var averageRating = totalRatings / ratingList.length;
+      averageRating = Math.min(Number(averageRating), 5);
+      setFacultyRating(averageRating);
     };
 
     calculateFacultyRating();

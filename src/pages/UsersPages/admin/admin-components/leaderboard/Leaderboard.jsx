@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useDB } from "../../../../../context/db/DBContext";
 import Loading from "../../../../../components/Loading/Loading";
 import InsRatingCard from "./InsRatingCard";
+import calculateRating from "../../../../../lib/utility/CalculateRating";
 
 const Leaderboard = ({ insList }) => {
   const db = useDB();
@@ -13,25 +14,7 @@ const Leaderboard = ({ insList }) => {
       try {
         if (insList.length === 0) return;
 
-        let ratedInstructors = [];
-
-        for (const ins of insList) {
-          const ratings = await db.getFacultyRatings(ins.id);
-
-          if (ratings.length > 0) {
-            const totalRatings = ratings.reduce(
-              (sum, rating) => sum + Number(rating.facultyRating),
-              0
-            );
-
-            const averageRating = totalRatings / ratings.length;
-
-            ratedInstructors.push({
-              ins,
-              avgRating: Math.min(averageRating, 5),
-            });
-          }
-        }
+        let ratedInstructors = await calculateRating(db, insList)
         const sortedIns = ratedInstructors.sort(
           (a, b) => b.avgRating - a.avgRating
         );

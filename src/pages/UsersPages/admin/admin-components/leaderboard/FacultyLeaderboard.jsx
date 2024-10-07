@@ -4,6 +4,7 @@ import { useAuth } from "../../../../../context/auth/AuthContext";
 import TopInstructors from "./TopInstructors";
 import Leaderboard from "./Leaderboard";
 import Loading from "../../../../../components/Loading/Loading";
+import CalculateRating from "../../../../../lib/utility/CalculateRating";
 
 const FacultyLeaderboard = () => {
   const db = useDB();
@@ -22,37 +23,14 @@ const FacultyLeaderboard = () => {
 
     fetchInstructors();
   }, [db]);
-
+  
   useEffect(() => {
     const fetchRatings = async () => {
       setLoading(true);
       try {
         if (insList.length === 0) return;
-
-        let ratedInstructors = [];
-
-        for (const ins of insList) {
-          const ratings = await db.getFacultyRatings(ins.id);
-
-          if (ratings.length > 0) {
-            const totalRatings = ratings.reduce(
-              (sum, rating) => sum + Number(rating.facultyRating),
-              0
-            );
-
-            const averageRating = totalRatings / ratings.length;
-
-            ratedInstructors.push({
-              ins,
-              avgRating: Math.min(averageRating, 5),
-            });
-          }
-        }
-        const top3 = ratedInstructors
-          .sort((a, b) => b.avgRating - a.avgRating)
-          .slice(0, 3);
-
-        setTopInstructors(top3);
+        const calculatedRating = await CalculateRating(db, insList)
+        setTopInstructors(calculatedRating);
       } catch (error) {
         console.error(error);
       } finally {

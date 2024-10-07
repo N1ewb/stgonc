@@ -13,7 +13,8 @@ const SchedulesModal = ({
 }) => {
   const [selectedTeacher, setSelectedTeacher] = useState("");
 
-  const handleSetTableData = () => {
+  const handleSetTableData = (e) => {
+    e.preventDefault()
     try {
       const value = JSON.parse(selectedTeacher);
       setTd(value);

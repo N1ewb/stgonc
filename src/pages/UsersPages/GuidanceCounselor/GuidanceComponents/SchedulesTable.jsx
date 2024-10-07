@@ -1,94 +1,25 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
-import SchedulesModal from "../../../../components/modal/schedules-modal/SchedulesModal";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import { useDB } from "../../../../context/db/DBContext";
-import { Tooltip } from "react-bootstrap";
 import Loading from "../../../../components/Loading/Loading";
+import { useAuth } from "../../../../context/auth/AuthContext";
+import toast from "react-hot-toast";
+import { Tooltip } from "react-bootstrap";
 import { times } from "../../../../lib/global";
+import { useScheduleManagement } from "../../../../hooks/useScheduleManagement";
+import ClickCell from "../../../../lib/utility/ClickCell";
 import SetTD from "../../../../lib/utility/setTd";
 
-const SchedulesTable = ({
-  show,
-  schedules,
-  toggleShow,
-  teachersList,
-  toastMessage,
-  setSchedules,
-  choosenCells,
-  setChoosenCells,
-  isEditMode,
-  setIsEditMode,
-}) => {
+const SchedulesTable = () => {
   const db = useDB();
+  const auth = useAuth();
+  const toastMessage = (message) => toast(message);
+  const [isEditMode, setIsEditMode] = useState(false);
+  const [schedules, setSchedules] = useState([]);
+  const [choosenCells, setChoosenCells] = useState([]);
   const [scheduleData, setScheduleData] = useState({});
   const deletedCells = useRef(new Set());
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(true);
-
- 
-
-  const handleDeleteSchedulesDoc = useCallback(
-    async (value, day) => {
-      try {
-        setError(false);
-        await db.deleteSchedule(value.timeslot.id, day.id);
-        const key = `${value.timeslot.time.startTime}-${value.timeslot.time.endTime}-${day.dayOfWeek}`;
-        deletedCells.current.add(key);
-        setScheduleData((prevData) => {
-          const newData = { ...prevData };
-          delete newData[key];
-          return newData;
-        });
-        toastMessage("Deleted Successfully");
-      } catch (error) {
-        setError(true);
-        toastMessage("Error in deleting schedule ...");
-      }
-    },
-    [db, toastMessage]
-  );
-
-  useEffect(() => {
-    const handleGetDays = async () => {
-      try {
-        const dayOfWeek = await db.getDays();
-        setSchedules(dayOfWeek);
-      } catch (error) {
-        toastMessage(error.message);
-      }
-    };
-    handleGetDays();
-  }, []);
-
-  // const handleGetTimeSlots = async (day) => {
-  //   try {
-  //     const timeSlot = await db.getTimeslotsForDay(day);
-  //   } catch (error) {
-  //     toastMessage("Error in retreivng timeslots", error.message);
-  //   }
-  // };
-
-  const handleCellClick = (time, day) => {
-    if (isEditMode) {
-      const cellData = { time, day: day.dayOfWeek, fullDay: day };
-      const JsonFormat = JSON.stringify(cellData);
-      setChoosenCells((prev) =>
-        prev.includes(JsonFormat)
-          ? prev.filter((cell) => cell !== JsonFormat)
-          : [...prev, JsonFormat]
-      );
-    }
-  };
-
-  const setTd = (value) => {
-    try {
-      const {choosedCells, editMode, notifSent} = SetTD(value, scheduleData, choosenCells, db)
-      db.setNotifSent(notifSent)
-      setChoosenCells(choosedCells)
-      setIsEditMode(editMode)
-    } catch (error) {
-      toastMessage("Error in setting table data", error.message);
-    }
-  };
+  const [error, setError] = useState(false);
 
   useEffect(() => {
     const fetchSchedules = async () => {
@@ -100,19 +31,17 @@ const SchedulesTable = ({
             const newScheduleData = {};
 
             schedules.forEach((schedule) => {
-              const unsubscribeTimeslot = db.subscribeToTimeslotChanges(
+              const unsubscribeTimeslot = db.subscribeToGuidanceTimeslotChanges(
                 (timeslots) => {
                   timeslots.forEach((timeslot) => {
                     const key = `${timeslot.time.startTime}-${timeslot.time.endTime}-${schedule.dayOfWeek}`;
 
                     if (!deletedCells.current.has(key)) {
-                      const foundInstructor = teachersList.find(
-                        (instructor) =>
-                          instructor.userID ===
-                          timeslot.assignedInstructor.userID
-                      );
-                     
-                      newScheduleData[key] = { foundInstructor, timeslot };
+                      let instructor
+                      if ( auth.currentUser.uid === timeslot.assignedInstructor.userID) {
+                        instructor = auth.currentUser
+                      }
+                      newScheduleData[key] = { instructor, timeslot };
                     }
                   });
 
@@ -147,14 +76,85 @@ const SchedulesTable = ({
     };
 
     fetchSchedules();
-  }, [db, teachersList, toastMessage]);
+  }, [db, auth.currentUser]);
+
+  const handleDeleteSchedulesDoc = useCallback(
+    async (value, day) => {
+      try {
+        setError(false);
+        await db.deleteSchedule(value.timeslot.id, day.id);
+        const key = `${value.timeslot.time.startTime}-${value.timeslot.time.endTime}-${day.dayOfWeek}`;
+        deletedCells.current.add(key);
+        setScheduleData((prevData) => {
+          const newData = { ...prevData };
+          delete newData[key];
+          return newData;
+        });
+        toastMessage("Deleted Successfully");
+      } catch (error) {
+        setError(true);
+        toastMessage("Error in deleting schedule ...");
+      }
+    },
+    [db, toastMessage]
+  );
+
+  const handleCellClick = (time, day) => {
+    const updatedCells = ClickCell(time, day, isEditMode, choosenCells);
+    setChoosenCells(updatedCells);
+  };
+
+  const setTd = (e) => {
+    e.preventDefault();
+    try {
+      const value = JSON.stringify({
+        firstName: auth.currentUser.firstName,
+        lastName: auth.currentUser.lastName,
+        userID: auth.currentUser.uid,
+        email: auth.currentUser.email,
+        phoneNumber: auth.currentUser.phoneNumber,
+        instructorColorCode: auth.currentUser.instructorColorCode,
+      });
+      const teacherValue = JSON.parse(value);
+      const { choosedCells, editMode, notifSent } = SetTD(
+        teacherValue,
+        scheduleData,
+        choosenCells,
+        db
+      );
+      db.setNotifSent(notifSent);
+      setChoosenCells(choosedCells);
+      setIsEditMode(editMode);
+    } catch (error) {
+      toastMessage("Error in setting table data", error.message);
+    }
+  };
+
+  useEffect(() => {
+    const handleGetDays = async () => {
+      try {
+        const dayOfWeek = await db.getDays();
+        setSchedules(dayOfWeek);
+      } catch (error) {
+        toastMessage(error.message);
+      }
+    };
+    handleGetDays();
+  }, [db]);
 
   if (loading) {
     return <Loading />;
   }
-
   return (
     <div className="schedules-table basis-[80%]  md:basis-[90%]  flex flex-col items-center justify-between shadow-md gap-3 p-10 rounded-[30px]">
+      {!isEditMode ? (
+        <button onClick={() => setIsEditMode(true)}>Edit</button>
+      ) : (
+        <>
+          <button onClick={() => setIsEditMode(false)}>Cancel</button>
+          <button onClick={() => setTd()}>Save Schedule</button>
+        </>
+      )}
       <table className=" min-w-[50%] border-collapse  text-center">
         <thead>
           <tr className="  [&_th]:border-transparent [&_th]:font-bold [&_th]:text-[#720000] [&_th]:p-[8px] [&_th]:w-[100px] xsm:w-[80px]">
@@ -184,7 +184,7 @@ const SchedulesTable = ({
                       <td
                         style={{
                           backgroundColor:
-                            cellValue?.foundInstructor?.instructorColorCode ||
+                            cellValue?.instructor?.instructorColorCode ||
                             "",
                         }}
                         key={cellKey}
@@ -234,15 +234,6 @@ const SchedulesTable = ({
           ))}
         </tbody>
       </table>
-      {show && (
-        <SchedulesModal
-          toggleShow={toggleShow}
-          show={show}
-          teachersList={teachersList}
-          toastMessage={toastMessage}
-          setTd={setTd}
-        />
-      )}
       <Tooltip data-anchorselect=".x-button" place="top">
         Delete cell
       </Tooltip>

@@ -66,9 +66,10 @@ const AdminAppointmentReqsPage = () => {
       <div className="w-full flex flex-row justify-between items-start h-[100%]">
         <div className="w-1/2 max-h-[90%] overflow-auto pb-3">
           {appointments && appointments.length ? (
-            appointments.map((appointment, index) =>
-              appointment.appointmentStatus === "Pending" ? (
+            appointments.map((appointment) =>
+              appointment.appointmentStatus === "Pending" && appointment.appointmentFormat !=='Walkin' ? (
                 <AppointmentReqList
+                  key={appointment.id}
                   handleAcceptAppointment={handleAcceptAppointment}
                   handleDenyAppointment={handleDenyAppointment}
                   appointment={appointment}

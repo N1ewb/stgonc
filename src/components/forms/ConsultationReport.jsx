@@ -1,10 +1,3 @@
-import React, { useEffect, useRef, useState } from "react";
-import { useDB } from "../../context/db/DBContext";
-import { useAuth } from "../../context/auth/AuthContext";
-import { useLocation } from "react-router-dom";
-import toast from "react-hot-toast";
-
-
 const ConsultationReport = ({submitForm, remarksRef, dateRef, durationRef, modeRef, agendaRef, summaryRef, isResolved, setIsResolved, submitting, setIsFollowupFormOpen}) => {
 
   return (
