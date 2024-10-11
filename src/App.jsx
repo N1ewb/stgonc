@@ -58,8 +58,8 @@ import FacultyEndCallPage from "./pages/videocall/FacultyEndCallPage";
 import StudentCounselingServices from "./pages/UsersPages/GuidanceCounselor/GuidancePages/StudentCounselingServices/StudentCounselingServices";
 import GuidanceRegister from "./pages/authentication/register/guidance_register/GuidanceRegister";
 import GuidanceDashboard from "./pages/UsersPages/GuidanceCounselor/GuidancePages/GuidanceDashboard";
-import GuidanceAppointments from "./pages/UsersPages/GuidanceCounselor/GuidancePages/GuidanceAppointments";
-import GuidanceAppointmentReq from "./pages/UsersPages/GuidanceCounselor/GuidancePages/GuidanceAppointmentReq";
+import GuidanceAppointments from "./pages/UsersPages/GuidanceCounselor/GuidancePages/GuidanceAppointments/GuidanceAppointments";
+import GuidanceAppointmentReq from "./pages/UsersPages/GuidanceCounselor/GuidancePages/GuidanceAppointments/GuidanceAppointmentReq";
 import GuidanceSchedules from "./pages/UsersPages/GuidanceCounselor/GuidancePages/GuidanceSchedules";
 import Referal from "./pages/UsersPages/GuidanceCounselor/GuidancePages/StudentCounselingServices/Referal";
 import Walkin from "./pages/UsersPages/GuidanceCounselor/GuidancePages/StudentCounselingServices/Walkin";
@@ -69,6 +69,7 @@ import WalkinForm from "./pages/UsersPages/admin/admin_pages/admin_walkins/walki
 import WalkinScheduleAppt from "./pages/UsersPages/admin/admin_pages/admin_walkins/walkin-pages/WalkinScheduleAppt";
 import WalkinPendingAppointment from "./pages/UsersPages/admin/admin_pages/admin_walkins/walkin-pages/WalkinPendingAppointment";
 import SCSDashboard from "./pages/UsersPages/GuidanceCounselor/GuidancePages/StudentCounselingServices/SCSDashboard";
+import GuidanceAppointmentDashboard from "./pages/UsersPages/GuidanceCounselor/GuidancePages/GuidanceAppointments/GuidanceAppointmentDashboard";
 
 function App() {
   const router = createBrowserRouter([
@@ -97,22 +98,22 @@ function App() {
                   element: <AdminWalkinLayout />,
                   children: [
                     {
-                      path: '/private/Admin/dashboard/walkins',
-                      element: <WalkinApptList />
+                      path: "/private/Admin/dashboard/walkins",
+                      element: <WalkinApptList />,
                     },
                     {
-                      path: '/private/Admin/dashboard/walkins/data-form',
-                      element: <WalkinForm />
+                      path: "/private/Admin/dashboard/walkins/data-form",
+                      element: <WalkinForm />,
                     },
                     {
-                      path: '/private/Admin/dashboard/walkins/schedule-form',
-                      element: <WalkinScheduleAppt />
+                      path: "/private/Admin/dashboard/walkins/schedule-form",
+                      element: <WalkinScheduleAppt />,
                     },
                     {
-                      path: '/private/Admin/dashboard/walkins/pending-walkin-appointments',
-                      element: <WalkinPendingAppointment />
+                      path: "/private/Admin/dashboard/walkins/pending-walkin-appointments",
+                      element: <WalkinPendingAppointment />,
                     },
-                  ]
+                  ],
                 },
                 {
                   path: "/private/Admin/dashboard/appointments-list",
@@ -179,13 +180,20 @@ function App() {
                   ],
                 },
                 {
-                  path: "/private/Guidance/appointments-list",
-                  element: <GuidanceAppointments />,
+                  path: "/private/Guidance/appointments",
+                  element: <GuidanceAppointmentDashboard />,
+                  children: [
+                    {
+                      path: "/private/Guidance/appointments/list",
+                      element: <GuidanceAppointments />,
+                    },
+                    {
+                      path: "/private/Guidance/appointments/request",
+                      element: <GuidanceAppointmentReq />,
+                    },
+                  ],
                 },
-                {
-                  path: "/private/Guidance/appointments-request",
-                  element: <GuidanceAppointmentReq />,
-                },
+
                 {
                   path: "/private/Guidance/schedules",
                   element: <GuidanceSchedules />,
@@ -193,7 +201,7 @@ function App() {
                 {
                   path: "/private/Guidance/notifications",
                   element: <NotificationPage />,
-                }
+                },
               ],
             },
             {

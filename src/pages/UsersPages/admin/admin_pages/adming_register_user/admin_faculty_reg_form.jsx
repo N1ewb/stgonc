@@ -4,6 +4,7 @@ import { ChromePicker } from "react-color";
 import "./admin_faculty_reg_form.css";
 import { AdminCreateFacultyAccount } from "../../../../../context/auth/adminCreateAccount";
 import toast from "react-hot-toast";
+import { spcDepartments } from "../../../../../lib/global";
 
 const RegisterFacultyForm = () => {
   const toastMessage = (message) => toast(message);
@@ -21,15 +22,6 @@ const RegisterFacultyForm = () => {
   const departmentRef = useRef();
   const passwordRef = useRef();
   const confirmpasswordRef = useRef();
-
-  const spcDepartments = [
-    "College of Computer Studies",
-    "College of Criminology",
-    "College of Education",
-    "College of Business Administration",
-    "College of Engineering",
-    "College of Arts and Sciences",
-  ];
 
   const handleCreateFacultyAccount = async () => {
     setIsSubmitting(true);
@@ -96,7 +88,7 @@ const RegisterFacultyForm = () => {
   return (
     <div className="faculty-register-form-container w-full flex flex-col  items-center">
       <h2 className="text-[#720000]">Faculty Registration Form</h2>
-      <div className="faculty-reg-form w-[90%] flex flex-col  [&_input]:border-solid [&_input]:border-[1px] [&_input]:border-[#740000] [&_input]:rounded-[4px] flex flex-col gap-[10px]">
+      <div className="faculty-reg-form w-[90%] [&_input]:border-solid [&_input]:border-[1px] [&_input]:border-[#740000] [&_input]:rounded-[4px] flex flex-col gap-[10px]">
         <input
           name="firstname"
           placeholder="First Name"

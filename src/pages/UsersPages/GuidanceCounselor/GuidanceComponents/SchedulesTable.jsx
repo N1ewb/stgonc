@@ -146,14 +146,14 @@ const SchedulesTable = () => {
     return <Loading />;
   }
   return (
-    <div className="schedules-table basis-[80%]  md:basis-[90%]  flex flex-col items-center justify-between shadow-md gap-3 p-10 rounded-[30px]">
+    <div className="schedules-table basis-[80%]  md:basis-[90%]  flex flex-col items-center justify-between shadow-md gap-3 p-10 rounded-[30px] [&_button]:bg-[#320000] [&_button]:hover:bg-[#720000] [&_button]:rounded-md ">
       {!isEditMode ? (
         <button onClick={() => setIsEditMode(true)}>Edit</button>
       ) : (
-        <>
+        <div className="flex flex-row gap-5">
           <button onClick={() => setIsEditMode(false)}>Cancel</button>
-          <button onClick={() => setTd()}>Save Schedule</button>
-        </>
+          <button onClick={(e) => setTd(e)}>Save Schedule</button>
+        </div>
       )}
       <table className=" min-w-[50%] border-collapse  text-center">
         <thead>

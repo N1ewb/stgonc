@@ -45,7 +45,7 @@ const AppointmentInfo = ({
           <span className="font-semibold">
             {currentAppointment.appointmentStatus === "Accepted"
               ? "Appointment"
-              : currentAppointment.appointmentStatus === "pending"
+              : currentAppointment.appointmentStatus === "Pending"
               ? "Request"
               : "No"}
           </span>{" "}

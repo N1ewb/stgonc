@@ -101,6 +101,21 @@ export const DBProvider = ({ children }) => {
     }
   };
 
+  const getGuidance = async () => {
+    try{
+      const q = query(usersCollectionRef, where('role', '==', 'Guidance'), limit(1))
+      const querySnapshot = await getDocs(q);
+      const userData = querySnapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+
+      return userData;
+    }catch(error){
+      toastMessage(`Errr in retreiving guidance counselor info, ${error.message}`)
+    }
+  }
+
   const getTeachers = async () => {
     try {
       if (auth.currentUser) {
@@ -1182,6 +1197,7 @@ export const DBProvider = ({ children }) => {
   const value = {
     getUsers,
     getUser,
+    getGuidance,
     getTeachers,
     getAllUsers,
     sendAppointmentRequest,

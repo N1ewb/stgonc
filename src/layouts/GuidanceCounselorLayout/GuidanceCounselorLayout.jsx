@@ -9,12 +9,8 @@ const GuidanceCounselorLayout = () => {
       link: "/private/Guidance/dashboard",
     },
     {
-      name: "Appointment List",
-      link: "/private/Guidance/appointments-list",
-    },
-    {
-      name: "Appointment Requests",
-      link: "/private/Guidance/appointments-request",
+      name: "Appointments",
+      link: "/private/Guidance/appointments/list",
     },
     {
       name: "Schedules",

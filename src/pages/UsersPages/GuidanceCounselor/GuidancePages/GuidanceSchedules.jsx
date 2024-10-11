@@ -5,7 +5,7 @@ const GuidanceSchedules = () => {
   return (
     <div className="w-full h-[100%] flex flex-col">
       <div className="header w-full justify-start">
-        <h1 className="w-full">
+        <h1 className="w-full font-bold">
           <span className="font-light">Your</span> Schedule
         </h1>
       </div>

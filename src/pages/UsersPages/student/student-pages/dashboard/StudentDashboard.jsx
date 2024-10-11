@@ -21,11 +21,24 @@ const StudentDashboard = () => {
   const notif = useMessage();
   const chat = useChat();
   const navigate = useNavigate();
-  const [instructors, setInstructors] = useState();
+  const [instructors, setInstructors] = useState([]);
   const [currentInstructor, setCurrentInstructor] = useState();
   const [instructorInfo, setInstructorInfo] = useState(null);
   const [myInfo, setMyInfo] = useState();
   const [show, setShow] = useState(false);
+  const [currentOption, setCurrentOption] = useState("Instructors");
+
+  const handleSetCurrentOption = (option) => {
+    setCurrentOption(option);
+  };
+
+  useEffect(() => {
+    if(currentOption === 'Instructors'){
+      handleGetTeachers();
+    } else if (currentOption === 'Guidance'){
+      handleGetGuidance()
+    }
+  },[currentOption])
 
   const toggleShow = (instructor) => {
     setShow(!show);
@@ -50,22 +63,16 @@ const StudentDashboard = () => {
     }
   });
 
-  useEffect(() => {
-    if (instructors === undefined) {
-      handleGetTeachers();
-    }
-  });
+
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const unsubscribe = call.subscribeToCallChanges(
-          (newcalloffers) => {
-            navigate(
-              `/private/ReceiveCallReq?appointment=${newcalloffers.appointment}&receiver=${auth.currentUser.uid}&caller=${newcalloffers.caller}`
-            );
-          }, "calling"
-        );
+        const unsubscribe = call.subscribeToCallChanges((newcalloffers) => {
+          navigate(
+            `/private/ReceiveCallReq?appointment=${newcalloffers.appointment}&receiver=${auth.currentUser.uid}&caller=${newcalloffers.caller}`
+          );
+        }, "calling");
         return () => unsubscribe();
       } catch (error) {
         console.log(error);
@@ -74,18 +81,33 @@ const StudentDashboard = () => {
     fetchData();
   }, [call]);
 
+  const handleGetGuidance = async () => {
+    const guidance = await db.getGuidance();
+    setInstructors(guidance);
+  };
+
   return (
     <div className="h-[100%] flex flex-col gap-10  w-full">
+      <header className="flex flex-row w-full justify-between items-center">
       <h1 className="text-[#360000] ">
         <span className="font-bold">{myInfo && myInfo.department} </span>{" "}
         <br></br>
         <span>Department Instructors</span>{" "}
       </h1>
-      <Link to='/private/Endcallpage'>Go to end call page</Link>
+      {/* <Link to='/private/Endcallpage'>Go to end call page</Link> */}
+      <div className="options flex flex-row w-1/2 gap-10 justify-end">
+        <button onClick={() => handleSetCurrentOption("Instructors")}>
+          Instructors
+        </button>
+        <button onClick={() => handleSetCurrentOption("Guidance")}>
+          Guidance Counselor
+        </button>
+      </div>
+      </header>
       <div className="flex flex-row w-full h-[100%] justify-between">
         <div className="main h-[85%] w-1/2 ">
           <InstructorsList
-            instructors={instructors} 
+            instructors={instructors}
             More={More}
             DefaultProfile={DefaultProfile}
             setInstructorInfo={setInstructorInfo}
@@ -99,14 +121,18 @@ const StudentDashboard = () => {
           }`}
         >
           {instructorInfo && (
-            <InstructorInfo toggleShow={toggleShow} currentInstructor={instructorInfo} setInstructorInfo={setInstructorInfo} />
+            <InstructorInfo
+              toggleShow={toggleShow}
+              currentInstructor={instructorInfo}
+              setInstructorInfo={setInstructorInfo}
+            />
           )}
         </div>
       </div>
 
       <RequestAppointmentForm
         instructor={currentInstructor}
-        toggleShow={toggleShow} 
+        toggleShow={toggleShow}
         show={show}
         myInfo={myInfo}
       />
