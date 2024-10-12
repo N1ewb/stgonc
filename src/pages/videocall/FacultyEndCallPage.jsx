@@ -34,7 +34,7 @@ const FacultyEndCallPage = () => {
       };
       handleGetUser();
     }
-  }, [auth.currentUser]);
+  }, [db, auth.currentUser]);
 
   const submitForm = async (e) => {
     e.preventDefault();
@@ -75,9 +75,9 @@ const FacultyEndCallPage = () => {
     }
   };
 
-  const handleSubmitReport = async () => {
+  const handleSubmitReport = async (e) => {
     try {
-      submitForm();
+      submitForm(e);
       await db.finishAppointment(appointment, receiver);
     } catch (error) {
       toastMessage(

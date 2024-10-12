@@ -236,6 +236,59 @@ export const DBProvider = ({ children }) => {
     }
   };
 
+  const makeReferal = async (firstname, lastname, email, referee, department, concern, concernType, date) => {
+    try{
+      if(auth.currentUser){
+        const q = query(appointmentsRef)
+        await addDoc(q, {
+          appointee : {
+            firstname,
+            lastname,
+            email,
+            department,
+          },
+          appointedFaculty: auth.currentUser.uid,
+          referee,
+          appointmentDate: date,
+          appointmentFormat: 'Referal', 
+          appointmentType: 'Face to Face',
+          appointmentConcern: concern,
+          appointmentType: concernType,
+          createdAt: serverTimestamp(),
+
+        })
+      }
+    }catch(error){
+      throw new Error(`Error in making referal ${error.message}`)
+    }
+  }
+
+  const makeWalkin = async (firstname, lastname,email, date, concern, concernType, department) => {
+    try{
+      if(auth.currentUser){
+        const q = query(appointmentsRef)
+        await addDoc(q, {
+          appointee : {
+            firstname,
+            lastname,
+            email,
+            department,
+          },
+          appointedFaculty: auth.currentUser.uid,
+          appointmentDate: date,
+          appointmentFormat: 'Walkin', 
+          appointmentType: 'Face to Face',
+          appointmentConcern: concern,
+          appointmentType: concernType,
+          createdAt: serverTimestamp(),
+
+        })
+      }
+    }catch(error){
+      throw new Error(`Error in making referal ${error.message}`)
+    }
+  }
+
   //As dean
   const uploadESignature = async (imageFile) => {
     try {
@@ -366,9 +419,9 @@ export const DBProvider = ({ children }) => {
       if (auth.currentUser) {
         const recevingUser = await getUser(receiver);
 
-        const updatedAppointmentDocRef = { appointmentStatus: "Followup" };
-        await updateDoc(appointmentsRef, updatedAppointmentDocRef);
-
+        const oldAppointmentRef = doc(appointmentsRef, id);
+        await updateDoc(oldAppointmentRef, { appointmentStatus: "Followup" });
+    
         await addDoc(appointmentsRef, {
           precedingAppt: id,
           appointee: receiver,
@@ -787,7 +840,41 @@ export const DBProvider = ({ children }) => {
           query(
             appointmentsRef,
             where("appointmentFormat", "==", "Walkin"),
-            where('appointmentStatus', 'in', statusArray)
+            where('appointmentStatus', 'in', statusArray),
+            where('appointedFaculty', '==', auth.currentUser.uid)
+          ),
+          (snapshot) => {
+            const data = snapshot.docs.map((doc) => ({
+              id: doc.id,
+              ...doc.data(),
+            }));
+
+            callback(data);
+          }
+        );
+        return unsubscribe;
+      } else {
+        console.warn("No current user found.");
+        return () => {};
+      }
+    } catch (error) {
+      console.error(
+        "Error in subscribing to walk-in appointment changes:",
+        error
+      );
+      return () => {};
+    }
+  };
+
+  const subscribeToSCSChanges = async (format,callback) => {
+    try {
+      if (auth.currentUser) {
+        const formatArray = Array.isArray(format) ? format : [format];
+        const unsubscribe = onSnapshot(
+          query(
+            appointmentsRef,
+            where("appointmentFormat", "in", formatArray),
+            where('appointedFaculty' ,'==', auth.currentUser.uid)
           ),
           (snapshot) => {
             const data = snapshot.docs.map((doc) => ({
@@ -1203,8 +1290,11 @@ export const DBProvider = ({ children }) => {
     sendAppointmentRequest,
     getAppointment,
     walkinAppointment,
+    makeReferal,
+    makeWalkin,
     uploadESignature,
     subscribeToWalkinAppointmentChanges,
+    subscribeToSCSChanges,
     getAppointmentRequests,
     getInstructorAppointment,
     approveAppointment,

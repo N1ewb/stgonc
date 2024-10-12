@@ -20,7 +20,7 @@ const StudentCounselingServices = () => {
           <Link to='/private/Guidance/student-counseling-services/Walkin'>Walk-ins</Link>
         </div>
       </div>
-      <div className="scs-content">
+      <div className="scs-content h-[100%] w-full">
         <Outlet />
       </div>
     </div>

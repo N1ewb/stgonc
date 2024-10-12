@@ -7,11 +7,10 @@ const AppointmentInfo = ({
   handleAcceptAppointment,
   handleDenyAppointment,
 }) => {
-  const db = useDB()
+  const db = useDB();
   const { currentAppointment, setCurrentAppointment } = useAppointment();
   const [appointee, setAppointee] = useState(null);
 
-  
   const handleGetUser = async (uid) => {
     try {
       const user = await db.getUser(uid);
@@ -21,13 +20,11 @@ const AppointmentInfo = ({
     }
   };
 
-  
   useEffect(() => {
     if (currentAppointment.appointee) {
       handleGetUser(currentAppointment.appointee);
     }
   }, [currentAppointment.appointee]);
-
 
   const formatDate = (dateString) => {
     const date = new Date(dateString);
@@ -47,6 +44,8 @@ const AppointmentInfo = ({
               ? "Appointment"
               : currentAppointment.appointmentStatus === "Pending"
               ? "Request"
+              : currentAppointment.appointmentStatus === "Followup"
+              ? "Follow Up"
               : "No"}
           </span>{" "}
           <span className="font-light">Information</span>
@@ -99,7 +98,7 @@ const AppointmentInfo = ({
             Deny
           </button>
         </div>
-      ) : currentAppointment.appointmentStatus === "Accepted" ? (
+      ) : currentAppointment.appointmentStatus === "Accepted" || "Followup" ? (
         <div className="appointment-info-footer w-full flex flex-row items-end justify-end gap-3 ">
           <button className="m-0 py-2 px-5 bg-[#57a627] rounded-md">
             Finish

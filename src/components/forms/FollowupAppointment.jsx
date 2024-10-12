@@ -39,8 +39,8 @@ const FollowupAppointment = ({
         receiver &&
         apptFormat &&
         appointmentDate &&
-        appointmentTime &&
-        location)
+        appointmentTime 
+        )
       ) {
         await db.followupAppointment(
           appointment,
@@ -48,9 +48,9 @@ const FollowupAppointment = ({
           apptFormat,
           appointmentDate.dateWithoutTime,
           appointmentTime,
-          location
+          location || null
         );
-        await submitForm();
+        await submitForm(e);
       } else {
         toastMessage("Please fill in fields in both forms");
       }
@@ -90,7 +90,7 @@ const FollowupAppointment = ({
         </button>
       </div>
       <div className="w-full">
-        <form onSubmit={handleSubmit} className="flex flex-col gap-5 w-full">
+        <form onSubmit={(e) => handleSubmit(e)} className="flex flex-col gap-5 w-full">
           <div className="schedule-container flex flex-row justify-between">
             <div className="calendar-container w-[48%]">
               <Calendar

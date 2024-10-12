@@ -19,7 +19,7 @@ const GuidanceAppointments = () => {
       if (auth.currentUser) {
         try {
           const unsubscribe = db.subscribeToAppointmentChanges(
-            "Accepted",
+            ["Accepted", "Followup"],
             (callback) => {
               setAppointments(callback);
               setTemp(callback);

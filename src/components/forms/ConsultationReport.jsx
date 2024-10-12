@@ -2,7 +2,7 @@ const ConsultationReport = ({submitForm, remarksRef, dateRef, durationRef, modeR
 
   return (
     <form
-      onSubmit={submitForm}
+      onSubmit={(e) => submitForm(e)}
       className="w-full p-10 rounded-3xl shadow-lg flex-col flex gap-4 items-center [&_div]:w-full mt-10"
     >
       <h1 className="text-[#720000] ">Consultation Report</h1>
