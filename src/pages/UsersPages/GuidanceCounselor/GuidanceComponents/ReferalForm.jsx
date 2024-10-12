@@ -2,11 +2,10 @@ import React, { useRef, useState } from "react";
 import { useDB } from "../../../../context/db/DBContext";
 import { spcDepartments } from "../../../../lib/global";
 import toast from "react-hot-toast";
-import { MessagingProvider } from "../../../../context/notification/NotificationContext";
 
 const ReferalForm = ({ handleOpenForm }) => {
   const db = useDB();
-  const toastMessage = (message) => toast(MessagingProvider)
+  const toastMessage = (message) => toast(message)
   const [submitting, setSubmitting] = useState(false);
   
   const firstnameRef = useRef();

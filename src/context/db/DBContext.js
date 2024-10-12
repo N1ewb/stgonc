@@ -236,14 +236,14 @@ export const DBProvider = ({ children }) => {
     }
   };
 
-  const makeReferal = async (firstname, lastname, email, referee, department, concern, concernType, date) => {
+  const makeReferal = async (firstName, lastName, email, referee, department, concern, concernType, date) => {
     try{
       if(auth.currentUser){
         const q = query(appointmentsRef)
         await addDoc(q, {
           appointee : {
-            firstname,
-            lastname,
+            firstName,
+            lastName,
             email,
             department,
           },
@@ -263,14 +263,14 @@ export const DBProvider = ({ children }) => {
     }
   }
 
-  const makeWalkin = async (firstname, lastname,email, date, concern, concernType, department) => {
+  const makeWalkin = async (firstName, lastName,email, date, concern, concernType, department) => {
     try{
       if(auth.currentUser){
         const q = query(appointmentsRef)
         await addDoc(q, {
           appointee : {
-            firstname,
-            lastname,
+            firstName,
+            lastName,
             email,
             department,
           },

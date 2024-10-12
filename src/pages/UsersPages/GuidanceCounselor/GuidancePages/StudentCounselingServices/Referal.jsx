@@ -3,11 +3,13 @@ import Add from "../../../../../static/images/add.png";
 import ReferalForm from "../../GuidanceComponents/ReferalForm";
 import { useDB } from "../../../../../context/db/DBContext";
 import SCSApptCards from "../../GuidanceComponents/SCSApptCards";
+import SCSApptInfo from "../../GuidanceComponents/SCSApptInfo";
 
 const Referal = () => {
   const [isFormOpen, setisFormOpen] = useState(false);
   const db = useDB();
   const [appts, setAppts] = useState([]);
+  const [currentSCSAppt, setCurrentSCSAppt] = useState(null);
   useEffect(() => {
     const fetchData = async () => {
       const unsubscribe = db.subscribeToSCSChanges("Referal", (callback) => {
@@ -19,7 +21,13 @@ const Referal = () => {
   }, [db]);
   const handleOpenForm = () => {
     setisFormOpen(!isFormOpen);
+    setCurrentSCSAppt(null)
   };
+  useEffect(() => {
+    if(currentSCSAppt){
+      setisFormOpen(false)
+    }
+  },[currentSCSAppt])
 
   return (
     <div className="flex flex-col gap-5 h-[100%] w-full">
@@ -31,23 +39,38 @@ const Referal = () => {
           <img src={Add} alt="add" height={35} width={35} />
         </button>
       </header>
-      <main className="h-[95%] flex flex-row">
+      <main className="h-[95%] w-full flex flex-row">
         <div
           className={`form-container transition-all duration-500 ease-out h-[100%] overflow-auto ${
             isFormOpen ? "w-1/2" : "w-0"
           }`}
         >
-          {isFormOpen && <ReferalForm handleOpenForm={handleOpenForm} />}
+          {isFormOpen && !currentSCSAppt && <ReferalForm handleOpenForm={handleOpenForm} />}
         </div>
         <div
-          className={`data-container transition-all duration-500 ease-out max-h-[100%] overflow-auto ${
-            !isFormOpen ? "w-full" : "w-1/2"
+          className={`data-container transition-all duration-500 ease-out max-h-[100%] overflow-auto w-1/2
           }`}
         >
           {appts.length !== 0
-            ? appts.map((appt) => <SCSApptCards appt={appt} />)
+            ? appts.map((appt) => (
+                <SCSApptCards
+                  key={appt.id}
+                  appt={appt}
+                  setCurrentSCSAppt={setCurrentSCSAppt}
+                  currentSCSAppt={currentSCSAppt}
+                />
+              ))
             : "No referal data yet"}
         </div>
+        {currentSCSAppt && !isFormOpen &&(
+          <div className="flex w-1/2 px-5">
+            {" "}
+            <SCSApptInfo
+              currentSCSAppt={currentSCSAppt}
+              setCurrentSCSAppt={setCurrentSCSAppt}
+            />{" "}
+          </div>
+        )}
       </main>
     </div>
   );
