@@ -789,6 +789,27 @@ export const DBProvider = ({ children }) => {
     }
   };
 
+  const subscribeToUserAppointmentChanges = async (callback) => {
+    try {
+      if (auth.currentUser) {
+        const unsubscribe = onSnapshot(
+          query(appointmentsRef, where("appointedFaculty", "==", auth.currentUser.uid)),
+          (snapshot) => {
+            const data = snapshot.docs.map((doc) => ({
+              id: doc.id,
+              ...doc.data(),
+            }));
+
+            callback(data);
+          }
+        );
+        return unsubscribe;
+      }
+    } catch (error) {
+      console.error();
+    }
+  };
+
   const subscribeToTodayAppointmentChanges = async (callback) => {
     try {
       if (auth.currentUser) {
@@ -1327,6 +1348,7 @@ export const DBProvider = ({ children }) => {
     subscribetoPendingRegistration,
     subscribeToAppointmentChanges,
     subscribeToAllAppointmentChanges,
+    subscribeToUserAppointmentChanges,
     subscribeToTodayAppointmentChanges,
     subscribeToMessageChanges,
     subscribeToRequestedAppointmentChanges,
