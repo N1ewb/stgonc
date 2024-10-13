@@ -1,8 +1,11 @@
 import React, { useEffect, useState } from "react";
 import PeopleIcon from "../../../../../static/images/people.png";
+import { useAuth } from "../../../../../context/auth/AuthContext";
 
 const TodayInfo = ({ apptList }) => {
+  const auth = useAuth()
   const [walkins, setWalkins] = useState([]);
+  const [referals, setReferals] = useState([])
   const [apptToday, setApptToday] = useState([]);
   const [ongoingAppt, setOngoingAppt] = useState([])
 
@@ -14,6 +17,7 @@ const TodayInfo = ({ apptList }) => {
       setOngoingAppt(filteredApptList) 
     }
   }
+
   const handlefindApptsToday = () => {
     const today = new Date().toISOString().split("T")[0];
     const filterApptList = apptList.filter(
@@ -38,6 +42,17 @@ const TodayInfo = ({ apptList }) => {
           (appt) => appt.appointmentFormat === "Walkin"
         );
         setWalkins(filterdAppt);
+      }
+    };
+    fetchData();
+  }, [apptToday]);
+  useEffect(() => {
+    const fetchData = async () => {
+      if (apptToday) {
+        const filterdAppt = apptList.filter(
+          (appt) => appt.appointmentFormat === "Referal"
+        );
+        setReferals(filterdAppt);
       }
     };
     fetchData();
@@ -72,9 +87,10 @@ const TodayInfo = ({ apptList }) => {
             <div className="img-wrapper flex items-center justify-center rounded-full p-1 bg-[#FFC107] h-[50px] w-[50px]">
               <img src={PeopleIcon} alt="people" />
             </div>
-            <p>Total Ongoing Appointments</p>
+            {auth.currentUser.role === "Guidance" ?   <p>Total Referals</p> :  <p>Total Ongoing Appointments</p>}
+          
           </div>
-          <span>{ongoingAppt && ongoingAppt.length}</span>
+          {auth.currentUser.role === "Guidance" ? <span>{referals && referals.length}</span> : <span>{ongoingAppt && ongoingAppt.length}</span>}
         </div>
         
       </div>
