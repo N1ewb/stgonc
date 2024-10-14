@@ -77,7 +77,7 @@ const FacultyEndCallPage = () => {
 
   const handleSubmitReport = async (e) => {
     try {
-      submitForm(e);
+      await submitForm(e);
       await db.finishAppointment(appointment, receiver);
     } catch (error) {
       toastMessage(

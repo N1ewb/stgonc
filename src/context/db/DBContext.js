@@ -251,7 +251,6 @@ export const DBProvider = ({ children }) => {
           referee,
           appointmentDate: date,
           appointmentFormat: 'Referal', 
-          appointmentType: 'Face to Face',
           department: user.department,
           appointmentConcern: concern,
           appointmentType: concernType,
@@ -513,8 +512,12 @@ export const DBProvider = ({ children }) => {
   ) => {
     try {
       if (auth.currentUser) {
-        const q = query(consultationReportRef);
-        await addDoc(q, {
+
+        const appointmentDocRef = doc(firestore, "Appointments", id);
+        const updatedAppointmentDocRef = { teacherRemarks: remarks };
+        const reportRef = collection(appointmentDocRef, "Reports");
+        await updateDoc(appointmentDocRef, updatedAppointmentDocRef)
+        await addDoc(reportRef, {
           remarks,
           date,
           duration,
@@ -1017,8 +1020,9 @@ export const DBProvider = ({ children }) => {
     }
   };
 
-  const denyRegistration = async () => {
+  const denyRegistration = async (denyMessage, receiver) => {
     try {
+
     } catch (error) {
       console.error(error);
     }
