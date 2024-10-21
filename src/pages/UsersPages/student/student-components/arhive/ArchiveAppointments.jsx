@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { useDB } from "../../../../context/db/DBContext";
-import More from '../../../../static/images/more-dark.png'
-const ArchiveAppointments = ({ appointment }) => {
+import { useDB } from "../../../../../context/db/DBContext";
+import More from "../../../../../static/images/more-dark.png";
+const ArchiveAppointments = ({ appointment, handleOpenForm, currentArch }) => {
   const db = useDB();
   const [faculty, setFacultyData] = useState();
   const facultyData = async (uid) => {
@@ -20,12 +20,15 @@ const ArchiveAppointments = ({ appointment }) => {
   }, [appointment]);
 
   return (
-    <div className="w-1/2 flex flex-row justify-between shadow-md rounded-3xl p-5">
+    <div className="w-full flex flex-row justify-between items-center shadow-md rounded-3xl p-5">
       <p>
         This appointment was {appointment.appointmentStatus} by{" "}
         {faculty?.firstName} {faculty?.lastName}
       </p>
+      <button className="bg-transparent p-0" onClick={() => handleOpenForm(appointment)}>
+        {" "}
         <img src={More} alt="More info" height={25} width={25} />
+      </button>
     </div>
   );
 };

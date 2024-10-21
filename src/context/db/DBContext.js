@@ -226,6 +226,7 @@ export const DBProvider = ({ children }) => {
           appointmentDuration: duration,
           teacherRemarks: remarks,
           appointmentFormat: "Walkin",
+          appointmentStatus: 'Recorded',
           createdAt: serverTimestamp(),
           appointedFaculty: auth.currentUser.uid,
         });

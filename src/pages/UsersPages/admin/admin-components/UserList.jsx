@@ -1,6 +1,17 @@
 import React from "react";
 
-const UserList = ({ currentCharacters, defaultProfile, More }) => {
+const UserList = ({
+  currentCharacters,
+  defaultProfile,
+  More,
+  setCurrentUserInfo,
+  currentUserInfo,
+}) => {
+  const handleSetCurrentUser = (user) => {
+    setCurrentUserInfo((prevUser) => (prevUser === user ? null : user));
+  };
+  
+
   return (
     <div className="user-list flex flex-col items-start gap-3 max-h-[100%] rounded-3xl overflow-auto py-3">
       {currentCharacters && currentCharacters.length !== 0 ? (
@@ -26,9 +37,12 @@ const UserList = ({ currentCharacters, defaultProfile, More }) => {
 
             <p className="w-[8%] xl:w-[10%] lg:hidden">{users.role}</p>
 
-            <div className="more-options cursor-pointer hover:bg-white p-1 rounded-full">
+            <button
+              onClick={() => handleSetCurrentUser(users)}
+              className="more-options cursor-pointer bg-transparent hover:bg-white p-0 rounded-full"
+            >
               <img src={More} alt="more" width={25} height={25} />
-            </div>
+            </button>
           </div>
         ))
       ) : (

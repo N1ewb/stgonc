@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useDB } from "../../../../../../context/db/DBContext";
-import More from "../../../../../../static/images/more-light.png";
-import { useNavigate } from "react-router-dom";
 import WalkinInfo from "./WalkinInfo";
+import ApptListCard from "../../../admin-components/walkins/ApptListCard";
 
 const WalkinApptList = () => {
   const [currentWalkin, setCurrentWalkin] = useState();
@@ -12,7 +11,8 @@ const WalkinApptList = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const unsubscribe = db.subscribeToWalkinAppointmentChanges( ['Recorded', 'Pending'],
+        const unsubscribe = db.subscribeToWalkinAppointmentChanges(
+          ["Recorded", "Pending"],
           (appointments) => {
             setWalkinAppointmentList(appointments);
           }
@@ -27,32 +27,14 @@ const WalkinApptList = () => {
 
   return (
     <div className="walkin-appointment-list-container h-[100%] w-full flex flex-row text-black">
-      <div className={`transition-all duration-500 ease-out ${currentWalkin ? "w-1/2" : "w-full"}`}>
+      <div
+        className={`transition-all duration-500 ease-out ${
+          currentWalkin ? "w-1/2" : "w-full"
+        }`}
+      >
         {walkinAppointmentList.length > 0 ? (
           walkinAppointmentList.map((appointment) => (
-            <div
-              key={appointment.id}
-              className="flex flex-row shadow-md items-center rounded-3xl p-5 justify-between"
-            >
-              <p className="capitalize">
-                Name: {appointment.appointee.firstName}{" "}
-                {appointment.appointee.lastName}
-              </p>
-
-              <p>Date: {appointment.appointmentDate}</p>
-              <button
-                className="bg-transparent hover:bg-transparent p-0 m-0"
-                onClick={() =>
-                  setCurrentWalkin(
-                    currentWalkin && currentWalkin === appointment
-                      ? null
-                      : appointment
-                  )
-                }
-              >
-                <img src={More} alt="info" height={25} width={25} />
-              </button>
-            </div>
+            <ApptListCard key={appointment.id} appointment={appointment} setCurrentWalkin={setCurrentWalkin} currentWalkin={currentWalkin} />
           ))
         ) : (
           <p>No walk-in appointment records</p>

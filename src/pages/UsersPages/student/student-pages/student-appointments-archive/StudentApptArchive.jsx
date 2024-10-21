@@ -1,10 +1,22 @@
 import React, { useEffect, useState } from "react";
 import { useDB } from "../../../../../context/db/DBContext";
-import ArchiveAppointments from "../../student-components/ArchiveAppointments";
+import ArchiveAppointments from "../../student-components/arhive/ArchiveAppointments";
+import ArhiveInfo from "../../student-components/arhive/ArhiveInfo";
 
 const StudentApptArchive = () => {
   const db = useDB();
   const [archiveAppointments, setArchiveAppointments] = useState();
+  const [currentArch, setCurrentArch] = useState(null)
+
+  const handleOpenForm = (arch) => {
+    if(!currentArch){
+      setCurrentArch(arch)
+    } else if( currentArch === arch) {
+      setCurrentArch(null)
+    } else {
+      setCurrentArch(null)
+    }
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -12,7 +24,7 @@ const StudentApptArchive = () => {
         ["Denied", "Finished", "Cancelled"],
         (callback) => {
           setArchiveAppointments(callback);
-          console.log(callback)
+          console.log(callback);
         }
       );
       return () => unsubscribe();
@@ -21,13 +33,26 @@ const StudentApptArchive = () => {
   }, [db]);
 
   return (
-    <div>
-      <div className="archive-page-header w-full h-[100%] flex-col flex ">
-        <h1 className="font-bold text-[#720000]">Student Appointment <span className="font-light">Archive</span></h1>
+    <div className="h-[100%] w-full flex flex-col justify-start">
+      <div className="archive-page-header w-full h-[10%] flex-col flex ">
+        <h1 className="font-bold text-[#720000]">
+          Student Appointment <span className="font-light">Archive</span>
+        </h1>
       </div>
-      <div className="archive-page-content">
-        {archiveAppointments && archiveAppointments.length !== 0 ? archiveAppointments.map((appointment) => 
-        <ArchiveAppointments key={appointment.id} appointment={appointment} /> ) :'No archives'}
+      <div className="archive-page-content flex flex-row h-[90%] max-h-[90%] pb-2 overflow-auto w-full justify-between ">
+        <div className="archives-list w-1/2">
+          {archiveAppointments && archiveAppointments.length !== 0
+            ? archiveAppointments.map((appointment) => (
+                <ArchiveAppointments
+                  key={appointment.id}
+                  appointment={appointment}
+                  handleOpenForm={handleOpenForm}
+                  currentArch={currentArch}
+                />
+              ))
+            : "No archives"}
+        </div>
+       {currentArch ? <ArhiveInfo appointment={currentArch} handleOpenForm={handleOpenForm} /> : ""}
       </div>
     </div>
   );

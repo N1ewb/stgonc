@@ -61,6 +61,7 @@ const AdminAppointmentReqsPage = () => {
           datas={appointments}
           setData={setAppointments}
           temp={temp}
+          setCurrentPage={() => null}
         />
       </div>
       <div className="w-full flex flex-row justify-between items-start h-[100%]">

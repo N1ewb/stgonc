@@ -7,6 +7,7 @@ import More from "../../../../../static/images/more-dark.png";
 import UserList from "../../admin-components/UserList";
 import AdminSearchBar from "../../admin-components/AdminSearchBar";
 import Loading from "../../../../../components/Loading/Loading";
+import UserlistInfo from "../../admin-components/userlist/UserlistInfo";
 
 const AdminUserList = () => {
   const db = useDB();
@@ -19,6 +20,8 @@ const AdminUserList = () => {
   const [currentCharacters, setcurrentCharacters] = useState();
   const [temp, setTemp] = useState();
   const [ITEMS_PER_PAGE, setITEMS_PER_PAGE] = useState(10);
+  const [currentUserInfo, setCurrentUserInfo] = useState(null)
+
   useEffect(() => {
     const fetchData = async () => {
       if (auth.currentUser) {
@@ -68,7 +71,7 @@ const AdminUserList = () => {
   }, [userList, currentPage, ITEMS_PER_PAGE]);
 
   if (loading) {
-    return <Loading />
+    return <Loading />;
   }
 
   if (error) {
@@ -92,12 +95,19 @@ const AdminUserList = () => {
             setCurrentPage={setCurrentPage}
           />
         </div>
-        <div className="div flex flex-col w-1/2 h-[80%] max-h-[90%] p-0 m-0">
-          <UserList
-            currentCharacters={currentCharacters}
-            defaultProfile={defaultProfile}
-            More={More}
-          />
+        <div className="h-[80%] max-h-[90%] flex flex-row w-full justify-between items-start">
+          <div className="div flex flex-col max-h-full w-[48%]  p-0 m-0">
+            <UserList
+              currentCharacters={currentCharacters}
+              defaultProfile={defaultProfile}
+              More={More}
+              setCurrentUserInfo={setCurrentUserInfo}
+              currentUserInfo={currentCharacters}
+            />
+          </div>
+          <div className="div flex flex-col w-[48%] max-h-full p-0 m-0">
+            {currentUserInfo && <UserlistInfo setCurrentUserInfo={setCurrentUserInfo} currentUserInfo={currentUserInfo} />}
+          </div>
         </div>
       </div>
       <div className="flex flex-row w-[95%] justify-between items-center absolute bottom-2 [&_p]:m-0 ">
@@ -113,7 +123,9 @@ const AdminUserList = () => {
             id="rows-per-page"
             name="rows-per-page"
             className="rows-per-page border-transparent focus:outline-none focus:ring-0"
-            onChange={(e) => setITEMS_PER_PAGE(Number(e.target.value), setCurrentPage(1))}
+            onChange={(e) =>
+              setITEMS_PER_PAGE(Number(e.target.value), setCurrentPage(1))
+            }
           >
             <option value="10">10</option>
             <option value="25">25</option>
