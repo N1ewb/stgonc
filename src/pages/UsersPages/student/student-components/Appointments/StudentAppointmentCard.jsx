@@ -3,6 +3,8 @@ import React, { useEffect, useState } from "react";
 
 import DefaultProfile from "../../../../../static/images/default-profile.png";
 import More from '../../../../../static/images/more-dark.png'
+import Chat from '../../../../../static/images/chat-dark.png'
+
 import { useDB } from "../../../../../context/db/DBContext";
 import { useChat } from "../../../../../context/chatContext/ChatContext";
 
@@ -45,11 +47,11 @@ const StudentAppointmentCard = ({ appointment, setCurrentAppointment  }) => {
               <span className="text-[#d4d4d4] text-base">{faculty?.email}</span>
             </p>
           </div>
-          <div className="flex flex-row items-center gap-3"><button
+          <div className="flex flex-row items-center gap-3 bg-transparent"><button
             className="py-2 px-4"
             onClick={() => chat.setCurrentChatReceiver(faculty)}
           >
-            Chat
+            <img src={Chat} alt="more" width={25} height={25} />
           </button>
           <button className="bg-transparent p-0 m-0" onClick={() => handleSetCurrentAppointment(appointment)}><img src={More} alt="more" width={25} height={25} /></button></div>
         </div>
