@@ -1,9 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/auth/AuthContext";
 import { useDB } from "../../context/db/DBContext";
-import { onAuthStateChanged } from "firebase/auth";
-import { auth } from "../../server/firebase";
 import STGONCLOGO from '../../static/images/STGONC-LOGO-WHITE.png'
 import Menu from '../../static/images/menu.png'
 
@@ -11,8 +9,6 @@ const Navbar = () => {
   const { currentUser } = useAuth();
   const db = useDB();
   const navigate = useNavigate();
-  const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
   const [menuIsOpen, setMenuIsOpen] = useState(false);
 
   const navLinks = [
@@ -24,53 +20,11 @@ const Navbar = () => {
 
   const handleOpenMenu = () => setMenuIsOpen(!menuIsOpen);
 
-  const handleGetUser = async (uid) => {
-    try {
-      setLoading(true);
-      if (uid) {
-        const userData = await db.getUser(uid);
-        if (userData) {
-          setUser(userData);
-        } else {
-         
-          console.warn("User data not found in database");
-          setUser(null);
-        }
-      } else {
-        setUser(null);
-      }
-    } catch (error) {
-      console.error("Error fetching user data:", error);
-      setUser(null);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    let unsubscribe;
-    
-    const setupAuthListener = () => {
-      unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
-        if (currentUser) {
-          await handleGetUser(currentUser.uid);
-        } else {
-          setUser(null);
-          setLoading(false);
-        }
-      });
-    };
-
-    setupAuthListener();
-    return () => unsubscribe?.();
-  }, []);
-
   const handleLogoClick = (e) => {
     e.preventDefault();
-    if (loading) return;
     
-    if (currentUser && user?.role) {
-      navigate(`/private/${user.role}/dashboard`);
+    if (currentUser && currentUser?.role) {
+      navigate(`/private/${currentUser.role}/dashboard`);
     } else {
       navigate('/');
     }
@@ -84,7 +38,7 @@ const Navbar = () => {
             src={STGONCLOGO} 
             alt="stgonc-logo" 
             width={40} 
-            className={loading ? 'opacity-50' : 'opacity-100'} 
+           
           />
         </a>
       </div>
