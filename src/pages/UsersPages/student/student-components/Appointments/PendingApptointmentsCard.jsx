@@ -1,13 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { useDB } from "../../../../context/db/DBContext";
-import { useChat } from "../../../../context/chatContext/ChatContext";
 
-import DefaultProfile from "../../../../static/images/default-profile.png";
+import More from '../../../../../static/images/more-dark.png'
+import DefaultProfile from "../../../../../static/images/default-profile.png";
+import { useDB } from "../../../../../context/db/DBContext";
 
-const PendingApptointmentsCard = ({ appointment }) => {
+const PendingApptointmentsCard = ({ appointment, setCurrentAppointment }) => {
   const db = useDB();
-  const chat = useChat();
-  const [faculty, setFacultyData] = useState();
+  const [faculty, setFacultyData] = useState(null);
   const facultyData = async (uid) => {
     try {
       const data = await db.getUser(uid);
@@ -22,11 +21,17 @@ const PendingApptointmentsCard = ({ appointment }) => {
       facultyData(appointment.appointedFaculty);
     }
   }, [appointment]);
+
+  const handleSetCurrentAppointment = (appt) => {
+    const appointment = {appt, faculty}
+    setCurrentAppointment((prevAppt) => (prevAppt === appt ? null : appointment));
+  }
+
   return (
     <div>
       {faculty && <div className="text-[#360000] w-full flex flex-row items-center [&_p]:m-0 justify-between shadow-md rounded-3xl p-4">
-        <div className="flex flex-row items-center gap-3">
-          <img
+        <div className="flex flex-row items-center w-full justify-between">
+          <div className="flex flex-row gap-3 items-center"><img
             className="w-[80px] p-[2px] bg-[#320000] h-[80px] rounded-full object-cover"
             src={faculty.photoURL ? faculty.photoURL : DefaultProfile}
             alt="profile"
@@ -34,7 +39,8 @@ const PendingApptointmentsCard = ({ appointment }) => {
           <p className="text-xl flex flex-col">
             <span>{faculty.firstName + " " + faculty.lastName}</span>
             <span className="text-[#d4d4d4] text-base">{faculty.email}</span>
-          </p>
+          </p></div>
+          <button className="bg-transparent m-0 p-0" onClick={() => handleSetCurrentAppointment(appointment)}><img src={More} alt="more" height={25} width={25} /></button>
         </div>
       </div>}
     </div>

@@ -21,11 +21,12 @@ const Layout = () => {
       try {
         setLoading(true);
         if (auth.currentUser) {
-          const userRole = auth.currentUser.role;
-          console.log(userRole);
+          const userRole = auth?.currentUser?.role;
           if (userRole) {
             setLoadedUserInfo(true);
           }
+        } else {
+          setLoadedUserInfo(false);
         }
       } catch (error) {
         setError(true);
@@ -33,7 +34,7 @@ const Layout = () => {
         if (error) {
           console.error("Error fetching user data:", error);
         } else {
-          if (loadedUserInfo) {
+          if (loadedUserInfo && auth.currentUser) {
             navigate(`/private/${auth.currentUser.role}/dashboard`);
           } else {
             navigate("/");

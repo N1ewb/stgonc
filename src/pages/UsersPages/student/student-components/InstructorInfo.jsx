@@ -44,10 +44,10 @@ const InstructorInfo = ({
 
   return (
     <div className="faculty-info h-auto w-full bg-white shadow-lg rounded-[30px] p-10 relative">
-      <div className="faculty-info-header flex flex-row justify-between border-b-[1px] border-solid border-[#aeaeae] mb-5">
+      <div className="faculty-info-header flex flex-row items-center justify-between border-b-[1px] border-solid border-[#aeaeae] mb-5">
         <h1 className="text-[#720000]">Faculty Info</h1>
         <button
-          className="bg-transparent p-0 m-0 hover:bg-transparent text-[#720000]"
+          className="bg-[#320000] hover:bg-[#720000] rounded-md m-0  text-white"
           onClick={() => setInstructorInfo(null)}
         >
           X

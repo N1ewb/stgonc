@@ -198,6 +198,20 @@ export const DBProvider = ({ children }) => {
     }
   };
 
+  //General
+  const cancelAppointment = async (id) => {
+    try{
+      if (auth.currentUser) {
+        const appointmentDocRef = doc(firestore, "Appointments", id);
+        const updatedAppointmentDocRef = { appointmentStatus: "Cancelled", updateMessage: `This Appointment was cancelled by ${auth.currentUser.firstName} ${auth.currentUser.lastName}` };
+        await updateDoc(appointmentDocRef, updatedAppointmentDocRef);
+        toastMessage("Appointment Cancelled");
+      }
+    }catch(error){
+      console.log("Error occured in canceling appointment")
+    }
+  }
+
   //As Admin
   const walkinAppointment = async (
     firstName,
@@ -381,7 +395,7 @@ export const DBProvider = ({ children }) => {
     try {
       if (auth.currentUser) {
         const appointmentDocRef = doc(firestore, "Appointments", id);
-        const updatedAppointmentDocRef = { appointmentStatus: "Accepted" };
+        const updatedAppointmentDocRef = { appointmentStatus: "Accepted", updateMessage: `This Appointment was approved by ${auth.currentUser.firstName} ${auth.currentUser.lastName}` };
         await notif.storeNotifToDB(
           "Appointment Accepted",
           `You appointment Request has been accepted and will be held on ${date}`,
@@ -399,7 +413,7 @@ export const DBProvider = ({ children }) => {
     try {
       if (auth.currentUser) {
         const appointmentDocRef = doc(firestore, "Appointments", id);
-        const updatedAppointmentDocRef = { appointmentStatus: "Denied" };
+        const updatedAppointmentDocRef = { appointmentStatus: "Denied", updateMessage: `This Appointment was denied by ${auth.currentUser.firstName} ${auth.currentUser.lastName}` };
         await notif.storeNotifToDB("Appoitnment Denied", reason, receiver);
         await updateDoc(appointmentDocRef, updatedAppointmentDocRef);
         toastMessage("Appointment Denied");
@@ -484,7 +498,7 @@ export const DBProvider = ({ children }) => {
       if (auth.currentUser) {
         const recevingUser = await getUser(receiver);
         const appointmentDocRef = doc(firestore, "Appointments", id);
-        const updatedAppointmentDocRef = { appointmentStatus: "Finished" };
+        const updatedAppointmentDocRef = { appointmentStatus: "Finished", updateMessage: `This Appointment was marked finished by ${auth.currentUser.firstName} ${auth.currentUser.lastName}` };
 
         await updateDoc(appointmentDocRef, updatedAppointmentDocRef);
         if (recevingUser) {
@@ -1316,6 +1330,7 @@ export const DBProvider = ({ children }) => {
     getTeachers,
     getAllUsers,
     sendAppointmentRequest,
+    cancelAppointment,
     getAppointment,
     walkinAppointment,
     makeReferal,

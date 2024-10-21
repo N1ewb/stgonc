@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useDB } from "../../../../../context/db/DBContext";
 import More from "../../../../../static/images/more-dark.png";
-const ArchiveAppointments = ({ appointment, handleOpenForm, currentArch }) => {
+const ArchiveAppointments = ({ appointment, handleOpenForm }) => {
   const db = useDB();
   const [faculty, setFacultyData] = useState();
   const facultyData = async (uid) => {

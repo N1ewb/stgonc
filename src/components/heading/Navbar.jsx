@@ -1,13 +1,11 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/auth/AuthContext";
-import { useDB } from "../../context/db/DBContext";
 import STGONCLOGO from '../../static/images/STGONC-LOGO-WHITE.png'
 import Menu from '../../static/images/menu.png'
 
 const Navbar = () => {
   const { currentUser } = useAuth();
-  const db = useDB();
   const navigate = useNavigate();
   const [menuIsOpen, setMenuIsOpen] = useState(false);
 
@@ -24,7 +22,7 @@ const Navbar = () => {
     e.preventDefault();
     
     if (currentUser && currentUser?.role) {
-      navigate(`/private/${currentUser.role}/dashboard`);
+      navigate(`/private/${currentUser?.role}/dashboard`);
     } else {
       navigate('/');
     }

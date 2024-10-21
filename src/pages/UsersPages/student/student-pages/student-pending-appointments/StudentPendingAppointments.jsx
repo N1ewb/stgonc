@@ -1,41 +1,59 @@
 import React, { useEffect, useState } from "react";
-import { useChat } from "../../../../../context/chatContext/ChatContext";
 import { useDB } from "../../../../../context/db/DBContext";
-import PendingApptointmentsCard from "../../student-components/PendingApptointmentsCard";
+import PendingApptointmentsCard from "../../student-components/Appointments/PendingApptointmentsCard";
 import { useAuth } from "../../../../../context/auth/AuthContext";
+import AppointmentInfo from "../../student-components/Appointments/AppointmentInfo";
 
-const StudentPendingAppointments = ({ appt }) => {
-    const chat = useChat();
-    const db = useDB();
-    const auth = useAuth();
-  
-    const [appointments, setAppointments] = useState();
-  
-    useEffect(() => {
-      const fetchData = async () => {
-        if (auth.currentUser) {
-          try {
-            const unsubscribe = db.subscribeToRequestedAppointmentChanges(
-              "Pending",
-              (newAppointment) => {
-                setAppointments(newAppointment);
-              }
-            );
-            return () => unsubscribe();
-          } catch (error) {
-            console.log(error);
-          }
+const StudentPendingAppointments = () => {
+  const db = useDB();
+  const auth = useAuth();
+  const [currentAppointment, setCurrentAppointment] = useState(null);
+
+  const [appointments, setAppointments] = useState();
+
+  useEffect(() => {
+    const fetchData = async () => {
+      if (auth.currentUser) {
+        try {
+          const unsubscribe = db.subscribeToRequestedAppointmentChanges(
+            "Pending",
+            (newAppointment) => {
+              setAppointments(newAppointment);
+            }
+          );
+          return () => unsubscribe();
+        } catch (error) {
+          console.log(error);
         }
-      };
-      fetchData();
-    }, [db]);
+      }
+    };
+    fetchData();
+  }, [db]);
   return (
-    <div>
-      <div className="student-pending-appointment-header w-1/2">
-        <h1 className="font-bold"><span className="font-light">Pending</span> Appointment</h1>
+    <div className="flex flex-col w-full ">
+      <div className="student-pending-appointment-header w-full">
+        <h1 className="font-bold">
+          <span className="font-light">Pending</span> Appointment
+        </h1>
       </div>
-      <div className="student-pending-appointment-content w-1/2">
-        {appointments && appointments.length !== 0 ? appointments.map((appointment) => <PendingApptointmentsCard key={appointment.id} appointment={appointment} />) : ""}
+      <div className="flex flex-row justify-between items-start">
+        <div className="student-pending-appointment-content w-[48%]">
+          {appointments && appointments.length !== 0
+            ? appointments.map((appointment) => (
+                <PendingApptointmentsCard
+                  key={appointment.id}
+                  appointment={appointment}
+                  currentAppointment={currentAppointment}
+                  setCurrentAppointment={setCurrentAppointment}
+                />
+              ))
+            : ""}
+        </div>
+        <div className="w-[48%]">
+          {currentAppointment && (
+            <AppointmentInfo appointment={currentAppointment} setCurrentAppointmentInfo={setCurrentAppointment} />
+          )}
+        </div>
       </div>
     </div>
   );

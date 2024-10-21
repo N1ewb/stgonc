@@ -103,14 +103,14 @@ const StudentDashboard = () => {
         <h1 className="text-[#360000] ">
           <span className="font-bold">{myInfo && myInfo.department} </span>{" "}
           <br></br>
-          <span>Department Instructors</span>{" "}
+          <span className="font-light">Department Instructors</span>{" "}
         </h1>
         {/* <Link to='/private/Endcallpage'>Go to end call page</Link> */}
-        <div className="options flex flex-row w-1/2 gap-10 justify-end">
-          <button onClick={() => handleSetCurrentOption("Instructors")}>
+        <div className="options flex flex-row w-1/2 gap-10 justify-end [&_button]:bg-[#320000] [&_button]:rounded-md">
+          <button className="hover:bg-[#720000]" onClick={() => handleSetCurrentOption("Instructors")}>
             Instructors
           </button>
-          <button onClick={() => handleSetCurrentOption("Guidance")}>
+          <button className="hover:bg-[#720000]" onClick={() => handleSetCurrentOption("Guidance")}>
             Guidance Counselor
           </button>
         </div>

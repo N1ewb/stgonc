@@ -1,15 +1,16 @@
 import React, { useEffect, useState } from "react";
 import { useDB } from "../../../../../context/db/DBContext";
 
-const ArhiveInfo = ({ appointment, handleOpenForm }) => {
+const ArchiveInfo = ({ appointment, handleOpenForm }) => {
   const db = useDB();
   const [faculty, setFacultyData] = useState();
+
   const facultyData = async (uid) => {
     try {
       const data = await db.getUser(uid);
       setFacultyData(data);
     } catch (error) {
-      console.log("Error occured in getting faculty data");
+      console.log("Error occurred in getting faculty data");
     }
   };
 
@@ -20,22 +21,27 @@ const ArhiveInfo = ({ appointment, handleOpenForm }) => {
   }, [appointment]);
 
   return (
-    <div className="w-[45%] max-h-[100%] overflow-auto flex flex-col p-10 shadow-md rounded-3xl">
-      <header className="flex flex-row w-full justify-between items-center border-b-[1px] border-solid border-[#9e9c9c32] pb-3">
-        <h1 className="">Archive Info</h1>
-        <button className="p-0 bg-transparent text-[#320000] cursor-pointer" onClick={() => handleOpenForm(appointment)}>X</button>
+    <div className="archive-info w-[48%] bg-white shadow-md rounded-[30px] p-10 relative">
+      <header className="archive-info-header flex flex-row items-center justify-between border-b-[1px] border-solid border-[#aeaeae] mb-5">
+        <h1 className="text-[#720000]">Archive Info</h1>
+        <button
+          className="bg-[#320000] hover:bg-[#720000] rounded-md m-0 text-white"
+          onClick={() => handleOpenForm(appointment)}
+        >
+          X
+        </button>
       </header>
-      <main className="flex flex-col gap-3 pt-3"> 
-        <p><span>Department: </span>{appointment.department}</p>
-        <p><span>Appointment Type: </span>{appointment.appointmentType}</p>
-        <p><span>Appointment Status: </span>{appointment.appointmentStatus}</p>
-        <p><span>Appointment Mode: </span>{appointment.appointmentFormat}</p>
-        <p><span>Appointment Duration: </span>{appointment.appointmentDuration}</p>
-        <p><span>Teacher Remarks: </span>{appointment.teacherRemarks}</p>
-        <p><span>Appointment Date was </span>{appointment.appointmentDate}</p>
+      <main className="archive-info-content flex flex-col gap-3 pt-3">
+        <p><span className="text-[14px] text-[#929292]">Department: </span>{appointment.department}</p>
+        <p><span className="text-[14px] text-[#929292]">Appointment Type: </span>{appointment.appointmentType}</p>
+        <p><span className="text-[14px] text-[#929292]">Appointment Status: </span>{appointment.appointmentStatus}</p>
+        <p><span className="text-[14px] text-[#929292]">Appointment Mode: </span>{appointment.appointmentFormat}</p>
+        <p><span className="text-[14px] text-[#929292]">Appointment Duration: </span>{appointment.appointmentDuration}</p>
+        <p><span className="text-[14px] text-[#929292]">Teacher Remarks: </span>{appointment.teacherRemarks}</p>
+        <p><span className="text-[14px] text-[#929292]">Appointment Date: </span>{appointment.appointmentDate}</p>
       </main>
     </div>
   );
 };
 
-export default ArhiveInfo;
+export default ArchiveInfo;

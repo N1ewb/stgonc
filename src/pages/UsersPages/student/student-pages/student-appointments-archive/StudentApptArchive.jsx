@@ -9,13 +9,7 @@ const StudentApptArchive = () => {
   const [currentArch, setCurrentArch] = useState(null)
 
   const handleOpenForm = (arch) => {
-    if(!currentArch){
-      setCurrentArch(arch)
-    } else if( currentArch === arch) {
-      setCurrentArch(null)
-    } else {
-      setCurrentArch(null)
-    }
+    setCurrentArch((prevAppt) => (prevAppt === arch ? null : arch));
   };
 
   useEffect(() => {
@@ -35,8 +29,8 @@ const StudentApptArchive = () => {
   return (
     <div className="h-[100%] w-full flex flex-col justify-start">
       <div className="archive-page-header w-full h-[10%] flex-col flex ">
-        <h1 className="font-bold text-[#720000]">
-          Student Appointment <span className="font-light">Archive</span>
+        <h1 className="font-light text-[#720000]">
+          Student  <span className="font-bold"> Appointment Archive</span>
         </h1>
       </div>
       <div className="archive-page-content flex flex-row h-[90%] max-h-[90%] pb-2 overflow-auto w-full justify-between ">
