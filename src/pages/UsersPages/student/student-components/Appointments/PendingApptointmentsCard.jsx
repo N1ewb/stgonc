@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import More from '../../../../../static/images/more-dark.png'
 import DefaultProfile from "../../../../../static/images/default-profile.png";
 import { useDB } from "../../../../../context/db/DBContext";
+import Usercard from "../../../../../components/userscard/Usercard";
 
 const PendingApptointmentsCard = ({ appointment, setCurrentAppointment }) => {
   const db = useDB();
@@ -27,22 +28,18 @@ const PendingApptointmentsCard = ({ appointment, setCurrentAppointment }) => {
     setCurrentAppointment((prevAppt) => (prevAppt === appt ? null : appointment));
   }
 
+  const buttons = [
+    
+    {
+      src: More,
+      alt: "More",
+      function: () => handleSetCurrentAppointment(appointment),
+    },
+  ];
+
   return (
-    <div>
-      {faculty && <div className="text-[#360000] w-full flex flex-row items-center [&_p]:m-0 justify-between shadow-md rounded-3xl p-4">
-        <div className="flex flex-row items-center w-full justify-between">
-          <div className="flex flex-row gap-3 items-center"><img
-            className="w-[80px] p-[2px] bg-[#320000] h-[80px] rounded-full object-cover"
-            src={faculty.photoURL ? faculty.photoURL : DefaultProfile}
-            alt="profile"
-          />
-          <p className="text-xl flex flex-col">
-            <span>{faculty.firstName + " " + faculty.lastName}</span>
-            <span className="text-[#d4d4d4] text-base">{faculty.email}</span>
-          </p></div>
-          <button className="bg-transparent m-0 p-0" onClick={() => handleSetCurrentAppointment(appointment)}><img src={More} alt="more" height={25} width={25} /></button>
-        </div>
-      </div>}
+    <div className="w-[48%]">
+      {faculty && <Usercard buttons={buttons} data={faculty} />}
     </div>
   );
 };

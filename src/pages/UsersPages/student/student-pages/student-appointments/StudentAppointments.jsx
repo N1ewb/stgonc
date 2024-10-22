@@ -32,14 +32,14 @@ const StudentAppointments = () => {
   }, [db]);
 
   return (
-    <div className="div">
+    <div className="flex flex-col gap-10">
       <div className="div-header">
         <h1 className="font-light text-[#720000]">
           Your <span className="font-bold">Appointments</span>
         </h1>
       </div>
       <div className="flex flex-row justify-between items-start">
-        <div className="div w-[48%]">
+        <div className="div w-[50%] flex flex-row flex-wrap gap-3">
           {appointments && appointments.length !== 0
             ? appointments.map((appointment) => (
                 <StudentAppointmentCard

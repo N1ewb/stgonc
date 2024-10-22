@@ -30,14 +30,14 @@ const StudentPendingAppointments = () => {
     fetchData();
   }, [db]);
   return (
-    <div className="flex flex-col w-full ">
+    <div className="flex flex-col w-full gap-10">
       <div className="student-pending-appointment-header w-full">
         <h1 className="font-bold">
           <span className="font-light">Pending</span> Appointment
         </h1>
       </div>
       <div className="flex flex-row justify-between items-start">
-        <div className="student-pending-appointment-content w-[48%]">
+        <div className="student-pending-appointment-content w-[50%] flex flex-row flex-wrap gap-3">
           {appointments && appointments.length !== 0
             ? appointments.map((appointment) => (
                 <PendingApptointmentsCard
