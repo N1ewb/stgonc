@@ -41,7 +41,7 @@ const AdminAppointmentPage = () => {
   }, []);
 
   return (
-    <div className="admin-appointments-container h-[100%] w-full flex flex-col">
+    <div className="admin-appointments-container h-[100%] w-full flex flex-col gap-10 ">
       <div className="appointments-header flex flex-row items-end w-1/2 justify-between">
         <h3 className="text-4xl font-bold text-[#320000]">
           Appointments <br></br> <span className="font-light">List</span>
@@ -54,7 +54,7 @@ const AdminAppointmentPage = () => {
         />
       </div>
       <div className="appoinments-container w-full flex flex-row justify-between items-start h-[100%]">
-        <div className="accepted-appointments-container w-1/2 max-h-[90%] flex flex-col overflow-auto pb-3 gap-2" >
+        <div className="accepted-appointments-container w-1/2 max-h-[90%] flex flex-row flex-wrap overflow-auto pb-3 gap-3" >
           {appointments && appointments.length ? (
             appointments.map((appointment, index) => (
               <AppointmentList

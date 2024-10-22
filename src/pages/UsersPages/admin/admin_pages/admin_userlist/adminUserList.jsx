@@ -8,6 +8,7 @@ import UserList from "../../admin-components/UserList";
 import AdminSearchBar from "../../admin-components/AdminSearchBar";
 import Loading from "../../../../../components/Loading/Loading";
 import UserlistInfo from "../../admin-components/userlist/UserlistInfo";
+import DefaultInfoScreen from "../../../../../components/appointments/DefaultInfoScreen";
 
 const AdminUserList = () => {
   const db = useDB();
@@ -20,7 +21,7 @@ const AdminUserList = () => {
   const [currentCharacters, setcurrentCharacters] = useState();
   const [temp, setTemp] = useState();
   const [ITEMS_PER_PAGE, setITEMS_PER_PAGE] = useState(10);
-  const [currentUserInfo, setCurrentUserInfo] = useState(null)
+  const [currentUserInfo, setCurrentUserInfo] = useState(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -81,19 +82,30 @@ const AdminUserList = () => {
   return (
     <div className="admin-userlist-container relative w-full h-[100%] flex flex-col justify-between px-10 py-5 shadow-md rounded-3xl">
       <div className="flex flex-col items-start h-[100%] w-full ">
-        <div className="admin-userlist-header w-full flex flex-row justify-between items-end">
-          <h1 className="relative text-[#320000] font-semibold">
-            User List{" "}
-            <span className="absolute top-0 text-[#720000] font-semibold text-xs w-full">
-              TotalUsers: {temp.length}
-            </span>
+        <div className="admin-userlist-header w-full flex flex-row justify-between items-center [&_p]:m-0">
+          <h1 className=" text-[#320000] basis-[20%] font-bold">
+            User <span className="font-light">List</span>
           </h1>
-          <AdminSearchBar
-            datas={userList}
-            setData={setUserList}
-            temp={temp}
-            setCurrentPage={setCurrentPage}
-          />
+          <div className="w-[85%] px-10 py-3 bg-[#320000] rounded-3xl flex flex-row items-center justify-between">
+            <div className="flex flex-row items-center gap-5">
+              <div className="buttons text-[15px] flex flex-row items-center [&_button]:px-8 [&_button]:py-2 [&_button]:rounded-2xl gap-3">
+                <button className={`bg-white text-[#320000]`}>Faculty</button>
+                <button className={`border-solid border-2 border-white bg-transparent`}>Student</button>
+              </div>
+              <p className="text-white">
+                Number of user: <span className="font-bold">{temp.length}</span>
+              </p>
+            </div>
+            <div className="search-container flex flex-row items-center gap-3">
+              <p className="font-semibold text-white ">Search</p>
+              <AdminSearchBar
+                datas={userList}
+                setData={setUserList}
+                temp={temp}
+                setCurrentPage={setCurrentPage}
+              />
+            </div>
+          </div>
         </div>
         <div className="h-[80%] max-h-[90%] flex flex-row w-full justify-between items-start">
           <div className="div flex flex-col max-h-full w-[48%]  p-0 m-0">
@@ -105,8 +117,13 @@ const AdminUserList = () => {
               currentUserInfo={currentCharacters}
             />
           </div>
-          <div className="div flex flex-col w-[48%] max-h-full p-0 m-0">
-            {currentUserInfo && <UserlistInfo setCurrentUserInfo={setCurrentUserInfo} currentUserInfo={currentUserInfo} />}
+          <div className="div flex flex-col w-[48%] h-full max-h-full p-0 m-0">
+            {currentUserInfo ? (
+              <UserlistInfo
+                setCurrentUserInfo={setCurrentUserInfo}
+                currentUserInfo={currentUserInfo}
+              />
+            ) : <DefaultInfoScreen />}
           </div>
         </div>
       </div>
