@@ -22,7 +22,7 @@ const About = () => {
         ONLINE CONSULTATION
       </h1>
       <div className="stgonc-logo-wrapper flex flex-row gap-3 items-center">
-        <img src={stgoncLogo} alt="stgonc-logo" />{" "}
+        <img src={stgoncLogo} alt="stgonc-logo" width={45} />{" "}
         <p className="font-light m-0 text-[36px] text-[#360000]">stgonc</p>
       </div>
       <div className="developer-statement text-center text-[#320000]">

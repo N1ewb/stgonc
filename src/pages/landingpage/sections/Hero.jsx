@@ -18,7 +18,7 @@ const Hero = () => {
         backgroundRepeat: 'no-repeat',
       }}
     >
-      <div className="logot-wrapper"><img src={stgoncLogo} alt="stgonc-logo" /></div>
+      <div className="logot-wrapper"><img src={stgoncLogo} alt="stgonc-logo" width={62} /></div>
       <h1 className='text-center text-[80px] font-normal'>Connect, organize, and track <br/> <span className='text-[#36000099]'>all in <span className='font-bold'>one</span> place</span></h1>
       
       <p className='[&_span]:font-bold'><span>Streamline</span> your <span>consultations</span> and <span>maximize</span> your <span>potential</span>!</p>
