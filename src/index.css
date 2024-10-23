@@ -71,7 +71,6 @@
 #root{
     display: flex;
     flex-direction: column;
-    height: 100vh;
     
 }
 #root > * {
@@ -82,5 +81,4 @@ html, body {
     margin: 0;
     padding: 0;
     height: 100%;
-    
 }

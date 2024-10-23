@@ -53,7 +53,7 @@ const Layout = () => {
   }
 
   return (
-    <div className="flex flex-col w-full h-auto">
+    <div className="flex flex-col w-full h-auto items-center">
       <Navbar />
       <main className="w-full h-auto">
         <div className="outlet w-full h-auto">

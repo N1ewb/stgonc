@@ -80,7 +80,7 @@ const AdminUserList = () => {
   }
 
   return (
-    <div className="admin-userlist-container relative w-full h-[100%] flex flex-col justify-between px-10 py-5 shadow-md rounded-3xl">
+    <div className="admin-userlist-container relative w-full h-[100%] flex flex-col justify-between px-10 ">
       <div className="flex flex-col items-start h-[100%] w-full ">
         <div className="admin-userlist-header w-full flex flex-row justify-between items-center [&_p]:m-0">
           <h1 className=" text-[#320000] basis-[20%] font-bold">
