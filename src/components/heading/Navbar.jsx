@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/auth/AuthContext";
-import STGONCLOGO from "../../static/images/STGONC-Logo.png";
+import STGONCLOGO from "../../static/images/STGONC-Logo.png"
 import Menu from "../../static/images/menu.png";
 
 const Navbar = () => {
