@@ -1,9 +1,8 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/auth/AuthContext";
-import STGONCLOGO from "../../static/images/STGONC-Logo.png"
 import Menu from "../../static/images/menu.png";
-
+import stgonclogo from '../../static/images/STGONC-Logo.png'
 const Navbar = () => {
   const { currentUser } = useAuth();
   const navigate = useNavigate();
@@ -34,7 +33,7 @@ const Navbar = () => {
     <div className="navbar-container bg-[#360000] flex flex-row fixed items-center w-full justify-between z-20 p-[20px]">
       <div className="logo-wrapper flex flex-row items-center justify-start w-[15%]">
         <button href="#" onClick={handleLogoClick} className="text-[36px] bg-transparent flex flex-row items-center gap-3">
-          <img src={STGONCLOGO} alt="stgonc-logo" width={45} height={45} />
+          <img src={stgonclogo} alt="stgonc-logo" width={45} height={45} />
           stgonc
         </button>
       </div>
