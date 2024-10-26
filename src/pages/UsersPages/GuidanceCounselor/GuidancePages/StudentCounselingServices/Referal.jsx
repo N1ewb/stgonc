@@ -30,7 +30,7 @@ const Referal = () => {
   },[currentSCSAppt])
 
   return (
-    <div className="flex flex-col gap-5 h-[100%] w-full">
+    <div className="flex flex-col gap-5 h-full w-full">
       <header className="flex flex-row items-center gap-10 h-[5%]">
         <h3>
           Referal <span className="font-light">Page</span>
@@ -39,7 +39,7 @@ const Referal = () => {
           <img src={Add} alt="add" height={35} width={35} />
         </button>
       </header>
-      <main className="h-[95%] w-full flex flex-row">
+      <main className="h-full w-full flex items-start">
         <div
           className={`form-container transition-all duration-500 ease-out h-[100%] overflow-auto ${
             isFormOpen ? "w-1/2" : "w-0"
@@ -48,7 +48,7 @@ const Referal = () => {
           {isFormOpen && !currentSCSAppt && <ReferalForm handleOpenForm={handleOpenForm} />}
         </div>
         <div
-          className={`data-container transition-all duration-500 ease-out max-h-[100%] overflow-auto w-1/2
+          className={`data-container flex flex-row flex-wrap transition-all duration-500 ease-out max-h-full items-start justify-start overflow-auto w-1/2
           }`}
         >
           {appts.length !== 0

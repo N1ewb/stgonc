@@ -4,7 +4,11 @@ import { AdminAccepptStudentAccount } from "../../../../context/auth/adminCreate
 import CheckMarkDark from "../../../../static/images/tick-mark-dark.png";
 import DenyDark from "../../../../static/images/delete-dark.png";
 import MoreDark from "../../../../static/images/more-dark.png";
+import { useAuth } from "../../../../context/auth/AuthContext";
+import { useDB } from "../../../../context/db/DBContext";
 const RegistrationReqCards = ({ pendingRegistrations,setCurrentOpenedRegistrationCard }) => {
+  const auth = useAuth()
+  const db = useDB()
   const toastMessage = (message) => toast(message);
 
   const handleApproveRegistrationRequest = async (
@@ -32,6 +36,17 @@ const RegistrationReqCards = ({ pendingRegistrations,setCurrentOpenedRegistratio
       toastMessage(error);
     }
   };
+
+  const handleDenyRegistration = async () => {
+    try{
+      if(auth.currentUser) {
+        await db.denyRegistration(pendingRegistrations.id, "Your registration request has been denied", pendingRegistrations.email)
+      }
+    }catch(error){
+      console.log("Error in denying registration")
+    }
+  }
+
   return (
     <div className="pending-registration-container [&_p]:m-0 flex flex-row items-center justify-between p-10 shadow-md rounded-[30px] w-full">
       <p className="capitalize font-semibold text-[#320000] ">
@@ -68,7 +83,7 @@ const RegistrationReqCards = ({ pendingRegistrations,setCurrentOpenedRegistratio
           >
             <img src={CheckMarkDark} alt="accept" height={35} width={35} />
           </button>
-          <button className="">
+          <button className="" onClick={handleDenyRegistration}>
             <img src={DenyDark} alt="deny" height={35} width={35} />
           </button>
           <button className="" onClick={() => setCurrentOpenedRegistrationCard(pendingRegistrations)}>

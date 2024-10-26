@@ -49,16 +49,19 @@ const AppointmentList = ({ appointment, setCurrentChatReceiver }) => {
       src: CallDark,
       alt: "Call",
       function: () => handleCall(),
+      needsParams: false,
     },
     {
       src: ChatDark,
       alt: "Message",
       function: () => setCurrentChatReceiver(appointee),
+      needsParams: true,
     },
     {
       src: MoreDark,
       alt: "More",
       function: () => setCurrentAppointment(appointment),
+      needsParams: true,
     },
   ];
 

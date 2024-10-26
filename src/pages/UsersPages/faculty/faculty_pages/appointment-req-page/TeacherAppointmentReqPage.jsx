@@ -33,13 +33,15 @@ const TeacherAppointmentReqPage = () => {
   }, [db]);
 
 
-  const handleAcceptAppointment = async (id, receiver, date) => {
+  const handleAcceptAppointment = async (requiredParams) => {
+    const {id, receiver, date} = requiredParams
     await db.approveAppointment(id, receiver, date);
     setCurrentAppointment(null);
   };
 
-  const handleDenyAppointment = async (id, receiver, date) => {
-    await db.denyAppointment(id, receiver, date);
+  const handleDenyAppointment = async (requiredParams) => {
+    const {id, receiver, reason} = requiredParams
+    await db.denyAppointment(id, receiver, reason);
     setCurrentAppointment(null);
   };
 
@@ -55,7 +57,7 @@ const TeacherAppointmentReqPage = () => {
         Requests
       </h1>
       <div className="appointment-request-main-content w-full flex flex-row justify-between">
-        <div className="appointment-request-list-container w-[40%] flex flex-col gap-5">
+        <div className="appointment-request-list-container w-[40%] flex flex-row flex-wrap">
           {requestedAppointments && requestedAppointments.length !== 0 ? (
             requestedAppointments.map((appointment, index) => (
               <AppointmentReqList
@@ -80,8 +82,8 @@ const TeacherAppointmentReqPage = () => {
           {currentAppointment && (
             <AppointmentInfo
               currentAppointment={currentAppointment}
-              handleAcceptAppointment={handleAcceptAppointment}
-              handleDenyAppointment={handleDenyAppointment}
+              positiveClick={handleAcceptAppointment}
+              negativeClick={handleDenyAppointment}
             />
           )}
         </div>

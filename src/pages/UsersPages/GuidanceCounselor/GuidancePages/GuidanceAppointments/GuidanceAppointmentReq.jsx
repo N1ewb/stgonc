@@ -12,13 +12,15 @@ const GuidanceAppointmentReq = () => {
   const { currentAppointment, setCurrentAppointment } = useAppointment();
   const [temp, setTemp] = useState([]);
 
-  const handleAcceptAppointment = async (id, receiver, date) => {
+  const handleAcceptAppointment = async (requiredParams) => {
+    const {id, receiver, date} = requiredParams
     await db.approveAppointment(id, receiver, date);
     setCurrentAppointment(null);
   };
-
-  const handleDenyAppointment = async (id, receiver, date) => {
-    await db.denyAppointment(id, receiver, date);
+  
+  const handleDenyAppointment = async (requiredParams) => {
+    const {id, receiver, reason} = requiredParams
+    await db.denyAppointment(id, receiver, reason);
     setCurrentAppointment(null);
   };
 
@@ -44,11 +46,11 @@ const GuidanceAppointmentReq = () => {
   }, [db]);
   return (
     <div>
-      <header>
+      <header className="pb-10">
         <h4 className="font-bold"> Requests</h4>
       </header>
       <main className="w-full flex flex-row justify-between items-start h-[100%]">
-        <div className="w-1/2 max-h-[90%] overflow-auto pb-3">
+        <div className="w-1/2 max-h-full overflow-auto pb-3 flex flex-row flex-wrap">
           {appointments && appointments.length ? (
             appointments.map((appointment) =>
               appointment.appointmentStatus === "Pending" &&
@@ -75,8 +77,8 @@ const GuidanceAppointmentReq = () => {
         >
           {currentAppointment && (
             <AppointmentInfo
-              handleAcceptAppointment={handleAcceptAppointment}
-              handleDenyAppointment={handleDenyAppointment}
+              positiveClick={handleAcceptAppointment}
+              negativeClick={handleDenyAppointment}
             />
           )}
         </div>

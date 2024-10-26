@@ -1035,11 +1035,17 @@ export const DBProvider = ({ children }) => {
     }
   };
 
-  const denyRegistration = async (denyMessage, receiver) => {
+  const denyRegistration = async (id,denyMessage, receiver) => {
     try {
-
+      if (auth.currentUser) {
+        const registrationDocRef = doc(firestore, "StudentRegistrationRequest", id);
+        const updatedRegistrationDocRef = { status: "Denied", updateMessage: `This Appointment was denied by ${auth.currentUser.firstName} ${auth.currentUser.lastName}` };
+        await notif.storeNotifToDB("Registration Denied", denyMessage, receiver);
+        await updateDoc(registrationDocRef, updatedRegistrationDocRef);
+        toastMessage("Registration Denied");
+      }
     } catch (error) {
-      console.error(error);
+      console.log("Error has occured")
     }
   };
 
@@ -1342,6 +1348,7 @@ export const DBProvider = ({ children }) => {
     getInstructorAppointment,
     approveAppointment,
     denyAppointment,
+    denyRegistration,
     followupAppointment,
     walkinScheduleAppointment,
     finishAppointment,

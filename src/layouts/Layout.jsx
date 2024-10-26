@@ -22,9 +22,8 @@ const Layout = () => {
         setLoading(true);
         if (auth.currentUser) {
           const userRole = auth?.currentUser?.role;
-          if (userRole) {
-            setLoadedUserInfo(true);
-          }
+
+          setLoadedUserInfo(true);
         } else {
           setLoadedUserInfo(false);
         }

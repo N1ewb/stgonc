@@ -7,11 +7,13 @@ import { useChat } from "../../../../../context/chatContext/ChatContext";
 import AppointmentInfo from "../../../../../components/appointments/AppointmentInfo";
 import { useAppointment } from "../../../../../context/appointmentContext/AppointmentContext";
 import AdminSearchBar from "../../admin-components/AdminSearchBar";
+import { useNavigate } from "react-router-dom";
 
 const AdminAppointmentPage = () => {
   const db = useDB();
   const auth = useAuth();
   const chat = useChat();
+  const navigate = useNavigate()
   const { currentAppointment, setCurrentAppointment } = useAppointment();
   const [appointments, setAppointments] = useState();
   const [temp, setTemp] = useState();
@@ -40,6 +42,17 @@ const AdminAppointmentPage = () => {
     setCurrentAppointment(null);
   }, []);
 
+  const handleFinishAppointment = async (requiredParams) => {
+    const { id, receiver } = requiredParams;
+    navigate(`/private/end-call-page?appointment=${id}&receiver=${receiver}`);
+    setCurrentAppointment(null);
+  };
+  const handleCancelAppointment = async (requiredParams) => {
+    const { id } = requiredParams;
+    await db.cancelAppointment(id);
+    setCurrentAppointment(null);
+  };
+
   return (
     <div className="admin-appointments-container h-[100%] w-full flex flex-col gap-10 ">
       <div className="appointments-header flex flex-row items-end w-1/2 justify-between">
@@ -54,7 +67,7 @@ const AdminAppointmentPage = () => {
         />
       </div>
       <div className="appoinments-container w-full flex flex-row justify-between items-start h-[100%]">
-        <div className="accepted-appointments-container w-1/2 max-h-[90%] flex flex-row flex-wrap overflow-auto pb-3 gap-3" >
+        <div className="accepted-appointments-container w-1/2 max-h-[90%] flex flex-row flex-wrap overflow-auto pb-3" >
           {appointments && appointments.length ? (
             appointments.map((appointment, index) => (
               <AppointmentList
@@ -77,8 +90,8 @@ const AdminAppointmentPage = () => {
         >
           {currentAppointment && (
             <AppointmentInfo
-              handleAcceptAppointment={() => null}
-              handleDenyAppointment={() => null}
+              positiveClick={handleFinishAppointment}
+              negativeClick={handleCancelAppointment}
             />
           )}
         </div>

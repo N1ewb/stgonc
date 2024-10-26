@@ -3,13 +3,11 @@ import Close from "../../static/images/close-dark.png";
 import { useAppointment } from "../../context/appointmentContext/AppointmentContext";
 import { useDB } from "../../context/db/DBContext";
 
-const AppointmentInfo = ({
-  handleAcceptAppointment,
-  handleDenyAppointment,
-}) => {
+const AppointmentInfo = ({ positiveClick, negativeClick }) => {
   const db = useDB();
   const { currentAppointment, setCurrentAppointment } = useAppointment();
   const [appointee, setAppointee] = useState(null);
+  const [status, setStatus] = useState(null);
 
   const handleGetUser = async (uid) => {
     try {
@@ -23,6 +21,7 @@ const AppointmentInfo = ({
   useEffect(() => {
     if (currentAppointment.appointee) {
       handleGetUser(currentAppointment.appointee);
+      setStatus(currentAppointment.appointmentStatus);
     }
   }, [currentAppointment.appointee]);
 
@@ -40,11 +39,11 @@ const AppointmentInfo = ({
       <div className="appointment-info-header  w-full flex flex-row justify-between items-center p-2 rounded-md border-b-[1px] border-solid border-[#d1d1d1d1] mb-5">
         <h3 className="capitalize m-0">
           <span className="font-semibold">
-            {currentAppointment.appointmentStatus === "Accepted"
+            {status && status === "Accepted"
               ? "Appointment"
-              : currentAppointment.appointmentStatus === "Pending"
+              : status === "Pending"
               ? "Request"
-              : currentAppointment.appointmentStatus === "Followup"
+              : status === "Followup"
               ? "Follow Up"
               : "No"}
           </span>{" "}
@@ -72,7 +71,7 @@ const AppointmentInfo = ({
           <p className="capitalize">
             <span className="text-[#320000] font-bold">Type:</span>{" "}
             {currentAppointment.appointmentType}
-          </p>  
+          </p>
           <p>
             <span className="text-[#320000] font-bold">Date:</span>{" "}
             {formatDate(currentAppointment.appointmentDate)}
@@ -83,27 +82,50 @@ const AppointmentInfo = ({
           </p>
         </div>
       </div>
-      {currentAppointment.appointmentStatus === "pending" ? (
+      {status && status === "Pending" ? (
         <div className="appointment-info-footer w-full flex flex-row items-end justify-end gap-3 ">
           <button
             className="m-0 py-2 px-5 bg-[#57a627] rounded-md"
-            onClick={() => handleAcceptAppointment(currentAppointment.id)}
+            onClick={() =>
+              positiveClick({
+                id: currentAppointment.id,
+                receiver: appointee.email,
+                date: Date.now(),
+              })
+            }
           >
             Accept
           </button>
           <button
             className="m-0 py-2 px-5 bg-[#720000] rounded-md"
-            onClick={() => handleDenyAppointment(currentAppointment.id)}
+            onClick={() =>
+              negativeClick({
+                id: currentAppointment.id,
+                receiver: appointee.email,
+                reason: "Bala ka jan"
+              })
+            }
           >
             Deny
           </button>
         </div>
-      ) : currentAppointment.appointmentStatus === "Accepted" || "Followup" ? (
+      ) : (status && status === "Accepted") || "Followup" ? (
         <div className="appointment-info-footer w-full flex flex-row items-end justify-end gap-3 ">
-          <button className="m-0 py-2 px-5 bg-[#57a627] rounded-md">
+          <button
+            className="m-0 py-2 px-5 bg-[#57a627] rounded-md"
+            onClick={() =>
+              positiveClick({
+                id: currentAppointment.id,
+                receiver: appointee.email,
+              })
+            }
+          >
             Finish
           </button>
-          <button className="m-0 py-2 px-5 bg-[#720000] rounded-md">
+          <button
+            className="m-0 py-2 px-5 bg-[#720000] rounded-md"
+            onClick={() => negativeClick({ id: currentAppointment.id })}
+          >
             Cancel
           </button>
         </div>

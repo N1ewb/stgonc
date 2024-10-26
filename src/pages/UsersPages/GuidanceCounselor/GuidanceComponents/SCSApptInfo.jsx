@@ -2,7 +2,7 @@ import React from "react";
 
 const SCSApptInfo = ({ currentSCSAppt, setCurrentSCSAppt }) => {
   return (
-    <div className="flex flex-col p-10 shadow-md rounded-3xl w-full">
+    <div className="flex flex-col p-10 shadow-md rounded-3xl w-full max-h-[80%]">
       <header className="flex flex-row w-full items-center justify-between border-b-[1px] border-solid border-[#c2c2c2] pb-3">
         <h3 className="font-semibold">
           {currentSCSAppt.appointmentFormat === "Walkin"
@@ -15,7 +15,7 @@ const SCSApptInfo = ({ currentSCSAppt, setCurrentSCSAppt }) => {
         </h3>
         <button onClick={() => setCurrentSCSAppt(null)}>X</button>
       </header>
-      <main className="flex flex-col py-5 [&_span]:text-[#a5a5a5] [&_span]:normal-case [&_p]:text-[#320000] [&_p]:capitalize">
+      <main className="flex flex-col py-5 [&_span]:text-[#a5a5a5] [&_span]:normal-case [&_p]:text-[#320000] [&_p]:capitalize max-h-full overflow-auto">
         <p>
           {" "}
           <span>Name:</span> {currentSCSAppt.appointee.firstName}{" "}

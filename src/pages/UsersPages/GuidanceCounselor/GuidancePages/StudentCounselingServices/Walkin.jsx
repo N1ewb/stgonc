@@ -31,7 +31,7 @@ const Walkin = () => {
   },[currentSCSAppt])
 
   return (
-    <div className="flex flex-col gap-5 h-[100%] w-full">
+    <div className="flex flex-col gap-5 h-full w-full">
       <header className="flex flex-row items-center gap-10 h-[5%]">
         <h3>
           Walk-in <span className="font-light">Page</span>
@@ -40,9 +40,9 @@ const Walkin = () => {
           <img src={Add} alt="add" height={35} width={35} />
         </button>
       </header>
-      <main className="h-[95%] flex flex-row">
+      <main className="h-full flex flex-row items-start">
         <div
-          className={`form-container transition-all duration-500 ease-out h-[100%] overflow-auto ${
+          className={`form-container transition-all duration-500 ease-out h-full overflow-auto ${
             isWalkingFormOpen ? "w-1/2" : "w-0"
           }`}
         >
@@ -51,7 +51,7 @@ const Walkin = () => {
           )}
         </div>
         <div
-          className={`data-container transition-all duration-500 ease-out max-h-[100%] pb-10 flex flex-col overflow-auto w-1/2
+          className={`data-container transition-all duration-500 ease-out max-h-[100%] pb-10 flex flex-row flex-wrap items-start justify-start overflow-auto w-1/2
             `}
         >
           {appts.length !== 0

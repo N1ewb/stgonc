@@ -17,13 +17,15 @@ const AdminAppointmentReqsPage = () => {
   const [appointments, setAppointments] = useState();
   const [temp, setTemp] = useState();
 
-  const handleAcceptAppointment = async (id, receiver, date) => {
+  const handleAcceptAppointment = async (requiredParams) => {
+    const { id, receiver, date } = requiredParams;
     await db.approveAppointment(id, receiver, date);
     setCurrentAppointment(null);
   };
 
-  const handleDenyAppointment = async (id, receiver, date) => {
-    await db.denyAppointment(id, receiver, date);
+  const handleDenyAppointment = async (requiredParams) => {
+    const { id, receiver, reason } = requiredParams;
+    await db.denyAppointment(id, receiver, reason);
     setCurrentAppointment(null);
   };
 
@@ -68,7 +70,8 @@ const AdminAppointmentReqsPage = () => {
         <div className="w-1/2 max-h-[90%] overflow-auto pb-3 flex flex-row flex-wrap">
           {appointments && appointments.length ? (
             appointments.map((appointment) =>
-              appointment.appointmentStatus === "Pending" && appointment.appointmentFormat !=='Walkin' ? (
+              appointment.appointmentStatus === "Pending" &&
+              appointment.appointmentFormat !== "Walkin" ? (
                 <AppointmentReqList
                   key={appointment.id}
                   handleAcceptAppointment={handleAcceptAppointment}
@@ -91,8 +94,8 @@ const AdminAppointmentReqsPage = () => {
         >
           {currentAppointment && (
             <AppointmentInfo
-              handleAcceptAppointment={handleAcceptAppointment}
-              handleDenyAppointment={handleDenyAppointment}
+              positiveClick={handleAcceptAppointment}
+              negativeClick={handleDenyAppointment}
             />
           )}
         </div>

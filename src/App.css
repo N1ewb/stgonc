@@ -1,11 +1,11 @@
 
-*{
+
+* {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
   font-family: "Poppins", sans-serif;
 }
-
 /* Global Scrollbar Styles */
 ::-webkit-scrollbar {
   width: 8px; /* Width of the scrollbar */

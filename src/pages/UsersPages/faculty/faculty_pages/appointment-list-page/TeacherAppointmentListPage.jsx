@@ -7,11 +7,13 @@ import { useDB } from "../../../../../context/db/DBContext";
 import { useAuth } from "../../../../../context/auth/AuthContext";
 import { useChat } from "../../../../../context/chatContext/ChatContext";
 import { useAppointment } from "../../../../../context/appointmentContext/AppointmentContext";
+import { useNavigate } from "react-router-dom";
 
 const TeacherAppointmentListPage = () => {
   const db = useDB();
   const auth = useAuth();
   const chat = useChat();
+  const navigate = useNavigate()
   const { currentAppointment, setCurrentAppointment } = useAppointment();
   const [acceptedAppointments, setAcceptedAppointments] = useState();
 
@@ -38,6 +40,17 @@ const TeacherAppointmentListPage = () => {
     setCurrentAppointment(null);
   }, []);
 
+  const handleFinishAppointment = async (requiredParams) => {
+    const { id, receiver } = requiredParams;
+    navigate(`/private/end-call-page?appointment=${id}&receiver=${receiver}`);
+    setCurrentAppointment(null);
+  };
+  const handleCancelAppointment = async (requiredParams) => {
+    const { id } = requiredParams;
+    await db.cancelAppointment(id);
+    setCurrentAppointment(null);
+  };
+
   return (
     <div className="teacher-appointment-page-list-container w-full flex flex-col">
       <h1 className="text-[#320000]">
@@ -46,7 +59,7 @@ const TeacherAppointmentListPage = () => {
         Appoinments
       </h1>
       <div className="appointment-list-main-content w-full flex flex-row justify-between">
-        <div className="appointment-list-container w-[40%] flex flex-col gap-3">
+        <div className="appointment-list-container w-[40%] flex flex-row flex-wrap">
           {acceptedAppointments && acceptedAppointments.length !== 0 ? (
             acceptedAppointments.map((appointment, index) => (
               <AppointmentsList
@@ -69,9 +82,8 @@ const TeacherAppointmentListPage = () => {
         >
           {currentAppointment && (
             <AppointmentInfo
-              appointment={currentAppointment}
-              handleAcceptAppointment={() => null}
-              handleDenyAppointment={() => null}
+              positiveClick={handleFinishAppointment}
+              negativeClick={handleCancelAppointment}
             />
           )}
         </div>

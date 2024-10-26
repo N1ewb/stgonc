@@ -17,18 +17,19 @@ const UserList = ({
       src:  More ,
       alt: "More",
       function: (users) => handleSetCurrentUser(users),
+      needsParams: true
     },
   ];
 
   return (
-    <div className="user-list flex flex-row flex-wrap gap-3 items-start max-h-[100%]  overflow-auto py-3">
+    <div className="user-list flex flex-row flex-wrap items-start max-h-[100%]  overflow-auto py-3">
       {currentCharacters && currentCharacters.length !== 0 ? (
         currentCharacters.map((users, index) => (
           <div
             className="userlist-container w-[48%]"
             key={index}
           >
-            <Usercard currentData={currentUserInfo} buttons={buttons} data={users} />
+            <Usercard buttons={buttons} data={users} />
           </div>
         ))
       ) : (

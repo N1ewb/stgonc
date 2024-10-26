@@ -1,23 +1,23 @@
-import React, { useState } from "react";
+import React from "react";
 
 const Footer = ({ buttons, data }) => {
-  const [componentFunction, setComponentFunction] = useState();
 
   const handleButtonClick = (button) => {
-    if (data) {
-      setComponentFunction(button.function(data));
+    if (button.needsParams) {
+      button.function(data)
     } else {
-      setComponentFunction(button.function);
+      button.function()
     }
   };
 
   return (
     <div className="flex flex-row w-full justify-between items-center">
       <p>{data?.role}</p>
-      <div className="flex flex-row  gap-2 justify- items-center">
+      <div className="flex flex-row  gap-1 justify-end items-center">
         {buttons.length !== 0 &&
-          buttons.map((button) => (
+          buttons.map((button, index) => (
             <button
+              key={index}
               className="bg-transparent"
               onClick={() => handleButtonClick(button)}
             >

@@ -17,22 +17,20 @@ const AppointmentReqList = ({
   const db = useDB();
   const { setCurrentAppointment } = useAppointment();
   const [appointee, setAppointee] = useState(null);
-  const [loading, setLoading] = useState(true)
+  const [loading, setLoading] = useState(true);
 
-  
   const handleGetUser = async (uid) => {
-    setLoading(true)
+    setLoading(true);
     try {
       const user = await db.getUser(uid);
       setAppointee(user);
     } catch (error) {
       console.log(`Error in retrieving user data: ${error.message}`);
-    }finally{
-      setLoading(false)
+    } finally {
+      setLoading(false);
     }
   };
 
-  
   useEffect(() => {
     if (appointment.appointee) {
       handleGetUser(appointment.appointee);
@@ -42,27 +40,36 @@ const AppointmentReqList = ({
   const buttons = [
     {
       src: CheckMarkDark,
-      alt: "Call",
-      function: () => handleAcceptAppointment( appointment.id,
-        appointee.userID, 
-        appointment.appointmentDate),
+      alt: "Accept",
+      function: () =>
+        handleAcceptAppointment({
+          id: appointment.id,
+          receiver: appointee.userID,
+          data: appointment.appointmentDate,
+        }),
+      needsParams: false,
     },
     {
       src: DenyDark,
-      alt: "Message",
-      function: () => handleDenyAppointment( appointment.id,
-        appointee.userID, 
-        "REASON: BALA KA JAN"),
+      alt: "Deny",
+      function: () =>
+        handleDenyAppointment({
+          id: appointment.id,
+          receiver: appointee.userID,
+          reason: "REASON: BALA KA JAN",
+        }),
+      needsParams: false,
     },
     {
       src: MoreDark,
       alt: "More",
       function: () => setCurrentAppointment(appointment),
+      needsParams: true,
     },
   ];
 
-  if(loading){
-    return <Loading />
+  if (loading) {
+    return <Loading />;
   }
 
   return (
