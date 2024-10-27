@@ -2,16 +2,18 @@ import React, { useEffect, useState } from "react";
 import { Bar } from "react-chartjs-2";
 import "chart.js/auto";
 
-const BarGraph = ({ apptList }) => {
+import ExportIcon from "../../../../../static/images/import-export.png";
+import { Tooltip } from "react-tooltip";
+
+const BarGraph = ({ apptList, exportButton }) => {
   const [sortedApptList, setSortedApptList] = useState([]);
-  const [category, setCategory] = useState("week"); // 'week', 'month', 'semester'
+  const [category, setCategory] = useState("week");
 
   useEffect(() => {
     const fetchData = () => {
       const now = new Date();
 
       if (category === "week") {
-        // This Week (By Day)
         const last7Days = [];
 
         for (let i = 6; i >= 0; i--) {
@@ -34,9 +36,7 @@ const BarGraph = ({ apptList }) => {
         });
 
         setSortedApptList(apptCounts);
-
       } else if (category === "month") {
-        // This Month (By Week)
         const weeks = Array.from({ length: 4 }, (_, i) => ({
           week: `Week ${i + 1}`,
           count: 0,
@@ -49,9 +49,7 @@ const BarGraph = ({ apptList }) => {
         });
 
         setSortedApptList(weeks);
-
       } else if (category === "semester") {
-        // This Semester (By Month - 6 months)
         const months = Array.from({ length: 6 }, (_, i) => {
           const month = new Date();
           month.setMonth(now.getMonth() - (5 - i));
@@ -63,7 +61,9 @@ const BarGraph = ({ apptList }) => {
 
         apptList.forEach((appt) => {
           const apptDate = new Date(appt.appointmentDate);
-          const monthName = apptDate.toLocaleString("default", { month: "long" });
+          const monthName = apptDate.toLocaleString("default", {
+            month: "long",
+          });
           const foundMonth = months.find((m) => m.month === monthName);
           if (foundMonth) foundMonth.count++;
         });
@@ -106,17 +106,53 @@ const BarGraph = ({ apptList }) => {
 
   return (
     <div className="w-full text-[#320000]">
-      <h3 className=" font-bold">Appointment <span className="font-light">Statistics</span></h3>
-     <div className="flex flex-row justify-between">
-      <p >This {category}</p>
-     <div className="[&_button]:bg-transparent [&_button]:hover:bg-transparent [&_button]:text-[#320000] flex flex-row gap-3 [&_button]:transition-all [&_button]:ease-out [&_button]:duration-150">
-        <button className={`p-0 ${category === 'week' ? "-translate-y-1 ":"border-0"}`} onClick={() => setCategory("week")}>This Week</button>
-        <button className={`p-0 ${category === 'month' ? "-translate-y-1 ":"border-0"}`} onClick={() => setCategory("month")}>This Month</button>
-        <button className={`p-0 ${category === 'semester' ? "-translate-y-1 ":"border-0"}`} onClick={() => setCategory("semester")}>This Semester</button>
+      <header className="flex flex-row w-full justify-between">
+        <h3 className=" font-bold">
+          Appointment <span className="font-light">Statistics</span>
+        </h3>
+        <button
+          className="export-button bg-transparent m-0 p-0"
+          id="export-button"
+          data-tooltip-id="export-button"
+          onClick={exportButton}
+        >
+          <img src={ExportIcon} alt="Export" width={35} />
+        </button>
+      </header>
+      <div className="flex flex-row justify-between">
+        <p>This {category}</p>
+        <div className="[&_button]:bg-transparent [&_button]:hover:bg-transparent [&_button]:text-[#320000] flex flex-row gap-3 [&_button]:transition-all [&_button]:ease-out [&_button]:duration-150">
+          <button
+            className={`p-0 ${
+              category === "week" ? "-translate-y-1 " : "border-0"
+            }`}
+            onClick={() => setCategory("week")}
+          >
+            This Week
+          </button>
+          <button
+            className={`p-0 ${
+              category === "month" ? "-translate-y-1 " : "border-0"
+            }`}
+            onClick={() => setCategory("month")}
+          >
+            This Month
+          </button>
+          <button
+            className={`p-0 ${
+              category === "semester" ? "-translate-y-1 " : "border-0"
+            }`}
+            onClick={() => setCategory("semester")}
+          >
+            This Semester
+          </button>
+        </div>
       </div>
-     </div>
 
       <Bar data={data} options={options} />
+      <Tooltip data-anchorselect="export-button" id="export-button" place="top">
+        Export this month's Report
+      </Tooltip>
     </div>
   );
 };

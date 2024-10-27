@@ -6,31 +6,24 @@ import Leaderboard from "./Leaderboard";
 import Loading from "../../../../../components/Loading/Loading";
 import CalculateRating from "../../../../../lib/utility/CalculateRating";
 
-const FacultyLeaderboard = () => {
+const FacultyLeaderboard = ({insList}) => {
   const db = useDB();
   const auth = useAuth();
-  const [insList, setInsList] = useState([]);
   const [topInstructors, setTopInstructors] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const fetchInstructors = async () => {
-      const unsubscribe = await db.subscribeToInstructorChanges((callback) => {
-        setInsList(callback);
-      });
-      return () => unsubscribe();
-    };
-
-    fetchInstructors();
-  }, [db]);
   
+
   useEffect(() => {
     const fetchRatings = async () => {
       setLoading(true);
       try {
         if (insList.length === 0) return;
-        const calculatedRating = await CalculateRating(db, insList)
-        setTopInstructors(calculatedRating);
+        const calculatedRating = await CalculateRating(db, insList);
+        const top3 = calculatedRating
+          .sort((a, b) => b.avgRating - a.avgRating)
+          .slice(0, 3);
+        setTopInstructors(top3);
       } catch (error) {
         console.error(error);
       } finally {
@@ -41,8 +34,8 @@ const FacultyLeaderboard = () => {
     fetchRatings();
   }, [insList, db]);
 
-  if(loading){
-    return <Loading />
+  if (loading) {
+    return <Loading />;
   }
 
   return (

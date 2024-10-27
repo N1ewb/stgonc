@@ -1,5 +1,5 @@
 import React, { useContext, createContext, useEffect, useState } from "react";
-import { startOfDay, endOfDay } from "date-fns";
+import { startOfDay, endOfDay, startOfMonth, endOfMonth } from "date-fns";
 import {
   addDoc,
   collection,
@@ -14,7 +14,6 @@ import {
   where,
   Timestamp,
   deleteDoc,
-  
 } from "firebase/firestore";
 import { firestore, storage } from "../../server/firebase";
 import { useAuth } from "../auth/AuthContext";
@@ -41,7 +40,6 @@ export const DBProvider = ({ children }) => {
   );
 
   const schedulesCollectionRef = collection(firestore, "Schedules");
-  const consultationReportRef = collection(firestore, "ConsultationReports");
   const auth = useAuth();
   const notif = useMessage();
   const [user, setUser] = useState(undefined);
@@ -51,8 +49,7 @@ export const DBProvider = ({ children }) => {
   useEffect(() => {
     const fetchData = async () => {
       if (auth.currentUser) {
-        const user = await getUser(auth.currentUser.uid);
-        setUser(user);
+        setUser(auth.currentUser);
       }
     };
     fetchData();
@@ -102,8 +99,12 @@ export const DBProvider = ({ children }) => {
   };
 
   const getGuidance = async () => {
-    try{
-      const q = query(usersCollectionRef, where('role', '==', 'Guidance'), limit(1))
+    try {
+      const q = query(
+        usersCollectionRef,
+        where("role", "==", "Guidance"),
+        limit(1)
+      );
       const querySnapshot = await getDocs(q);
       const userData = querySnapshot.docs.map((doc) => ({
         id: doc.id,
@@ -111,10 +112,12 @@ export const DBProvider = ({ children }) => {
       }));
 
       return userData;
-    }catch(error){
-      toastMessage(`Errr in retreiving guidance counselor info, ${error.message}`)
+    } catch (error) {
+      toastMessage(
+        `Errr in retreiving guidance counselor info, ${error.message}`
+      );
     }
-  }
+  };
 
   const getTeachers = async () => {
     try {
@@ -168,7 +171,8 @@ export const DBProvider = ({ children }) => {
     date,
     time,
     format,
-    type
+    type,
+    department
   ) => {
     try {
       if (auth.currentUser) {
@@ -184,7 +188,7 @@ export const DBProvider = ({ children }) => {
           appointmentDuration: 1,
           createdAt: new Date(),
           teacherRemarks: null,
-          department: user.department,
+          department,
         });
 
         await notif.storeNotifToDB(
@@ -200,17 +204,20 @@ export const DBProvider = ({ children }) => {
 
   //General
   const cancelAppointment = async (id) => {
-    try{
+    try {
       if (auth.currentUser) {
         const appointmentDocRef = doc(firestore, "Appointments", id);
-        const updatedAppointmentDocRef = { appointmentStatus: "Cancelled", updateMessage: `This Appointment was cancelled by ${auth.currentUser.firstName} ${auth.currentUser.lastName}` };
+        const updatedAppointmentDocRef = {
+          appointmentStatus: "Cancelled",
+          updateMessage: `This Appointment was cancelled by ${auth.currentUser.firstName} ${auth.currentUser.lastName}`,
+        };
         await updateDoc(appointmentDocRef, updatedAppointmentDocRef);
         toastMessage("Appointment Cancelled");
       }
-    }catch(error){
-      console.log("Error occured in canceling appointment")
+    } catch (error) {
+      console.log("Error occured in canceling appointment");
     }
-  }
+  };
 
   //As Admin
   const walkinAppointment = async (
@@ -240,7 +247,7 @@ export const DBProvider = ({ children }) => {
           appointmentDuration: duration,
           teacherRemarks: remarks,
           appointmentFormat: "Walkin",
-          appointmentStatus: 'Recorded',
+          appointmentStatus: "Recorded",
           createdAt: serverTimestamp(),
           appointedFaculty: auth.currentUser.uid,
         });
@@ -251,12 +258,21 @@ export const DBProvider = ({ children }) => {
     }
   };
 
-  const makeReferal = async (firstName, lastName, email, referee, department, concern, concernType, date) => {
-    try{
-      if(auth.currentUser){
-        const q = query(appointmentsRef)
+  const makeReferal = async (
+    firstName,
+    lastName,
+    email,
+    referee,
+    department,
+    concern,
+    concernType,
+    date
+  ) => {
+    try {
+      if (auth.currentUser) {
+        const q = query(appointmentsRef);
         await addDoc(q, {
-          appointee : {
+          appointee: {
             firstName,
             lastName,
             email,
@@ -265,25 +281,32 @@ export const DBProvider = ({ children }) => {
           appointedFaculty: auth.currentUser.uid,
           referee,
           appointmentDate: date,
-          appointmentFormat: 'Referal', 
+          appointmentFormat: "Referal",
           department: user.department,
           appointmentConcern: concern,
           appointmentType: concernType,
           createdAt: serverTimestamp(),
-
-        })
+        });
       }
-    }catch(error){
-      throw new Error(`Error in making referal ${error.message}`)
+    } catch (error) {
+      throw new Error(`Error in making referal ${error.message}`);
     }
-  }
+  };
 
-  const makeWalkin = async (firstName, lastName,email, date, concern, concernType, department) => {
-    try{
-      if(auth.currentUser){
-        const q = query(appointmentsRef)
+  const makeWalkin = async (
+    firstName,
+    lastName,
+    email,
+    date,
+    concern,
+    concernType,
+    department
+  ) => {
+    try {
+      if (auth.currentUser) {
+        const q = query(appointmentsRef);
         await addDoc(q, {
-          appointee : {
+          appointee: {
             firstName,
             lastName,
             email,
@@ -291,19 +314,17 @@ export const DBProvider = ({ children }) => {
           },
           appointedFaculty: auth.currentUser.uid,
           appointmentDate: date,
-          appointmentFormat: 'Walkin', 
-          appointmentType: 'Face to Face',
+          appointmentFormat: "Walkin",
           department: user.department,
           appointmentConcern: concern,
           appointmentType: concernType,
           createdAt: serverTimestamp(),
-
-        })
+        });
       }
-    }catch(error){
-      throw new Error(`Error in making referal ${error.message}`)
+    } catch (error) {
+      throw new Error(`Error in making referal ${error.message}`);
     }
-  }
+  };
 
   //As dean
   const uploadESignature = async (imageFile) => {
@@ -390,12 +411,43 @@ export const DBProvider = ({ children }) => {
       notifyError(error);
     }
   };
+  const getFinishedFacultyAppointment = async (id) => {
+    try {
+      if (auth.currentUser) {
+        const now = new Date();
+        const startDate = startOfMonth(now).toISOString().split("T")[0];
+        const endDate = endOfMonth(now).toISOString().split("T")[0];
+
+        const q = query(
+          appointmentsRef,
+          where("appointedFaculty", "==", id),
+          where("appointmentStatus", "==", "Finished"),
+          where("appointmentDate", ">=", startDate),
+          where("appointmentDate", "<=", endDate)
+        );
+
+        const querySnapshot = await getDocs(q);
+        const appointmentData = querySnapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+
+        return appointmentData || [];
+      }
+    } catch (error) {
+      notifyError(error);
+    }
+  };
 
   const approveAppointment = async (id, receiver, date) => {
     try {
       if (auth.currentUser) {
         const appointmentDocRef = doc(firestore, "Appointments", id);
-        const updatedAppointmentDocRef = { appointmentStatus: "Accepted", updateMessage: `This Appointment was approved by ${auth.currentUser.firstName} ${auth.currentUser.lastName}` };
+        const updatedAppointmentDocRef = {
+          appointmentStatus: "Accepted",
+          department: auth.currentUser.department,
+          updateMessage: `This Appointment was approved by ${auth.currentUser.firstName} ${auth.currentUser.lastName}`,
+        };
         await notif.storeNotifToDB(
           "Appointment Accepted",
           `You appointment Request has been accepted and will be held on ${date}`,
@@ -413,7 +465,10 @@ export const DBProvider = ({ children }) => {
     try {
       if (auth.currentUser) {
         const appointmentDocRef = doc(firestore, "Appointments", id);
-        const updatedAppointmentDocRef = { appointmentStatus: "Denied", updateMessage: `This Appointment was denied by ${auth.currentUser.firstName} ${auth.currentUser.lastName}` };
+        const updatedAppointmentDocRef = {
+          appointmentStatus: "Denied",
+          updateMessage: `This Appointment was denied by ${auth.currentUser.firstName} ${auth.currentUser.lastName}`,
+        };
         await notif.storeNotifToDB("Appoitnment Denied", reason, receiver);
         await updateDoc(appointmentDocRef, updatedAppointmentDocRef);
         toastMessage("Appointment Denied");
@@ -437,7 +492,7 @@ export const DBProvider = ({ children }) => {
 
         const oldAppointmentRef = doc(appointmentsRef, id);
         await updateDoc(oldAppointmentRef, { appointmentStatus: "Followup" });
-    
+
         await addDoc(appointmentsRef, {
           precedingAppt: id,
           appointee: receiver,
@@ -477,12 +532,18 @@ export const DBProvider = ({ children }) => {
     try {
       if (auth.currentUser) {
         await addDoc(appointmentsRef, {
-          appointee: { firstName, lastName, email, department: user.department, appointeeType: type},
+          appointee: {
+            firstName,
+            lastName,
+            email,
+            department: user.department,
+            appointeeType: type,
+          },
           appointedFaculty: auth.currentUser.uid,
           appointmentDate: date.dateWithoutTime,
           appointmentsTime: time,
           createdAt: serverTimestamp(),
-          department: user.department,  
+          department: user.department,
           appointmentFormat: "Walkin",
           appointmentStatus: "Pending",
           appointmentType: type,
@@ -498,7 +559,10 @@ export const DBProvider = ({ children }) => {
       if (auth.currentUser) {
         const recevingUser = await getUser(receiver);
         const appointmentDocRef = doc(firestore, "Appointments", id);
-        const updatedAppointmentDocRef = { appointmentStatus: "Finished", updateMessage: `This Appointment was marked finished by ${auth.currentUser.firstName} ${auth.currentUser.lastName}` };
+        const updatedAppointmentDocRef = {
+          appointmentStatus: "Finished",
+          updateMessage: `This Appointment was marked finished by ${auth.currentUser.firstName} ${auth.currentUser.lastName}`,
+        };
 
         await updateDoc(appointmentDocRef, updatedAppointmentDocRef);
         if (recevingUser) {
@@ -527,11 +591,10 @@ export const DBProvider = ({ children }) => {
   ) => {
     try {
       if (auth.currentUser) {
-
         const appointmentDocRef = doc(firestore, "Appointments", id);
         const updatedAppointmentDocRef = { teacherRemarks: remarks };
         const reportRef = collection(appointmentDocRef, "Reports");
-        await updateDoc(appointmentDocRef, updatedAppointmentDocRef)
+        await updateDoc(appointmentDocRef, updatedAppointmentDocRef);
         await addDoc(reportRef, {
           remarks,
           date,
@@ -569,6 +632,7 @@ export const DBProvider = ({ children }) => {
         await addDoc(facultyRatingRef, {
           facultyRating,
           facultyfeedback,
+          createdAt: serverTimestamp(),
         });
 
         await addDoc(appointmentRatingRef, {
@@ -811,7 +875,10 @@ export const DBProvider = ({ children }) => {
     try {
       if (auth.currentUser) {
         const unsubscribe = onSnapshot(
-          query(appointmentsRef, where("appointedFaculty", "==", auth.currentUser.uid)),
+          query(
+            appointmentsRef,
+            where("appointedFaculty", "==", auth.currentUser.uid)
+          ),
           (snapshot) => {
             const data = snapshot.docs.map((doc) => ({
               id: doc.id,
@@ -881,8 +948,8 @@ export const DBProvider = ({ children }) => {
           query(
             appointmentsRef,
             where("appointmentFormat", "==", "Walkin"),
-            where('appointmentStatus', 'in', statusArray),
-            where('appointedFaculty', '==', auth.currentUser.uid)
+            where("appointmentStatus", "in", statusArray),
+            where("appointedFaculty", "==", auth.currentUser.uid)
           ),
           (snapshot) => {
             const data = snapshot.docs.map((doc) => ({
@@ -907,7 +974,7 @@ export const DBProvider = ({ children }) => {
     }
   };
 
-  const subscribeToSCSChanges = async (format,callback) => {
+  const subscribeToSCSChanges = async (format, callback) => {
     try {
       if (auth.currentUser) {
         const formatArray = Array.isArray(format) ? format : [format];
@@ -915,7 +982,7 @@ export const DBProvider = ({ children }) => {
           query(
             appointmentsRef,
             where("appointmentFormat", "in", formatArray),
-            where('appointedFaculty' ,'==', auth.currentUser.uid)
+            where("appointedFaculty", "==", auth.currentUser.uid)
           ),
           (snapshot) => {
             const data = snapshot.docs.map((doc) => ({
@@ -1035,17 +1102,28 @@ export const DBProvider = ({ children }) => {
     }
   };
 
-  const denyRegistration = async (id,denyMessage, receiver) => {
+  const denyRegistration = async (id, denyMessage, receiver) => {
     try {
       if (auth.currentUser) {
-        const registrationDocRef = doc(firestore, "StudentRegistrationRequest", id);
-        const updatedRegistrationDocRef = { status: "Denied", updateMessage: `This Appointment was denied by ${auth.currentUser.firstName} ${auth.currentUser.lastName}` };
-        await notif.storeNotifToDB("Registration Denied", denyMessage, receiver);
+        const registrationDocRef = doc(
+          firestore,
+          "StudentRegistrationRequest",
+          id
+        );
+        const updatedRegistrationDocRef = {
+          status: "Denied",
+          updateMessage: `This Appointment was denied by ${auth.currentUser.firstName} ${auth.currentUser.lastName}`,
+        };
+        await notif.storeNotifToDB(
+          "Registration Denied",
+          denyMessage,
+          receiver
+        );
         await updateDoc(registrationDocRef, updatedRegistrationDocRef);
         toastMessage("Registration Denied");
       }
     } catch (error) {
-      console.log("Error has occured")
+      console.log("Error has occured");
     }
   };
 
@@ -1313,7 +1391,10 @@ export const DBProvider = ({ children }) => {
       if (auth.currentUser) {
         const dayRef = doc(firestore, "Schedules", day.id);
         const timeslotsCollectionRef = collection(dayRef, "timeslots");
-        const q = query(timeslotsCollectionRef, where('assignedInstructor.userID', '==', auth.currentUser.uid))
+        const q = query(
+          timeslotsCollectionRef,
+          where("assignedInstructor.userID", "==", auth.currentUser.uid)
+        );
         const unsubscribe = onSnapshot(q, (snapshot) => {
           const timeslotsData = snapshot.docs.map((doc) => ({
             id: doc.id,
@@ -1371,6 +1452,7 @@ export const DBProvider = ({ children }) => {
     setInstructorSchedule,
     subscribeToTimeslotChanges,
     getAppointmentList,
+    getFinishedFacultyAppointment,
     getPendingRegistrationRequests,
     subscribetoPendingRegistration,
     subscribeToAppointmentChanges,

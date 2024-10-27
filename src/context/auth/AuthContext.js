@@ -239,7 +239,7 @@ export const AuthProvider = ({ children }) => {
           facultyIdnumber: firestoreUserData?.facultyIdnumber,
           studentIdnumber: firestoreUserData?.studentIdnumber,
           guidanceIdnumber: firestoreUserData?.guidanceIdnumber,
-
+          eSignature: firestoreUserData?.eSignature
         };
 
         setCurrentUser(userData);

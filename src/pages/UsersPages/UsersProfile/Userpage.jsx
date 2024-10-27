@@ -71,7 +71,7 @@ const Userpage = () => {
   }, []);
 
   return (
-    <div className="Userpage-container w-full overflow-auto h-[100%]">
+    <div className="Userpage-container w-full overflow-auto h-full bg-white">
       <div className="flex w-full flex-row h-[100%]">
         <div className="account-details-sidebar-container flex flex-col gap-3 basis-1/5  [&_button]:w-[80%] [&_button]:rounded-md text-center ">
           <button

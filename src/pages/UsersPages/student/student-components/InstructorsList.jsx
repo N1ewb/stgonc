@@ -1,21 +1,19 @@
 import React from "react";
-import { useAuth } from "../../../../context/auth/AuthContext";
 import Usercard from "../../../../components/userscard/Usercard";
 
 const InstructorsList = ({
   instructors,
   More,
-  DefaultProfile,
   setInstructorInfo,
 }) => {
-  const auth = useAuth();
 
-  const buttons = [
+  const buttons = [ 
     
     {
       src: More,
       alt: "More",
       function: (instructor) => setInstructorInfo(instructor),
+      needsParams: true
     },
   ];
 

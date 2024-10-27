@@ -8,7 +8,6 @@ import toast from "react-hot-toast";
 import CalendarIcon from "../../../../../static/images/Group 1171275864.png";
 import Calendar from "../RequestApptCalendar/RequestApptCalendar";
 import { useDB } from "../../../../../context/db/DBContext";
-import TimeslotRadioInput from "../timeslots/TimeslotRadioInput";
 import Timeslot from "../timeslots/Timeslot";
 
 const RequestAppointmentForm = ({ instructor, show, toggleShow }) => {
@@ -22,7 +21,6 @@ const RequestAppointmentForm = ({ instructor, show, toggleShow }) => {
   const [selectedDate, setSelectedDate] = useState(null);
   const [instructorSchedule, setInstructorSchedule] = useState([]);
   const [instructorTimeslots, setInstructorTimeslots] = useState([]);
-  const [days, setDays] = useState();
   const concernRef = useRef();
   const formatRef = useRef();
   const typeRef = useRef();
@@ -133,7 +131,7 @@ const RequestAppointmentForm = ({ instructor, show, toggleShow }) => {
         setInstructorSchedule([]);
         if (show) {
           const dayOfWeek = await db.getDays();
-          setDays(dayOfWeek);
+
           handleGetInstructorAvailableDays(dayOfWeek, instructor.email);
         }
       } catch (error) {
@@ -148,7 +146,8 @@ const RequestAppointmentForm = ({ instructor, show, toggleShow }) => {
     facultyUID,
     concern,
     format,
-    type
+    type,
+    department
   ) => {
     try {
       if (
@@ -165,7 +164,8 @@ const RequestAppointmentForm = ({ instructor, show, toggleShow }) => {
           appointmentDate.dateWithoutTime,
           appointmentTime,
           format,
-          type
+          type,
+          department
         );
         toastMessage("Appointment request sent");
         handleToggleShow();
@@ -297,7 +297,8 @@ const RequestAppointmentForm = ({ instructor, show, toggleShow }) => {
                       instructor.userID,
                       concernRef.current.value,
                       formatRef.current.value,
-                      typeRef.current.value
+                      typeRef.current.value,
+                      instructor.department
                     )
                   }
                 >

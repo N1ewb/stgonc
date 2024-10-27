@@ -2,7 +2,6 @@ import React, { useEffect, useRef, useState } from "react";
 import "./admin_schedules.css";
 import { useAuth } from "../../../../../context/auth/AuthContext";
 import { useDB } from "../../../../../context/db/DBContext";
-import { auth } from "../../../../../server/firebase";
 import { Tooltip } from "react-tooltip";
 
 import toast from "react-hot-toast";
@@ -69,7 +68,7 @@ const AdminSchedulesPage = () => {
 
   return (
     <ExportToPDFHOC
-      fileName={`${auth.currentUser.displayName} Faculty schedule`}
+      fileName={`${currentUser.displayName} Faculty schedule`}
       fileType={fileType}
       ref={exportPDFRef}
     >
@@ -87,12 +86,14 @@ const AdminSchedulesPage = () => {
           <div className="actions-container w-full flex flex-row-reverse gap-3">
             <button
               onClick={() => setDialogVisible(true)}
+              data-tooltip-id="export-button"
               className="export-button bg-transparent  p-0"
             >
               <img src={Export} alt="Export" height={27} width={27} />
             </button>
             {!isEditMode ? (
               <button
+                data-tooltip-id="edit-button"
                 className="edit-button bg-transparent  p-0"
                 onClick={handleChooseCells}
               >
@@ -139,10 +140,14 @@ const AdminSchedulesPage = () => {
             </div>
           </div>
         </div>
-        <Tooltip data-anchorselect=".export-button" place="top">
-          Export file 
+        <Tooltip
+          data-anchorselect=".export-button"
+          id="export-button"
+          place="top"
+        >
+          Export file
         </Tooltip>
-        <Tooltip data-anchorselect=".edit-button" place="top">
+        <Tooltip data-anchorselect=".edit-button" id="edit-button" place="top">
           Edit Table
         </Tooltip>
       </div>

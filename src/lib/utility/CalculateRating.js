@@ -18,11 +18,9 @@ const calculateRating = async (db, insList) => {
       });
     }
   }
-  const top3 = ratedInstructors
-    .sort((a, b) => b.avgRating - a.avgRating)
-    .slice(0, 3);
+  
 
-  return top3;
+  return ratedInstructors;
 };
 
 export default calculateRating;

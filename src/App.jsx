@@ -338,7 +338,7 @@ function App() {
               <ChatProvider>
                 <Appointmentprovider>
                   <PrimeReactProvider>
-                    <div className="App h-full w-full bg-[#320000] overflow-auto">
+                    <div className="App h-full w-full bg-[#320000] overflow-auto relative">
                       <RouterProvider router={router} />
                       <Toaster />
                     </div>
