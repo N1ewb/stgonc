@@ -13,7 +13,7 @@ const WalkinScheduleAppt = () => {
   const firstNameRef = useRef();
   const lastNameRef = useRef();
   const emailRef = useRef();
-  const [appteeType, setAppteeType] = useState('')
+  const appteeTypeRef = useRef()
   const isFormOpen = true;
   const {
     selectedDate,
@@ -35,14 +35,17 @@ const WalkinScheduleAppt = () => {
     const firstName = firstNameRef.current.value;
     const lastName = lastNameRef.current.value;
     const email = emailRef.current.value;
+    const appteeType = appteeTypeRef.current.value
+
     setIsSubmitting(true);
+    console.log(`Email: ${email}, Firstname: ${firstName}, Lastname: ${lastName}, Appt Date: ${appointmentDate.dayOfWeek}, Appt Time: ${JSON.stringify(appointmentTime)}, Appt Type: ${appteeType}`)
     if (email && firstName && lastName && appointmentDate && appointmentTime && appteeType) {
       try {
         await db.walkinScheduleAppointment(
           firstName,
           lastName,
           email,
-          appointmentDate,
+          appointmentDate.dayOfWeek,
           appointmentTime,
           appteeType
         );
@@ -101,7 +104,7 @@ const WalkinScheduleAppt = () => {
             </div>
             <div className="group flex flex-col items-center w-full">
               <label htmlFor="role">Appointee Type</label>
-              <select onChange={(e) => setAppteeType(e.target.value) }>
+              <select ref={appteeTypeRef}>
                 <option value='Student'>Student</option>
                 <option value='Guardian'>Guardian</option>
               </select>

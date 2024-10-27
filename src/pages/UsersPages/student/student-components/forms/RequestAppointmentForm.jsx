@@ -167,13 +167,20 @@ const RequestAppointmentForm = ({ instructor, show, toggleShow }) => {
           type,
           department
         );
+
         toastMessage("Appointment request sent");
         handleToggleShow();
+
+        concernRef.current.value = "";
+        formatRef.current.value = "";
+        typeRef.current.value = "";
+        setAppointmentTime(undefined);
+        setAppointmentDate(undefined);
       } else {
         toastMessage("Please fill in fields");
       }
     } catch (error) {
-      toastMessage("Request Appoinment not sent");
+      toastMessage("Request Appointment not sent");
     }
   };
 

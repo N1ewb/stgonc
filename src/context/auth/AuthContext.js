@@ -29,7 +29,7 @@ export function useAuth() {
 export const AuthProvider = ({ children }) => {
   const [currentUser, setCurrentUser] = useState(null);
   const usersCollectionRef = collection(firestore, "Users");
-  const [error, setError] = useState();
+  const [error, setError] = useState(false);
 
   const toastMessage = (message) => toast(message);
 
@@ -48,7 +48,7 @@ export const AuthProvider = ({ children }) => {
         );
       } catch (error) {
         toastMessage(error.message);
-        setError(error.message);
+        setError(true);
       } finally {
         if (!error) {
           toastMessage("Logged in Successfully");

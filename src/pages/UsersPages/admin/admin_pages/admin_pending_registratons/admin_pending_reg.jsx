@@ -22,11 +22,13 @@ const AdmingPendingRegPage = () => {
     if (auth.currentUser) {
       const handleGetPendingRegistrations = async () => {
         try {
-          const unsubscribe = await db.subscribetoPendingRegistration((callback) => {
-            setPendingRegistrationList(callback);
-            setTemp(callback);
-          });
-          return () => unsubscribe()
+          const unsubscribe = await db.subscribetoPendingRegistration(
+            (callback) => {
+              setPendingRegistrationList(callback);
+              setTemp(callback);
+            }
+          );
+          return () => unsubscribe();
         } catch (error) {
           console.log(error);
         } finally {
@@ -46,8 +48,8 @@ const AdmingPendingRegPage = () => {
   }
 
   return (
-    <div className="pending-registrations-container h-[100%] w-full">
-      <div className="pending-registrations-header flex flex-row justify-between w-1/2 items-end">
+    <div className="pending-registrations-container h-full w-full">
+      <header className="flex flex-row justify-between w-1/2 items-end pb-3">
         <h1 className="text-[#320000] text-4xl font-bold">
           Pending<br></br> <span className="font-light">Registrations</span>
         </h1>
@@ -56,18 +58,19 @@ const AdmingPendingRegPage = () => {
           setData={setPendingRegistrationList}
           temp={temp}
         />
-      </div>
-      <div className="pending-regitrations-content-container flex flex-row justify-between h-[100%] w-full">
-        <div className="pending-registration-list-container w-1/2 max-h-[90%] overflow-auto pb-3">
+      </header>
+      <div className="pending-regitrations-content-container flex flex-row justify-between h-[90%] w-full">
+        <div className="flex flex-wrap items-start w-1/2 max-h-full gap-3 overflow-auto py-3">
           {pendingRegistrationList && pendingRegistrationList.length !== 0 ? (
             pendingRegistrationList.map((pendingRegistrations, index) => (
-              <RegistrationReqCards
-                pendingRegistrations={pendingRegistrations}
-                setCurrentOpenedRegistrationCard={
-                  setCurrentOpenedRegistrationCard
-                }
-                key={index}
-              />
+              <div className="w-[48%] h-fit" key={index}>
+                <RegistrationReqCards
+                  pendingRegistrations={pendingRegistrations}
+                  setCurrentOpenedRegistrationCard={
+                    setCurrentOpenedRegistrationCard
+                  }
+                />
+              </div>
             ))
           ) : (
             <p>No pending Registrations</p>

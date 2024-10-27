@@ -531,6 +531,7 @@ export const DBProvider = ({ children }) => {
   ) => {
     try {
       if (auth.currentUser) {
+        console.log("SDSD: ", time.appointmentStartTime)
         await addDoc(appointmentsRef, {
           appointee: {
             firstName,
@@ -540,8 +541,8 @@ export const DBProvider = ({ children }) => {
             appointeeType: type,
           },
           appointedFaculty: auth.currentUser.uid,
-          appointmentDate: date.dateWithoutTime,
-          appointmentsTime: time,
+          appointmentDate: date,
+          appointmentsTime: {appointmentStartTime: time.appointmentStartTime, appointmentEndTime: time.appointmentEndTime},
           createdAt: serverTimestamp(),
           department: user.department,
           appointmentFormat: "Walkin",
@@ -550,7 +551,7 @@ export const DBProvider = ({ children }) => {
         });
       }
     } catch (error) {
-      notifyError(`Error scheduling walkin appointment: ${error.message}`);
+      toastMessage(`Error scheduling walkin appointment: ${error.message}`);
     }
   };
 

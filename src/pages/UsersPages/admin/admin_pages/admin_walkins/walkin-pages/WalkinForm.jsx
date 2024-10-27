@@ -63,38 +63,37 @@ const WalkinForm = () => {
         <h3 className="text-[#720000]">Input Walk-in Details</h3>
       </div>
 
-      <div className="name-group flex flex-col md:flex-row gap-4 w-full">
+      <div className="name-group flex gap-3 justify-between w-full items-center">
         <input
-          className="border border-gray-300 rounded-lg p-2 w-full md:w-1/2 focus:ring-2 focus:ring-indigo-400"
+          className="border border-gray-300 rounded-lg p-2  w-[45%] focus:ring-2 focus:ring-indigo-400"
           type="text"
           ref={appointeeFirstNameRef}
           placeholder="First Name"
         />
         <input
-          className="border border-gray-300 rounded-lg p-2 w-full md:w-1/2 focus:ring-2 focus:ring-indigo-400"
+          className="border border-gray-300 rounded-lg p-2  w-[45%] focus:ring-2 focus:ring-indigo-400"
           type="text"
           ref={appointeeLastNameRef}
           placeholder="Last Name"
         />
       </div>
 
-      <div className="email-group">
+      <div className="group flex justify-between gap-3 w-full items-center">
         <input
-          className="border border-gray-300 rounded-lg p-2 w-full md:full focus:ring-2 focus:ring-indigo-400"
+          className="border border-gray-300 rounded-lg p-2 w-[45%]focus:ring-2 focus:ring-indigo-400"
           type="text"
           ref={emailRef}
           placeholder="Email"
         />
+        <select
+          ref={appointeeTypeRef}
+          className="w-[45%] border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-indigo-400"
+        >
+          <option value={undefined}>Appointee Type</option>
+          <option value="Student">Student</option>
+          <option value="Guardian">Guardian</option>
+        </select>
       </div>
-
-      <select
-        ref={appointeeTypeRef}
-        className="w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-indigo-400"
-      >
-        <option value={undefined}>Appointee Type</option>
-        <option value="Student">Student</option>
-        <option value="Guardian">Guardian</option>
-      </select>
 
       <div className="group w-full flex flex-col">
         <label htmlFor="concern" className="font-semibold text-gray-600 mb-1">
@@ -110,23 +109,25 @@ const WalkinForm = () => {
         />
       </div>
 
-      <div className="date-group w-full">
-        <input
-          type="date"
-          name="date"
-          className="w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-indigo-400"
-          ref={dateRef}
-        />
-      </div>
+      <div className="input-group flex w-full justify-between gap-3 items-center">
+        <div className="date-group w-[48%]">
+          <input
+            type="date"
+            name="date"
+            className="w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-indigo-400"
+            ref={dateRef}
+          />
+        </div>
 
-      <div className="group w-full">
-        <input
-          name="duration"
-          className="w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-indigo-400"
-          type="number"
-          ref={durationRef}
-          placeholder="Duration in hours"
-        />
+        <div className="group w-[48%]">
+          <input
+            name="duration"
+            className="w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-indigo-400"
+            type="number"
+            ref={durationRef}
+            placeholder="Duration in hours"
+          />
+        </div>
       </div>
 
       <div className="group w-full flex flex-col">

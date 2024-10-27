@@ -32,16 +32,13 @@ const ExportReport = ({ onClose, insList }) => {
 
         const updatedInstructors = await Promise.all(
           insList.map(async (ins) => {
-            // Fetch all appointments for the current instructor
             const insApts = await db.getFinishedFacultyAppointment(ins.id);
 
-            // Sum up total consultation hours
             const totalConsultationHours = insApts.reduce(
               (sum, apt) => sum + (parseInt(apt.appointmentDuration) || 0),
               0
             );
 
-            // Find the rating or default to "N/A"
             const ratingData = sortedIns.find(
               (rated) => rated.ins.userID === ins.id
             ) || {
@@ -89,10 +86,9 @@ const ExportReport = ({ onClose, insList }) => {
   }, [currentUser]);
 
   const handleDownloadPDF = async () => {
-    if (!signatureSrc) return; // Ensure the signature is loaded
+    if (!signatureSrc) return;
     console.log("Signature source URL:", signatureSrc);
 
-    // Wait for the signature image to load
     const img = new Image();
     img.crossOrigin = "Anonymous";
     img.src = signatureSrc;
@@ -113,7 +109,7 @@ const ExportReport = ({ onClose, insList }) => {
         format: "a4",
       });
 
-      const imgWidth = 210; // A4 width in mm
+      const imgWidth = 210;
       const imgHeight = (canvas.height * imgWidth) / canvas.width;
 
       pdf.addImage(imgData, "PNG", 0, 0, imgWidth, imgHeight);
@@ -138,8 +134,8 @@ const ExportReport = ({ onClose, insList }) => {
     >
       <div className="spacer p-20"></div>
       <div className="content flex flex-row justify-between items-start">
-        <header className="p-10">
-          <h2 className="text-white">Export this month's report file</h2>
+        <header className="p-9 fixed z-10 bg-[#320000] left-0">
+          <h1 className="text-white text-3xl">Export this month's report file</h1>
           <div
             style={{ margin: "20px 0" }}
             onClick={(e) => e.stopPropagation()}

@@ -26,15 +26,17 @@ const WalkinApptList = () => {
   }, [db]);
 
   return (
-    <div className="walkin-appointment-list-container h-[100%] w-full flex flex-row text-black">
-      <div
-        className={`transition-all duration-500 ease-out ${
-          currentWalkin ? "w-1/2" : "w-full"
-        }`}
-      >
+    <div className="walkin-appointment-list-container h-full w-full flex justify-between ">
+      <div className={`w-1/2 grid grid-cols-2 items-start max-h-[90%] gap-3 overflow-auto p-3`}>
         {walkinAppointmentList.length > 0 ? (
           walkinAppointmentList.map((appointment) => (
-            <ApptListCard key={appointment.id} appointment={appointment} setCurrentWalkin={setCurrentWalkin} currentWalkin={currentWalkin} />
+            <div key={appointment.id} className="w-full h-fit">
+              <ApptListCard
+                appointment={appointment}
+                setCurrentWalkin={setCurrentWalkin}
+                currentWalkin={currentWalkin}
+              />
+            </div>
           ))
         ) : (
           <p>No walk-in appointment records</p>
@@ -42,7 +44,7 @@ const WalkinApptList = () => {
       </div>
       <div
         className={`transition-transform duration-500 ease-in-out pb-5 px-2 ${
-          currentWalkin ? "w-1/2 mx-3 translate-x-0" : "w-0 translate-x-[100%]"
+          currentWalkin ? "w-[48%] mx-3 translate-x-0" : "w-0 translate-x-[100%]"
         } overflow-hidden`}
       >
         {currentWalkin && (

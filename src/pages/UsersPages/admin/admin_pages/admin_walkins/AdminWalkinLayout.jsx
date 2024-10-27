@@ -2,13 +2,12 @@ import React from "react";
 import { Link, Outlet, useLocation } from "react-router-dom";
 
 const AdminWalkinLayout = () => {
-  const location = useLocation(); // Track active link
-
+  const location = useLocation(); 
   return (
     <div className="h-full w-full bg-white">
-      <header className="flex justify-between items-center ">
+      <header className="flex justify-between items-center pb-3">
         <h1 className="text-2xl font-semibold text-[#320000]">Walk-ins</h1>
-        <div className="flex gap-6">
+        <div className="w-[80%] flex justify-between items-center bg-[#320000] px-10 py-3 rounded-2xl">
           <NavLink 
             to="/private/Admin/dashboard/walkins" 
             location={location} 
@@ -22,32 +21,31 @@ const AdminWalkinLayout = () => {
           <NavLink 
             to="/private/Admin/dashboard/walkins/schedule-form" 
             location={location} 
-            label="Schedule Walk-in Data" 
+            label="Schedule Walk-in" 
           />
           <NavLink 
             to="/private/Admin/dashboard/walkins/pending-walkin-appointments" 
             location={location} 
-            label="Pending Appointments" 
+            label="Pending Appts" 
           />
         </div>
       </header>
 
-      <main className="flex justify-center items-center w-full h-full">
+      <main className="w-full h-full">
         <Outlet />
       </main>
     </div>
   );
 };
 
-// Reusable NavLink component with clean, minimal styling
 const NavLink = ({ to, location, label }) => (
   <Link
     to={to}
-    className={`text-[#320000] text-base font-medium transition-all duration-200 decoration-transparent
+    className={`text-base border-2 border-white rounded-2xl font-medium px-2 w-[23%] text-[12px] py-2 text-center  transition-all duration-200 decoration-transparent
       ${
         location.pathname === to
-          ? "border-b-2 border-[#720000] text-[#720000] "
-          : "hover:text-[#720000]"
+          ? " text-[#320000] bg-white "
+          : "hover:text-white text-white"
       }`}
   >
     {label}

@@ -44,7 +44,7 @@ const AdminLayout = () => {
         <Sidebar SidebarLinks={SidebarLinks} />
       </div>
 
-      <main className="group-with-spacer h-screen w-[83%] lg:w-full flex flex-col justify-around">
+      <main className="group-with-spacer h-full w-[83%] lg:w-full flex flex-col justify-around">
         <div className="spacer w-full h-[5vh]"></div>
         <div className="Main-Content bg-white w-full h-[85vh] rounded-tl-[70px] rounded-bl-[70px] p-[50px]  lg:rounded-bl-[0px] lg:rounded-tl-[0px] sm:p-4">
           <Outlet />

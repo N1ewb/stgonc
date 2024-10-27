@@ -15,14 +15,15 @@ const LoginPage = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleSignIn = (e) => {
-    e.preventDefault()
+    e.preventDefault();
+    setIsSubmitting(true);
     auth.SignIn(emailRef.current.value, passwordRef.current.value);
   };
 
   useEffect(() => {
     const fetchUserAndRedirect = async () => {
+      
       if (auth.currentUser) {
-        setIsSubmitting(true);
         try {
           const user = await db.getUser(auth.currentUser.uid);
           if (user) {
@@ -41,6 +42,8 @@ const LoginPage = () => {
         } finally {
           setIsSubmitting(false);
         }
+      } else {
+        setIsSubmitting(false);
       }
     };
 
