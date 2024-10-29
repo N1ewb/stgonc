@@ -1,13 +1,13 @@
 import React from "react";
-import Usercard from "../../../../components/userscard/Usercard";
+import Usercard from "../../../../../components/userscard/Usercard";
+import More from '../../../../../static/images/more-dark.png'
+import { useUserList } from "../../../../../context/admin/UserListContext";
 
-const UserList = ({
-  currentCharacters,
-  defaultProfile,
-  More,
-  setCurrentUserInfo,
-  currentUserInfo,
-}) => {
+const UserList = () => {
+  const {
+    currentCharacters,
+    setCurrentUserInfo,
+  } = useUserList();
   const handleSetCurrentUser = (user) => {
     setCurrentUserInfo((prevUser) => (prevUser === user ? null : user));
   };

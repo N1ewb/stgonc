@@ -531,7 +531,7 @@ export const DBProvider = ({ children }) => {
   ) => {
     try {
       if (auth.currentUser) {
-        console.log("SDSD: ", time.appointmentStartTime)
+        console.log("SDSD: ", time.appointmentStartTime);
         await addDoc(appointmentsRef, {
           appointee: {
             firstName,
@@ -542,7 +542,10 @@ export const DBProvider = ({ children }) => {
           },
           appointedFaculty: auth.currentUser.uid,
           appointmentDate: date,
-          appointmentsTime: {appointmentStartTime: time.appointmentStartTime, appointmentEndTime: time.appointmentEndTime},
+          appointmentsTime: {
+            appointmentStartTime: time.appointmentStartTime,
+            appointmentEndTime: time.appointmentEndTime,
+          },
           createdAt: serverTimestamp(),
           department: user.department,
           appointmentFormat: "Walkin",
@@ -791,6 +794,31 @@ export const DBProvider = ({ children }) => {
         const q = query(
           usersCollectionRef,
           where("role", "in", ["Faculty", "Admin"]),
+          where("department", "==", user.department)
+        );
+
+        const unsubscribe = onSnapshot(q, (snapshot) => {
+          const data = snapshot.docs.map((doc) => ({
+            id: doc.id,
+            ...doc.data(),
+          }));
+
+          const updatedData = data.filter((user) => user.role !== "moderator");
+          callback(updatedData);
+        });
+
+        return unsubscribe;
+      }
+    } catch (error) {
+      toastMessage("Error subscribing to user changes:", error);
+    }
+  };
+  const subscribeToStudentChanges = async (callback) => {
+    try {
+      if (auth.currentUser) {
+        const q = query(
+          usersCollectionRef,
+          where("role", "in", ["Student"]),
           where("department", "==", user.department)
         );
 
@@ -1464,6 +1492,7 @@ export const DBProvider = ({ children }) => {
     subscribeToRequestedAppointmentChanges,
     subscribeToUserChanges,
     subscribeToInstructorChanges,
+    subscribeToStudentChanges,
     subscribeToSchedulesChanges,
     setNotifSent,
     subscribeToGuidanceTimeslotChanges,

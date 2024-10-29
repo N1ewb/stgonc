@@ -70,6 +70,10 @@ import WalkinScheduleAppt from "./pages/UsersPages/admin/admin_pages/admin_walki
 import WalkinPendingAppointment from "./pages/UsersPages/admin/admin_pages/admin_walkins/walkin-pages/WalkinPendingAppointment";
 import SCSDashboard from "./pages/UsersPages/GuidanceCounselor/GuidancePages/StudentCounselingServices/SCSDashboard";
 import GuidanceAppointmentDashboard from "./pages/UsersPages/GuidanceCounselor/GuidancePages/GuidanceAppointments/GuidanceAppointmentDashboard";
+import FacultyList from "./pages/UsersPages/admin/admin_pages/admin_userlist/FacultyList";
+import StudentList from "./pages/UsersPages/admin/admin_pages/admin_userlist/StudentList";
+import UserList from "./pages/UsersPages/admin/admin-components/userlist/UserList";
+import { UserListProvider } from "./context/admin/UserListContext";
 
 function App() {
   const router = createBrowserRouter([
@@ -134,6 +138,20 @@ function App() {
                 {
                   path: "/private/Admin/dashboard/user-list",
                   element: <AdminUserList />,
+                  children: [
+                    {
+                      path: "/private/Admin/dashboard/user-list/",
+                      element: <UserList />,
+                    },
+                    {
+                      path: "/private/Admin/dashboard/user-list/faculty",
+                      element: <FacultyList />,
+                    },
+                    {
+                      path: "/private/Admin/dashboard/user-list/student",
+                      element: <StudentList />,
+                    },
+                  ],
                 },
                 {
                   path: "/private/Admin/dashboard/register-user",
@@ -166,7 +184,7 @@ function App() {
                   element: <StudentCounselingServices />,
                   children: [
                     {
-                      path: "/private/Guidance/student-counseling-services/Dashboard",
+                      path: "/private/Guidance/student-counseling-services",
                       element: <SCSDashboard />,
                     },
                     {
@@ -338,10 +356,12 @@ function App() {
               <ChatProvider>
                 <Appointmentprovider>
                   <PrimeReactProvider>
-                    <div className="App h-full w-full bg-[#320000] overflow-auto relative">
-                      <RouterProvider router={router} />
-                      <Toaster />
-                    </div>
+                    <UserListProvider>
+                      <div className="App h-full w-full bg-[#320000] overflow-auto relative">
+                        <RouterProvider router={router} />
+                        <Toaster />
+                      </div>
+                    </UserListProvider>
                   </PrimeReactProvider>
                 </Appointmentprovider>
               </ChatProvider>

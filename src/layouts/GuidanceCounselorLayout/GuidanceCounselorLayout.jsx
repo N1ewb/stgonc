@@ -18,7 +18,7 @@ const GuidanceCounselorLayout = () => {
     },
     {
       name: "Student Counseling Services",
-      link: "/private/Guidance/student-counseling-services/Dashboard",
+      link: "/private/Guidance/student-counseling-services",
     },
     // {
     //   name: "Referal",

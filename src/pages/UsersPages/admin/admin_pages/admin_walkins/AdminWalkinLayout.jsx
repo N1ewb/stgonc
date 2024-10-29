@@ -1,5 +1,6 @@
 import React from "react";
-import { Link, Outlet, useLocation } from "react-router-dom";
+import { Outlet, useLocation } from "react-router-dom";
+import NavLink from "../../../../../components/buttons/NavLinks";
 
 const AdminWalkinLayout = () => {
   const location = useLocation(); 
@@ -7,7 +8,7 @@ const AdminWalkinLayout = () => {
     <div className="h-full w-full bg-white">
       <header className="flex justify-between items-center pb-3">
         <h1 className="text-2xl font-semibold text-[#320000]">Walk-ins</h1>
-        <div className="w-[80%] flex justify-between items-center bg-[#320000] px-10 py-3 rounded-2xl">
+        <div className="w-[80%] flex justify-between items-center bg-[#320000] px-10 py-3 rounded-2xl gap-4">
           <NavLink 
             to="/private/Admin/dashboard/walkins" 
             location={location} 
@@ -38,18 +39,6 @@ const AdminWalkinLayout = () => {
   );
 };
 
-const NavLink = ({ to, location, label }) => (
-  <Link
-    to={to}
-    className={`text-base border-2 border-white rounded-2xl font-medium px-2 w-[23%] text-[12px] py-2 text-center  transition-all duration-200 decoration-transparent
-      ${
-        location.pathname === to
-          ? " text-[#320000] bg-white "
-          : "hover:text-white text-white"
-      }`}
-  >
-    {label}
-  </Link>
-);
+
 
 export default AdminWalkinLayout;

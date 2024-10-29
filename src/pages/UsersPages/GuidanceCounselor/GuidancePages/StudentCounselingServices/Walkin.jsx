@@ -21,14 +21,14 @@ const Walkin = () => {
   }, [db]);
   const handleOpenWalkinForm = () => {
     setisWalkingFormOpen(!isWalkingFormOpen);
-    setCurrentSCSAppt(null)
+    setCurrentSCSAppt(null);
   };
 
   useEffect(() => {
-    if(currentSCSAppt){
-      setisWalkingFormOpen(false)
+    if (currentSCSAppt) {
+      setisWalkingFormOpen(false);
     }
-  },[currentSCSAppt])
+  }, [currentSCSAppt]);
 
   return (
     <div className="flex flex-col gap-5 h-full w-full">
@@ -46,7 +46,7 @@ const Walkin = () => {
             isWalkingFormOpen ? "w-1/2" : "w-0"
           }`}
         >
-          {isWalkingFormOpen && !currentSCSAppt &&(
+          {isWalkingFormOpen && !currentSCSAppt && (
             <WalkinForm handleOpenWalkinForm={handleOpenWalkinForm} />
           )}
         </div>
@@ -57,6 +57,7 @@ const Walkin = () => {
           {appts.length !== 0
             ? appts.map((appt) => (
                 <SCSApptCards
+                  key={appt.id}
                   appt={appt}
                   setCurrentSCSAppt={setCurrentSCSAppt}
                   currentSCSAppt={currentSCSAppt}

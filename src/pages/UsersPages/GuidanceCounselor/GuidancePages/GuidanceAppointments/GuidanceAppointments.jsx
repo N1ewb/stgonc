@@ -11,10 +11,9 @@ const GuidanceAppointments = () => {
   const db = useDB();
   const auth = useAuth();
   const chat = useChat();
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const { currentAppointment, setCurrentAppointment } = useAppointment();
   const [appointments, setAppointments] = useState();
-  const [temp, setTemp] = useState();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -24,7 +23,6 @@ const GuidanceAppointments = () => {
             ["Accepted", "Followup"],
             (callback) => {
               setAppointments(callback);
-              setTemp(callback);
             }
           );
           return () => unsubscribe();
@@ -34,7 +32,7 @@ const GuidanceAppointments = () => {
       }
     };
     fetchData();
-  }, [db]);
+  }, [db, auth.currentUser]);
 
   const handleFinishAppointment = async (requiredParams) => {
     const { id, receiver } = requiredParams;
@@ -46,6 +44,8 @@ const GuidanceAppointments = () => {
     await db.cancelAppointment(id);
     setCurrentAppointment(null);
   };
+
+ 
 
   return (
     <div>

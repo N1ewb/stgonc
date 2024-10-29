@@ -1,75 +1,33 @@
-import React, { useEffect, useState } from "react";
-import { useDB } from "../../../../../context/db/DBContext";
-import { useAuth } from "../../../../../context/auth/AuthContext";
-
-import defaultProfile from "../../../../../static/images/default-profile.png";
-import More from "../../../../../static/images/more-dark.png";
-import UserList from "../../admin-components/UserList";
 import AdminSearchBar from "../../admin-components/AdminSearchBar";
 import Loading from "../../../../../components/Loading/Loading";
 import UserlistInfo from "../../admin-components/userlist/UserlistInfo";
 import DefaultInfoScreen from "../../../../../components/appointments/DefaultInfoScreen";
+import NavLink from "../../../../../components/buttons/NavLinks";
+import { Outlet, useLocation } from "react-router-dom";
+import { useUserList } from "../../../../../context/admin/UserListContext";
+import { useEffect } from "react";
 
 const AdminUserList = () => {
-  const db = useDB();
-  const auth = useAuth();
-  const [userList, setUserList] = useState();
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [paginationControls, setPaginationControls] = useState();
-  const [currentCharacters, setcurrentCharacters] = useState();
-  const [temp, setTemp] = useState();
-  const [ITEMS_PER_PAGE, setITEMS_PER_PAGE] = useState(10);
-  const [currentUserInfo, setCurrentUserInfo] = useState(null);
+  const location = useLocation();
+  const {
+    userList,
+    setUserList,
+    loading,
+    error,
+    currentPage,
+    setCurrentPage,
+    paginationControls,
+    temp,
+    ITEMS_PER_PAGE,
+    setITEMS_PER_PAGE,
+    currentUserInfo,
+    setCurrentUserInfo,
+    setCategory,
+  } = useUserList();
 
   useEffect(() => {
-    const fetchData = async () => {
-      if (auth.currentUser) {
-        try {
-          const unsubscribe = db.subscribeToUserChanges((newUserList) => {
-            setUserList(newUserList);
-            setLoading(false);
-            setTemp(newUserList);
-          });
-          return () => unsubscribe();
-        } catch (error) {
-          setError(error);
-        }
-      }
-    };
-    fetchData();
-  }, [db, auth.currentUser]);
-
-  useEffect(() => {
-    if (userList) {
-      const indexOfLastCharacter = currentPage * ITEMS_PER_PAGE;
-      const indexOfFirstCharacter = indexOfLastCharacter - ITEMS_PER_PAGE;
-      const currentCharacters = userList.slice(
-        indexOfFirstCharacter,
-        indexOfLastCharacter
-      );
-      setcurrentCharacters(currentCharacters);
-
-      const totalPages = Math.ceil(userList.length / ITEMS_PER_PAGE);
-      const controls = Array.from(
-        { length: totalPages },
-        (_, index) => index + 1
-      ).map((page) => (
-        <button
-          key={page}
-          onClick={() => setCurrentPage(page)}
-          className={`pagination-button hover:bg-[#862727] rounded-[4px] ${
-            page === currentPage ? "bg-[#360000]" : "bg-[#740000] "
-          }`}
-        >
-          {page}
-        </button>
-      ));
-
-      setPaginationControls(controls);
-    }
-  }, [userList, currentPage, ITEMS_PER_PAGE]);
+    setCategory("all")
+  },[location])
 
   if (loading) {
     return <Loading />;
@@ -88,9 +46,17 @@ const AdminUserList = () => {
           </h1>
           <div className="w-[85%] px-10 py-3 bg-[#320000] rounded-3xl flex flex-row items-center justify-between">
             <div className="flex flex-row items-center gap-5">
-              <div className="buttons text-[15px] flex flex-row items-center [&_button]:px-8 [&_button]:py-2 [&_button]:rounded-2xl gap-3">
-                <button className={`bg-white text-[#320000]`}>Faculty</button>
-                <button className={`border-solid border-2 border-white bg-transparent`}>Student</button>
+              <div className="buttons text-[15px] flex flex-row items-center gap-3">
+                <NavLink
+                  to="/private/Admin/dashboard/user-list/faculty"
+                  location={location}
+                  label="Faculty"
+                />
+                <NavLink
+                  to="/private/Admin/dashboard/user-list/student"
+                  location={location}
+                  label="Student"
+                />
               </div>
               <p className="text-white">
                 Number of user: <span className="font-bold">{temp.length}</span>
@@ -109,13 +75,7 @@ const AdminUserList = () => {
         </div>
         <div className="h-[80%] max-h-[90%] flex flex-row w-full justify-between items-start">
           <div className="div flex flex-col max-h-full w-[48%]  p-0 m-0">
-            <UserList
-              currentCharacters={currentCharacters}
-              defaultProfile={defaultProfile}
-              More={More}
-              setCurrentUserInfo={setCurrentUserInfo}
-              currentUserInfo={currentCharacters}
-            />
+            <Outlet />
           </div>
           <div className="div flex flex-col w-[48%] h-full max-h-full p-0 m-0">
             {currentUserInfo ? (
@@ -123,7 +83,9 @@ const AdminUserList = () => {
                 setCurrentUserInfo={setCurrentUserInfo}
                 currentUserInfo={currentUserInfo}
               />
-            ) : <DefaultInfoScreen />}
+            ) : (
+              <DefaultInfoScreen />
+            )}
           </div>
         </div>
       </div>
