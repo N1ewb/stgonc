@@ -79,6 +79,7 @@ import DeanAppointments from "./pages/UsersPages/admin/admin_pages/admin_appoint
 import DeanAppointmentAchive from "./pages/UsersPages/admin/admin_pages/admin_appointments/DeanAppointmentAchive";
 import ErrorPage from "./pages/Error/ErrorPage";
 import DeanFollowupAppointments from "./pages/UsersPages/admin/admin_pages/admin_appointments/DeanFollowupAppointments";
+import StudentInfoFromTGP from "./pages/UsersPages/STG-Info/StudentInfoFromTGP";
 
 function App() {
   const router = createBrowserRouter([
@@ -98,6 +99,10 @@ function App() {
           path: "/private",
           element: <PrivateRoutes />,
           children: [
+            {
+              path:'/private/student-info',
+              element: <StudentInfoFromTGP />
+            },
             {
               path: "/private/Admin",
               element: <AdminLayout />,

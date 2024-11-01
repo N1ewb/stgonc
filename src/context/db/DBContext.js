@@ -498,7 +498,7 @@ export const DBProvider = ({ children }) => {
           "Followup"
         );
 
-        const precedingApptdata = await getAppointment(id)
+        const precedingApptdata = await getAppointment(id);
 
         await addDoc(followupAppointmentRef, {
           precedingAppt: id,
@@ -887,6 +887,37 @@ export const DBProvider = ({ children }) => {
       console.error();
     }
   };
+  const subscribeToSwithTGAppointmentChanges = async (
+    appointee,
+    status,
+    callback
+  ) => {
+    try {
+      if (auth.currentUser) {
+        const statusArray = Array.isArray(status) ? status : [status];
+        const unsubscribe = onSnapshot(
+          query(
+            appointmentsRef,
+            where("appointedFaculty", "==", auth.currentUser.uid),
+            where("appointee", "==", appointee),
+            where("appointmentStatus", "in", statusArray),
+            where("appointmentFormat", "!=", "Walkin")
+          ),
+          (snapshot) => {
+            const data = snapshot.docs.map((doc) => ({
+              id: doc.id,
+              ...doc.data(),
+            }));
+
+            callback(data);
+          }
+        );
+        return unsubscribe;
+      }
+    } catch (error) {
+      console.error();
+    }
+  };
 
   const subscribeToFollowupAppointmentChanges = async (status, callback) => {
     try {
@@ -927,6 +958,37 @@ export const DBProvider = ({ children }) => {
       );
     }
   };
+
+  const subscribeToApptFollowupChanges = async (id, callback) => {
+    try {
+      if (auth.currentUser) {
+        const unsubscribe = onSnapshot(
+          doc(appointmentsRef, id),
+          async (appointmentDoc) => {
+            if (appointmentDoc.exists()) {
+              const followupRef = collection(appointmentDoc.ref, "Followup");
+              const followupSnapshot = await getDocs(followupRef);
+  
+              const followups = followupSnapshot.docs.map((followupDoc) => ({
+                id: followupDoc.id,
+                ...followupDoc.data(),
+              }));
+  
+              callback(followups);
+            } else {
+              console.log("No such appointment document!");
+              callback([]);
+            }
+          }
+        );
+  
+        return unsubscribe;
+      }
+    } catch (error) {
+      console.error("Error subscribing to follow-up appointment changes:", error);
+    }
+  };
+  
 
   const subscribeToAllAppointmentChanges = async (callback) => {
     try {
@@ -1534,7 +1596,9 @@ export const DBProvider = ({ children }) => {
     getPendingRegistrationRequests,
     subscribetoPendingRegistration,
     subscribeToAppointmentChanges,
+    subscribeToSwithTGAppointmentChanges,
     subscribeToFollowupAppointmentChanges,
+    subscribeToApptFollowupChanges,
     subscribeToAllAppointmentChanges,
     subscribeToUserAppointmentChanges,
     subscribeToTodayAppointmentChanges,

@@ -54,7 +54,7 @@ const DeanAppointmentAchive = () => {
   return (
     <div>
       <header className="flex flex-row items-end w-1/2 justify-between">
-        <h3 className="text-4xl font-bold text-[#320000]">List</h3>
+        <h3 className="text-4xl font-bold text-[#320000]">Archive</h3>
         <AdminSearchBar
           datas={appointments}
           setData={setAppointments}

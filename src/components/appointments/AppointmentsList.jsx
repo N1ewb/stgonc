@@ -45,14 +45,15 @@ const AppointmentList = ({ appointment, setCurrentChatReceiver }) => {
       }&caller=${auth.currentUser.uid}`
     );
   };
-
   const buttons = [
-    {
-      src: CallDark,
-      alt: "Call",
-      function: () => handleCall(),
-      needsParams: false,
-    },
+    appointment.appointmentStatus === "Finished"
+      ? null
+      : {
+          src: CallDark,
+          alt: "Call",
+          function: () => handleCall(),
+          needsParams: false,
+        },
     {
       src: ChatDark,
       alt: "Message",
@@ -62,10 +63,13 @@ const AppointmentList = ({ appointment, setCurrentChatReceiver }) => {
     {
       src: MoreDark,
       alt: "More",
-      function: () => setCurrentAppointment(appointment),
+      function: () =>
+        appointment.appointmentStatus === "Finished"
+          ? navigate(`/private/student-info?appointee=${appointment.appointee}`)
+          : setCurrentAppointment(appointment),
       needsParams: true,
     },
-  ];
+  ].filter(Boolean);
 
   if (loading) {
     return <Loading />;
