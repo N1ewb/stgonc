@@ -25,6 +25,10 @@ const GuidanceAppointmentReq = () => {
   };
 
   useEffect(() => {
+    setCurrentAppointment(null)
+  },[])
+
+  useEffect(() => {
     const fetchData = async () => {
       if (auth.currentUser) {
         try {

@@ -411,6 +411,7 @@ export const DBProvider = ({ children }) => {
       notifyError(error);
     }
   };
+
   const getFinishedFacultyAppointment = async (id) => {
     try {
       if (auth.currentUser) {
@@ -491,15 +492,23 @@ export const DBProvider = ({ children }) => {
         const recevingUser = await getUser(receiver);
 
         const oldAppointmentRef = doc(appointmentsRef, id);
-        await updateDoc(oldAppointmentRef, { appointmentStatus: "Followup" });
+        await updateDoc(oldAppointmentRef, { appointmentStatus: "Finished" });
+        const followupAppointmentRef = collection(
+          oldAppointmentRef,
+          "Followup"
+        );
 
-        await addDoc(appointmentsRef, {
+        const precedingApptdata = await getAppointment(id)
+
+        await addDoc(followupAppointmentRef, {
           precedingAppt: id,
           appointee: receiver,
           appointedFaculty: auth.currentUser.uid,
           appointmentDate: date,
           appointmentFormat: format,
+          appointmentStatus: "Followup",
           appointmentsTime,
+          appointmentConcern: precedingApptdata.appointmentConcern,
           location,
           createdAt: serverTimestamp(),
           department: user.department,
@@ -604,7 +613,7 @@ export const DBProvider = ({ children }) => {
           date,
           duration,
           mode,
-          radio,
+          resolved: radio,
           agenda,
           summary,
           receiver,
@@ -876,6 +885,46 @@ export const DBProvider = ({ children }) => {
       }
     } catch (error) {
       console.error();
+    }
+  };
+
+  const subscribeToFollowupAppointmentChanges = async (status, callback) => {
+    try {
+      if (auth.currentUser) {
+        const statusArray = Array.isArray(status) ? status : [status];
+        const unsubscribe = onSnapshot(
+          query(
+            appointmentsRef,
+            where("appointedFaculty", "==", auth.currentUser.uid),
+            where("appointmentStatus", "in", statusArray),
+            where("appointmentFormat", "!=", "Walkin")
+          ),
+          async (snapshot) => {
+            const followups = await Promise.all(
+              snapshot.docs.map(async (doc) => {
+                const followupRef = collection(doc.ref, "Followup");
+                const followupSnapshot = await getDocs(followupRef);
+
+                if (!followupSnapshot.empty) {
+                  return followupSnapshot.docs.map((followupDoc) => ({
+                    id: followupDoc.id,
+                    ...followupDoc.data(),
+                  }));
+                }
+                return null;
+              })
+            );
+
+            callback(followups.filter((followup) => followup !== null).flat());
+          }
+        );
+        return unsubscribe;
+      }
+    } catch (error) {
+      console.error(
+        "Error subscribing to follow-up appointment changes:",
+        error
+      );
     }
   };
 
@@ -1485,6 +1534,7 @@ export const DBProvider = ({ children }) => {
     getPendingRegistrationRequests,
     subscribetoPendingRegistration,
     subscribeToAppointmentChanges,
+    subscribeToFollowupAppointmentChanges,
     subscribeToAllAppointmentChanges,
     subscribeToUserAppointmentChanges,
     subscribeToTodayAppointmentChanges,

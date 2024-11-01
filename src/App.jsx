@@ -45,7 +45,7 @@ import TeacherGraphs from "./pages/UsersPages/faculty/faculty_pages/faculty-grap
 import TeacherAppointmentListPage from "./pages/UsersPages/faculty/faculty_pages/appointment-list-page/TeacherAppointmentListPage";
 import TeacherAppointmentReqPage from "./pages/UsersPages/faculty/faculty_pages/appointment-req-page/TeacherAppointmentReqPage";
 import TeacherSchedulePage from "./pages/UsersPages/faculty/faculty_pages/schedules-page/TeacherSchedulePage";
-import AdminAppointmentReqsPage from "./pages/UsersPages/admin/admin_pages/admin_appointment_reqs/AdminAppointmentReqs";
+import AdminAppointmentReqsPage from "./pages/UsersPages/admin/admin_pages/admin_appointments/AdminAppointmentReqs";
 import PendingReqMessagePage from "./pages/authentication/YourRegReqisPending/PendingReqMessagePage";
 import NotificationPage from "./pages/Notifications/notifications-page/NotificationPage";
 import ExportToPDF from "./ComponentToPDF/ExportComponentToPDF";
@@ -74,6 +74,11 @@ import FacultyList from "./pages/UsersPages/admin/admin_pages/admin_userlist/Fac
 import StudentList from "./pages/UsersPages/admin/admin_pages/admin_userlist/StudentList";
 import UserList from "./pages/UsersPages/admin/admin-components/userlist/UserList";
 import { UserListProvider } from "./context/admin/UserListContext";
+import GuidanceAppointmentArchive from "./pages/UsersPages/GuidanceCounselor/GuidancePages/GuidanceAppointments/GuidanceAppointmentArchive";
+import DeanAppointments from "./pages/UsersPages/admin/admin_pages/admin_appointments/Dean_appointments";
+import DeanAppointmentAchive from "./pages/UsersPages/admin/admin_pages/admin_appointments/DeanAppointmentAchive";
+import ErrorPage from "./pages/Error/ErrorPage";
+import DeanFollowupAppointments from "./pages/UsersPages/admin/admin_pages/admin_appointments/DeanFollowupAppointments";
 
 function App() {
   const router = createBrowserRouter([
@@ -84,6 +89,10 @@ function App() {
         {
           path: "/",
           element: <LandingPage />,
+        },
+        {
+          path: '*',
+          element: <ErrorPage />
         },
         {
           path: "/private",
@@ -120,12 +129,26 @@ function App() {
                   ],
                 },
                 {
-                  path: "/private/Admin/dashboard/appointments-list",
-                  element: <AdminAppointmentListPage />,
-                },
-                {
-                  path: "/private/Admin/dashboard/appointments-requests",
-                  element: <AdminAppointmentReqsPage />,
+                  path: '/private/Admin/dashboard/appointments',
+                  element: <DeanAppointments />,
+                  children: [
+                    {
+                      path: "/private/Admin/dashboard/appointments/list",
+                      element: <AdminAppointmentListPage />,
+                    },
+                    {
+                      path: "/private/Admin/dashboard/appointments/requests",
+                      element: <AdminAppointmentReqsPage />,
+                    },
+                    {
+                      path: "/private/Admin/dashboard/appointments/archive",
+                      element: <DeanAppointmentAchive />,
+                    },
+                    {
+                      path: "/private/Admin/dashboard/appointments/followup",
+                      element: <DeanFollowupAppointments />,
+                    },
+                  ]
                 },
                 {
                   path: "/private/Admin/dashboard/pending-registrations",
@@ -208,6 +231,10 @@ function App() {
                     {
                       path: "/private/Guidance/appointments/request",
                       element: <GuidanceAppointmentReq />,
+                    },
+                    {
+                      path: "/private/Guidance/appointments/archive",
+                      element: <GuidanceAppointmentArchive />,
                     },
                   ],
                 },
@@ -345,6 +372,7 @@ function App() {
         },
       ],
     },
+    
   ]);
 
   return (

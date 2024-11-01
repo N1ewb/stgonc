@@ -12,22 +12,21 @@ const Usercard = ({ data, buttons }) => {
   const isFetched = useRef(false);
   const db = useDB();
 
-  const handleGetUser = async (uid) => {
-    setLoading(true);
-    try {
-      const user = await db.getUser(uid);
-      setAppointee(user);
-    } catch (err) {
-      console.error("Failed to fetch user:", err);
-      setError(true);
-    } finally {
-      setLoading(false);
-    }
-  };
-
   useEffect(() => {
     if (data.appointee && !isFetched.current) {
-      handleGetUser(data.appointee);
+      const handleGetAppointee = async (uid) => {
+        setLoading(true);
+        try {
+          const user = await db.getUser(data.appointee);
+          setAppointee(user);
+        } catch (err) {
+          console.error("Failed to fetch user:", err);
+          setError(true);
+        } finally {
+          setLoading(false);
+        }
+      };
+      handleGetAppointee(data.appointee);
       isFetched.current = true;
     } else {
       setLoading(false);
@@ -60,7 +59,7 @@ const Usercard = ({ data, buttons }) => {
               alt="profile"
             />
             <p className="text-[16px] flex flex-col">
-            <span className="font-bold truncate w-full">{`${displayFirstName} ${displayLastName}`}</span>
+              <span className="font-bold truncate w-full">{`${displayFirstName} ${displayLastName}`}</span>
 
               <span className="text-[#360000] font-light text-[12px]">
                 {displayEmail}
@@ -68,8 +67,9 @@ const Usercard = ({ data, buttons }) => {
             </p>
           </div>
           <footer className="pt-2 w-full">
+            
             <Footer buttons={buttons} data={data} />
-          </footer>{" "}
+          </footer>
         </>
       )}
     </div>

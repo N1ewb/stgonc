@@ -57,7 +57,7 @@ const TeacherAppointmentReqPage = () => {
         Requests
       </h1>
       <div className="appointment-request-main-content w-full flex flex-row justify-between">
-        <div className="appointment-request-list-container w-[40%] flex flex-row flex-wrap">
+        <div className="appointment-request-list-container w-[50%] flex flex-row flex-wrap">
           {requestedAppointments && requestedAppointments.length !== 0 ? (
             requestedAppointments.map((appointment, index) => (
               <AppointmentReqList

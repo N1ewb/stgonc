@@ -68,7 +68,7 @@ const EndCallPage = () => {
   }, [caller, db]);
 
   return (
-    <div className="h-screen w-full flex flex-col items-center justify-center">
+    <div className="h-screen w-full flex flex-col items-center justify-center bg-white">
       <div className="flex flex-col h-[80%] p-10 shadow-lg items-center ">
         <div className="end-call-page-header">
           <h3>Help us improve your experience with your feedback</h3>

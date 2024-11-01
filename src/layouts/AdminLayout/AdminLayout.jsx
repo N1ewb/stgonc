@@ -17,12 +17,8 @@ const AdminLayout = () => {
       link: "/private/Admin/dashboard/pending-registrations",
     },
     {
-      name: "Appointments List",
-      link: "/private/Admin/dashboard/appointments-list",
-    },
-    {
-      name: "Appointments Requests",
-      link: "/private/Admin/dashboard/appointments-requests",
+      name: "Appointments ",
+      link: "/private/Admin/dashboard/appointments",
     },
     {
       name: "Schedules",

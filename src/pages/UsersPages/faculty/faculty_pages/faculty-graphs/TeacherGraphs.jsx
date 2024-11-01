@@ -18,7 +18,7 @@ const TeacherGraphs = () => {
       return () => unsubscribe()
     }
     fetchData()
-  })
+  },[db])
 
   return (
     <div className="h-[100%] w-full">

@@ -19,11 +19,11 @@ const AppointmentInfo = ({ positiveClick, negativeClick }) => {
   };
 
   useEffect(() => {
-    if (currentAppointment.appointee) {
+    if (currentAppointment?.appointee) {
       handleGetUser(currentAppointment.appointee);
       setStatus(currentAppointment.appointmentStatus);
     }
-  }, [currentAppointment.appointee]);
+  }, [currentAppointment?.appointee]);
 
   const formatDate = (dateString) => {
     const date = new Date(dateString);
@@ -33,6 +33,10 @@ const AppointmentInfo = ({ positiveClick, negativeClick }) => {
       day: "numeric",
     });
   };
+
+  if (!currentAppointment) {
+    return null;
+  }
 
   return (
     <div className="appointment-info w-full h-full flex flex-col text-[#320000]">
@@ -44,7 +48,9 @@ const AppointmentInfo = ({ positiveClick, negativeClick }) => {
               : status === "Pending"
               ? "Request"
               : status === "Followup"
-              ? "Follow Up"
+              ? "Follow Up" 
+              : status === "Finished"
+              ? "Finished" 
               : "No"}
           </span>{" "}
           <span className="font-light">Information</span>
@@ -67,7 +73,6 @@ const AppointmentInfo = ({ positiveClick, negativeClick }) => {
           {currentAppointment.appointmentConcern}
         </p>
         <div className="flex flex-row gap-3">
-          {" "}
           <p className="capitalize">
             <span className="text-[#320000] font-bold">Type:</span>{" "}
             {currentAppointment.appointmentType}
@@ -82,55 +87,57 @@ const AppointmentInfo = ({ positiveClick, negativeClick }) => {
           </p>
         </div>
       </div>
-      {status && status === "Pending" ? (
-        <div className="appointment-info-footer w-full flex flex-row items-end justify-end gap-3 ">
-          <button
-            className="m-0 py-2 px-5 bg-[#57a627] rounded-md"
-            onClick={() =>
-              positiveClick({
-                id: currentAppointment.id,
-                receiver: appointee.email,
-                date: Date.now(),
-              })
-            }
-          >
-            Accept
-          </button>
-          <button
-            className="m-0 py-2 px-5 bg-[#720000] rounded-md"
-            onClick={() =>
-              negativeClick({
-                id: currentAppointment.id,
-                receiver: appointee.email,
-                reason: "Bala ka jan"
-              })
-            }
-          >
-            Deny
-          </button>
-        </div>
-      ) : (status && status === "Accepted") || "Followup" ? (
-        <div className="appointment-info-footer w-full flex flex-row items-end justify-end gap-3 ">
-          <button
-            className="m-0 py-2 px-5 bg-[#57a627] rounded-md"
-            onClick={() =>
-              positiveClick({
-                id: currentAppointment.id,
-                receiver: appointee.email,
-              })
-            }
-          >
-            Finish
-          </button>
-          <button
-            className="m-0 py-2 px-5 bg-[#720000] rounded-md"
-            onClick={() => negativeClick({ id: currentAppointment.id })}
-          >
-            Cancel
-          </button>
-        </div>
-      ) : (
-        ""
+      {status && status !== "Finished" && (
+        <>
+          {status === "Pending" ? (
+            <div className="appointment-info-footer w-full flex flex-row items-end justify-end gap-3 ">
+              <button
+                className="m-0 py-2 px-5 bg-[#57a627] rounded-md"
+                onClick={() =>
+                  positiveClick({
+                    id: currentAppointment.id,
+                    receiver: appointee.userID,
+                    date: Date.now(),
+                  })
+                }
+              >
+                Accept
+              </button>
+              <button
+                className="m-0 py-2 px-5 bg-[#720000] rounded-md"
+                onClick={() =>
+                  negativeClick({
+                    id: currentAppointment.id,
+                    receiver: appointee.userID,
+                    reason: "Bala ka jan",
+                  })
+                }
+              >
+                Deny
+              </button>
+            </div>
+          ) : (status === "Accepted" || status === "Followup") && (
+            <div className="appointment-info-footer w-full flex flex-row items-end justify-end gap-3 ">
+              <button
+                className="m-0 py-2 px-5 bg-[#57a627] rounded-md"
+                onClick={() =>
+                  positiveClick({
+                    id: currentAppointment.id,
+                    receiver: appointee.userID,
+                  })
+                }
+              >
+                Finish
+              </button>
+              <button
+                className="m-0 py-2 px-5 bg-[#720000] rounded-md"
+                onClick={() => negativeClick({ id: currentAppointment.id })}
+              >
+                Cancel
+              </button>
+            </div>
+          )}
+        </>
       )}
     </div>
   );

@@ -1,15 +1,14 @@
 import React, { useEffect, useState } from "react";
-
 import { useDB } from "../../../../../context/db/DBContext";
 import { useAuth } from "../../../../../context/auth/AuthContext";
-import AppointmentList from "../../../../../components/appointments/AppointmentsList";
 import { useChat } from "../../../../../context/chatContext/ChatContext";
-import AppointmentInfo from "../../../../../components/appointments/AppointmentInfo";
+import { useNavigate } from "react-router-dom";
 import { useAppointment } from "../../../../../context/appointmentContext/AppointmentContext";
 import AdminSearchBar from "../../admin-components/AdminSearchBar";
-import { useNavigate } from "react-router-dom";
+import AppointmentList from "../../../../../components/appointments/AppointmentsList";
+import AppointmentInfo from "../../../../../components/appointments/AppointmentInfo";
 
-const AdminAppointmentPage = () => {
+const DeanAppointmentAchive = () => {
   const db = useDB();
   const auth = useAuth();
   const chat = useChat();
@@ -23,7 +22,7 @@ const AdminAppointmentPage = () => {
       if (auth.currentUser) {
         try {
           const unsubscribe = db.subscribeToAppointmentChanges(
-            "Accepted",
+            ["Finished", 'Followup', 'Denied', 'Cancelled'],
             (callback) => {
               setAppointments(callback);
               setTemp(callback);
@@ -52,10 +51,9 @@ const AdminAppointmentPage = () => {
     await db.cancelAppointment(id);
     setCurrentAppointment(null);
   };
-
   return (
-    <div className="admin-appointments-container h-[100%] w-full flex flex-col gap-10 ">
-      <div className="appointments-header flex flex-row items-end w-1/2 justify-between">
+    <div>
+      <header className="flex flex-row items-end w-1/2 justify-between">
         <h3 className="text-4xl font-bold text-[#320000]">List</h3>
         <AdminSearchBar
           datas={appointments}
@@ -63,9 +61,9 @@ const AdminAppointmentPage = () => {
           temp={temp}
           setCurrentPage={() => null}
         />
-      </div>
-      <div className="appoinments-container w-full flex flex-row justify-between items-start h-[100%]">
-        <div className="accepted-appointments-container w-1/2 max-h-[90%] flex flex-row flex-wrap overflow-auto pb-3">
+      </header>
+      <main className=" w-full flex flex-row justify-between items-start h-[100%]">
+        <div className="all-appointments-container w-1/2 max-h-[90%] flex flex-row flex-wrap overflow-auto pb-3">
           {appointments && appointments.length ? (
             appointments.map((appointment, index) => (
               <AppointmentList
@@ -93,9 +91,9 @@ const AdminAppointmentPage = () => {
             />
           )}
         </div>
-      </div>
+      </main>
     </div>
   );
 };
 
-export default AdminAppointmentPage;
+export default DeanAppointmentAchive;

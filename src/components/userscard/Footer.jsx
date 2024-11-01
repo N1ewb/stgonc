@@ -12,8 +12,9 @@ const Footer = ({ buttons, data }) => {
 
   return (
     <div className="flex flex-row w-full justify-between items-center">
-      <p>{data?.role}</p>
+      <p>{data?.role || data?.appointmentStatus}</p>
       <div className="flex flex-row  gap-1 justify-end items-center">
+        
         {buttons.length !== 0 &&
           buttons.map((button, index) => (
             <button

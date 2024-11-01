@@ -16,7 +16,7 @@ const GuidanceAppointmentDashboard = () => {
     <div className="w-full h-full">
       <header className="flex flex-row justify-between w-full">
         <h1 className="font-light">Appointment</h1>
-        <div className="links flex flex-row items-center gap-5  bg-[#320000] px-10 py-3 rounded-3xl w-1/2">
+        <div className="links flex flex-row items-center gap-5  bg-[#320000] px-10 py-3 rounded-3xl w-[70%]">
           <NavLink
             to="/private/Guidance/appointments/list"
             location={location}
@@ -26,6 +26,11 @@ const GuidanceAppointmentDashboard = () => {
             to="/private/Guidance/appointments/request"
             location={location}
             label="Appointment Requests"
+          />
+          <NavLink
+            to="/private/Guidance/appointments/archive"
+            location={location}
+            label="Appointment Archive"
           />
         </div>
       </header>

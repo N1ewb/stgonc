@@ -56,9 +56,7 @@ const AdminAppointmentReqsPage = () => {
   return (
     <div className="admin-appointments-container w-full flex flex-col h-[100%] gap-10">
       <div className="admin-appointment-request-header flex flex-row w-1/2 justify-between items-end">
-        <h3 className="text-4xl font-bold">
-          Appointment <br></br> <span className="font-light">Requests</span>
-        </h3>
+        <h3 className="text-4xl font-bold">Requests</h3>
         <AdminSearchBar
           datas={appointments}
           setData={setAppointments}
