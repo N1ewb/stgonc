@@ -7,8 +7,8 @@ const DeanAppointments = () => {
     const navigate = useNavigate()
 
     useEffect(() => {
-        if(location.pathname === '/private/Admin/dashboard/appointments'){
-            navigate('/private/Admin/dashboard/appointments/list')
+        if(location.pathname === '/private/Admin/appointments'){
+            navigate('/private/Admin/appointments/list')
         }
     },[location])
 
@@ -18,22 +18,22 @@ const DeanAppointments = () => {
           <h1 className="font-light">Appointment</h1>
           <div className="nav-links flex flex-row items-center gap-5  bg-[#320000] px-10 py-3 rounded-3xl w-[70%]">
             <NavLink
-              to="/private/Admin/dashboard/appointments/list"
+              to="/private/Admin/appointments/list"
               location={location}
               label="Upcoming"
             />
               <NavLink
-                to="/private/Admin/dashboard/appointments/followup"
+                to="/private/Admin/appointments/followup"
                 location={location}
                 label="Followup"
               />
             <NavLink
-              to="/private/Admin/dashboard/appointments/requests"
+              to="/private/Admin/appointments/requests"
               location={location}
               label="Requests"
             />
             <NavLink
-              to="/private/Admin/dashboard/appointments/archive"
+              to="/private/Admin/appointments/archive"
               location={location}
               label="Archive"
             />

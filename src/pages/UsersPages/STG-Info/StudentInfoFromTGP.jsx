@@ -60,7 +60,7 @@ const StudentInfoFromTGP = () => {
   }
 
   return (
-    <div className=" p-2 h-[95%] w-full flex flex-row gap-5">
+    <div className=" p-2 h-[95%] w-full flex flex-col items-start justify-start gap-1">
       <StudentInfoCard currentAppointee={currentAppointee} />
       <STGAppointmentList pastAppointments={pastAppointments} />
     </div>

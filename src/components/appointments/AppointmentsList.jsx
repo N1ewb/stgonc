@@ -65,7 +65,7 @@ const AppointmentList = ({ appointment, setCurrentChatReceiver }) => {
       alt: "More",
       function: () =>
         appointment.appointmentStatus === "Finished"
-          ? navigate(`/private/${auth.currentUser.role}/dashboard/appointments/students-info?appointee=${appointment.appointee}
+          ? navigate(`/private/${auth.currentUser.role}/appointments/students-info?appointee=${appointment.appointee}
 `)
           : setCurrentAppointment(appointment),
       needsParams: true,

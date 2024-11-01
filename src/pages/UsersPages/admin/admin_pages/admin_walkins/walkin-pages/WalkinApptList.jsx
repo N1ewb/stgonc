@@ -4,7 +4,7 @@ import WalkinInfo from "./WalkinInfo";
 import ApptListCard from "../../../admin-components/walkins/ApptListCard";
 
 const WalkinApptList = () => {
-  const [currentWalkin, setCurrentWalkin] = useState();
+  const [currentWalkin, setCurrentWalkin] = useState(null);
   const db = useDB();
   const [walkinAppointmentList, setWalkinAppointmentList] = useState([]);
 

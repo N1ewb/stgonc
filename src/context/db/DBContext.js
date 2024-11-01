@@ -508,6 +508,7 @@ export const DBProvider = ({ children }) => {
             appointmentDate: date,
             appointmentFormat: format,
             appointmentStatus: "Followup",
+            appointmentType: precedingApptdata?.appointmentType || null,
             appointmentsTime,
             appointmentConcern: precedingApptdata?.precedingAppt?.appointmentConcern || precedingApptdata.appointmentConcern ||  null,
             location,

@@ -1,8 +1,5 @@
 import React, { useEffect, useState } from "react";
 
-import "./admin_pending_reg.css";
-import { Toaster } from "react-hot-toast";
-
 import { useAuth } from "../../../../../context/auth/AuthContext";
 import { useDB } from "../../../../../context/db/DBContext";
 import RegistrationReqCards from "../../admin-components/RegistrationReqCards";
@@ -37,7 +34,7 @@ const AdmingPendingRegPage = () => {
       };
       handleGetPendingRegistrations();
     }
-  }, [db]);
+  }, [db, auth.currentUser]);
 
   if (loading) {
     return (
@@ -57,6 +54,7 @@ const AdmingPendingRegPage = () => {
           datas={pendingRegistrationList}
           setData={setPendingRegistrationList}
           temp={temp}
+          setCurrentPage={() => null}
         />
       </header>
       <div className="pending-regitrations-content-container flex flex-row justify-between h-[90%] w-full">

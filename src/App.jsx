@@ -80,6 +80,7 @@ import DeanAppointmentAchive from "./pages/UsersPages/admin/admin_pages/admin_ap
 import ErrorPage from "./pages/Error/ErrorPage";
 import DeanFollowupAppointments from "./pages/UsersPages/admin/admin_pages/admin_appointments/DeanFollowupAppointments";
 import StudentInfoFromTGP from "./pages/UsersPages/STG-Info/StudentInfoFromTGP";
+import GuidanceFollowupAppointments from "./pages/UsersPages/GuidanceCounselor/GuidancePages/GuidanceAppointments/GuidanceFollowupAppointments";
 
 function App() {
   const router = createBrowserRouter([
@@ -131,27 +132,27 @@ function App() {
                   ],
                 },
                 {
-                  path: '/private/Admin/dashboard/appointments',
+                  path: '/private/Admin/appointments',
                   element: <DeanAppointments />,
                   children: [
                     {
-                      path: "/private/Admin/dashboard/appointments/list",
+                      path: "/private/Admin/appointments/list",
                       element: <AdminAppointmentListPage />,
                     },
                     {
-                      path: "/private/Admin/dashboard/appointments/requests",
+                      path: "/private/Admin/appointments/requests",
                       element: <AdminAppointmentReqsPage />,
                     },
                     {
-                      path: "/private/Admin/dashboard/appointments/archive",
+                      path: "/private/Admin/appointments/archive",
                       element: <DeanAppointmentAchive />,
                     },
                     {
-                      path: "/private/Admin/dashboard/appointments/students-info",
+                      path: "/private/Admin/appointments/students-info",
                       element: <StudentInfoFromTGP />,
                     },
                     {
-                      path: "/private/Admin/dashboard/appointments/followup",
+                      path: "/private/Admin/appointments/followup",
                       element: <DeanFollowupAppointments />,
                     },
                   ]
@@ -180,6 +181,7 @@ function App() {
                       path: "/private/Admin/dashboard/user-list/student",
                       element: <StudentList />,
                     },
+
                   ],
                 },
                 {
@@ -241,6 +243,14 @@ function App() {
                     {
                       path: "/private/Guidance/appointments/archive",
                       element: <GuidanceAppointmentArchive />,
+                    },
+                    {
+                      path: "/private/Guidance/appointments/followup",
+                      element: <GuidanceFollowupAppointments />
+                    },
+                    {
+                      path: "/private/Guidance/appointments/students-info",
+                      element: <StudentInfoFromTGP />,
                     },
                   ],
                 },
