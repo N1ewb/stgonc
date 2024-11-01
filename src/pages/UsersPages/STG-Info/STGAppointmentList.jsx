@@ -1,14 +1,22 @@
 import React from "react";
-import AppointmentCard from "./STGAppointmentCard";
+import STGAppointmentCard from "./STGAppointmentCard";
 
-const AppointmentList = ({ pastAppointments }) => {
+const STGAppointmentList = ({ pastAppointments = [] }) => {
+  const sortedAppointments = pastAppointments.length
+    ? pastAppointments.sort((b, a) => {
+        return b.createdAt?.toMillis() - a.createdAt?.toMillis();
+      })
+    : [];
+
   return (
     <div className="max-h-full w-full overflow-auto">
-      {pastAppointments.length !== 0
-        ? pastAppointments.map((appt) => <AppointmentCard key={appt.id} appt={appt} />)
+      {sortedAppointments.length !== 0
+        ? sortedAppointments.map((appt) => (
+            <STGAppointmentCard key={appt.id} appt={appt} />
+          ))
         : "No past appointments with this user"}
     </div>
   );
 };
 
-export default AppointmentList;
+export default STGAppointmentList;

@@ -39,7 +39,7 @@ const FacultyLeaderboard = ({insList}) => {
   }
 
   return (
-    <div className="h-[100%] w-full flex flex-col justify-start">
+    <div className="h-[90%] w-full flex flex-col justify-start">
       <h5 className="text-[#320000] font-light">
         Faculty <span className="font-bold">Leaderboard</span>
       </h5>

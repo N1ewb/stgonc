@@ -1,7 +1,6 @@
 import React, { useEffect } from "react";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import NavLink from "../../../../../components/buttons/NavLinks";
-import AdminSearchBar from "../../admin-components/AdminSearchBar";
 
 const DeanAppointments = () => {
     const location = useLocation();

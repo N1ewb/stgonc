@@ -4,7 +4,7 @@ import { useDB } from "../../../context/db/DBContext";
 import Loading from "../../../components/Loading/Loading";
 import ErrorPage from '../../Error/ErrorPage'
 import StudentInfoCard from "./STGStudentInfoCard";
-import AppointmentList from "./STGAppointmentList";
+import STGAppointmentList from "./STGAppointmentList";
 
 const StudentInfoFromTGP = () => {
   const db = useDB();
@@ -60,9 +60,9 @@ const StudentInfoFromTGP = () => {
   }
 
   return (
-    <div className="bg-[#eaeaea] h-screen w-full pt-40 px-20 flex flex-col gap-10">
+    <div className=" p-2 h-[95%] w-full flex flex-row gap-5">
       <StudentInfoCard currentAppointee={currentAppointee} />
-      <AppointmentList pastAppointments={pastAppointments} />
+      <STGAppointmentList pastAppointments={pastAppointments} />
     </div>
   );
 };

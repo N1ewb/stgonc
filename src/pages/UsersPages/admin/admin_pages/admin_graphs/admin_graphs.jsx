@@ -37,7 +37,7 @@ const AdminGraphs = () => {
   const handleCloseOverlay = () => setOpenOverlay(false);
 
   return (
-    <div className="h-full w-full flex flex-col">
+    <div className="h-[90%] w-full flex flex-col">
       {/* <div className="admin-dashboard-header">
         <Link to='/private/end-call-page'>End page access</Link>
       </div> */}

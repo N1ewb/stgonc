@@ -99,10 +99,7 @@ function App() {
           path: "/private",
           element: <PrivateRoutes />,
           children: [
-            {
-              path:'/private/student-info',
-              element: <StudentInfoFromTGP />
-            },
+            
             {
               path: "/private/Admin",
               element: <AdminLayout />,
@@ -148,6 +145,10 @@ function App() {
                     {
                       path: "/private/Admin/dashboard/appointments/archive",
                       element: <DeanAppointmentAchive />,
+                    },
+                    {
+                      path: "/private/Admin/dashboard/appointments/students-info",
+                      element: <StudentInfoFromTGP />,
                     },
                     {
                       path: "/private/Admin/dashboard/appointments/followup",

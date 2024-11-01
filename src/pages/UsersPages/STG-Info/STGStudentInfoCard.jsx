@@ -8,7 +8,7 @@ const StudentInfoCard = ({ currentAppointee }) => {
   const photoURL = currentAppointee?.photoURL || DefaultProfile;
 
   return (
-    <div className="flex flex-row items-center p-4 bg-white shadow rounded">
+    <div className="flex flex-col items-center text-center p-4 bg-white shadow rounded">
       <img
         src={photoURL}
         alt="profile"

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useAuth } from "../../context/auth/AuthContext";
 import DefaultProfile from "../../static/images/default-profile.png";
 import Dropdown from "react-bootstrap/Dropdown";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import "./Profile.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { useDB } from "../../context/db/DBContext";
@@ -49,7 +49,7 @@ const Profile = () => {
           setUser(user);
         }
       } catch (error) {
-        console.log(`Error in retreving user: ${error.message}`);
+        console.log(`Error in retrieving user: ${error.message}`);
       }
     };
     handleGetUser();
@@ -58,7 +58,7 @@ const Profile = () => {
   return (
     <div className="profile-container lg:hidden">
       <Dropdown>
-        <div className="div relative">
+        <div className="relative">
           <Dropdown.Toggle
             variant="success"
             id="dropdown-basic"
@@ -69,7 +69,7 @@ const Profile = () => {
               alignItems: "center",
             }}
           >
-            <div className="relative ">
+            <div className="relative">
               {auth.currentUser && (
                 <img
                   className="w-[100px] h-[100px] rounded-full object-cover"
@@ -83,18 +83,18 @@ const Profile = () => {
               )}
             </div>
           </Dropdown.Toggle>
-          <Link
+          <div
             className={`notif-block absolute -top-[5%] left-[36%] h-8 w-8 rounded-full bg-red-800 ${
-              notifications.length !== 0 ? "flex" : "hidden "
-            } items-center justify-center text-white decoration-transparent `}
-            to={`/private/${user?.role}/notifications`}
+              notifications.length !== 0 ? "flex" : "hidden"
+            } items-center justify-center text-white decoration-transparent`}
+            onClick={() => navigate(`/private/${user?.role}/notifications`)}
           >
             {notifications.length}
-          </Link>
+          </div>
         </div>
         <Dropdown.Menu>
           {auth.currentUser && (
-            <Dropdown.Item href="#/action-1" onClick={() => navigate("/private/Userpage")}>
+            <Dropdown.Item onClick={() => navigate("/private/Userpage")}>
               {auth.currentUser.displayName}
             </Dropdown.Item>
           )}
@@ -102,24 +102,14 @@ const Profile = () => {
           <Dropdown.Item onClick={() => navigate("/private/Userpage")}>
             Account Settings
           </Dropdown.Item>
-          <Dropdown.Item>
-            <Link
-              className="decoration-transparent [&_a]:decoration-transparent text-[#000000d2]"
-              to={`/private/${user?.role}/notifications`}
-            >
-              Notifications
-            </Link>
+          <Dropdown.Item onClick={() => navigate(`/private/${user?.role}/notifications`)}>
+            Notifications
           </Dropdown.Item>
-          <Dropdown.Item>
-            <Link
-              className="decoration-transparent [&_a]:decoration-transparent text-[#000000d2]"
-              to={`/private/${user?.role}/messages`}
-            >
-              Messages
-            </Link>
+          <Dropdown.Item onClick={() => navigate(`/private/${user?.role}/messages`)}>
+            Messages
           </Dropdown.Item>
           <Dropdown.Item href="#/action-2">Give Feedback</Dropdown.Item>
-          <Dropdown.Item onClick={() => handleSignout()}>Logout</Dropdown.Item>
+          <Dropdown.Item onClick={handleSignout}>Logout</Dropdown.Item>
         </Dropdown.Menu>
       </Dropdown>
       <div className="user-display">
