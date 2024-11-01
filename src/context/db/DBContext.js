@@ -14,6 +14,7 @@ import {
   where,
   Timestamp,
   deleteDoc,
+  getDoc,
 } from "firebase/firestore";
 import { firestore, storage } from "../../server/firebase";
 import { useAuth } from "../auth/AuthContext";
@@ -394,23 +395,22 @@ export const DBProvider = ({ children }) => {
   const getAppointment = async (id) => {
     try {
       if (auth.currentUser) {
-        const q = query(appointmentsRef, where("id", "==", id));
-        const querySnapshot = await getDocs(q);
-        const appointmentData = querySnapshot.docs.map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
-        }));
-
-        if (appointmentData) {
-          return appointmentData;
+        const docRef = doc(appointmentsRef, id); 
+        const docSnap = await getDoc(docRef);
+  
+        if (docSnap.exists()) {
+          return { id: docSnap.id, ...docSnap.data() };
         } else {
-          return console.log("Nothing");
+          console.log("No such document!");
+          return null;
         }
       }
     } catch (error) {
       notifyError(error);
+      return null;
     }
   };
+  
 
   const getFinishedFacultyAppointment = async (id) => {
     try {
@@ -500,33 +500,35 @@ export const DBProvider = ({ children }) => {
 
         const precedingApptdata = await getAppointment(id);
 
-        await addDoc(followupAppointmentRef, {
-          precedingAppt: id,
-          appointee: receiver,
-          appointedFaculty: auth.currentUser.uid,
-          appointmentDate: date,
-          appointmentFormat: format,
-          appointmentStatus: "Followup",
-          appointmentsTime,
-          appointmentConcern: precedingApptdata.appointmentConcern,
-          location,
-          createdAt: serverTimestamp(),
-          department: user.department,
-        });
-        if (recevingUser) {
-          await notif.storeNotifToDB(
-            "Appointment",
-            `A follow up appointment has been made between ${
-              auth.currentUser.displayName
-            } and you. ${
-              location ? `Appointment will be held at ${location}` : ""
-            }`,
-            recevingUser.email
-          );
+        if (precedingApptdata) {
+          await addDoc(followupAppointmentRef, {
+            precedingAppt: id,
+            appointee: receiver,
+            appointedFaculty: auth.currentUser.uid,
+            appointmentDate: date,
+            appointmentFormat: format,
+            appointmentStatus: "Followup",
+            appointmentsTime,
+            appointmentConcern: precedingApptdata?.precedingAppt?.appointmentConcern || precedingApptdata.appointmentConcern ||  null,
+            location,
+            createdAt: serverTimestamp(),
+            department: user.department,
+          });
+          if (recevingUser) {
+            await notif.storeNotifToDB(
+              "Appointment",
+              `A follow up appointment has been made between ${
+                auth.currentUser.displayName
+              } and you. ${
+                location ? `Appointment will be held at ${location}` : ""
+              }`,
+              recevingUser.email
+            );
+          }
         }
       }
     } catch (error) {
-      notifyError(`Error creating follow-up appointment: ${error.message}`);
+      toastMessage(`Error creating follow-up appointment: ${error.message}`);
     }
   };
 
@@ -968,12 +970,12 @@ export const DBProvider = ({ children }) => {
             if (appointmentDoc.exists()) {
               const followupRef = collection(appointmentDoc.ref, "Followup");
               const followupSnapshot = await getDocs(followupRef);
-  
+
               const followups = followupSnapshot.docs.map((followupDoc) => ({
                 id: followupDoc.id,
                 ...followupDoc.data(),
               }));
-  
+
               callback(followups);
             } else {
               console.log("No such appointment document!");
@@ -981,14 +983,16 @@ export const DBProvider = ({ children }) => {
             }
           }
         );
-  
+
         return unsubscribe;
       }
     } catch (error) {
-      console.error("Error subscribing to follow-up appointment changes:", error);
+      console.error(
+        "Error subscribing to follow-up appointment changes:",
+        error
+      );
     }
   };
-  
 
   const subscribeToAllAppointmentChanges = async (callback) => {
     try {

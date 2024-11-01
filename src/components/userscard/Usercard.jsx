@@ -14,7 +14,7 @@ const Usercard = ({ data, buttons }) => {
 
   useEffect(() => {
     if (data.appointee && !isFetched.current) {
-      const handleGetAppointee = async (uid) => {
+      const handleGetAppointee = async () => {
         setLoading(true);
         try {
           const user = await db.getUser(data.appointee);
@@ -26,7 +26,7 @@ const Usercard = ({ data, buttons }) => {
           setLoading(false);
         }
       };
-      handleGetAppointee(data.appointee);
+      handleGetAppointee();
       isFetched.current = true;
     } else {
       setLoading(false);

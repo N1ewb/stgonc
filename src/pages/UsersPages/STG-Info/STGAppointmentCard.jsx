@@ -20,12 +20,12 @@ const AppointmentCard = ({ appt }) => {
   }, [db]);
 
   return (
-    <div className="h-full w-full flex flex-col p-10 gap-5">
+    <div className="h-auto w-full flex flex-col p-10 gap-5">
       <header className="flex justify-between w-full rounded-md shadow-md bg-white p-5">
         <h1 className="text-[20px]">{appt.appointmentDate}</h1>
         <button>Download Report PDF</button>
       </header>
-      <main className="w-full">
+      <main className="w-full flex gap-5">
         {followups.length !== 0
           ? followups.map((followup) => (
               <STGAllFollowUpCards key={followup.id} followup={followup} />

@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import Close from "../../static/images/close-dark.png";
 import { useAppointment } from "../../context/appointmentContext/AppointmentContext";
 import { useDB } from "../../context/db/DBContext";
+import RedButton from "../buttons/RedButton";
+import GreenButton from "../buttons/GreenButton";
 
 const AppointmentInfo = ({ positiveClick, negativeClick }) => {
   const db = useDB();
@@ -48,9 +50,9 @@ const AppointmentInfo = ({ positiveClick, negativeClick }) => {
               : status === "Pending"
               ? "Request"
               : status === "Followup"
-              ? "Follow Up" 
+              ? "Follow Up"
               : status === "Finished"
-              ? "Finished" 
+              ? "Finished"
               : "No"}
           </span>{" "}
           <span className="font-light">Information</span>
@@ -96,7 +98,7 @@ const AppointmentInfo = ({ positiveClick, negativeClick }) => {
                 onClick={() =>
                   positiveClick({
                     id: currentAppointment.id,
-                    receiver: appointee.userID,
+                    receiver: appointee?.userID || appointee,
                     date: Date.now(),
                   })
                 }
@@ -108,7 +110,7 @@ const AppointmentInfo = ({ positiveClick, negativeClick }) => {
                 onClick={() =>
                   negativeClick({
                     id: currentAppointment.id,
-                    receiver: appointee.userID,
+                    receiver: appointee?.userID || appointee,
                     reason: "Bala ka jan",
                   })
                 }
@@ -116,26 +118,22 @@ const AppointmentInfo = ({ positiveClick, negativeClick }) => {
                 Deny
               </button>
             </div>
-          ) : (status === "Accepted" || status === "Followup") && (
-            <div className="appointment-info-footer w-full flex flex-row items-end justify-end gap-3 ">
-              <button
-                className="m-0 py-2 px-5 bg-[#57a627] rounded-md"
-                onClick={() =>
-                  positiveClick({
+          ) : (
+            (status === "Accepted" || status === "Followup") && (
+              <div className="appointment-info-footer w-full flex flex-row items-end justify-end gap-3 ">
+                <GreenButton
+                  label="Finish"
+                  click={ () => positiveClick({
                     id: currentAppointment.id,
-                    receiver: appointee.userID,
-                  })
-                }
-              >
-                Finish
-              </button>
-              <button
-                className="m-0 py-2 px-5 bg-[#720000] rounded-md"
-                onClick={() => negativeClick({ id: currentAppointment.id })}
-              >
-                Cancel
-              </button>
-            </div>
+                    receiver: appointee?.userID || appointee,
+                  })}
+                />
+                <RedButton
+                  click={() => negativeClick({ id: currentAppointment.id })}
+                  label="Cancel"
+                />
+              </div>
+            )
           )}
         </>
       )}
