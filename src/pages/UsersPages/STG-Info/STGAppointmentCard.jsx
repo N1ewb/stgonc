@@ -2,9 +2,11 @@ import React, { useEffect, useState } from "react";
 import { useDB } from "../../../context/db/DBContext";
 import STGAllFollowUpCards from "./STGFollowUpCards";
 import STGAdditionalInfo from "./STGAdditionalInfo";
+import { useExport } from "../../../context/exportContext/ExportContext";
 
-const STGAppointmentCard = ({ appt, setCurrentAppt, currentAppt }) => {
+const STGAppointmentCard = ({ appt, setCurrentAppt, currentAppt, handleDownloadRecord }) => {
   const db = useDB();
+  const {setCurrentAppointmentData} = useExport()
   const [followups, setFollowups] = useState([]);
   const [isExteded, setIsExtended] = useState(false);
   const [appointee, setAppointee] = useState(null);
@@ -32,6 +34,8 @@ const STGAppointmentCard = ({ appt, setCurrentAppt, currentAppt }) => {
     fetchData();
   }, [db]);
 
+  
+
   return (
     <div className="h-auto w-full flex flex-col px-10 py-5 gap-3">
       <h1 className="text-[16px]">Main Appointment</h1>
@@ -51,7 +55,7 @@ const STGAppointmentCard = ({ appt, setCurrentAppt, currentAppt }) => {
 
         <footer className="w-full flex justify-between items-center p-1">
           <p>{appt.appointmentDate}</p>
-          <button className="bg-[#72B9FF] rounded-3xl py-2 px-3">
+          <button onClick={(e) => handleDownloadRecord(appt, e)} className="bg-[#72B9FF] rounded-3xl py-2 px-3">
             Download
           </button>
         </footer>
@@ -66,6 +70,7 @@ const STGAppointmentCard = ({ appt, setCurrentAppt, currentAppt }) => {
                 appointee={appointee}
                 setCurrentAppt={setCurrentAppt}
                 currentAppt={currentAppt}
+                handleDownloadRecord={handleDownloadRecord}
               />
             ))
           : "This appointment had no finished followups"}

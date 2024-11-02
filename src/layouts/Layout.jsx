@@ -6,11 +6,14 @@ import { useDB } from "../context/db/DBContext";
 import { useChat } from "../context/chatContext/ChatContext";
 import Chatbox from "../components/Chatsbox/Chatbox";
 import Loading from "../components/Loading/Loading";
+import { useExport } from "../context/exportContext/ExportContext";
+import AppointmentData from "../ComponentToPDF/AppointmentData";
 
 const Layout = () => {
   const auth = useAuth();
   const db = useDB();
   const chat = useChat();
+  const Export = useExport()
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
@@ -66,6 +69,7 @@ const Layout = () => {
             setCurrentChatReceiver={chat.setCurrentChatReceiver}
           />
         )}
+        {auth.currentUser && Export.currentAppointmentData && <AppointmentData data={Export.currentAppointmentData} />}
       </main>
     </div>
   );

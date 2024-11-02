@@ -1,6 +1,6 @@
 import React from "react";
 
-const STGAllFollowUpCards = ({ followup, appointee, setCurrentAppt, currentAppt }) => {
+const STGAllFollowUpCards = ({ followup, appointee, setCurrentAppt, currentAppt, handleDownloadRecord }) => {
   return (
     <div
       onClick={() => setCurrentAppt(currentAppt && currentAppt === followup ? null : followup)}
@@ -15,7 +15,7 @@ const STGAllFollowUpCards = ({ followup, appointee, setCurrentAppt, currentAppt 
       </header>
       <footer className="flex justify-between items-center p-1">
         <p className="text-[16px]">{followup.appointmentDate}</p>
-        <button className="bg-[#72B9FF] rounded-3xl py-2 px-3">Download</button>
+        <button onClick={(e) => handleDownloadRecord(followup, e)} className="bg-[#72B9FF] rounded-3xl py-2 px-3">Download</button>
       </footer>
     </div>
   );

@@ -81,6 +81,7 @@ import ErrorPage from "./pages/Error/ErrorPage";
 import DeanFollowupAppointments from "./pages/UsersPages/admin/admin_pages/admin_appointments/DeanFollowupAppointments";
 import StudentInfoFromTGP from "./pages/UsersPages/STG-Info/StudentInfoFromTGP";
 import GuidanceFollowupAppointments from "./pages/UsersPages/GuidanceCounselor/GuidancePages/GuidanceAppointments/GuidanceFollowupAppointments";
+import { ExportProvider } from "./context/exportContext/ExportContext";
 
 function App() {
   const router = createBrowserRouter([
@@ -93,14 +94,13 @@ function App() {
           element: <LandingPage />,
         },
         {
-          path: '*',
-          element: <ErrorPage />
+          path: "*",
+          element: <ErrorPage />,
         },
         {
           path: "/private",
           element: <PrivateRoutes />,
           children: [
-            
             {
               path: "/private/Admin",
               element: <AdminLayout />,
@@ -132,7 +132,7 @@ function App() {
                   ],
                 },
                 {
-                  path: '/private/Admin/appointments',
+                  path: "/private/Admin/appointments",
                   element: <DeanAppointments />,
                   children: [
                     {
@@ -155,7 +155,7 @@ function App() {
                       path: "/private/Admin/appointments/followup",
                       element: <DeanFollowupAppointments />,
                     },
-                  ]
+                  ],
                 },
                 {
                   path: "/private/Admin/dashboard/pending-registrations",
@@ -181,7 +181,6 @@ function App() {
                       path: "/private/Admin/dashboard/user-list/student",
                       element: <StudentList />,
                     },
-
                   ],
                 },
                 {
@@ -246,7 +245,7 @@ function App() {
                     },
                     {
                       path: "/private/Guidance/appointments/followup",
-                      element: <GuidanceFollowupAppointments />
+                      element: <GuidanceFollowupAppointments />,
                     },
                     {
                       path: "/private/Guidance/appointments/students-info",
@@ -388,7 +387,6 @@ function App() {
         },
       ],
     },
-    
   ]);
 
   return (
@@ -401,10 +399,12 @@ function App() {
                 <Appointmentprovider>
                   <PrimeReactProvider>
                     <UserListProvider>
-                      <div className="App h-full w-full bg-[#320000] overflow-auto relative">
-                        <RouterProvider router={router} />
-                        <Toaster />
-                      </div>
+                      <ExportProvider>
+                        <div className="App h-full w-full bg-[#320000] overflow-auto relative">
+                          <RouterProvider router={router} />
+                          <Toaster />
+                        </div>
+                      </ExportProvider>
                     </UserListProvider>
                   </PrimeReactProvider>
                 </Appointmentprovider>
