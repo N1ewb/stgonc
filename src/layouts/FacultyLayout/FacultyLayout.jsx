@@ -9,13 +9,10 @@ const FacultyLayout = () => {
       link: "/private/Faculty/dashboard",
     },
     {
-      name: "Appointment List",
-      link: "/private/Faculty/appointments-list",
+      name: "Appointments",
+      link: "/private/Faculty/appointments",
     },
-    {
-      name: "Appointment Requests",
-      link: "/private/Faculty/appointments-request",
-    },
+    
     {
       name: "Schedules",
       link: "/private/Faculty/schedules",
@@ -24,7 +21,7 @@ const FacultyLayout = () => {
 
   return (
     <div className="teacher-dashboard-container bg-[#360000] w-full h-screen flex flex-row items-center justify-center">
-      <div className="teacher-sidebar-container w-[17%] h-screen flex flex-row items-center justify-center pt-3 lg:w-0">
+      <div className="teacher-sidebar-container w-[17%] h-screen flex flex-row items-center justify-center mt-5 lg:w-0">
         <Sidebar SidebarLinks={SidebarLinks} />
       </div>
       <main className="group-with-spacer h-[100vh] w-[83%] lg:w-full flex flex-col justify-around">

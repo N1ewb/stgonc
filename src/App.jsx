@@ -42,8 +42,8 @@ import AdminSchedulesPage from "./pages/UsersPages/admin/admin_pages/admin_sched
 import AdminUserList from "./pages/UsersPages/admin/admin_pages/admin_userlist/adminUserList";
 import AdminRegisteruserPage from "./pages/UsersPages/admin/admin_pages/adming_register_user/admin_reg_user";
 import TeacherGraphs from "./pages/UsersPages/faculty/faculty_pages/faculty-graphs/TeacherGraphs";
-import TeacherAppointmentListPage from "./pages/UsersPages/faculty/faculty_pages/appointment-list-page/TeacherAppointmentListPage";
-import TeacherAppointmentReqPage from "./pages/UsersPages/faculty/faculty_pages/appointment-req-page/TeacherAppointmentReqPage";
+import TeacherAppointmentListPage from "./pages/UsersPages/faculty/faculty_pages/faculty-appointments/TeacherAppointmentListPage";
+import TeacherAppointmentReqPage from "./pages/UsersPages/faculty/faculty_pages/faculty-appointments/TeacherAppointmentReqPage";
 import TeacherSchedulePage from "./pages/UsersPages/faculty/faculty_pages/schedules-page/TeacherSchedulePage";
 import AdminAppointmentReqsPage from "./pages/UsersPages/admin/admin_pages/admin_appointments/AdminAppointmentReqs";
 import PendingReqMessagePage from "./pages/authentication/YourRegReqisPending/PendingReqMessagePage";
@@ -82,6 +82,9 @@ import DeanFollowupAppointments from "./pages/UsersPages/admin/admin_pages/admin
 import StudentInfoFromTGP from "./pages/UsersPages/STG-Info/StudentInfoFromTGP";
 import GuidanceFollowupAppointments from "./pages/UsersPages/GuidanceCounselor/GuidancePages/GuidanceAppointments/GuidanceFollowupAppointments";
 import { ExportProvider } from "./context/exportContext/ExportContext";
+import TeacherAppointments from "./pages/UsersPages/faculty/faculty_pages/faculty-appointments/TeacherAppointments";
+import TeacherAppointmentFollowups from "./pages/UsersPages/faculty/faculty_pages/faculty-appointments/TeacherAppointmentFollowups";
+import TeacherAppointmentArchive from "./pages/UsersPages/faculty/faculty_pages/faculty-appointments/TeacherAppointmentArchive";
 
 function App() {
   const router = createBrowserRouter([
@@ -273,13 +276,28 @@ function App() {
                   element: <TeacherGraphs />,
                 },
                 {
-                  path: "/private/Faculty/appointments-list",
-                  element: <TeacherAppointmentListPage />,
+                  path: "/private/Faculty/appointments",
+                  element: <TeacherAppointments />,
+                  children: [
+                    {
+                      path: '/private/Faculty/appointments/list',
+                      element: <TeacherAppointmentListPage />
+                    },
+                    {
+                      path: "/private/Faculty/appointments/requests",
+                      element: <TeacherAppointmentReqPage />,
+                    },
+                    {
+                      path: "/private/Faculty/appointments/followup",
+                      element: <TeacherAppointmentFollowups />,
+                    },
+                    {
+                      path: "/private/Faculty/appointments/archive",
+                      element: <TeacherAppointmentArchive />,
+                    },
+                  ]
                 },
-                {
-                  path: "/private/Faculty/appointments-request",
-                  element: <TeacherAppointmentReqPage />,
-                },
+                
                 {
                   path: "/private/Faculty/schedules",
                   element: <TeacherSchedulePage />,

@@ -84,7 +84,7 @@ const Profile = () => {
             </div>
           </Dropdown.Toggle>
           <div
-            className={`notif-block absolute -top-[5%] left-[36%] h-8 w-8 rounded-full bg-red-800 ${
+            className={`notif-block cursor-pointer absolute -top-[5%] left-[36%] h-8 w-8 rounded-full bg-red-800 ${
               notifications.length !== 0 ? "flex" : "hidden"
             } items-center justify-center text-white decoration-transparent`}
             onClick={() => navigate(`/private/${user?.role}/notifications`)}

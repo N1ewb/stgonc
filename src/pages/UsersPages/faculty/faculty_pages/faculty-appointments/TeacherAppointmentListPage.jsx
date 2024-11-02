@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 
-import "./TeacherAppointmentListPage.css";
 import AppointmentsList from "../../../../../components/appointments/AppointmentsList";
 import AppointmentInfo from "../../../../../components/appointments/AppointmentInfo";
 import { useDB } from "../../../../../context/db/DBContext";
@@ -8,15 +7,16 @@ import { useAuth } from "../../../../../context/auth/AuthContext";
 import { useChat } from "../../../../../context/chatContext/ChatContext";
 import { useAppointment } from "../../../../../context/appointmentContext/AppointmentContext";
 import { useNavigate } from "react-router-dom";
+import AdminSearchBar from "../../../admin/admin-components/AdminSearchBar";
 
 const TeacherAppointmentListPage = () => {
   const db = useDB();
   const auth = useAuth();
   const chat = useChat();
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const { currentAppointment, setCurrentAppointment } = useAppointment();
-  const [acceptedAppointments, setAcceptedAppointments] = useState();
-
+  const [acceptedAppointments, setAcceptedAppointments] = useState([]);
+  const [temp, setTemp] = useState()
   useEffect(() => {
     const fetchData = async () => {
       if (auth.currentUser) {
@@ -25,6 +25,7 @@ const TeacherAppointmentListPage = () => {
             "Accepted",
             (callback) => {
               setAcceptedAppointments(callback);
+              setTemp(callback)
             }
           );
           return () => unsubscribe();
@@ -53,11 +54,17 @@ const TeacherAppointmentListPage = () => {
 
   return (
     <div className="teacher-appointment-page-list-container w-full flex flex-col">
-      <h1 className="text-[#320000]">
-        <span className="font-bold">Accepted</span>
-        <br></br>
-        Appoinments
-      </h1>
+      <header className="w-1/2 flex justify-between">
+        <h1 className="text-[#320000]">
+          <span className="font-bold">Upcoming</span>
+        </h1>
+        <AdminSearchBar
+          datas={acceptedAppointments}
+          setData={setAcceptedAppointments}
+          temp={temp}
+          setCurrentPage={() => null}
+        />
+      </header>
       <div className="appointment-list-main-content w-full flex flex-row justify-between">
         <div className="appointment-list-container w-[50%] flex flex-row flex-wrap">
           {acceptedAppointments && acceptedAppointments.length !== 0 ? (

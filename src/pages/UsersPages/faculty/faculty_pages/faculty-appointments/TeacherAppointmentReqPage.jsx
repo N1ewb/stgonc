@@ -4,14 +4,15 @@ import AppointmentInfo from "../../../../../components/appointments/AppointmentI
 import { useDB } from "../../../../../context/db/DBContext";
 import { useAuth } from "../../../../../context/auth/AuthContext";
 
-import "./TeacherAppointmentReqPage.css";
 import { useAppointment } from "../../../../../context/appointmentContext/AppointmentContext";
+import AdminSearchBar from "../../../admin/admin-components/AdminSearchBar";
 
 const TeacherAppointmentReqPage = () => {
   const db = useDB();
   const auth = useAuth();
   const { currentAppointment, setCurrentAppointment } = useAppointment();
-  const [requestedAppointments, setRequestedAppointments] = useState();
+  const [requestedAppointments, setRequestedAppointments] = useState([]);
+  const [temp, setTemp] = useState()
 
   useEffect(() => {
     const fetchData = async () => {
@@ -21,6 +22,7 @@ const TeacherAppointmentReqPage = () => {
             "Pending",
             (callback) => {
               setRequestedAppointments(callback);
+              setTemp(callback)
             }
           );
           return () => unsubscribe();
@@ -32,15 +34,14 @@ const TeacherAppointmentReqPage = () => {
     fetchData();
   }, [db]);
 
-
   const handleAcceptAppointment = async (requiredParams) => {
-    const {id, receiver, date} = requiredParams
+    const { id, receiver, date } = requiredParams;
     await db.approveAppointment(id, receiver, date);
     setCurrentAppointment(null);
   };
 
   const handleDenyAppointment = async (requiredParams) => {
-    const {id, receiver, reason} = requiredParams
+    const { id, receiver, reason } = requiredParams;
     await db.denyAppointment(id, receiver, reason);
     setCurrentAppointment(null);
   };
@@ -51,11 +52,15 @@ const TeacherAppointmentReqPage = () => {
 
   return (
     <div className="teacher-appointment-request-container w-full">
-      <h1 className="text-[#320000]">
-        <span className="font-bold">Appointment</span>
-        <br></br>
-        Requests
-      </h1>
+      <header className="w-1/2 flex justify-between">
+        <h1 className="text-[#320000] font-bold">Requests</h1>
+        <AdminSearchBar
+          datas={requestedAppointments}
+          setData={setRequestedAppointments}
+          temp={temp}
+          setCurrentPage={() => null}
+        />
+      </header>
       <div className="appointment-request-main-content w-full flex flex-row justify-between">
         <div className="appointment-request-list-container w-[50%] flex flex-row flex-wrap">
           {requestedAppointments && requestedAppointments.length !== 0 ? (
