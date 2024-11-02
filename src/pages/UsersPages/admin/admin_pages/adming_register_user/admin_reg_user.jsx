@@ -15,11 +15,12 @@ const AdminRegisteruserPage = () => {
 
   return (
     <div className="admin-register-page-container flex flex-row flex-wrap items-center justify-center h-[95%] w-full xl:flex-col text-center">
-      <div className="admin-register-page-left-content flex flex-col items-center w-1/2 lg:w-full">
+      <div className="admin-register-page-left-content flex flex-col items-start gap-3 w-1/2 lg:w-full">
         <h1 className="text-6xl font-semibold text-[#740000]">
           Register User Form
         </h1>
-        <div className="register-left-buttons flex gap-3  [&_button]:bg-[#320000] [&_button]:rounded-3xl [&_button]:flex [&_button]:items-center [&_button]:relative [&_span]:py-1 [&_span]:px-3">
+        <p className="text-[#720000] font-light">You can add</p>
+        <div className="register-left-buttons flex gap-3 [&_button]:p-1  [&_button]:bg-[#320000] [&_button]:rounded-3xl [&_button]:flex [&_button]:items-center [&_button]:relative [&_span]:py-1 [&_span]:px-4">
           <button className={`hover:bg-[#720000] ${currentForm === "Faculty"? "[&_span]:text-[#320000] [&_span]:bg-white [&_span]:rounded-r-3xl " : "text-white"}`} onClick={() => handleSetCurrentForm("Faculty")}>
             <div className={`bg-white px-3 py-1 rounded-3xl outline outline-2 outline-[#320000] relative z-10`}><img  src={InstructorIcon} alt="instructor" height={30} width={30} /></div> <span className="relative right-2 z-0">Faculty</span>
           </button>

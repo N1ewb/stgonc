@@ -71,7 +71,7 @@ const SchedulesModal = ({
           <Button
             variant="primary"
             type="submit"
-            onClick={() => handleSetTableData()}
+            onClick={(e) => handleSetTableData(e)}
           >
             Confrm
           </Button>
