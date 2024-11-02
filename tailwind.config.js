@@ -8,8 +8,8 @@ export const content = [
 export const theme = {
   extend: {
     boxShadow: {
-      
       'custom-inner': '0px -9px 6px -3px rgba(54,0,0,1) inset',
+      'inner-userlist-shadow' : '0px 1px 14px 0px rgba(0,0,0,1) inset',
     },
     colors: {
       border: "hsl(var(--border))",

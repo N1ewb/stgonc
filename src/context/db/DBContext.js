@@ -930,25 +930,27 @@ export const DBProvider = ({ children }) => {
           query(
             appointmentsRef,
             where("appointedFaculty", "==", auth.currentUser.uid),
-            where("appointmentStatus", "in", statusArray),
+            where("appointmentStatus", "in", statusArray), 
             where("appointmentFormat", "!=", "Walkin")
           ),
           async (snapshot) => {
             const followups = await Promise.all(
               snapshot.docs.map(async (doc) => {
                 const followupRef = collection(doc.ref, "Followup");
-                const followupSnapshot = await getDocs(followupRef);
-
-                if (!followupSnapshot.empty) {
-                  return followupSnapshot.docs.map((followupDoc) => ({
-                    id: followupDoc.id,
-                    ...followupDoc.data(),
-                  }));
-                }
-                return null;
+  
+                const followupSnapshot = await getDocs(
+                  query(followupRef, where("appointmentStatus", "==", "Followup"))
+                );
+  
+                return followupSnapshot.empty
+                  ? null
+                  : followupSnapshot.docs.map((followupDoc) => ({
+                      id: followupDoc.id,
+                      ...followupDoc.data(),
+                    }));
               })
             );
-
+  
             callback(followups.filter((followup) => followup !== null).flat());
           }
         );
@@ -961,6 +963,7 @@ export const DBProvider = ({ children }) => {
       );
     }
   };
+  
 
   const subscribeToApptFollowupChanges = async (id, callback) => {
     try {

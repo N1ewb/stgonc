@@ -1,5 +1,5 @@
 import React, { useRef, useState } from "react";
-
+import { spcDepartments } from "../../../../../lib/global";
 import "./admin_student_reg_form.css";
 import { AdminCreateStudentAccount } from "../../../../../context/auth/adminCreateAccount";
 import toast from "react-hot-toast";
@@ -16,15 +16,6 @@ const RegisterStudentForm = () => {
   const departmentRef = useRef();
   const passwordRef = useRef();
   const confirmpasswordRef = useRef();
-
-  const spcDepartments = [
-    "College of Computer Studies",
-    "College of Criminology",
-    "College of Education",
-    "College of Business Administration",
-    "College of Engineering",
-    "College of Arts and Sciences",
-  ];
 
   const handleCreateStudentAccount = async () => {
     setIsSubmitting(true);
@@ -75,7 +66,7 @@ const RegisterStudentForm = () => {
   return (
     <div className="student-register-form-container w-full flex flex-col  items-center">
       <h2 className="text-[#720000]">Student Registration Form</h2>
-      <div className="student-reg-form w-[90%] flex flex-col  [&_input]:border-solid [&_input]:border-[1px] [&_input]:border-[#740000] [&_input]:rounded-[4px] flex flex-col gap-[10px]">
+      <div className="student-reg-form w-[90%] [&_input]:border-solid [&_input]:border-[1px] [&_input]:border-[#740000] [&_input]:rounded-[4px] flex flex-col gap-[10px]">
         <input
           name="firstname"
           placeholder="First Name"

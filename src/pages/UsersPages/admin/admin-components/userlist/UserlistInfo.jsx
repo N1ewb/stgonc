@@ -33,11 +33,11 @@ const UserlistInfo = ({ setCurrentUserInfo, currentUserInfo }) => {
             {currentUserInfo.role}
           </p>
         </div>
-        <div className="m-w-1/2 h-[250px] w-[250px] rounded-3xl bg-[#320000] ">
+        <div className="m-w-1/2 h-[250px] w-[250px] rounded-3xl bg-[#320000] shadow-inner-userlist-shadow">
           <img
             src={currentUserInfo?.photoURL}
             alt="User profile"
-            className="h-[100%]  max-h-[100%] rounded-3xl w-full object-cover object-center"
+            className="h-[100%]  max-h-[100%] rounded-3xl w-full object-cover object-center shadow-inner-userlist-shadow"
           />
         </div>
       </main>

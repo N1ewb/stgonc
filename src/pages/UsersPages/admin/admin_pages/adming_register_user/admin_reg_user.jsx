@@ -1,11 +1,13 @@
 import React, { useState } from "react";
 
-import "./admin_reg_user.css";
 import RegisterFacultyForm from "./admin_faculty_reg_form";
 import RegisterStudentForm from "./admin_student_reg_form";
 
+import StudentIcon from '../../../../../static/images/studentIcon.png'
+import InstructorIcon from '../../../../../static/images/instructorIcon.png'
+
 const AdminRegisteruserPage = () => {
-  const [currentForm, setCurrentForm] = useState();
+  const [currentForm, setCurrentForm] = useState(null);
 
   const handleSetCurrentForm = (formName) => {
     setCurrentForm(formName);
@@ -17,12 +19,12 @@ const AdminRegisteruserPage = () => {
         <h1 className="text-6xl font-semibold text-[#740000]">
           Register User Form
         </h1>
-        <div className="register-left-buttons [&_button]:text-[#740000] [&_button]:bg-transparent">
-          <button onClick={() => handleSetCurrentForm("Faculty")}>
-            Faculty Member
+        <div className="register-left-buttons flex gap-3  [&_button]:bg-[#320000] [&_button]:rounded-3xl [&_button]:flex [&_button]:items-center [&_button]:relative [&_span]:py-1 [&_span]:px-3">
+          <button className={`hover:bg-[#720000] ${currentForm === "Faculty"? "[&_span]:text-[#320000] [&_span]:bg-white [&_span]:rounded-r-3xl " : "text-white"}`} onClick={() => handleSetCurrentForm("Faculty")}>
+            <div className={`bg-white px-3 py-1 rounded-3xl outline outline-2 outline-[#320000] relative z-10`}><img  src={InstructorIcon} alt="instructor" height={30} width={30} /></div> <span className="relative right-2 z-0">Faculty</span>
           </button>
-          <button onClick={() => handleSetCurrentForm("Student")}>
-            CCS Student
+          <button className={`hover:bg-[#720000] ${currentForm === "Student"? "[&_span]:text-[#320000] [&_span]:bg-white [&_span]:rounded-r-3xl" : "text-white"}`} onClick={() => handleSetCurrentForm("Student")}>
+           <div className={`bg-white px-3 py-1 rounded-3xl outline outline-2 outline-[#320000] relative z-10`}> <img src={StudentIcon} alt="student" height={30} width={30} /></div> <span className="relative right-2 z-0">Student</span> 
           </button>
         </div>
       </div>
