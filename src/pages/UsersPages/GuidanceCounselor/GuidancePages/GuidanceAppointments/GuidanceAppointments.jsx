@@ -6,6 +6,7 @@ import { useDB } from "../../../../../context/db/DBContext";
 import AppointmentList from "../../../../../components/appointments/AppointmentsList";
 import AppointmentInfo from "../../../../../components/appointments/AppointmentInfo";
 import { useNavigate } from "react-router-dom";
+import AdminSearchBar from "../../../admin/admin-components/AdminSearchBar";
 
 const GuidanceAppointments = () => {
   const db = useDB();
@@ -14,6 +15,7 @@ const GuidanceAppointments = () => {
   const navigate = useNavigate();
   const { currentAppointment, setCurrentAppointment } = useAppointment();
   const [appointments, setAppointments] = useState();
+  const [temp, setTemp] = useState()
 
   useEffect(() => {
     setCurrentAppointment(null)
@@ -27,6 +29,7 @@ const GuidanceAppointments = () => {
             ["Accepted", "Followup"],
             (callback) => {
               setAppointments(callback);
+              setTemp(callback)
             }
           );
           return () => unsubscribe();
@@ -52,9 +55,15 @@ const GuidanceAppointments = () => {
  
 
   return (
-    <div>
-      <header className="pb-10">
+    <div className="w-full">
+      <header className="pb-10 w-1/2 flex justify-between">
         <h4 className="font-bold">List</h4>
+        <AdminSearchBar
+          datas={appointments}
+          setData={setAppointments}
+          temp={temp}
+          setCurrentPage={() => null}
+        />
       </header>
       <main>
         <div className="appoinments-container w-full flex flex-row justify-between items-start h-[100%]">

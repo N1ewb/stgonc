@@ -20,17 +20,22 @@ const GuidanceAppointmentDashboard = () => {
           <NavLink
             to="/private/Guidance/appointments/list"
             location={location}
-            label="Upcoming Appointments"
+            label="Upcoming"
+          />
+          <NavLink
+            to="/private/Guidance/appointments/followup"
+            location={location}
+            label="Followups"
           />
           <NavLink
             to="/private/Guidance/appointments/request"
             location={location}
-            label="Appointment Requests"
+            label="Requests"
           />
           <NavLink
             to="/private/Guidance/appointments/archive"
             location={location}
-            label="Appointment Archive"
+            label="Archive"
           />
         </div>
       </header>

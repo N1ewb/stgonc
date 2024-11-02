@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 import { useAppointment } from "../../../../../context/appointmentContext/AppointmentContext";
 import AppointmentList from "../../../../../components/appointments/AppointmentsList";
 import AppointmentInfo from "../../../../../components/appointments/AppointmentInfo";
+import AdminSearchBar from "../../../admin/admin-components/AdminSearchBar";
 
 const GuidanceAppointmentArchive = () => {
   const db = useDB();
@@ -14,6 +15,7 @@ const GuidanceAppointmentArchive = () => {
   const navigate = useNavigate();
   const { currentAppointment, setCurrentAppointment } = useAppointment();
   const [appointments, setAppointments] = useState();
+  const [temp, setTemp] = useState()
 
   useEffect(() => {
     setCurrentAppointment(null);
@@ -24,9 +26,10 @@ const GuidanceAppointmentArchive = () => {
       if (auth.currentUser) {
         try {
           const unsubscribe = db.subscribeToAppointmentChanges(
-            ["Accepted", "Followup", "Finished", "Cancelled", "Denied"],
+            ["Finished", "Cancelled", "Denied"],
             (callback) => {
               setAppointments(callback);
+              setTemp(callback)
             }
           );
           return () => unsubscribe();
@@ -49,9 +52,15 @@ const GuidanceAppointmentArchive = () => {
     setCurrentAppointment(null);
   };
   return (
-    <div className="h-full">
-      <header className="pb-10">
+    <div className="h-full w-full">
+      <header className="pb-10 w-1/2 flex justify-between ">
         <h4 className="font-bold">Archive</h4>
+        <AdminSearchBar
+          datas={appointments}
+          setData={setAppointments}
+          temp={temp}
+          setCurrentPage={() => null}
+        />
       </header>
       <main>
         <div className="appoinments-container w-full flex flex-row justify-between items-start h-[100%]">

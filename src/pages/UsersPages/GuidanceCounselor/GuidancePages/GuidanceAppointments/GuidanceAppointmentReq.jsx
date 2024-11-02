@@ -4,6 +4,7 @@ import { useAuth } from "../../../../../context/auth/AuthContext";
 import { useAppointment } from "../../../../../context/appointmentContext/AppointmentContext";
 import AppointmentReqList from "../../../../../components/appointments/AppointmentReqList";
 import AppointmentInfo from "../../../../../components/appointments/AppointmentInfo";
+import AdminSearchBar from "../../../admin/admin-components/AdminSearchBar";
 
 const GuidanceAppointmentReq = () => {
   const db = useDB();
@@ -49,9 +50,15 @@ const GuidanceAppointmentReq = () => {
     fetchData();
   }, [db]);
   return (
-    <div>
-      <header className="pb-10">
+    <div className="w-full">
+      <header className="pb-10 w-1/2 justify-between flex">
         <h4 className="font-bold"> Requests</h4>
+        <AdminSearchBar
+          datas={appointments}
+          setData={setAppointments}
+          temp={temp}
+          setCurrentPage={() => null}
+        />
       </header>
       <main className="w-full flex flex-row justify-between items-start h-[100%]">
         <div className="w-1/2 max-h-full overflow-auto pb-3 flex flex-row flex-wrap">
