@@ -5,7 +5,11 @@ import More from "../../../../../static/images/more-dark.png";
 import { useLocation } from "react-router-dom";
 const FacultyList = () => {
   const location = useLocation();
-  const { currentCharacters, setCurrentUserInfo, setCategory } = useUserList();
+  const { currentCharacters, setCurrentUserInfo, setCurrentPage, setCategory } = useUserList();
+
+  useEffect(() => {
+    setCurrentPage(1)
+  },[setCurrentPage])
 
   const handleSetCurrentUser = (user) => {
     setCurrentUserInfo((prevUser) => (prevUser === user ? null : user));

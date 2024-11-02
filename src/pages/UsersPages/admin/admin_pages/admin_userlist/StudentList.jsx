@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import Usercard from "../../../../../components/userscard/Usercard";
 import { useUserList } from "../../../../../context/admin/UserListContext";
 import More from "../../../../../static/images/more-dark.png";
@@ -6,8 +6,11 @@ import { useLocation } from "react-router-dom";
 
 const StudentList = () => {
   const location = useLocation();
-  const { currentCharacters, setCurrentUserInfo, setCategory } = useUserList();
-  const [studentList, setstudentList] = useState([]);
+  const { currentCharacters, setCurrentUserInfo, setCurrentPage, setCategory } = useUserList();
+  
+  useEffect(() => {
+    setCurrentPage(1)
+  },[setCurrentPage])
 
   const handleSetCurrentUser = (user) => {
     setCurrentUserInfo((prevUser) => (prevUser === user ? null : user));
@@ -27,7 +30,7 @@ const StudentList = () => {
   useEffect(() => {
     const pathSegment = location.pathname.split("/").pop();
     setCategory(capitalize(pathSegment));
-  }, [location]);
+  }, [location, setCategory]);
 
   return (
     <div className="user-list flex flex-row flex-wrap items-start max-h-[100%]  overflow-auto py-3">

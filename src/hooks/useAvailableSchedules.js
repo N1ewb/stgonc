@@ -48,7 +48,29 @@ const useAvailableSchedules = (instructor, appointmentDate) => {
       const filteredAppointments = appointments.filter(
         (appt) => appt.appointedFaculty === instructor.id
       );
-      setAllAppointments(filteredAppointments);
+
+      const followupPromises = filteredAppointments.map(async (appointment) => {
+        const followupRef = collection(
+          db.appointmentsRef,
+          appointment.id,
+          "Followup"
+        );
+        const followupSnapshot = await getDocs(
+          query(followupRef, where("appointmentStatus", "==", "Followup"))
+        );
+        const followups = followupSnapshot.docs.map((followupDoc) => ({
+          id: followupDoc.id,
+          ...followupDoc.data(),
+        }));
+
+        return {
+          ...appointment,
+          followups,
+        };
+      });
+
+      const appointmentsWithFollowups = await Promise.all(followupPromises);
+      setAllAppointments(appointmentsWithFollowups);
     };
 
     if (instructor && appointmentDate) {

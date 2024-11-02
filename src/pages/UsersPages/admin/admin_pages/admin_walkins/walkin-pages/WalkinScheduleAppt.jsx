@@ -38,14 +38,14 @@ const WalkinScheduleAppt = () => {
     const appteeType = appteeTypeRef.current.value
 
     setIsSubmitting(true);
-    console.log(`Email: ${email}, Firstname: ${firstName}, Lastname: ${lastName}, Appt Date: ${appointmentDate.dayOfWeek}, Appt Time: ${JSON.stringify(appointmentTime)}, Appt Type: ${appteeType}`)
+    console.log(`Email: ${email}, Firstname: ${firstName}, Lastname: ${lastName}, Appt Date: ${appointmentDate.dateWithoutTime}, Appt Time: ${JSON.stringify(appointmentTime)}, Appt Type: ${appteeType}`)
     if (email && firstName && lastName && appointmentDate && appointmentTime && appteeType) {
       try {
         await db.walkinScheduleAppointment(
           firstName,
           lastName,
           email,
-          appointmentDate.dayOfWeek,
+          appointmentDate.dateWithoutTime,
           appointmentTime,
           appteeType
         );

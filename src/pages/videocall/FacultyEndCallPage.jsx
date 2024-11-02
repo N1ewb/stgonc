@@ -15,6 +15,7 @@ const FacultyEndCallPage = () => {
   const queryParams = new URLSearchParams(location.search);
   const receiver = queryParams.get("receiver");
   const appointment = queryParams.get("appointment");
+  const currentAppointment = queryParams.get('currentAppointment')
   const toastMessage = (message) => toast(message);
   const [submitting, setSubmitting] = useState(false);
   const remarksRef = useRef();
@@ -120,6 +121,7 @@ const FacultyEndCallPage = () => {
           <FollowupAppointment
             receiver={receiver}
             appointment={appointment}
+            currentAppointment={currentAppointment}
             submitForm={submitForm}
             setIsFollowupFormOpen={setIsFollowupFormOpen}
             isFollowupFormOpen={isFollowupFormOpen}

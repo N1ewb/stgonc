@@ -10,6 +10,7 @@ const FollowupAppointment = ({
   setIsFollowupFormOpen,
   submitForm,
   appointment,
+  currentAppointment,
   receiver,
 }) => {
   const {
@@ -44,6 +45,7 @@ const FollowupAppointment = ({
       ) {
         await db.followupAppointment(
           appointment,
+          currentAppointment || null,
           receiver,
           apptFormat,
           appointmentDate.dateWithoutTime,

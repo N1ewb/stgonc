@@ -124,7 +124,8 @@ const AppointmentInfo = ({ positiveClick, negativeClick }) => {
                 <GreenButton
                   label="Finish"
                   click={ () => positiveClick({
-                    id: currentAppointment.id,
+                    curID:  currentAppointment.id,
+                    id: currentAppointment.precedingAppt || currentAppointment.id,
                     receiver: appointee?.userID || appointee,
                   })}
                 />

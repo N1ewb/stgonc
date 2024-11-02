@@ -9,10 +9,6 @@ const STGAppointmentCard = ({ appt, setCurrentAppt, currentAppt }) => {
   const [isExteded, setIsExtended] = useState(false);
   const [appointee, setAppointee] = useState(null);
 
-  const handleExtend = () => {
-    setIsExtended(!isExteded);
-  };
-
   useEffect(() => {
     if (appt) {
       async function handleGetUser() {
@@ -72,7 +68,7 @@ const STGAppointmentCard = ({ appt, setCurrentAppt, currentAppt }) => {
                 currentAppt={currentAppt}
               />
             ))
-          : "This appointment had no followups"}
+          : "This appointment had no finished followups"}
       </div>
     </div>
   );

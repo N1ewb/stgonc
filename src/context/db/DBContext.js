@@ -395,9 +395,9 @@ export const DBProvider = ({ children }) => {
   const getAppointment = async (id) => {
     try {
       if (auth.currentUser) {
-        const docRef = doc(appointmentsRef, id); 
+        const docRef = doc(appointmentsRef, id);
         const docSnap = await getDoc(docRef);
-  
+
         if (docSnap.exists()) {
           return { id: docSnap.id, ...docSnap.data() };
         } else {
@@ -410,7 +410,6 @@ export const DBProvider = ({ children }) => {
       return null;
     }
   };
-  
 
   const getFinishedFacultyAppointment = async (id) => {
     try {
@@ -481,6 +480,7 @@ export const DBProvider = ({ children }) => {
 
   const followupAppointment = async (
     id,
+    curID = null,
     receiver,
     format,
     date,
@@ -488,47 +488,63 @@ export const DBProvider = ({ children }) => {
     location
   ) => {
     try {
-      if (auth.currentUser) {
-        const recevingUser = await getUser(receiver);
+      if (!auth.currentUser) return;
 
-        const oldAppointmentRef = doc(appointmentsRef, id);
-        await updateDoc(oldAppointmentRef, { appointmentStatus: "Finished" });
-        const followupAppointmentRef = collection(
-          oldAppointmentRef,
-          "Followup"
-        );
+      const receivingUser = await getUser(receiver);
+      const oldAppointmentRef = doc(appointmentsRef, id);
 
-        const precedingApptdata = await getAppointment(id);
+      console.log("curID:", curID);
 
-        if (precedingApptdata) {
-          await addDoc(followupAppointmentRef, {
-            precedingAppt: id,
-            appointee: receiver,
-            appointedFaculty: auth.currentUser.uid,
-            appointmentDate: date,
-            appointmentFormat: format,
-            appointmentStatus: "Followup",
-            appointmentType: precedingApptdata?.appointmentType || null,
-            appointmentsTime,
-            appointmentConcern: precedingApptdata?.precedingAppt?.appointmentConcern || precedingApptdata.appointmentConcern ||  null,
-            location,
-            createdAt: serverTimestamp(),
-            department: user.department,
-          });
-          if (recevingUser) {
-            await notif.storeNotifToDB(
-              "Appointment",
-              `A follow up appointment has been made between ${
-                auth.currentUser.displayName
-              } and you. ${
-                location ? `Appointment will be held at ${location}` : ""
-              }`,
-              recevingUser.email
-            );
-          }
+      const appointmentToUpdateRef = curID
+        ? doc(oldAppointmentRef, "Followup", curID)
+        : oldAppointmentRef;
+
+      const appointmentData = await getDoc(appointmentToUpdateRef);
+
+      if (!appointmentData.exists()) {
+        throw new Error(`Appointment with ID ${curID || id} does not exist.`);
+      }
+
+      await updateDoc(appointmentToUpdateRef, {
+        appointmentStatus: "Finished",
+      });
+
+      const followupAppointmentRef = collection(oldAppointmentRef, "Followup");
+      const precedingApptdata = await getAppointment(id);
+
+      if (precedingApptdata) {
+        await addDoc(followupAppointmentRef, {
+          precedingAppt: id,
+          appointee: receiver,
+          appointedFaculty: auth.currentUser.uid,
+          appointmentDate: date,
+          appointmentFormat: format,
+          appointmentStatus: "Followup",
+          appointmentType: precedingApptdata?.appointmentType || null,
+          appointmentsTime,
+          appointmentConcern:
+            precedingApptdata?.precedingAppt?.appointmentConcern ||
+            precedingApptdata.appointmentConcern ||
+            null,
+          location,
+          createdAt: serverTimestamp(),
+          department: user.department,
+        });
+
+        if (receivingUser) {
+          await notif.storeNotifToDB(
+            "Appointment",
+            `A follow-up appointment has been made between ${
+              auth.currentUser.displayName
+            } and you. ${
+              location ? `Appointment will be held at ${location}` : ""
+            }`,
+            receivingUser.email
+          );
         }
       }
     } catch (error) {
+      console.error("Error creating follow-up appointment:", error);
       toastMessage(`Error creating follow-up appointment: ${error.message}`);
     }
   };
@@ -930,18 +946,21 @@ export const DBProvider = ({ children }) => {
           query(
             appointmentsRef,
             where("appointedFaculty", "==", auth.currentUser.uid),
-            where("appointmentStatus", "in", statusArray), 
+            where("appointmentStatus", "in", statusArray),
             where("appointmentFormat", "!=", "Walkin")
           ),
           async (snapshot) => {
             const followups = await Promise.all(
               snapshot.docs.map(async (doc) => {
                 const followupRef = collection(doc.ref, "Followup");
-  
+
                 const followupSnapshot = await getDocs(
-                  query(followupRef, where("appointmentStatus", "==", "Followup"))
+                  query(
+                    followupRef,
+                    where("appointmentStatus", "==", "Followup")
+                  )
                 );
-  
+
                 return followupSnapshot.empty
                   ? null
                   : followupSnapshot.docs.map((followupDoc) => ({
@@ -950,7 +969,7 @@ export const DBProvider = ({ children }) => {
                     }));
               })
             );
-  
+
             callback(followups.filter((followup) => followup !== null).flat());
           }
         );
@@ -963,7 +982,6 @@ export const DBProvider = ({ children }) => {
       );
     }
   };
-  
 
   const subscribeToApptFollowupChanges = async (id, callback) => {
     try {
@@ -973,7 +991,9 @@ export const DBProvider = ({ children }) => {
           async (appointmentDoc) => {
             if (appointmentDoc.exists()) {
               const followupRef = collection(appointmentDoc.ref, "Followup");
-              const followupSnapshot = await getDocs(followupRef);
+              const followupSnapshot = await getDocs(
+                query(followupRef, where("appointmentStatus", "==", "Finished"))
+              );
 
               const followups = followupSnapshot.docs.map((followupDoc) => ({
                 id: followupDoc.id,

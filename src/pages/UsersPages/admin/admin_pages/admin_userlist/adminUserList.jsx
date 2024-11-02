@@ -26,8 +26,12 @@ const AdminUserList = () => {
   } = useUserList();
 
   useEffect(() => {
+    setCurrentPage(1)
+  },[setCurrentPage])
+
+  useEffect(() => {
     setCategory("all")
-  },[location])
+  },[location, setCategory])
 
   if (loading) {
     return <Loading />;

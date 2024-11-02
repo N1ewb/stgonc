@@ -42,8 +42,8 @@ const DeanFollowupAppointments = () => {
   }, []);
 
   const handleFinishAppointment = async (requiredParams) => {
-    const { id, receiver } = requiredParams;
-    navigate(`/private/end-call-page?appointment=${id}&receiver=${receiver}`);
+    const { id, curID, receiver } = requiredParams;
+    navigate(`/private/end-call-page?appointment=${id}&currentAppointment=${curID}&receiver=${receiver}`);
     setCurrentAppointment(null);
   };
   const handleCancelAppointment = async (requiredParams) => {
