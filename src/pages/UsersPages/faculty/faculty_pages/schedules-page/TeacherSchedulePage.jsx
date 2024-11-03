@@ -76,10 +76,10 @@ const TeacherSchedulePage = () => {
         <div className="schedules-calendar w-[48%]">
           <SchedulesPageCalendar instructorSchedule={instructorSchedule} />
         </div>
-        <div className="timeslot-list w-[30%] text-[#320000] flex flex-col">
+        <div className="timeslot-list w-1/2 text-[#320000] flex flex-col">
           <div className="flex flex-col py-4 px-6 bg-white rounded-[30px] shadow-lg">
             <h2 className="font-bold">Consultation Hours</h2>
-            <div className="flex flex-col flex-wrap w-full gap-3">
+            <div className="flex flex-col flex-wrap w-[80%] gap-3">
               {instructorTimeslots && instructorTimeslots.length !== 0 ? (
                 instructorTimeslots.map(
                   (timeslots, index) =>

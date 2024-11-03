@@ -23,7 +23,7 @@ const AppointmentInfo = ({ appointment,setCurrentAppointmentInfo }) => {
         <p><span>Mode: </span>{appointment.appt.appointmentFormat}</p>
         <p><span>Concern: </span>{appointment.appt.appointmentConcern}</p>
         <div className="footer w-full flex flex-row justify-end">
-            <button onClick={handleApptRequest} className="bg-[#720000] hover:bg-[#a72e2e] rounded-md">Cancel Request</button>
+            <button onClick={handleApptRequest} className="bg-[#720000] hover:bg-[#a72e2e] rounded-md">Cancel {appointment.appt.appointmentStatus === "Pending"? "Request": appointment.appt.appointmentStatus === "Accepted" ? "Appointment" : ""}</button>
         </div>
       </main>
     </div>

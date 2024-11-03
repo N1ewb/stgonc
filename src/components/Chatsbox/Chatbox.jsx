@@ -120,7 +120,7 @@ const Chatbox = ({ auth, db, receiver, setCurrentChatReceiver }) => {
   }
 
   return (
-    <div className="absolute bottom-2 right-5 z-50 bg-white text-white h-[450px] w-[350px] flex flex-col rounded-t-[10px] shadow-lg ">
+    <div className="absolute bottom-3 right-5 z-50 bg-white text-white h-[450px] w-[350px] flex flex-col rounded-t-[10px] shadow-lg ">
       <div className="chatbox-header py-2 px-3 bg-[#320000] flex flex-row w-full justify-between [&_p]:m-0 rounded-t-[10px]">
         <p className="capitalize flex flex-row gap-1 items-center ">
           <img
