@@ -295,6 +295,10 @@ function App() {
                       path: "/private/Faculty/appointments/archive",
                       element: <TeacherAppointmentArchive />,
                     },
+                    {
+                      path: "/private/Faculty/appointments/students-info",
+                      element: <StudentInfoFromTGP />,
+                    },
                   ]
                 },
                 

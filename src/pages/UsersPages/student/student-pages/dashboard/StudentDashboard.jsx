@@ -33,11 +33,33 @@ const StudentDashboard = () => {
 
   useEffect(() => {
     if (currentOption === "Instructors") {
+      const handleGetTeachers = async () => {
+        try {
+          setLoading(true);
+          const teachers = await db.getTeachers();
+          setInstructors(teachers);
+        } catch (error) {
+          console.log("Error occured");
+        } finally {
+          setLoading(false);
+        }
+      };
       handleGetTeachers();
     } else if (currentOption === "Guidance") {
+      const handleGetGuidance = async () => {
+        try {
+          setLoading(true);
+          const guidance = await db.getGuidance();
+          setInstructors(guidance);
+        } catch (error) {
+          console.log("An error has occured");
+        } finally {
+          setLoading(false);
+        }
+      };
       handleGetGuidance();
     }
-  }, [currentOption]);
+  }, [currentOption, db]);
 
   const toggleShow = (instructor) => {
     setShow(!show);
@@ -48,30 +70,6 @@ const StudentDashboard = () => {
     if (auth.currentUser) {
       const me = await db.getUser(auth.currentUser.uid);
       setMyInfo(me);
-    }
-  };
-
-  const handleGetTeachers = async () => {
-    try {
-      setLoading(true);
-      const teachers = await db.getTeachers();
-      setInstructors(teachers);
-    } catch (error) {
-      console.log("Error occured");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleGetGuidance = async () => {
-    try {
-      setLoading(true);
-      const guidance = await db.getGuidance();
-      setInstructors(guidance);
-    } catch (error) {
-      console.log("An error has occured");
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -95,7 +93,7 @@ const StudentDashboard = () => {
       }
     };
     fetchData();
-  }, [call]);
+  }, [call, auth.currentUser, navigate]);
 
   return (
     <div className="h-[100%] flex flex-col gap-10  w-full">
@@ -106,11 +104,17 @@ const StudentDashboard = () => {
           <span className="font-light">Department Instructors</span>{" "}
         </h1>
         {/* <Link to='/private/Endcallpage'>Go to end call page</Link> */}
-        <div className="options flex flex-row w-1/2 gap-10 justify-end [&_button]:bg-[#320000] [&_button]:rounded-md">
-          <button className="hover:bg-[#720000]" onClick={() => handleSetCurrentOption("Instructors")}>
+        <div className="options flex flex-row w-1/2 gap-4 justify-end bg-[#320000] rounded-3xl  [&_button]:rounded-3xl p-2">
+          <button
+            className={` ${currentOption === "Instructors" ? "bg-white text-[#320000]" : "text-white border-2 border-solid bg-transparent border-white"}`}
+            onClick={() => handleSetCurrentOption("Instructors")}
+          >
             Instructors
           </button>
-          <button className="hover:bg-[#720000]" onClick={() => handleSetCurrentOption("Guidance")}>
+          <button
+            className={`${currentOption === "Guidance" ? "bg-white text-[#320000]" : "text-white border-2 border-solid bg-transparent border-white"}`}
+            onClick={() => handleSetCurrentOption("Guidance")}
+          >
             Guidance Counselor
           </button>
         </div>
