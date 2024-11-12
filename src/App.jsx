@@ -72,7 +72,7 @@ import SCSDashboard from "./pages/UsersPages/GuidanceCounselor/GuidancePages/Stu
 import GuidanceAppointmentDashboard from "./pages/UsersPages/GuidanceCounselor/GuidancePages/GuidanceAppointments/GuidanceAppointmentDashboard";
 import FacultyList from "./pages/UsersPages/admin/admin_pages/admin_userlist/FacultyList";
 import StudentList from "./pages/UsersPages/admin/admin_pages/admin_userlist/StudentList";
-import UserList from "./pages/UsersPages/admin/admin-components/userlist/UserList";
+import UserList from "./pages/UsersPages/admin/admin_pages/admin_userlist/UserList";
 import { UserListProvider } from "./context/admin/UserListContext";
 import GuidanceAppointmentArchive from "./pages/UsersPages/GuidanceCounselor/GuidancePages/GuidanceAppointments/GuidanceAppointmentArchive";
 import DeanAppointments from "./pages/UsersPages/admin/admin_pages/admin_appointments/Dean_appointments";
@@ -171,20 +171,6 @@ function App() {
                 {
                   path: "/private/Admin/dashboard/user-list",
                   element: <AdminUserList />,
-                  children: [
-                    {
-                      path: "/private/Admin/dashboard/user-list/",
-                      element: <UserList />,
-                    },
-                    {
-                      path: "/private/Admin/dashboard/user-list/faculty",
-                      element: <FacultyList />,
-                    },
-                    {
-                      path: "/private/Admin/dashboard/user-list/student",
-                      element: <StudentList />,
-                    },
-                  ],
                 },
                 {
                   path: "/private/Admin/dashboard/register-user",
@@ -280,8 +266,8 @@ function App() {
                   element: <TeacherAppointments />,
                   children: [
                     {
-                      path: '/private/Faculty/appointments/list',
-                      element: <TeacherAppointmentListPage />
+                      path: "/private/Faculty/appointments/list",
+                      element: <TeacherAppointmentListPage />,
                     },
                     {
                       path: "/private/Faculty/appointments/requests",
@@ -299,9 +285,9 @@ function App() {
                       path: "/private/Faculty/appointments/students-info",
                       element: <StudentInfoFromTGP />,
                     },
-                  ]
+                  ],
                 },
-                
+
                 {
                   path: "/private/Faculty/schedules",
                   element: <TeacherSchedulePage />,

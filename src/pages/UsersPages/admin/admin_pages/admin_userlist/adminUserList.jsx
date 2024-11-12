@@ -5,7 +5,10 @@ import DefaultInfoScreen from "../../../../../components/appointments/DefaultInf
 import NavLink from "../../../../../components/buttons/NavLinks";
 import { Outlet, useLocation } from "react-router-dom";
 import { useUserList } from "../../../../../context/admin/UserListContext";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import UserList from "./UserList";
+import FacultyList from "./FacultyList";
+import StudentList from "./StudentList";
 
 const AdminUserList = () => {
   const location = useLocation();
@@ -24,14 +27,20 @@ const AdminUserList = () => {
     setCurrentUserInfo,
     setCategory,
   } = useUserList();
+  const [currentUserPageType, setCurrentPageType] = useState("all");
 
   useEffect(() => {
-    setCurrentPage(1)
-  },[setCurrentPage])
+    setCurrentPage(1);
+  }, [setCurrentPage]);
 
   useEffect(() => {
-    setCategory("all")
-  },[location, setCategory])
+    setCategory("all");
+  }, [location, setCategory]);
+
+  const handleUserPageTypeChange = (type) => {
+    setCurrentPageType((prevType) => (prevType === type ? "all" : type));
+    console.log(type);
+  };
 
   if (loading) {
     return <Loading />;
@@ -51,16 +60,26 @@ const AdminUserList = () => {
           <div className="w-[85%] px-10 py-3 bg-[#320000] rounded-3xl flex flex-row items-center justify-between">
             <div className="flex flex-row items-center gap-5">
               <div className="buttons text-[15px] flex flex-row items-center gap-3">
-                <NavLink
-                  to="/private/Admin/dashboard/user-list/faculty"
-                  location={location}
-                  label="Faculty"
-                />
-                <NavLink
-                  to="/private/Admin/dashboard/user-list/student"
-                  location={location}
-                  label="Student"
-                />
+                <button
+                  className={`text-base w-full border-solid border-2 border-white rounded-2xl font-medium px-2 text-[12px] py-[6px] text-center transition-all duration-200  ${
+                    currentUserPageType === 'Faculty'
+                      ? "text-[#320000] bg-white "
+                      : "hover:text-white text-white bg-transparent "
+                  }`}
+                  onClick={() => handleUserPageTypeChange("Faculty")}
+                >
+                  Faculty
+                </button>
+                <button
+                  className={`text-base  w-full rounded-2xl border-solid border-2 border-white font-medium px-2 text-[12px] py-[6px] text-center transition-all duration-200  ${
+                    currentUserPageType === 'Student'
+                      ? "text-[#320000] bg-white "
+                      : "hover:text-white text-white bg-transparent "
+                  }`}
+                  onClick={() => handleUserPageTypeChange("Student")}
+                >
+                  Student
+                </button>
               </div>
               <p className="text-white">
                 Number of user: <span className="font-bold">{temp.length}</span>
@@ -79,7 +98,15 @@ const AdminUserList = () => {
         </div>
         <div className="h-[80%] max-h-[90%] flex flex-row w-full justify-between items-start">
           <div className="div flex flex-col max-h-full w-[48%]  p-0 m-0">
-            <Outlet />
+            {currentUserPageType === "all" ? (
+              <UserList />
+            ) : currentUserPageType === "Faculty" ? (
+              <FacultyList />
+            ) : currentUserPageType === "Student" ? (
+              <StudentList />
+            ) : (
+              ""
+            )}
           </div>
           <div className="div flex flex-col w-[48%] h-full max-h-full p-0 m-0">
             {currentUserInfo ? (

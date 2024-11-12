@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import Usercard from "../../../../../components/userscard/Usercard";
 import More from '../../../../../static/images/more-dark.png'
 import { useUserList } from "../../../../../context/admin/UserListContext";
@@ -7,6 +7,7 @@ const UserList = () => {
   const {
     currentCharacters,
     setCurrentUserInfo,
+    setCategory,
   } = useUserList();
   const handleSetCurrentUser = (user) => {
     setCurrentUserInfo((prevUser) => (prevUser === user ? null : user));
@@ -20,6 +21,11 @@ const UserList = () => {
       needsParams: true
     },
   ];
+
+
+  useEffect(() => {
+    setCategory("all");
+  }, [setCategory]);
 
   return (
     <div className="user-list flex flex-row flex-wrap items-start max-h-[100%]  overflow-auto py-3">

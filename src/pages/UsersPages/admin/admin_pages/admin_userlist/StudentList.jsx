@@ -6,11 +6,12 @@ import { useLocation } from "react-router-dom";
 
 const StudentList = () => {
   const location = useLocation();
-  const { currentCharacters, setCurrentUserInfo, setCurrentPage, setCategory } = useUserList();
-  
+  const { currentCharacters, setCurrentUserInfo, setCurrentPage, setCategory } =
+    useUserList();
+
   useEffect(() => {
-    setCurrentPage(1)
-  },[setCurrentPage])
+    setCurrentPage(1);
+  }, [setCurrentPage]);
 
   const handleSetCurrentUser = (user) => {
     setCurrentUserInfo((prevUser) => (prevUser === user ? null : user));
@@ -28,9 +29,8 @@ const StudentList = () => {
   const capitalize = (str) => str.charAt(0).toUpperCase() + str.slice(1);
 
   useEffect(() => {
-    const pathSegment = location.pathname.split("/").pop();
-    setCategory(capitalize(pathSegment));
-  }, [location, setCategory]);
+    setCategory("Student");
+  }, [setCategory]);
 
   return (
     <div className="user-list flex flex-row flex-wrap items-start max-h-[100%]  overflow-auto py-3">
