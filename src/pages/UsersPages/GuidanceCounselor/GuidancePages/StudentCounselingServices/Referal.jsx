@@ -12,7 +12,7 @@ const Referal = () => {
   const [currentSCSAppt, setCurrentSCSAppt] = useState(null);
   useEffect(() => {
     const fetchData = async () => {
-      const unsubscribe = db.subscribeToSCSChanges("Referal", (callback) => {
+      const unsubscribe = db.subscribeToSCSChanges("Referral", (callback) => {
         setAppts(callback);
       });
       return () => unsubscribe();
@@ -30,16 +30,16 @@ const Referal = () => {
   },[currentSCSAppt])
 
   return (
-    <div className="flex flex-col gap-5 h-full w-full">
-      <header className="flex flex-row items-center gap-10 h-[5%]">
+    <div className="flex flex-col gap-2 h-full w-full">
+      <header className="flex flex-row items-center gap-4 h-[3%]">
         <h3>
-          Referal <span className="font-light">Page</span>
+          Referral <span className="font-light">Page</span>
         </h3>
         <button className="bg-transparent p-0" onClick={handleOpenForm}>
           <img src={Add} alt="add" height={35} width={35} />
         </button>
       </header>
-      <main className="h-full w-full flex items-start">
+      <main className="h-full w-full flex items-start pb-5">
         <div
           className={`form-container transition-all duration-500 ease-out h-[100%] overflow-auto ${
             isFormOpen ? "w-1/2" : "w-0"
@@ -48,7 +48,7 @@ const Referal = () => {
           {isFormOpen && !currentSCSAppt && <ReferalForm handleOpenForm={handleOpenForm} />}
         </div>
         <div
-          className={`data-container flex flex-row flex-wrap transition-all duration-500 ease-out max-h-full items-start justify-start overflow-auto w-1/2
+          className={`data-container pb-4 flex flex-row flex-wrap transition-all duration-500 ease-out max-h-full items-start justify-start overflow-auto w-1/2
           }`}
         >
           {appts.length !== 0

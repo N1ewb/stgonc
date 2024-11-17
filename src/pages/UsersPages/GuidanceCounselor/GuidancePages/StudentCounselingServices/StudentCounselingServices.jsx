@@ -5,7 +5,7 @@ import NavLink from "../../../../../components/buttons/NavLinks";
 const StudentCounselingServices = () => {
   const location = useLocation();
   return (
-    <div className="w-full h-full flex flex-col gap-5">
+    <div className="w-full h-full flex flex-col gap-2">
       <div className="scs-header flex flex-row items-center justify-between w-full">
         <h1 className="">
           <span className="font-light">Student </span>Counseling Services
@@ -19,7 +19,7 @@ const StudentCounselingServices = () => {
           <NavLink
             to="/private/Guidance/student-counseling-services/Referal"
             location={location}
-            label="Referals"
+            label="Referrals"
           />
           <NavLink
             to="/private/Guidance/student-counseling-services/Walkin"

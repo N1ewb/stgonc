@@ -2,8 +2,7 @@ import AdminSearchBar from "../../admin-components/AdminSearchBar";
 import Loading from "../../../../../components/Loading/Loading";
 import UserlistInfo from "../../admin-components/userlist/UserlistInfo";
 import DefaultInfoScreen from "../../../../../components/appointments/DefaultInfoScreen";
-import NavLink from "../../../../../components/buttons/NavLinks";
-import { Outlet, useLocation } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import { useUserList } from "../../../../../context/admin/UserListContext";
 import { useEffect, useState } from "react";
 import UserList from "./UserList";
@@ -62,7 +61,7 @@ const AdminUserList = () => {
               <div className="buttons text-[15px] flex flex-row items-center gap-3">
                 <button
                   className={`text-base w-full border-solid border-2 border-white rounded-2xl font-medium px-2 text-[12px] py-[6px] text-center transition-all duration-200  ${
-                    currentUserPageType === 'Faculty'
+                    currentUserPageType === "Faculty"
                       ? "text-[#320000] bg-white "
                       : "hover:text-white text-white bg-transparent "
                   }`}
@@ -72,7 +71,7 @@ const AdminUserList = () => {
                 </button>
                 <button
                   className={`text-base  w-full rounded-2xl border-solid border-2 border-white font-medium px-2 text-[12px] py-[6px] text-center transition-all duration-200  ${
-                    currentUserPageType === 'Student'
+                    currentUserPageType === "Student"
                       ? "text-[#320000] bg-white "
                       : "hover:text-white text-white bg-transparent "
                   }`}

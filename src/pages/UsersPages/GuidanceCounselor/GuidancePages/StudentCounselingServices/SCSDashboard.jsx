@@ -11,7 +11,7 @@ const SCSDashboard = () => {
   useEffect(() => {
     const fetchData = async () => {
       const unsubscribe = db.subscribeToSCSChanges(
-        ["Referal", "Walkin"],
+        ["Referral", "Walkin"],
         (callback) => {
           setAppts(callback);
         }

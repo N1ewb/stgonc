@@ -1,19 +1,31 @@
-import React, { useRef, useState } from "react";
-import { useDB } from "../../../../context/db/DBContext";
-import { spcDepartments } from "../../../../lib/global";
+import React, { useEffect, useRef, useState } from "react";
+import { useDB } from "../../../../../context/db/DBContext";
+import { spcDepartments } from "../../../../../lib/global";
 import toast from "react-hot-toast";
+import { useLocation } from "react-router-dom";
 
-const ReferalForm = ({ handleOpenForm }) => {
+const FollowupRecordForm = () => {
   const db = useDB();
+  const location = useLocation()
+  const queryParams = new URLSearchParams(location.search);
+  const appointment = queryParams.get("appointment");
+  const [apptInfo, setApptInfo] = useState(null)
   const toastMessage = (message) => toast(message);
   const [submitting, setSubmitting] = useState(false);
 
-  const firstnameRef = useRef();
-  const lastnameRef = useRef();
-  const emailRef = useRef();
+  useEffect(() => {
+    if(appointment){
+      const fetchData = async () => {
+        const appt = await db.getAppointment(appointment)
+        setApptInfo(appt)
+      }
+      fetchData()
+    }
+  },[appointment])
+
   const yearLevelRef = useRef();
   const ageRef = useRef();
-  const refereeRef = useRef();
+
   const sessionNumberRef = useRef();
   const locationRef = useRef();
 
@@ -31,54 +43,48 @@ const ReferalForm = ({ handleOpenForm }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+  
     try {
       setSubmitting(true);
-
-      const firstname = firstnameRef.current.value;
-      const lastname = lastnameRef.current.value;
-      const email = emailRef.current.value;
-      const referee = refereeRef.current.value;
+  
       const department = departmentRef.current.value;
       const concernType = concernTypeRef.current.value;
       const date = dateRef.current.value;
-
+  
       const yearLevel = yearLevelRef.current.value;
       const age = ageRef.current.value;
       const sessionNumber = sessionNumberRef.current.value;
       const location = locationRef.current.value;
-
+  
       const observation = observationRef.current.value;
       const nonVerbalCues = nonVerbalCuesRef.current.value;
       const summary = summaryRef.current.value;
-      const techniques = techniquesRef.current.value;
+      const techniques = techniquesRef.current.value || '';  
       const actionPlan = actionPlanRef.current.value;
       const evaluation = evaluationRef.current.value;
-
+  
       if (
-        firstname &&
-          lastname &&
-          email &&
-          referee &&
-          department &&
-          concernType &&
-          date &&
-          yearLevel &&
-          age &&
-          sessionNumber &&
-          location &&
-          observation &&
-          nonVerbalCues &&
-          summary &&
-          techniques &&
-          actionPlan &&
-          evaluation
+        appointment &&
+        department &&
+        concernType &&
+        date &&
+        yearLevel &&
+        age &&
+        sessionNumber &&
+        location &&
+        observation &&
+        nonVerbalCues &&
+        summary &&
+        techniques &&
+        actionPlan &&
+        evaluation
       ) {
-        await db.makeReferal(
-          firstname,
-          lastname,
-          email,
-          referee,
+        await db.guidanceFollowupRecord(
+          appointment,
+          apptInfo.appointee.firstName,
+          apptInfo.appointee.lastName,
+          apptInfo.appointee.email,
+          apptInfo.appointmentFormat,
           department,
           concernType,
           date,
@@ -93,7 +99,7 @@ const ReferalForm = ({ handleOpenForm }) => {
           actionPlan,
           evaluation
         );
-        toastMessage("Successfully made referral");
+        toastMessage("Successfully made followup record");
       } else {
         toastMessage("Please fill in forms");
       }
@@ -103,6 +109,7 @@ const ReferalForm = ({ handleOpenForm }) => {
       setSubmitting(false);
     }
   };
+  
 
   return (
     <form
@@ -113,37 +120,13 @@ const ReferalForm = ({ handleOpenForm }) => {
         <h5>
           <span className="font-light">Referal</span> Form
         </h5>
-        <button
-          className="bg-[#720000] hover:bg-[#320000] rounded-md"
-          onClick={handleOpenForm}
-        >
-          X
-        </button>
+
       </div>
       <div className="input-group flex flex-col [&_input]:border-solid [&_input]:border-[1px] [&_input]:border-[#273240] [&_input]:rounded-[4px]">
-        <div className="input-group flex gap-2 justify-between w-full">
-          <div className="group flex flex-col w-[31%]">
-            <label htmlFor="firstname">First Name</label>
-            <input
-              type="text"
-              id="firstname"
-              name="firstname"
-              ref={firstnameRef}
-            />
-          </div>
-          <div className="group flex flex-col w-[31%]">
-            <label htmlFor="lastname">Last Name</label>
-            <input
-              type="text"
-              id="lastname"
-              name="lastname"
-              ref={lastnameRef}
-            />
-          </div>
-          <div className="group flex flex-col w-[31%]">
-            <label htmlFor="email">Email</label>
-            <input type="email" id="email" name="email" ref={emailRef} />
-          </div>
+        <div className="client-info flex gap-3 [&_p]:m-0 [&_h6]:m-0 items-center w-full capitalize">
+          <h6>Client Information:</h6>
+          <p>{apptInfo?.appointee.firstName} {apptInfo?.appointee.lastName}</p>
+          <p className="normal-case">{apptInfo?.appointee.email}</p>
         </div>
 
         <div className="input-group flex justify-between w-full">
@@ -184,10 +167,6 @@ const ReferalForm = ({ handleOpenForm }) => {
           </div>
         </div>
 
-        <div className="group flex flex-col">
-          <label htmlFor="referee">Refered By</label>
-          <input type="text" id="referee" name="referee" ref={refereeRef} />
-        </div>
         <div className="group flex flex-col">
           <label htmlFor="concernType">Reason for Counseling</label>
           <select
@@ -305,4 +284,4 @@ const ReferalForm = ({ handleOpenForm }) => {
   );
 };
 
-export default ReferalForm;
+export default FollowupRecordForm;

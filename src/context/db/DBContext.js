@@ -265,9 +265,18 @@ export const DBProvider = ({ children }) => {
     email,
     referee,
     department,
-    concern,
     concernType,
-    date
+    date,
+    yearLevel,
+    age,
+    sessionNumber,
+    location,
+    observation,
+    nonVerbalCues,
+    summary,
+    techniques,
+    actionPlan,
+    evaluation
   ) => {
     try {
       if (auth.currentUser) {
@@ -282,15 +291,25 @@ export const DBProvider = ({ children }) => {
           appointedFaculty: auth.currentUser.uid,
           referee,
           appointmentDate: date,
-          appointmentFormat: "Referal",
+          appointmentFormat: "Referral",
+          appointmentStatus: "Recorded",
           department: user.department,
-          appointmentConcern: concern,
           appointmentType: concernType,
+          yearLevel,
+          age,
+          sessionNumber,
+          location,
+          observation,
+          nonVerbalCues,
+          summary,
+          techniques,
+          actionPlan,
+          evaluation,
           createdAt: serverTimestamp(),
         });
       }
     } catch (error) {
-      throw new Error(`Error in making referal ${error.message}`);
+      throw new Error(`Error in making referral: ${error.message}`);
     }
   };
 
@@ -549,6 +568,62 @@ export const DBProvider = ({ children }) => {
     }
   };
 
+  const guidanceFollowupRecord = async (
+    id,
+    format,
+    firstName,
+    lastName,
+    email,
+    department,
+    concernType,
+    date,
+    yearLevel,
+    age,
+    sessionNumber,
+    location,
+    observation,
+    nonVerbalCues,
+    summary,
+    techniques,
+    actionPlan,
+    evaluation
+  ) => {
+    try {
+      if (auth.currentUser) {
+        const oldAppointmentRef = doc(appointmentsRef, id);
+
+        const followupRef = collection(oldAppointmentRef, "Followup");
+
+        await addDoc(followupRef, {
+          appointee: {
+            firstName,
+            lastName,
+            email,
+            department,
+          },
+          appointedFaculty: auth.currentUser.uid,
+          appointmentDate: date,
+          appointmentFormat: format,
+          department: user.department,
+          appointmentType: concernType,
+          yearLevel,
+          age,
+          sessionNumber,
+          location,
+          observation,
+          nonVerbalCues,
+          summary,
+          techniques,
+          actionPlan,
+          evaluation,
+          createdAt: serverTimestamp(),
+        });
+      }
+    } catch (error) {
+      throw new Error(`Error in making referral: ${error.message}`);
+    }
+  };
+
   const walkinScheduleAppointment = async (
     firstName,
     lastName,
@@ -594,6 +669,7 @@ export const DBProvider = ({ children }) => {
         const updatedAppointmentDocRef = {
           appointmentStatus: "Finished",
           updateMessage: `This Appointment was marked finished by ${auth.currentUser.firstName} ${auth.currentUser.lastName}`,
+          
         };
 
         await updateDoc(appointmentDocRef, updatedAppointmentDocRef);
@@ -612,36 +688,117 @@ export const DBProvider = ({ children }) => {
 
   const makeReport = async (
     id,
-    remarks,
+    currentAppointment,
     date,
     duration,
     mode,
     radio,
-    agenda,
-    summary,
-    receiver
+    receiver,
+    keyissues,
+    rootcause,
+    recommendation,
+    expectedOutcome,
+    yearLevel,
+    age,
+    sessionNumber
   ) => {
     try {
       if (auth.currentUser) {
         const appointmentDocRef = doc(firestore, "Appointments", id);
-        const updatedAppointmentDocRef = { teacherRemarks: remarks };
-        const reportRef = collection(appointmentDocRef, "Reports");
-        await updateDoc(appointmentDocRef, updatedAppointmentDocRef);
+        let reportRef;
+  
+        if (currentAppointment) {
+          const followupRef = doc(appointmentDocRef, "Followup", currentAppointment);
+          reportRef = collection(followupRef, "Reports");
+        } else {
+          reportRef = collection(appointmentDocRef, "Reports");
+        }
+  
+        const querySnapshot = await getDocs(query(reportRef));
+        if (!querySnapshot.empty) {
+          toastMessage("A report already exists for this document!");
+          return false;
+        }
+  
         await addDoc(reportRef, {
-          remarks,
           date,
           duration,
           mode,
           resolved: radio,
-          agenda,
-          summary,
+          keyissues,
+          rootcause,
+          recommendation,
+          expectedOutcome,
+          yearLevel,
+          age,
+          sessionNumber,
           receiver,
+          ReportBy: auth.currentUser.uid,
+          appointmentReference: id,
+          createdAt: serverTimestamp(),
+        });
+  
+        toastMessage("Report made successfully!");
+        return true;
+      }
+    } catch (error) {
+      toastMessage("Error in making report: ");
+      console.log(error.message);
+      return false;
+    }
+  };
+  
+
+  const makeGuidanceReport = async (
+    appointment,
+    concernType,
+    apptDate,
+    yearLevel,
+    age,
+    sessionNumber,
+    location,
+    observation,
+    nonVerbalCues,
+    summary,
+    techniques,
+    actionPlan,
+    evaluation,
+    receiver,
+    isResolved,
+    consultationMode
+  ) => {
+    try {
+      if (auth.currentUser) {
+        console.log("apptDate: ", apptDate);
+        const appointmentDocRef = doc(firestore, "Appointments", appointment);
+
+        const reportRef = collection(appointmentDocRef, "Reports");
+        await addDoc(reportRef, {
+          appointmentDate: apptDate,
+          department: "Guidance",
+          concernType,
+          yearLevel,
+          age,
+          sessionNumber,
+          location,
+          observation,
+          nonVerbalCues,
+          summary,
+          techniques,
+          actionPlan,
+          evaluation,
+          consultationMode,
+          receiver,
+          resolved: isResolved,
           ReportBy: auth.currentUser.uid,
           createdAt: serverTimestamp(),
         });
+
+        toastMessage("Report successfully created!");
       }
     } catch (error) {
-      toastMessage("Error in making report: ", error.message);
+      console.error("Error in making guidance report:", error);
+      toastMessage(`Error in making report: ${error.message}`);
     }
   };
 
@@ -992,7 +1149,10 @@ export const DBProvider = ({ children }) => {
             if (appointmentDoc.exists()) {
               const followupRef = collection(appointmentDoc.ref, "Followup");
               const followupSnapshot = await getDocs(
-                query(followupRef, where("appointmentStatus", "==", "Finished"))
+                query(
+                  followupRef,
+                  where("appointmentStatus", "in", ["Finished", "Recorded"])
+                )
               );
 
               const followups = followupSnapshot.docs.map((followupDoc) => ({
@@ -1513,6 +1673,36 @@ export const DBProvider = ({ children }) => {
     }
   };
 
+  const getReports = async (id, precedingApptId = null) => {
+    if (auth.currentUser) {
+      try {
+        const apptRef = precedingApptId
+          ? doc(firestore, "Appointments", precedingApptId)
+          : doc(firestore, "Appointments", id);
+        const reportsRef = collection(apptRef, "Reports");
+  
+        const querySnapshot = await getDocs(query(reportsRef));
+  
+        const reportData = querySnapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+  
+        if (!reportData.length && precedingApptId) {
+          console.log(`No reports found in preceding appointment ${precedingApptId}`);
+          return [];
+        }
+  
+        return reportData.length ? reportData : [];
+      } catch (error) {
+        console.error("Error fetching reports:", error.message);
+        toastMessage("Error in fetching reports: ", error.message);
+        return [];
+      }
+    }
+  };
+  
+
   const subscribeToRatingChanges = async (callback, id) => {
     try {
       if (auth.currentUser) {
@@ -1599,9 +1789,11 @@ export const DBProvider = ({ children }) => {
     denyAppointment,
     denyRegistration,
     followupAppointment,
+    guidanceFollowupRecord,
     walkinScheduleAppointment,
     finishAppointment,
     makeReport,
+    makeGuidanceReport,
     rateExperiences,
     editInstructorColorCode,
     getMessages,
@@ -1613,6 +1805,7 @@ export const DBProvider = ({ children }) => {
     getInstructorSchedule,
     getInstructorTimeslots,
     getFacultyRatings,
+    getReports,
     subscribeToRatingChanges,
     // updateScheduleData,
     deleteSchedule,

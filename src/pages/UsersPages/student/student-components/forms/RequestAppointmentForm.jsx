@@ -286,6 +286,8 @@ const RequestAppointmentForm = ({ instructor, show, toggleShow }) => {
                     <option value="">Select Type</option>
                     <option value="Academic">Academic</option>
                     <option value="Personal">Personal</option>
+                    <option value="Career">Career</option>
+                    <option value="Behavioral">Behavioral</option>
                   </select>
                 </div>
               </div>

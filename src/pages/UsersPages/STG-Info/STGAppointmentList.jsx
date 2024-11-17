@@ -2,8 +2,10 @@ import React, { useState } from "react";
 import STGAppointmentCard from "./STGAppointmentCard";
 import STGAdditionalInfo from "./STGAdditionalInfo";
 import { useExport } from "../../../context/exportContext/ExportContext";
+import { useDB } from "../../../context/db/DBContext";
 
 const STGAppointmentList = ({ pastAppointments = [] }) => {
+  const { getReports } = useDB();
   const [currentAppt, setCurrentAppt] = useState(null);
   const { setCurrentAppointmentData } = useExport();
   const sortedAppointments = pastAppointments.length
@@ -15,9 +17,11 @@ const STGAppointmentList = ({ pastAppointments = [] }) => {
   const handleDownloadRecord = async (data, e) => {
     e.stopPropagation();
     try {
-      setCurrentAppointmentData(data);
+      const report = await getReports(data.id, data.precedingAppt || null);
+      console.log( 'data and report', { ...data, report })
+      setCurrentAppointmentData({ ...data, report });
     } catch (error) {
-      console.log("An error occured in downloading the record");
+      console.log("An error occurred in downloading the record");
     }
   };
 

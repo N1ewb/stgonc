@@ -15,15 +15,23 @@ const FacultyEndCallPage = () => {
   const queryParams = new URLSearchParams(location.search);
   const receiver = queryParams.get("receiver");
   const appointment = queryParams.get("appointment");
-  const currentAppointment = queryParams.get('currentAppointment')
+  const currentAppointment = queryParams.get("currentAppointment");
   const toastMessage = (message) => toast(message);
   const [submitting, setSubmitting] = useState(false);
-  const remarksRef = useRef();
+
+  const keyissuesRef = useRef();
+  const rootCauseRef = useRef();
+  const recommendationRef = useRef();
+  const expectedOutcomeRef = useRef();
+
+  const sessionNumberRef = useRef();
+  const yearLevelRef = useRef();
+  const ageRef = useRef();
+
   const dateRef = useRef();
   const durationRef = useRef();
   const modeRef = useRef();
-  const agendaRef = useRef();
-  const summaryRef = useRef();
+
   const [isResolved, setIsResolved] = useState("");
   const [isFollowupFormOpen, setIsFollowupFormOpen] = useState(false);
 
@@ -40,30 +48,52 @@ const FacultyEndCallPage = () => {
   const submitForm = async (e) => {
     e.preventDefault();
 
-    const remarks = remarksRef.current.value;
     const date = dateRef.current.value;
     const duration = durationRef.current.value;
     const mode = modeRef.current.value;
-    const agenda = agendaRef.current.value;
-    const summary = summaryRef.current.value;
+
+    const yearlevel = yearLevelRef.current.value;
+    const age = ageRef.current.value;
+    const sessionNumber = sessionNumberRef.current.value;
+
+    const keyissues = keyissuesRef.current.value;
+    const rootcause = rootCauseRef.current.value;
+    const recommendation = recommendationRef.current.value;
+    const expectedOutcome = expectedOutcomeRef.current.value;
+
     if (
-      (appointment, remarks, date, duration, mode, isResolved, agenda, summary)
+      (currentAppointment || appointment,
+      date,
+      duration,
+      mode,
+      isResolved,
+      keyissues,
+      rootcause,
+      recommendation,
+      expectedOutcome,
+      yearlevel,
+      age,
+      sessionNumber)
     ) {
       try {
         setSubmitting(true);
         if (auth.currentUser) {
           await db.makeReport(
             appointment,
-            remarks,
+            currentAppointment,
             date,
             duration,
             mode,
             isResolved,
-            agenda,
-            summary,
-            receiver
+            receiver,
+            keyissues,
+            rootcause,
+            recommendation,
+            expectedOutcome,
+            yearlevel,
+            age,
+            sessionNumber
           );
-          toastMessage("Report made successfuly!");
         }
       } catch (error) {
         console.error("Error in:", error);
@@ -87,7 +117,7 @@ const FacultyEndCallPage = () => {
     }
   };
   return (
-    <div className="h-screen w-full flex flex-col justify-center items-center bg-white ">
+    <div className="h-screen w-full flex flex-col justify-center items-center bg-white overflow-x-hidden">
       <div className="f-end-page-header w-full"></div>
       <div className="f-end-page-content w-full flex items-center justify-center">
         <div
@@ -102,13 +132,17 @@ const FacultyEndCallPage = () => {
             setSubmitting={setSubmitting}
             submitting={submitting}
             receiver={receiver}
-            remarksRef={remarksRef}
             dateRef={dateRef}
             durationRef={durationRef}
             modeRef={modeRef}
-            agendaRef={agendaRef}
-            summaryRef={summaryRef}
             setIsFollowupFormOpen={setIsFollowupFormOpen}
+            keyissuesRef={keyissuesRef}
+            rootCauseRef={rootCauseRef}
+            recommendationRef={recommendationRef}
+            expectedOutcomeRef={expectedOutcomeRef}
+            yearLevelRef={yearLevelRef}
+            ageRef={ageRef}
+            sessionNumberRef={sessionNumberRef}
           />
         </div>
         <div

@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useAuth } from "../context/auth/AuthContext";
 import html2pdf from "html2pdf.js";
+import * as HTMLDocx from "html-docx-js/dist/html-docx";
 
 import spcLogo from "../static/images/spc-logo.png";
 import ccsLogo from "../static/departmentLogos/ccs-logo.png";
@@ -11,7 +12,9 @@ import cedLogo from "../static/departmentLogos/ced-logo.png";
 import cbaLogo from "../static/departmentLogos/cba-logo.png";
 import { useDB } from "../context/db/DBContext";
 import Loading from "../components/Loading/Loading";
-import { useExport } from "../context/exportContext/ExportContext";
+import GeneralAppointmenteport from "./Papers/GeneralAppointmenteport";
+import AdjustmentsTab from "./adjustments-tab/AdjustmentsTab";
+import TabularReport from "./Papers/TabularGeneralAppointmentReport";
 
 const departmentLogos = {
   "College of Computer Studies": ccsLogo,
@@ -25,9 +28,13 @@ const departmentLogos = {
 const AppointmentData = ({ data }) => {
   const { currentUser } = useAuth();
   const db = useDB();
-  const { setCurrentAppointmentData } = useExport();
+
   const [appointee, setAppointee] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [arrangementType, setArrangementType] = useState("default");
+  const [isBlank, setIsBlank] = useState(false);
+  const [fileType, setFileType] = useState("PDF");
+
   const departmentLogo = departmentLogos[currentUser.department] || spcLogo;
 
   // Reference to the content to export
@@ -61,63 +68,75 @@ const AppointmentData = ({ data }) => {
     html2pdf().from(contentRef.current).set(options).save();
   };
 
+  const handleDownloadDocx = () => {
+    const contentHtml = contentRef.current.innerHTML;
+    const converted = HTMLDocx.asBlob(contentHtml);
+
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(converted);
+    link.download = `Appointment_${data.appointmentDate}.docx`;
+    link.click();
+  };
+
+  const handleDownload = () => {
+    if(fileType === 'PDF'){
+      handleDownloadPDF()
+    }else if (fileType === 'DOCS'){
+      handleDownloadDocx()
+    }else {
+      console.log("Unsa mani")
+    }
+  }
+
   if (loading) {
     return <Loading />;
   }
 
   return (
     <div
-      onClick={() => setCurrentAppointmentData(null)}
-      className="absolute z-10 top-0 left-0 w-full h-full max-h-full bg-[#0000005e] flex items-center justify-center overflow-auto"
+      // onClick={() => setCurrentAppointmentData(null)}
+      className="absolute z-10 top-[15%] right-[1%] w-[81%] h-[80%]  rounded-[65px]  max-h-full bg-[#273240] flex"
     >
-      <button
-        onClick={handleDownloadPDF}
-        className="mt-4 px-4 py-2 bg-blue-500 text-white rounded"
-      >
-        Download PDF
-      </button>
-      <div
-        onClick={(e) => e.stopPropagation()}
-        className="paper-container bg-white p-10"
-        ref={contentRef}
-        style={{
-          width: "595px",
-          height: "842px",
-          margin: "auto",
-        }}
-      >
-        <header className="flex flex-row items-center justify-around p-10 w-full">
-          <img src={spcLogo} width={60} alt="SPC logo" />
-          <h1 className="text-center text-black text-[28px]">
-            St. Peter's College <br />
-            <span className="text-[20px] font-light">
-              {currentUser.department}
-            </span>
-          </h1>
-          <img
-            src={departmentLogo}
-            alt={`${currentUser.department} logo`}
-            width={60}
+      <div className="file-visualizer w-[40%] h-full p-10 flex flex-col ">
+        <h1 className="text-white text-3xl">
+          File <span className="font-bold">Visualizer</span>
+        </h1>
+        <div className="informative-text text-[12px] text-white flex w-full justify-between">
+          <p>
+            Customize your file that work for your convenience before exporting!
+          </p>{" "}
+          <p>
+            Paper: <span className="font-semibold">A4</span>
+          </p>
+        </div>
+
+        {arrangementType === "default" ? (
+          <GeneralAppointmenteport
+            contentRef={contentRef}
+            data={data}
+            appointee={appointee}
+            isBlank={isBlank}
           />
-        </header>
-        <main className="text-justify w-full text-[12px]">
-          <p>
-            Consultation record with{" "}
-            {`${appointee?.firstName} ${appointee?.lastName}`}
-          </p>
-          <p>
-            <span>This appointment was held on </span>
-            {data.appointmentDate}
-          </p>
-          <p>
-            <span>Student's Concern: </span>
-            {data.appointmentConcern}
-          </p>
-          <p>
-            <span>Faculty's Recommendation: </span>
-            {data.teacherRemarks}
-          </p>
-        </main>
+        ) : (
+          <TabularReport
+            contentRef={contentRef}
+            data={data}
+            appointee={appointee}
+            isBlank={isBlank}
+          />
+        )}
+        {/* <SamplePaper /> */}
+      </div>
+      <div className="adjustments-tab w-[60%] flex pb-10">
+        <AdjustmentsTab
+          setArrangementType={setArrangementType}
+          arrangementType={arrangementType}
+          setIsBlank={setIsBlank}
+          isBlank={isBlank}
+          handleDownload={handleDownload}
+          fileType={fileType}
+          setFileType={setFileType}
+        />
       </div>
     </div>
   );

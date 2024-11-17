@@ -31,8 +31,8 @@ const Walkin = () => {
   }, [currentSCSAppt]);
 
   return (
-    <div className="flex flex-col gap-5 h-full w-full">
-      <header className="flex flex-row items-center gap-10 h-[5%]">
+    <div className="flex flex-col gap-2 h-full w-full">
+      <header className="flex flex-row items-center gap-4 h-[3%]">
         <h3>
           Walk-in <span className="font-light">Page</span>
         </h3>

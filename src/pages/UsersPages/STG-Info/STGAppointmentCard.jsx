@@ -1,14 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { useDB } from "../../../context/db/DBContext";
 import STGAllFollowUpCards from "./STGFollowUpCards";
-import STGAdditionalInfo from "./STGAdditionalInfo";
-import { useExport } from "../../../context/exportContext/ExportContext";
 
 const STGAppointmentCard = ({ appt, setCurrentAppt, currentAppt, handleDownloadRecord }) => {
   const db = useDB();
-  const {setCurrentAppointmentData} = useExport()
   const [followups, setFollowups] = useState([]);
-  const [isExteded, setIsExtended] = useState(false);
   const [appointee, setAppointee] = useState(null);
 
   useEffect(() => {

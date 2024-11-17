@@ -85,6 +85,8 @@ import { ExportProvider } from "./context/exportContext/ExportContext";
 import TeacherAppointments from "./pages/UsersPages/faculty/faculty_pages/faculty-appointments/TeacherAppointments";
 import TeacherAppointmentFollowups from "./pages/UsersPages/faculty/faculty_pages/faculty-appointments/TeacherAppointmentFollowups";
 import TeacherAppointmentArchive from "./pages/UsersPages/faculty/faculty_pages/faculty-appointments/TeacherAppointmentArchive";
+import GuidanceEndcallPage from "./pages/videocall/GuidanceEndCallPage";
+import AddFollowupRecord from "./pages/UsersPages/GuidanceCounselor/GuidancePages/StudentCounselingServices/AddFollowupRecord";
 
 function App() {
   const router = createBrowserRouter([
@@ -194,6 +196,7 @@ function App() {
               path: "/private/Guidance",
               element: <GuidanceCounselorLayout />,
               children: [
+                
                 {
                   path: "/private/Guidance/dashboard",
                   element: <GuidanceDashboard />,
@@ -205,6 +208,10 @@ function App() {
                     {
                       path: "/private/Guidance/student-counseling-services",
                       element: <SCSDashboard />,
+                    },
+                    {
+                      path: '/private/Guidance/student-counseling-services/add-followup-record',
+                      element: <AddFollowupRecord />
                     },
                     {
                       path: "/private/Guidance/student-counseling-services/Walkin",
@@ -360,6 +367,10 @@ function App() {
             {
               path: "/private/Endcallpage",
               element: <EndCallPage />,
+            },
+            {
+              path: '/private/GuidanceEndcallPage',
+              element: <GuidanceEndcallPage />
             },
           ],
         },

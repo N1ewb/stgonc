@@ -44,7 +44,7 @@ const GuidanceFollowupAppointments = () => {
   const handleFinishAppointment = async (requiredParams) => {
     const { id, curID, receiver } = requiredParams;
     navigate(
-      `/private/end-call-page?appointment=${id}&currentAppointment=${curID}&receiver=${receiver}`
+      `/private/GuidanceEndcallPage?appointment=${id}&currentAppointment=${curID}&receiver=${receiver}`
     );
     setCurrentAppointment(null);
   };
