@@ -37,13 +37,13 @@ export default function GeneralAppointmentReport({ contentRef, data, appointee, 
             <li>
               Year Level / Age:{" "}
               <span className="font-bold text-gray-600">
-                {isBlank ? "" : `${report.yearLevel} Year / ${report.age}`}
+                {isBlank ? "" : `${report?.yearLevel} Year / ${report?.age}`}
               </span>
             </li>
             <li>
               Date of Session:{" "}
               <span className="font-bold text-gray-600">
-                {isBlank ? "" : report.date}
+                {isBlank ? "" : report?.date}
               </span>
             </li>
             <li>
@@ -55,13 +55,13 @@ export default function GeneralAppointmentReport({ contentRef, data, appointee, 
             <li>
               Session Number:{" "}
               <span className="font-bold text-gray-600">
-                {isBlank ? "" : report.sessionNumber}
+                {isBlank ? "" : report?.sessionNumber}
               </span>
             </li>
             <li>
               Mode of Consultation:{" "}
               <span className="font-bold text-gray-600">
-                {isBlank ? "" : report.mode}
+                {isBlank ? "" : report?.mode}
               </span>
             </li>
           </ul>
@@ -73,16 +73,16 @@ export default function GeneralAppointmentReport({ contentRef, data, appointee, 
         <div className="observations [&_p]:font-semibold [&_span]:font-normal">
           <p className="">Faculty's Observation</p>
           <p>
-            KEY ISSUES: <span>{isBlank ? "" : report.keyissues}</span>
+            KEY ISSUES: <span>{isBlank ? "" : report?.keyissues}</span>
           </p>
           <p>
-            ROOT CAUSE: <span>{isBlank ? "" : report.rootcause}</span>
+            ROOT CAUSE: <span>{isBlank ? "" : report?.rootcause}</span>
           </p>
           <p>
-            RECOMMENDATION: <span>{isBlank ? "" : report.recommendation}</span>
+            RECOMMENDATION: <span>{isBlank ? "" : report?.recommendation}</span>
           </p>
           <p>
-            EXPECTED OUTCOME: <span>{isBlank ? "" : report.expectedOutcome}</span>
+            EXPECTED OUTCOME: <span>{isBlank ? "" : report?.expectedOutcome}</span>
           </p>
         </div>
       </main>

@@ -1675,9 +1675,10 @@ export const DBProvider = ({ children }) => {
 
   const getReports = async (id, precedingApptId = null) => {
     if (auth.currentUser) {
+      
       try {
         const apptRef = precedingApptId
-          ? doc(firestore, "Appointments", precedingApptId)
+          ? doc(doc(collection(firestore, "Appointments"), precedingApptId), 'Followup', id)
           : doc(firestore, "Appointments", id);
         const reportsRef = collection(apptRef, "Reports");
   
