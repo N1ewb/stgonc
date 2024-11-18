@@ -31,7 +31,6 @@ const SCSApptCards = ({ appt, setCurrentSCSAppt, currentSCSAppt }) => {
         appt.id,
         (followups) => {
           setFollowups(followups);
-          console.log(followups)
         }
       );
       return () => unsubscribe();

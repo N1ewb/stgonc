@@ -430,6 +430,43 @@ export const DBProvider = ({ children }) => {
     }
   };
 
+  const getAppointmentRecords = async (id) => {
+    try {
+      if (auth.currentUser) {
+        const appointmentDocRef = doc(firestore, "Appointments", id);
+        const appointmentDocSnap = await getDoc(appointmentDocRef);
+
+        if (appointmentDocSnap.exists()) {
+          const followupCollectionRef = collection(
+            appointmentDocRef,
+            "Followup"
+          );
+          const followupSnapshot = await getDocs(followupCollectionRef);
+
+          const followupRecords = followupSnapshot.docs.map((doc) =>
+            doc.data()
+          );
+
+          const appointment = appointmentDocSnap.data();
+
+          const result = [
+            {
+              ...appointment,
+              followup: followupRecords,
+            },
+          ];
+
+          console.log(result);
+          return result;
+        } else {
+          console.log("Appointment not found");
+        }
+      }
+    } catch (error) {
+      console.log("Error in getting appointment records:", error);
+    }
+  };
+
   const getFinishedFacultyAppointment = async (id) => {
     try {
       if (auth.currentUser) {
@@ -570,10 +607,10 @@ export const DBProvider = ({ children }) => {
 
   const guidanceFollowupRecord = async (
     id,
-    format,
     firstName,
     lastName,
     email,
+    format,
     department,
     concernType,
     date,
@@ -669,7 +706,6 @@ export const DBProvider = ({ children }) => {
         const updatedAppointmentDocRef = {
           appointmentStatus: "Finished",
           updateMessage: `This Appointment was marked finished by ${auth.currentUser.firstName} ${auth.currentUser.lastName}`,
-          
         };
 
         await updateDoc(appointmentDocRef, updatedAppointmentDocRef);
@@ -706,20 +742,24 @@ export const DBProvider = ({ children }) => {
       if (auth.currentUser) {
         const appointmentDocRef = doc(firestore, "Appointments", id);
         let reportRef;
-  
+
         if (currentAppointment) {
-          const followupRef = doc(appointmentDocRef, "Followup", currentAppointment);
+          const followupRef = doc(
+            appointmentDocRef,
+            "Followup",
+            currentAppointment
+          );
           reportRef = collection(followupRef, "Reports");
         } else {
           reportRef = collection(appointmentDocRef, "Reports");
         }
-  
+
         const querySnapshot = await getDocs(query(reportRef));
         if (!querySnapshot.empty) {
           toastMessage("A report already exists for this document!");
           return false;
         }
-  
+
         await addDoc(reportRef, {
           date,
           duration,
@@ -737,7 +777,7 @@ export const DBProvider = ({ children }) => {
           appointmentReference: id,
           createdAt: serverTimestamp(),
         });
-  
+
         toastMessage("Report made successfully!");
         return true;
       }
@@ -747,7 +787,6 @@ export const DBProvider = ({ children }) => {
       return false;
     }
   };
-  
 
   const makeGuidanceReport = async (
     appointment,
@@ -1675,25 +1714,30 @@ export const DBProvider = ({ children }) => {
 
   const getReports = async (id, precedingApptId = null) => {
     if (auth.currentUser) {
-      
       try {
         const apptRef = precedingApptId
-          ? doc(doc(collection(firestore, "Appointments"), precedingApptId), 'Followup', id)
+          ? doc(
+              doc(collection(firestore, "Appointments"), precedingApptId),
+              "Followup",
+              id
+            )
           : doc(firestore, "Appointments", id);
         const reportsRef = collection(apptRef, "Reports");
-  
+
         const querySnapshot = await getDocs(query(reportsRef));
-  
+
         const reportData = querySnapshot.docs.map((doc) => ({
           id: doc.id,
           ...doc.data(),
         }));
-  
+
         if (!reportData.length && precedingApptId) {
-          console.log(`No reports found in preceding appointment ${precedingApptId}`);
+          console.log(
+            `No reports found in preceding appointment ${precedingApptId}`
+          );
           return [];
         }
-  
+
         return reportData.length ? reportData : [];
       } catch (error) {
         console.error("Error fetching reports:", error.message);
@@ -1702,7 +1746,6 @@ export const DBProvider = ({ children }) => {
       }
     }
   };
-  
 
   const subscribeToRatingChanges = async (callback, id) => {
     try {
@@ -1778,6 +1821,7 @@ export const DBProvider = ({ children }) => {
     sendAppointmentRequest,
     cancelAppointment,
     getAppointment,
+    getAppointmentRecords,
     walkinAppointment,
     makeReferal,
     makeWalkin,

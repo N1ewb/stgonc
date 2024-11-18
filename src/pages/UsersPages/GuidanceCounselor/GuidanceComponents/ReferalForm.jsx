@@ -56,7 +56,7 @@ const ReferalForm = ({ handleOpenForm }) => {
       const evaluation = evaluationRef.current.value;
 
       if (
-        firstname &&
+          firstname &&
           lastname &&
           email &&
           referee &&

@@ -18,7 +18,7 @@ const STGAppointmentList = ({ pastAppointments = [] }) => {
     e.stopPropagation();
     try {
       const report = await getReports(data.id, data.precedingAppt || null);
-      console.log( 'data and report', { ...data, report })
+
       setCurrentAppointmentData({ ...data, report });
     } catch (error) {
       console.log("An error occurred in downloading the record");

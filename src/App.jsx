@@ -87,6 +87,7 @@ import TeacherAppointmentFollowups from "./pages/UsersPages/faculty/faculty_page
 import TeacherAppointmentArchive from "./pages/UsersPages/faculty/faculty_pages/faculty-appointments/TeacherAppointmentArchive";
 import GuidanceEndcallPage from "./pages/videocall/GuidanceEndCallPage";
 import AddFollowupRecord from "./pages/UsersPages/GuidanceCounselor/GuidancePages/StudentCounselingServices/AddFollowupRecord";
+import FullRecordInfo from "./pages/UsersPages/GuidanceCounselor/GuidancePages/StudentCounselingServices/FullRecordInfo";
 
 function App() {
   const router = createBrowserRouter([
@@ -212,6 +213,10 @@ function App() {
                     {
                       path: '/private/Guidance/student-counseling-services/add-followup-record',
                       element: <AddFollowupRecord />
+                    },
+                    {
+                      path: '/private/Guidance/student-counseling-services/view-appointment-record',
+                      element: <FullRecordInfo />
                     },
                     {
                       path: "/private/Guidance/student-counseling-services/Walkin",
