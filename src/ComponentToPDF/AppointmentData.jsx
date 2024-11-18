@@ -15,6 +15,8 @@ import Loading from "../components/Loading/Loading";
 import GeneralAppointmenteport from "./Papers/GeneralAppointmenteport";
 import AdjustmentsTab from "./adjustments-tab/AdjustmentsTab";
 import TabularReport from "./Papers/TabularGeneralAppointmentReport";
+import GuidanceReport from "./Papers/GuidanceReport";
+import GuidanceTabularReport from "./Papers/GuidanceTabularReport";
 
 const departmentLogos = {
   "College of Computer Studies": ccsLogo,
@@ -79,14 +81,14 @@ const AppointmentData = ({ data }) => {
   };
 
   const handleDownload = () => {
-    if(fileType === 'PDF'){
-      handleDownloadPDF()
-    }else if (fileType === 'DOCS'){
-      handleDownloadDocx()
-    }else {
-      console.log("Unsa mani")
+    if (fileType === "PDF") {
+      handleDownloadPDF();
+    } else if (fileType === "DOCS") {
+      handleDownloadDocx();
+    } else {
+      console.log("Unsa mani");
     }
-  }
+  };
 
   if (loading) {
     return <Loading />;
@@ -111,10 +113,26 @@ const AppointmentData = ({ data }) => {
         </div>
 
         {arrangementType === "default" ? (
-          <GeneralAppointmenteport
+          currentUser?.role === "Guidance" ? (
+            <GuidanceReport
+              contentRef={contentRef}
+              data={data}
+              appointee={data.appointee}
+              isBlank={isBlank}
+            />
+          ) : (
+            <GeneralAppointmenteport
+              contentRef={contentRef}
+              data={data}
+              appointee={appointee}
+              isBlank={isBlank}
+            />
+          )
+        ) : currentUser?.role === "Guidance" ? (
+          <GuidanceTabularReport
             contentRef={contentRef}
             data={data}
-            appointee={appointee}
+            appointee={data.appointee}
             isBlank={isBlank}
           />
         ) : (

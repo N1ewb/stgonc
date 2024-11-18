@@ -1,10 +1,8 @@
 import React from "react";
 import { useAuth } from "../../context/auth/AuthContext";
 
-export default function GeneralAppointmentReport({ contentRef, data, appointee, isBlank }) {
+export default function GuidanceReport({ contentRef, data, appointee, isBlank }) {
   const { currentUser } = useAuth();
-  
-  const report = Array.isArray(data?.report) ? data?.report[0] : data?.report;
 
   return (
     <div
@@ -20,7 +18,7 @@ export default function GeneralAppointmentReport({ contentRef, data, appointee, 
           </span>
         </p>
         <p className="text-center text-black text-[14px]">
-          {currentUser.department} <br />
+          {currentUser.department} Office <br />
           <span className="text-[12px] font-light">Counseling Report</span>
         </p>
       </header>
@@ -37,13 +35,13 @@ export default function GeneralAppointmentReport({ contentRef, data, appointee, 
             <li>
               Year Level / Age:{" "}
               <span className="font-bold text-gray-600">
-                {isBlank ? "" : `${report?.yearLevel} Year / ${report?.age}`}
+                {isBlank ? "" : `${data?.yearLevel} Year / ${data?.age}`}
               </span>
             </li>
             <li>
               Date of Session:{" "}
               <span className="font-bold text-gray-600">
-                {isBlank ? "" : report?.date}
+                {isBlank ? "" : data?.appointmentDate || data?.date}
               </span>
             </li>
             <li>
@@ -55,13 +53,13 @@ export default function GeneralAppointmentReport({ contentRef, data, appointee, 
             <li>
               Session Number:{" "}
               <span className="font-bold text-gray-600">
-                {isBlank ? "" : report?.sessionNumber}
+                {isBlank ? "" : data?.sessionNumber}
               </span>
             </li>
             <li>
               Mode of Consultation:{" "}
               <span className="font-bold text-gray-600">
-                {isBlank ? "" : report?.mode}
+                {isBlank ? "" : data?.location}
               </span>
             </li>
           </ul>
@@ -72,18 +70,31 @@ export default function GeneralAppointmentReport({ contentRef, data, appointee, 
         </div>
         <div className="observations [&_p]:font-semibold [&_span]:font-normal">
           <p className="">Faculty's Observation</p>
-          <p>
-            KEY ISSUES: <span>{isBlank ? "" : report?.keyissues}</span>
+          <div className="fields"><p>
+            Observation: <span>{isBlank ? "" : data?.observation}</span>
           </p>
           <p>
-            ROOT CAUSE: <span>{isBlank ? "" : report?.rootcause}</span>
+            Non-verbal Cues: <span>{isBlank ? "" : data?.nonVerbalCues}</span>
           </p>
           <p>
-            RECOMMENDATION: <span>{isBlank ? "" : report?.recommendation}</span>
+            Discussion Summary: <span>{isBlank ? "" : data?.summary}</span>
           </p>
           <p>
-            EXPECTED OUTCOME: <span>{isBlank ? "" : report?.expectedOutcome}</span>
+            Techniques Approach Used: <span>{isBlank ? "" : data?.techniques}</span>
           </p>
+          <p>
+            Action Plan/ Next Steps: <span>{isBlank ? "" : data?.actionPlan}</span>
+          </p>
+          <p>
+            Next Appointment: <span>{isBlank ? "" : ""}</span>
+          </p>
+          <p>
+            Counselors Evaluation: <span>{isBlank ? "" : data?.evaluation}</span>
+          </p></div>
+          <div className="signatures flex w-full justify-between items-start [&_p]:w-1/2">
+            <p >Signature:</p>
+            <p>Date: {data?.appointmentDate}</p>
+          </div>
         </div>
       </main>
     </div>

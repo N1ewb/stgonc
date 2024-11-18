@@ -21,7 +21,7 @@ export default function TabularReport({ contentRef, data, appointee, isBlank }) 
         </p>
         <p className="text-center text-black text-[14px]">
           {currentUser.department} <br />
-          <span className="text-[12px] font-light">Consultation Report</span>
+          <span className="text-[12px] font-light">Counseling Report</span>
         </p>
       </header>
       <main className="text-justify w-full text-[12px]">
