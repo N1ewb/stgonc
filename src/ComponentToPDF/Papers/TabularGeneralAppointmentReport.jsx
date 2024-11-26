@@ -5,7 +5,13 @@ export default function TabularReport({ contentRef, data, appointee, isBlank }) 
   const { currentUser } = useAuth();
 
   const report = Array.isArray(data?.report) ? data?.report[0] : data?.report;
+  const todayDate = new Date();
 
+  const formattedDate = todayDate.toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
   return (
     <div
       onClick={(e) => e.stopPropagation()}

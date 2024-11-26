@@ -1,9 +1,20 @@
 import React from "react";
 import { useAuth } from "../../context/auth/AuthContext";
 
-export default function GuidanceReport({ contentRef, data, appointee, isBlank }) {
+export default function GuidanceReport({
+  contentRef,
+  data,
+  appointee,
+  isBlank,
+}) {
   const { currentUser } = useAuth();
+  const todayDate = new Date();
 
+  const formattedDate = todayDate.toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
   return (
     <div
       onClick={(e) => e.stopPropagation()}
@@ -47,7 +58,9 @@ export default function GuidanceReport({ contentRef, data, appointee, isBlank })
             <li>
               Faculty Name:{" "}
               <span className="font-bold text-gray-600">
-                {isBlank ? "" : `${currentUser.firstName} ${currentUser.lastName}`}
+                {isBlank
+                  ? ""
+                  : `${currentUser.firstName} ${currentUser.lastName}`}
               </span>
             </li>
             <li>
@@ -65,35 +78,41 @@ export default function GuidanceReport({ contentRef, data, appointee, isBlank })
           </ul>
 
           <p>
-            Reason for Counseling: <span>{isBlank ? "" : data.appointmentType || "N/A"}</span>
+            Reason for Counseling:{" "}
+            <span>{isBlank ? "" : data.appointmentType || "N/A"}</span>
           </p>
         </div>
         <div className="observations [&_p]:font-semibold [&_span]:font-normal">
           <p className="">Faculty's Observation</p>
-          <div className="fields"><p>
-            Observation: <span>{isBlank ? "" : data?.observation}</span>
-          </p>
-          <p>
-            Non-verbal Cues: <span>{isBlank ? "" : data?.nonVerbalCues}</span>
-          </p>
-          <p>
-            Discussion Summary: <span>{isBlank ? "" : data?.summary}</span>
-          </p>
-          <p>
-            Techniques Approach Used: <span>{isBlank ? "" : data?.techniques}</span>
-          </p>
-          <p>
-            Action Plan/ Next Steps: <span>{isBlank ? "" : data?.actionPlan}</span>
-          </p>
-          <p>
-            Next Appointment: <span>{isBlank ? "" : ""}</span>
-          </p>
-          <p>
-            Counselors Evaluation: <span>{isBlank ? "" : data?.evaluation}</span>
-          </p></div>
+          <div className="fields">
+            <p>
+              Observation: <span>{isBlank ? "" : data?.observation}</span>
+            </p>
+            <p>
+              Non-verbal Cues: <span>{isBlank ? "" : data?.nonVerbalCues}</span>
+            </p>
+            <p>
+              Discussion Summary: <span>{isBlank ? "" : data?.summary}</span>
+            </p>
+            <p>
+              Techniques Approach Used:{" "}
+              <span>{isBlank ? "" : data?.techniques}</span>
+            </p>
+            <p>
+              Action Plan/ Next Steps:{" "}
+              <span>{isBlank ? "" : data?.actionPlan}</span>
+            </p>
+            <p>
+              Next Appointment: <span>{isBlank ? "" : ""}</span>
+            </p>
+            <p>
+              Counselors Evaluation:{" "}
+              <span>{isBlank ? "" : data?.evaluation}</span>
+            </p>
+          </div>
           <div className="signatures flex w-full justify-between items-start [&_p]:w-1/2">
-            <p >Signature:</p>
-            <p>Date: {data?.appointmentDate}</p>
+            <p>Signature:</p>
+            <p>Date: {formattedDate}</p>
           </div>
         </div>
       </main>

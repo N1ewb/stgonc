@@ -112,7 +112,7 @@ const AppointmentData = ({ data }) => {
           </p>
         </div>
 
-        {arrangementType === "default" ? (
+        <div className="paper w-full max-h-full overflow-auto bg-white">{arrangementType === "default" ? (
           currentUser?.role === "Guidance" ? (
             <GuidanceReport
               contentRef={contentRef}
@@ -142,7 +142,7 @@ const AppointmentData = ({ data }) => {
             appointee={appointee}
             isBlank={isBlank}
           />
-        )}
+        )}</div>
         {/* <SamplePaper /> */}
       </div>
       <div className="adjustments-tab w-[60%] flex pb-10">
