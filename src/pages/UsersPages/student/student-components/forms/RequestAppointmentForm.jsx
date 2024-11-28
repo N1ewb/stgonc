@@ -274,14 +274,14 @@ const RequestAppointmentForm = ({ instructor, show, toggleShow }) => {
                 bookedTimeslots={bookedTimeslots}
               />
               <div className="group-container flex flex-row justify-around items-center">
-                <div className="group">
+                <div className="group px-4 py-1 rounded-sm">
                   <select name="" id="" className="" ref={formatRef}>
                     <option value="">Select Format</option>
                     <option value="F2F">Face to Face</option>
                     <option value="Online">Online</option>
                   </select>
                 </div>
-                <div className="group">
+                <div className="group px-4 py-1 rounded-sm">
                   <select name="" id="" className="" ref={typeRef}>
                     <option value="">Select Type</option>
                     <option value="Academic">Academic</option>
@@ -291,11 +291,8 @@ const RequestAppointmentForm = ({ instructor, show, toggleShow }) => {
                   </select>
                 </div>
               </div>
-              <div className="form-group">
-                <label htmlFor="image">
-                  Picture of Yourself right now this moment
-                </label>
-                <input className="" id="image" name="image" type="file" />
+              <div className="form-group flex w-full justify-between">
+                <div></div>
                 <Button variant="secondary" onClick={() => toggleShow()}>
                   Close
                 </Button>

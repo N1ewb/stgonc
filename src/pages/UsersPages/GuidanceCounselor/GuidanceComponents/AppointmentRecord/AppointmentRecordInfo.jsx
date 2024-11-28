@@ -12,7 +12,7 @@ export default function AppointmentRecordInfo({
         >
           X
         </button>
-      </header>
+      </header>npm st
       <main className=" flex flex-col gap-3 max-h-[90%] overflow-auto">
         <div className="client-information flex flex-col gap-2 [&_p]:m-0">
           <p>Client Information</p>

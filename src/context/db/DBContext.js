@@ -317,10 +317,19 @@ export const DBProvider = ({ children }) => {
     firstName,
     lastName,
     email,
-    date,
-    concern,
+    department,
     concernType,
-    department
+    date,
+    yearLevel,
+    age,
+    sessionNumber,
+    location,
+    observation,
+    nonVerbalCues,
+    summary,
+    techniques,
+    actionPlan,
+    evaluation
   ) => {
     try {
       if (auth.currentUser) {
@@ -335,9 +344,19 @@ export const DBProvider = ({ children }) => {
           appointedFaculty: auth.currentUser.uid,
           appointmentDate: date,
           appointmentFormat: "Walkin",
+          appointmentStatus: "Recorded",
           department: user.department,
-          appointmentConcern: concern,
           appointmentType: concernType,
+          yearLevel,
+          age,
+          sessionNumber,
+          location,
+          observation,
+          nonVerbalCues,
+          summary,
+          techniques,
+          actionPlan,
+          evaluation,
           createdAt: serverTimestamp(),
         });
       }
