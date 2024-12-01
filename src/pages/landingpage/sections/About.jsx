@@ -33,7 +33,7 @@ const About = () => {
           <span className="font-bold">Andromel P. Ramirez</span>.
         </p>
       </div>
-      <div className="about-statement text-justify w-[40%]">
+      <div className="about-statement text-justify w-[40%] xl:w-[70%] md:w-[90%]">
         <p className="flex flex-col gap-3 text-[#320000]">
           Recognizing the critical importance of comprehensive support and
           guidance for students in higher education, we aimed to address the

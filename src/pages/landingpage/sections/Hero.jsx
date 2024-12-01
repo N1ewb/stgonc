@@ -19,7 +19,7 @@ const Hero = () => {
       }}
     >
       <div className="logot-wrapper"><img src={stgoncLogo} alt="stgonc-logo" width={62} /></div>
-      <h1 className='text-center text-[80px] font-normal'>Connect, organize, and track <br/> <span className='text-[#36000099]'>all in <span className='font-bold'>one</span> place</span></h1>
+      <h1 className='text-center text-[5rem] font-normal md:text-[4rem] sm:text-[3rem]'>Connect, organize, and track <br/> <span className='text-[#36000099]'>all in <span className='font-bold'>one</span> place</span></h1>
       
       <p className='[&_span]:font-bold'><span>Streamline</span> your <span>consultations</span> and <span>maximize</span> your <span>potential</span>!</p>
       <button className='bg-[#360000] hover:bg-[#720000] px-16 py-4 rounded-2xl text-[20px]' onClick={handleGetStarted}>Get Started</button>
