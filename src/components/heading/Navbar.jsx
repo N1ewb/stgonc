@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/auth/AuthContext";
 import Menu from "../../static/images/menu.png";
 import stgonclogo from '../../static/images/STGONC-Logo.png'
+import Profile from "../userProfile/Profile";
 const Navbar = ({sidebarLinks}) => {
   const { currentUser } = useAuth();
   const navigate = useNavigate();
@@ -66,8 +67,8 @@ const Navbar = ({sidebarLinks}) => {
             </React.Fragment>
           ))}
       </div>
-
-      <div className="mobile-nav-links hidden md:flex flex-col">
+      {currentUser && <div className="hidden lg:flex absolute right-0"><Profile /></div>}
+      {/* <div className="mobile-nav-links hidden md:flex flex-col">
         <img
           className="w-[40px]"
           onClick={handleOpenMenu}
@@ -92,7 +93,7 @@ const Navbar = ({sidebarLinks}) => {
               </React.Fragment>
             ))}</div>
         </div>
-      </div>
+      </div> */}
     </div>
   );
 };

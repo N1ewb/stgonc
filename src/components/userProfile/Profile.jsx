@@ -56,23 +56,22 @@ const Profile = () => {
   }, []);
 
   return (
-    <div className="profile-container lg:hidden">
+    <div className="profile-container ">
       <Dropdown>
-        <div className="relative">
+        <div className="relative w-[150px]">
           <Dropdown.Toggle
-            variant="success"
-            id="dropdown-basic"
             style={{
               backgroundColor: "transparent",
               border: "none",
               display: "flex",
               alignItems: "center",
+              width: "auto",
             }}
           >
             <div className="relative">
               {auth.currentUser && (
                 <img
-                  className="w-[100px] h-[100px] rounded-full object-cover"
+                  className="w-[100px] h-[100px] lg:w-[70px] lg:h-[70px] rounded-full object-cover"
                   src={
                     auth.currentUser?.photoURL
                       ? auth.currentUser.photoURL
@@ -84,7 +83,7 @@ const Profile = () => {
             </div>
           </Dropdown.Toggle>
           <div
-            className={`notif-block cursor-pointer absolute -top-[5%] left-[36%] h-8 w-8 rounded-full bg-red-800 ${
+            className={`notif-block cursor-pointer absolute -top-[5%] right-[15%] lg:left-0 h-8 w-8 rounded-full bg-red-800 ${
               notifications.length !== 0 ? "flex" : "hidden"
             } items-center justify-center text-white decoration-transparent`}
             onClick={() => navigate(`/private/${user?.role}/notifications`)}
@@ -109,7 +108,7 @@ const Profile = () => {
           <Dropdown.Item onClick={handleSignout}>Logout</Dropdown.Item>
         </Dropdown.Menu>
       </Dropdown>
-      <div className="user-display">
+      <div className="user-display lg:hidden">
         <p className="text-[30px] m-0 capitalize xl:text-[1.5rem]">
           {auth.currentUser && auth.currentUser.displayName}
         </p>

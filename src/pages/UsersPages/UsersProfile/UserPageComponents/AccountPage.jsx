@@ -48,9 +48,9 @@ const AccountPage = ({ useAuth, db, user }) => {
         <span className="text-[#828282] text-sm">Mange user profile</span>
       </p>
 
-      <div className="div shadow-md relative rounded-[20px]  bg-white w-full flex flex-row gap-5 mb-10 p-4">
+      <div className="div shadow-md rounded-[20px]  bg-white w-full flex flex-row gap-5 mb-10 p-4">
         <div className="profile flex flex-col gap-3 items-start relative">
-          <div className="profile-wrapper bg-[#720000] rounded-full p-[2px]">
+          <div className="profile-wrapper relative bg-[#720000] w-[150px] h-[150px] rounded-full p-[2px]">
             <img
               className="w-[150px] h-[150px] rounded-full object-cover"
               src={photoURL}

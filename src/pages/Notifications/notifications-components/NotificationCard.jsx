@@ -65,22 +65,22 @@ const NotificationCard = ({ currentCategory }) => {
   };
 
   return (
-    <div className="div flex flex-col gap-5 max-h-[100%] overflow-auto">
+    <div className="div flex flex-col gap-5 max-h-[100%] lg:max-h-[80%] overflow-auto">
       {currentCategory && currentCategory.length !== 0
         ? currentCategory.map((notification) => (
             <div key={notification.id} className="flex flex-row w-full justify-between">
               <div className="flex flex-row gap-5">
-                <div className="image-wrapper bg-[#720000] p-1 rounded-full h-[110px]">
+                <div className="image-wrapper  p-1 rounded-full w-[20%] h-[110px] flex justify-center items-center">
                   <img
                     src={DefaultProfile}
                     alt="picture"
-                    className="w-[100px] h-[100px] rounded-full object-cover"
+                    className="w-[80px] h-[80px] rounded-full object-cover bg-[#720000] lg:w-[50px] lg:h-[50px]"
                   />
                 </div>
-                <div className="notification-card-content flex flex-col items-start gap-3 [&_p]:m-0">
+                <div className="notification-card-content max-w-[80%] flex flex-col items-start gap-3 [&_p]:m-0">
                   <div className="flex flex-row gap-3 items-center [&_p]:m-0 ">
                     <p
-                      className=" text-white py-2 px-10 rounded-3xl"
+                      className=" text-white py-2 px-10 rounded-3xl lg:text-[10px] lg:py-1 lg:px-5"
                       style={{
                         backgroundColor: findColor(notification.subject),
                       }}
@@ -91,16 +91,16 @@ const NotificationCard = ({ currentCategory }) => {
                       {notification.subject.split(" ")[1]}
                     </p>
                   </div>
-                  <p>{notification.content}</p>
+                  <p className="lg:text-[12px]">{notification.content}</p>
                   <div className="notification-buttons flex flex-row gap-4">
                     <button
-                      className="bg-transparent p-0 text-[#2fa74f]"
+                      className="bg-transparent p-0 text-[#2fa74f] lg:text-[10px]"
                       onClick={() => handleMarkNotifRead(notification.id)}
                     >
                       Mark as Read
                     </button>
                     <button
-                      className="bg-transparent p-0 text-[#ae2828]"
+                      className="bg-transparent p-0 text-[#ae2828] lg:text-[10px]"
                       onClick={() => handleDeleteNotifRead(notification.id)}
                     >
                       Delete
@@ -108,7 +108,7 @@ const NotificationCard = ({ currentCategory }) => {
                   </div>
                 </div>
               </div>
-              <div className="flex flex-row items-center [&_p]:m-0 [&_p]:text-[#BDBDBD] [&_p]:text-sm gap-2">
+              <div className="flex flex-row items-center [&_p]:m-0 [&_p]:text-[#BDBDBD] [&_p]:text-sm gap-2 lg:text-[8px]">
                 <img src={ClockIcon} alt="clock" />
                 <p>{formatDate(notification.createdAt?.toDate())}</p>
               </div>

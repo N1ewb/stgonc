@@ -71,9 +71,9 @@ const Userpage = () => {
   }, []);
 
   return (
-    <div className="Userpage-container w-full overflow-auto h-full bg-white">
-      <div className="flex w-full flex-row h-[100%]">
-        <div className="account-details-sidebar-container flex flex-col gap-3 basis-1/5  [&_button]:w-[80%] [&_button]:rounded-md text-center ">
+    <div className="Userpage-container w-full overflow-auto h-screen bg-white lg:px-10 relative top-[100px] p-[100px] lg:p-10">
+      <div className="flex w-full lg:flex-col h-[100%] lg:gap-4 justify-center items-start">
+        <div className="account-details-sidebar-container flex flex-col lg:flex-row lg:items-center gap-3 basis-1/5  [&_button]:w-[80%] [&_button]:rounded-md text-center ">
           <button
             className={`hover:bg-[#320000] hover:text-white ${
               currentPage === "Account"
@@ -105,7 +105,7 @@ const Userpage = () => {
             Help
           </button>
         </div>
-        <div className="account-details-main-content-container h-[100%] basis-4/5">
+        <div className="account-details-main-content-container h-[100%] w-4/5 lg:w-full lg:basis-full">
           {currentPage === "Account" ? (
             <AccountPage user={user} useAuth={auth} db={db} />
           ) : currentPage === "Password" ? (

@@ -45,8 +45,8 @@ const NotificationPage = () => {
 
   return (
     <div className="h-[100%]">
-      <div className="notification-body h-[100%] flex flex-row gap-5">
-        <div className="notification-sidebar h-[100%]">
+      <div className="notification-body h-[100%] flex lg:flex-col gap-5 lg:gap-3">
+        <div className="notification-sidebar h-[100%] lg:h-auto">
           <NotificationSidebar
             setCurrentbutton={setCurrentbutton}
             currentButton={currentbutton}

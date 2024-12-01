@@ -22,7 +22,7 @@ const PasswordPage = () => {
   };
 
   return (
-    <div className=" p-40 bg-white flex items-center justify-center">
+    <div className=" p-40 lg:p-10 bg-white flex items-center justify-center">
       <div className="w-full max-w-md bg-[#f9f9f9] shadow-lg rounded-lg p-6">
         <h1 className="text-2xl font-bold text-center text-[#320000]">
           Reset Your Password
