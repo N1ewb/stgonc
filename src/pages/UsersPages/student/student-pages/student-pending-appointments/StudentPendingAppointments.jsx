@@ -37,7 +37,7 @@ const StudentPendingAppointments = () => {
         </h1>
       </div>
       <div className="flex flex-row justify-between items-start">
-        <div className="student-pending-appointment-content w-[50%] flex flex-row flex-wrap">
+        <div className="student-pending-appointment-content w-[50%] flex flex-row flex-wrap max-h-[80%] overflow-auto">
           {appointments && appointments.length !== 0
             ? appointments.map((appointment) => (
                 <PendingApptointmentsCard

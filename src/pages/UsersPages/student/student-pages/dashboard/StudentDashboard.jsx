@@ -120,7 +120,7 @@ const StudentDashboard = () => {
         </div>
       </header>
       <div className="flex flex-row w-full h-[100%] justify-between">
-        <div className="main h-[85%] w-1/2 ">
+        <div className="main max-h-full w-1/2 ">
           {!loading ? (
             <InstructorsList
               instructors={instructors}

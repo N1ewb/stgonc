@@ -3,6 +3,7 @@ import React from "react";
 import Hero from "./sections/Hero";
 import About from "./sections/About";
 import Devs from "./sections/Devs";
+import Footer from "./sections/Footer";
 
 const LandingPage = () => {
   return (
@@ -15,6 +16,7 @@ const LandingPage = () => {
         <div className="spacer h-[40vh]"></div>
         <Devs />
         <div className="spacer h-[20vh]"></div>
+        <Footer />
       </div>
     </div>
   );

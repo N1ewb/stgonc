@@ -17,6 +17,8 @@ import { ChatProvider } from "./context/chatContext/ChatContext";
 import { Appointmentprovider } from "./context/appointmentContext/AppointmentContext";
 import { Toaster } from "react-hot-toast";
 import { PrimeReactProvider } from "primereact/api";
+import { ExportProvider } from "./context/exportContext/ExportContext";
+import { UserListProvider } from "./context/admin/UserListContext";
 
 import Chatroom from "./pages/chatroom/Chatroom";
 import LandingPage from "./pages/landingpage/LandingPage";
@@ -70,10 +72,6 @@ import WalkinScheduleAppt from "./pages/UsersPages/admin/admin_pages/admin_walki
 import WalkinPendingAppointment from "./pages/UsersPages/admin/admin_pages/admin_walkins/walkin-pages/WalkinPendingAppointment";
 import SCSDashboard from "./pages/UsersPages/GuidanceCounselor/GuidancePages/StudentCounselingServices/SCSDashboard";
 import GuidanceAppointmentDashboard from "./pages/UsersPages/GuidanceCounselor/GuidancePages/GuidanceAppointments/GuidanceAppointmentDashboard";
-import FacultyList from "./pages/UsersPages/admin/admin_pages/admin_userlist/FacultyList";
-import StudentList from "./pages/UsersPages/admin/admin_pages/admin_userlist/StudentList";
-import UserList from "./pages/UsersPages/admin/admin_pages/admin_userlist/UserList";
-import { UserListProvider } from "./context/admin/UserListContext";
 import GuidanceAppointmentArchive from "./pages/UsersPages/GuidanceCounselor/GuidancePages/GuidanceAppointments/GuidanceAppointmentArchive";
 import DeanAppointments from "./pages/UsersPages/admin/admin_pages/admin_appointments/Dean_appointments";
 import DeanAppointmentAchive from "./pages/UsersPages/admin/admin_pages/admin_appointments/DeanAppointmentAchive";
@@ -81,7 +79,6 @@ import ErrorPage from "./pages/Error/ErrorPage";
 import DeanFollowupAppointments from "./pages/UsersPages/admin/admin_pages/admin_appointments/DeanFollowupAppointments";
 import StudentInfoFromTGP from "./pages/UsersPages/STG-Info/StudentInfoFromTGP";
 import GuidanceFollowupAppointments from "./pages/UsersPages/GuidanceCounselor/GuidancePages/GuidanceAppointments/GuidanceFollowupAppointments";
-import { ExportProvider } from "./context/exportContext/ExportContext";
 import TeacherAppointments from "./pages/UsersPages/faculty/faculty_pages/faculty-appointments/TeacherAppointments";
 import TeacherAppointmentFollowups from "./pages/UsersPages/faculty/faculty_pages/faculty-appointments/TeacherAppointmentFollowups";
 import TeacherAppointmentArchive from "./pages/UsersPages/faculty/faculty_pages/faculty-appointments/TeacherAppointmentArchive";
