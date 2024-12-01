@@ -21,7 +21,7 @@ const ArchiveInfo = ({ appointment, handleOpenForm }) => {
   }, [appointment]);
 
   return (
-    <div className="archive-info w-[48%] bg-white shadow-md rounded-[30px] p-10 relative">
+    <div className="archive-info w-[48%] bg-white shadow-md rounded-[30px] p-10 relative lg:w-full lg:absolute transition-all ease-in-out duration-300">
       <header className="archive-info-header flex flex-row items-center justify-between border-b-[1px] border-solid border-[#aeaeae] mb-5">
         <h1 className="text-[#720000]">Archive Info</h1>
         <button

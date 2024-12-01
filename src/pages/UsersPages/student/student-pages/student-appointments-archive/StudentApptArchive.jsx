@@ -33,8 +33,8 @@ const StudentApptArchive = () => {
           Student  <span className="font-bold"> Appointment Archive</span>
         </h1>
       </div>
-      <div className="archive-page-content flex flex-row h-[90%] max-h-[90%] pb-2 overflow-auto w-full justify-between ">
-        <div className="archives-list w-1/2 ">
+      <div className="archive-page-content flex flex-row h-[90%] gap-2 max-h-[90%] pb-2 overflow-x-hidden overflow-y-auto w-full justify-between ">
+        <div className="archives-list w-1/2  lg:w-full">
           {archiveAppointments && archiveAppointments.length !== 0
             ? archiveAppointments.map((appointment) => (
                 <ArchiveAppointments

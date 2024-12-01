@@ -13,6 +13,7 @@ import RequestAppointmentForm from "../../student-components/forms/RequestAppoin
 import InstructorsList from "../../student-components/InstructorsList";
 import InstructorInfo from "../../student-components/InstructorInfo";
 import Loading from "../../../../../components/Loading/Loading";
+import toast from "react-hot-toast";
 
 const StudentDashboard = () => {
   const db = useDB();
@@ -26,6 +27,7 @@ const StudentDashboard = () => {
   const [show, setShow] = useState(false);
   const [currentOption, setCurrentOption] = useState("Instructors");
   const [loading, setLoading] = useState(true);
+  const toastMessage = (message) => toast(message);
 
   const handleSetCurrentOption = (option) => {
     setCurrentOption(option);
@@ -39,7 +41,7 @@ const StudentDashboard = () => {
           const teachers = await db.getTeachers();
           setInstructors(teachers);
         } catch (error) {
-          console.log("Error occured");
+          toastMessage("Error occured in retreiving the instructors");
         } finally {
           setLoading(false);
         }
@@ -52,7 +54,7 @@ const StudentDashboard = () => {
           const guidance = await db.getGuidance();
           setInstructors(guidance);
         } catch (error) {
-          console.log("An error has occured");
+          toastMessage("Error occured in retreiving the guidance counselor");
         } finally {
           setLoading(false);
         }
@@ -89,7 +91,7 @@ const StudentDashboard = () => {
         }, "calling");
         return () => unsubscribe();
       } catch (error) {
-        console.log(error);
+        toastMessage("Error occured in Receiving call");
       }
     };
     fetchData();
@@ -97,30 +99,36 @@ const StudentDashboard = () => {
 
   return (
     <div className="h-[100%] flex flex-col gap-10  w-full">
-      <header className="flex flex-row w-full justify-between items-center">
-        <h1 className="text-[#360000] ">
+      <header className="flex w-full justify-between items-center lg:!flex-col">
+        <h1 className="text-[#360000] flex flex-col xl:gap-4  lg:flex-row">
           <span className="font-bold">{myInfo && myInfo.department} </span>{" "}
-          <br></br>
           <span className="font-light">Department Instructors</span>{" "}
         </h1>
-        {/* <Link to='/private/Endcallpage'>Go to end call page</Link> */}
-        <div className="options flex flex-row w-1/2 gap-4 justify-end bg-[#320000] rounded-3xl  [&_button]:rounded-3xl p-2">
+        <div className="options flex flex-row w-1/2 lg:w-full lg:justify-start gap-4 justify-end bg-[#320000] rounded-3xl  [&_button]:rounded-3xl p-2">
           <button
-            className={` ${currentOption === "Instructors" ? "bg-white text-[#320000]" : "text-white border-2 border-solid bg-transparent border-white"}`}
+            className={` ${
+              currentOption === "Instructors"
+                ? "bg-white text-[#320000]"
+                : "text-white border-2 border-solid bg-transparent border-white"
+            }`}
             onClick={() => handleSetCurrentOption("Instructors")}
           >
             Instructors
           </button>
           <button
-            className={`${currentOption === "Guidance" ? "bg-white text-[#320000]" : "text-white border-2 border-solid bg-transparent border-white"}`}
+            className={`${
+              currentOption === "Guidance"
+                ? "bg-white text-[#320000]"
+                : "text-white border-2 border-solid bg-transparent border-white"
+            }`}
             onClick={() => handleSetCurrentOption("Guidance")}
           >
             Guidance Counselor
           </button>
         </div>
       </header>
-      <div className="flex flex-row w-full h-[100%] justify-between">
-        <div className="main max-h-full w-1/2 ">
+      <div className="flex flex-row w-full h-[100%] justify-between lg:relative">
+        <div className="main max-h-full w-1/2 lg:w-full">
           {!loading ? (
             <InstructorsList
               instructors={instructors}
@@ -133,7 +141,7 @@ const StudentDashboard = () => {
           )}
         </div>
         <div
-          className={`instructor-info-container w-[45%] transition-all ease-in-out duration-300 ${
+          className={`instructor-info-container w-[45%] lg:w-full lg:absolute transition-all ease-in-out duration-300 ${
             instructorInfo
               ? "opacity-100 h-auto translate-y-0"
               : "opacity-0 h-0 -translate-y-10"

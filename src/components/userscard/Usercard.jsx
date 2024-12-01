@@ -45,23 +45,22 @@ const Usercard = ({ data, buttons }) => {
 
   return (
     <div
-      className={`datacard-container flex flex-col m-2 p-3 text-[#320000] rounded-3xl 
+      className={`datacard-container w-full flex flex-col m-2 p-3 text-[#320000] rounded-3xl 
       shadow-inner border border-[#ADADAD] hover:shadow-lg hover:shadow-[#320000]/40 
       `}
     >
       {data && (
         <>
-          {" "}
-          <div className="flex flex-row pb-3 gap-3 border-b border-[#777777]">
+          <div className="w-full flex flex-row pb-3 gap-3 border-b border-[#777777]">
             <img
-              className="w-[50px] h-[50px] p-[2px] bg-[#320000] rounded-full object-cover"
+              className="w-[50px] h-[50px] xl:w-[40px] xl:h-[40px] p-[2px] bg-[#320000] rounded-full object-cover"
               src={displayPhotoURL}
               alt="profile"
             />
-            <p className="text-[16px] flex flex-col">
-              <span className="font-bold truncate w-full">{`${displayFirstName} ${displayLastName}`}</span>
+            <p className="text-[16px] flex flex-col xl:w-[90%]">
+              <span className="font-bold truncate ... xl:w-[90%] xl:text-[1rem]">{`${displayFirstName} ${displayLastName}`}</span>
 
-              <span className="text-[#360000] font-light text-[12px]">
+              <span className="text-[#360000] font-light text-[12px] max-w-[90%] truncate ...">
                 {displayEmail}
               </span>
             </p>

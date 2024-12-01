@@ -37,7 +37,7 @@ const StudentPendingAppointments = () => {
         </h1>
       </div>
       <div className="flex flex-row justify-between items-start">
-        <div className="student-pending-appointment-content w-[50%] flex flex-row flex-wrap max-h-[80%] overflow-auto">
+        <div className="student-pending-appointment-content gap-2 w-[50%] lg:w-full  flex flex-row flex-wrap max-h-[80%] overflow-x-hidden overflow-y-auto">
           {appointments && appointments.length !== 0
             ? appointments.map((appointment) => (
                 <PendingApptointmentsCard
@@ -49,7 +49,7 @@ const StudentPendingAppointments = () => {
               ))
             : ""}
         </div>
-        <div className="w-[48%]">
+        <div className="w-[48%] lg:w-full lg:absolute transition-all ease-in-out duration-300">
           {currentAppointment && (
             <AppointmentInfo appointment={currentAppointment} setCurrentAppointmentInfo={setCurrentAppointment} />
           )}

@@ -18,7 +18,7 @@ const InstructorsList = ({
   ];
 
   return (
-    <div className="flex flex-row flex-wrap w-full gap-3 max-h-[95%] px-2 pb-10 !overflow-auto">
+    <div className="flex flex-row flex-wrap w-full gap-3 max-h-[95%] lg:px-2 pb-10  !overflow-x-hidden !overflow-y-auto">
       {instructors && instructors.length !== 0 ? (
         instructors.map((instructor, index) => (
           <div

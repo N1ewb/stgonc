@@ -9,7 +9,7 @@ const AppointmentInfo = ({ appointment,setCurrentAppointmentInfo }) => {
   }
     
   return (
-    <div className="w-full h-auto flex flex-col p-5 shadow-md rounded-3xl">
+    <div className="w-full h-auto flex flex-col p-5 shadow-md rounded-3xl bg-white">
       <header className="flex flex-row w-full justify-between items-center border-b-[1px] border-solid border-[#929292] rounded-md pb-3">
         <h3 className="font-semibold">
           <span className="font-light pt-3">Appointment</span> Info

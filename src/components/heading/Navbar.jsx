@@ -3,14 +3,20 @@ import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/auth/AuthContext";
 import Menu from "../../static/images/menu.png";
 import stgonclogo from '../../static/images/STGONC-Logo.png'
-const Navbar = () => {
+const Navbar = ({sidebarLinks}) => {
   const { currentUser } = useAuth();
   const navigate = useNavigate();
   const [menuIsOpen, setMenuIsOpen] = useState(false);
 
+ 
+  const defaultNavLinks = [
+    { name: "About Us", link: "/Aboutus", inAuthHide: false, beforeMDHide:false },
+    { name: "Contact Us", link: "/Contactus", inAuthHide: false, beforeMDHide:false },
+  ];
+  
   const navLinks = [
-    { name: "About Us", link: "/Aboutus", inAuthHide: false },
-    { name: "Contact Us", link: "/Contactus", inAuthHide: false },
+    ...defaultNavLinks,
+    // ...sidebarLinks
   ];
 
   const authLinks = [
@@ -76,7 +82,7 @@ const Navbar = () => {
           }`}
         >
           <div className="nav-links">{navLinks
-            .filter((navLink) => !(currentUser && navLink.inAuthHide))
+            .filter((navLink) => !(currentUser && navLink.inAuthHide && !navLink.beforeMDHide))
             .map((navLink, index) => (
               <React.Fragment key={`${navLink.name} ${index}`}>
                 <Link className="no-underline text-white" to={navLink.link}>

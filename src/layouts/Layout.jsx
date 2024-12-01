@@ -8,6 +8,7 @@ import Chatbox from "../components/Chatsbox/Chatbox";
 import Loading from "../components/Loading/Loading";
 import { useExport } from "../context/exportContext/ExportContext";
 import AppointmentData from "../ComponentToPDF/AppointmentData";
+import { AdminSidebarLinks, FacultySidebarLinks, GuidanceSidebarLinks, StudentSidebarLinks } from "../lib/global";
 
 const Layout = () => {
   const auth = useAuth();
@@ -54,9 +55,29 @@ const Layout = () => {
     return <Loading />;
   }
 
+  const handleGetSidebarLinks = () => {
+    if (auth.currentUser) {
+      const role = auth.currentUser.role; 
+      switch(role) {
+        case "Admin":
+          return AdminSidebarLinks; 
+        case "Faculty":
+          return FacultySidebarLinks; 
+        case "Guidance":
+          return GuidanceSidebarLinks; 
+        case "Student":
+          return StudentSidebarLinks; 
+        default:
+          return []; 
+      }
+    } else {
+      return []; 
+    }
+  };
+
   return (
     <div className="flex flex-col w-full h-auto items-center">
-      <Navbar />
+      <Navbar sidebarLinks={handleGetSidebarLinks()} />
       <main className="w-full h-auto relative">
         <div className="outlet w-full h-auto">
           <Outlet />

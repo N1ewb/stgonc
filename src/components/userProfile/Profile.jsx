@@ -94,7 +94,7 @@ const Profile = () => {
         </div>
         <Dropdown.Menu>
           {auth.currentUser && (
-            <Dropdown.Item onClick={() => navigate("/private/Userpage")}>
+            <Dropdown.Item className="capitalize" onClick={() => navigate("/private/Userpage")}>
               {auth.currentUser.displayName}
             </Dropdown.Item>
           )}
@@ -110,10 +110,10 @@ const Profile = () => {
         </Dropdown.Menu>
       </Dropdown>
       <div className="user-display">
-        <p className="text-[30px] m-0">
+        <p className="text-[30px] m-0 capitalize xl:text-[1.5rem]">
           {auth.currentUser && auth.currentUser.displayName}
         </p>
-        <p className="m-0" style={{ opacity: "0.8", fontWeight: "200" }}>
+        <p className="m-0 xl:text-sm max-w-[90%] truncate ..." style={{ opacity: "0.8", fontWeight: "200" }}>
           {auth.currentUser && auth.currentUser.email}
         </p>
       </div>

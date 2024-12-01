@@ -1,38 +1,17 @@
-import React from "react";
+import React, { useState } from "react";
 import { Outlet } from "react-router-dom";
 import Sidebar from "../../components/sidebar/Sidebar";
+import { GuidanceSidebarLinks } from "../../lib/global";
+import MobileNavigationBar from "../../components/mobileNavigation/MobileNavigationBar";
+import { useMediaQuery } from "react-responsive";
 
 const GuidanceCounselorLayout = () => {
-  const SidebarLinks = [
-    {
-      name: "Dashboard",
-      link: "/private/Guidance/dashboard",
-    },
-    {
-      name: "Appointments",
-      link: "/private/Guidance/appointments/list",
-    },
-    {
-      name: "Schedules",
-      link: "/private/Guidance/schedules",
-    },
-    {
-      name: "Student Counseling Services",
-      link: "/private/Guidance/student-counseling-services",
-    },
-    // {
-    //   name: "Referal",
-    //   link: "/private/Guidance/student-counseling-services/Referal",
-    // },
-    // {
-    //   name: "Walkin",
-    //   link: "/private/Guidance/student-counseling-services/Walkin",
-    // },
-  ]
+  const [activeLink, setActiveLink] = useState("Dashboard");
+  const isMobile = useMediaQuery({ maxWidth: 1023 });
   return (
     <div className="guidance-dashboard-container bg-[#360000] w-full h-full flex flex-row items-center justify-center">
       <div className="guidance-sidebar-container w-[17%] h-[90%] flex flex-row items-center justify-center pt-8  lg:w-0">
-        <Sidebar SidebarLinks={SidebarLinks} />
+        <Sidebar SidebarLinks={GuidanceSidebarLinks} />
       </div>
       <main className="group-with-spacer h-[100vh] w-[83%] lg:w-full flex flex-col justify-around">
         <div className="spacer w-full h-[5vh]"></div>
@@ -40,6 +19,15 @@ const GuidanceCounselorLayout = () => {
           <Outlet />
         </div>
       </main>
+      {isMobile && (
+        <div className="mobile-navigation absolute w-full bottom-0 flex justify-center items-center ">
+          <MobileNavigationBar
+            Links={GuidanceSidebarLinks}
+            activeLink={activeLink}
+            setActiveLink={setActiveLink}
+          />
+        </div>
+      )}
     </div>
   );
 };
