@@ -96,16 +96,6 @@ const Userpage = () => {
           </button>
           <button
             className={`hover:bg-[#320000] hover:text-white ${
-              currentPage === "Notification"
-                ? "bg-[#720000] text-white"
-                : "bg-transparent text-black"
-            } `}
-            onClick={() => setCurrentPage("Notification")}
-          >
-            Notifications
-          </button>
-          <button
-            className={`hover:bg-[#320000] hover:text-white ${
               currentPage === "Help"
                 ? "bg-[#720000] text-white"
                 : "bg-transparent text-black"

@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import CheckBlack from "../../../static/images/check-black.png";
 
 const NotificationSidebar = ({ setCurrentbutton, currentButton }) => {
-  
   const buttons = [
     {
       name: "All Notifications",
@@ -42,8 +41,9 @@ const NotificationSidebar = ({ setCurrentbutton, currentButton }) => {
       <div className="div">
         <p className="text-[#320000] text-lg">Categories</p>
         <div className="sidebar-categories flex flex-col items-center [&_button]:w-[11rem] [&_button]:py-2 [&_button]:px-3 [&_button]:rounded-3xl gap-3">
-          {buttons.map((button) => (
+          {buttons.map((button, index) => (
             <div
+              key={index}
               className="button-container flex flex-row w-full justify-around items-center cursor-pointer"
               onClick={() => setCurrentbutton(button.link)}
             >

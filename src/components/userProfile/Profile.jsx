@@ -105,9 +105,6 @@ const Profile = () => {
           <Dropdown.Item onClick={() => navigate(`/private/${user?.role}/notifications`)}>
             Notifications
           </Dropdown.Item>
-          <Dropdown.Item onClick={() => navigate(`/private/${user?.role}/messages`)}>
-            Messages
-          </Dropdown.Item>
           <Dropdown.Item href="#/action-2">Give Feedback</Dropdown.Item>
           <Dropdown.Item onClick={handleSignout}>Logout</Dropdown.Item>
         </Dropdown.Menu>

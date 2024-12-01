@@ -1,6 +1,6 @@
 import React, { createContext, useContext } from "react";
 import { useAuth } from "../auth/AuthContext";
-
+import emailjs from "@emailjs/browser";
 import {
   addDoc,
   collection,
@@ -14,7 +14,7 @@ import {
   where,
 } from "firebase/firestore";
 import { firestore } from "../../server/firebase";
-import emailjs from "@emailjs/browser";
+
 import toast, { Toaster } from "react-hot-toast";
 
 const MessagingContext = createContext();
@@ -23,10 +23,12 @@ export function useMessage() {
   return useContext(MessagingContext);
 }
 
+
 export const MessagingProvider = ({ children }) => {
   const auth = useAuth();
   const notificationRef = collection(firestore, "Notifications");
   const toastMessage = (message) => toast(message);
+  
 
   const sendEmail = async (recipient_email, content, subject) => {
     const form = document.createElement("form");
@@ -48,8 +50,9 @@ export const MessagingProvider = ({ children }) => {
     });
     try {
       emailjs
-        .sendForm("service_6ohiq8x", "template_t4nesyk", form, {
-          publicKey: "3kBWbebX9h3kQSvMq",
+        .sendForm("service_vfk9424", "template_z5a9rqm", form, {
+          publicKey: "8BBDOBwWlicJlebvq",
+          privateKey: "m5ISSvW-0RaQIXjqUBH4Q",
         })
         .then(
           () => {
@@ -85,7 +88,7 @@ export const MessagingProvider = ({ children }) => {
     try {
       emailjs
         .sendForm("service_6ohiq8x", "template_t4nesyk", form, {
-          publicKey: "3kBWbebX9h3kQSvMq",
+          publicKey: "8BBDOBwWlicJlebvq",
         })
         .then(
           () => {
@@ -115,7 +118,7 @@ export const MessagingProvider = ({ children }) => {
       await addDoc(notificationRef, newNotification);
 
       // EMAIL NOTIFICATION
-      // await sendEmailRegistrationRequest(receiver, senderName);
+      await sendEmailRegistrationRequest(receiver, sender);
 
       return true;
     } catch (error) {
@@ -141,7 +144,7 @@ export const MessagingProvider = ({ children }) => {
         await addDoc(notificationRef, newNotification);
 
         // EMAIL NOTIFICATION
-        // await sendEmail(receiver, content, subject);
+        await sendEmail(receiver, content, subject);
 
         return true;
       } else {
@@ -207,20 +210,20 @@ export const MessagingProvider = ({ children }) => {
   }
 
   async function MarkNotifRead(id) {
-    try{
-      const notificationDocsRef = doc(firestore, 'Notifications', id)
-      await updateDoc(notificationDocsRef, {read: true})
-    }catch(error){
-      toastMessage(`Error in marking notification,: ${error.message}`)
+    try {
+      const notificationDocsRef = doc(firestore, "Notifications", id);
+      await updateDoc(notificationDocsRef, { read: true });
+    } catch (error) {
+      toastMessage(`Error in marking notification,: ${error.message}`);
     }
   }
 
   async function DeleteNotif(id) {
-    try{
-      const notificationDocsRef = doc(firestore, 'Notifications', id)
-      await deleteDoc(notificationDocsRef)
-    }catch(error){
-      toastMessage(`Error in deleteing notification: ${error.message}`)
+    try {
+      const notificationDocsRef = doc(firestore, "Notifications", id);
+      await deleteDoc(notificationDocsRef);
+    } catch (error) {
+      toastMessage(`Error in deleteing notification: ${error.message}`);
     }
   }
 

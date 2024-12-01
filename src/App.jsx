@@ -88,6 +88,9 @@ import TeacherAppointmentArchive from "./pages/UsersPages/faculty/faculty_pages/
 import GuidanceEndcallPage from "./pages/videocall/GuidanceEndCallPage";
 import AddFollowupRecord from "./pages/UsersPages/GuidanceCounselor/GuidancePages/StudentCounselingServices/AddFollowupRecord";
 import FullRecordInfo from "./pages/UsersPages/GuidanceCounselor/GuidancePages/StudentCounselingServices/FullRecordInfo";
+import ResetPassword from "./pages/authentication/resetpassword/ResetPassword";
+import AboutUs from "./pages/miscPages/AboutUs";
+import ContactUs from "./pages/miscPages/ContactUs";
 
 function App() {
   const router = createBrowserRouter([
@@ -98,6 +101,14 @@ function App() {
         {
           path: "/",
           element: <LandingPage />,
+        },
+        {
+          path: "/Aboutus",
+          element: <AboutUs />,
+        },
+        {
+          path: "/Contactus",
+          element: <ContactUs />,
         },
         {
           path: "*",
@@ -406,6 +417,10 @@ function App() {
             {
               path: "/auth/PendingRequestMessage",
               element: <PendingReqMessagePage />,
+            },
+            {
+              path: "/auth/Resetpassword",
+              element: <ResetPassword />,
             },
           ],
         },

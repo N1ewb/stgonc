@@ -86,7 +86,7 @@ const LoginPage = () => {
                   >
                     {!isSubmitting ? "Login" : "Submitting"}
                   </button>
-                  <p>
+                 <div className="w-full flex justify-between"> <p>
                     Don't have an account?{" "}
                     <Link
                       to={"/auth/StudentRegistration"}
@@ -95,6 +95,15 @@ const LoginPage = () => {
                       <span style={{ color: "#FF8682" }}>{"Sign up"}</span>
                     </Link>
                   </p>
+                  <p>
+                    Forgot Password? {" "}
+                    <Link
+                      to={"/auth/Resetpassword"}
+                      style={{ textDecoration: "none" }}
+                    >
+                      <span style={{ color: "#FF8682" }}>{"Reset Password"}</span>
+                    </Link>
+                  </p></div>
                 </div>
               </form>
             </div>

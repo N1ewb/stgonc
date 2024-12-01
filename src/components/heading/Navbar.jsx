@@ -9,8 +9,8 @@ const Navbar = () => {
   const [menuIsOpen, setMenuIsOpen] = useState(false);
 
   const navLinks = [
-    { name: "About Us", link: "#", inAuthHide: false },
-    { name: "Contact Us", link: "#", inAuthHide: false },
+    { name: "About Us", link: "/Aboutus", inAuthHide: false },
+    { name: "Contact Us", link: "/Contactus", inAuthHide: false },
   ];
 
   const authLinks = [

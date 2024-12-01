@@ -121,7 +121,7 @@ const AccountPage = ({ useAuth, db, user }) => {
             </p>
           </div>
         </div>
-        {user?.role === "Admin" && (
+        {/* {user?.role === "Admin" && (
           <div className="flex flex-col justify-center items-center w-[44%] relative">
             <img
               src={eSignature}
@@ -142,7 +142,7 @@ const AccountPage = ({ useAuth, db, user }) => {
               <SignatureCanvasComponent setCanvasOpen={setCanvasOpen}  setEsignature={setEsignature}/>
             )}</div>
           </div>
-        )}
+        )} */}
       </div>
     </div>
   );

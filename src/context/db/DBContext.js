@@ -732,7 +732,7 @@ export const DBProvider = ({ children }) => {
           await notif.storeNotifToDB(
             "Appointment",
             `You appointment with ${auth.currentUser.displayName} has been marked finished`,
-            recevingUser.email
+            "nathaniellucero20@gmail.com"
           );
         }
       }
