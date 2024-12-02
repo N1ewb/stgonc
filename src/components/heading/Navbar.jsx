@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/auth/AuthContext";
-import Menu from "../../static/images/menu.png";
 import stgonclogo from '../../static/images/STGONC-Logo.png'
 import Profile from "../userProfile/Profile";
 const Navbar = ({sidebarLinks}) => {

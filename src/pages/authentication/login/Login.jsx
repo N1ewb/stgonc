@@ -28,7 +28,6 @@ const LoginPage = () => {
           const user = await db.getUser(auth.currentUser.uid);
           if (user) {
             const userRole = user.role;
-            console.log(userRole);
             if (userRole) {
               navigate(`/private/${userRole}/dashboard`);
             } else {

@@ -58,9 +58,9 @@ const Usercard = ({ data, buttons }) => {
               alt="profile"
             />
             <p className="text-[16px] flex flex-col xl:w-[90%]">
-              <span className="font-bold truncate ... xl:w-[90%] xl:text-[1rem]">{`${displayFirstName} ${displayLastName}`}</span>
+              <span className="font-bold lg:truncate ... xl:w-[90%] xl:text-[1rem]">{`${displayFirstName} ${displayLastName}`}</span>
 
-              <span className="text-[#360000] font-light text-[12px] max-w-[90%] truncate ...">
+              <span className="text-[#360000] font-light text-[12px] max-w-[90%] lg:truncate ...">
                 {displayEmail}
               </span>
             </p>

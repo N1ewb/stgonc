@@ -544,7 +544,11 @@ export const DBProvider = ({ children }) => {
           appointmentStatus: "Denied",
           updateMessage: `This Appointment was denied by ${Auth.currentUser.firstName} ${Auth.currentUser.lastName}`,
         };
-        await notif.storeNotifToDB("Appoitnment Denied", reason, receiver);
+        await notif.storeNotifToDB(
+          "Appointment Denied",
+          `You appointment Request has been denied because: ${reason}`,
+          receiver
+        );
         await updateDoc(appointmentDocRef, updatedAppointmentDocRef);
         toastMessage("Appointment Denied");
       }

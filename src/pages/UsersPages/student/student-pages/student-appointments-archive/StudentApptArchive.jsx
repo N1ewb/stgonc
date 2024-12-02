@@ -18,7 +18,6 @@ const StudentApptArchive = () => {
         ["Denied", "Finished", "Cancelled"],
         (callback) => {
           setArchiveAppointments(callback);
-          console.log(callback);
         }
       );
       return () => unsubscribe();

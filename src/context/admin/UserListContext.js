@@ -1,5 +1,4 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
-import { useLocation } from "react-router-dom";
 import { useAuth } from "../auth/AuthContext";
 import { useDB } from "../db/DBContext";
 
@@ -51,7 +50,6 @@ export const UserListProvider = ({ children }) => {
         category === "all"
           ? userList
           : userList.filter((chars) => chars.role === category);
-      console.log(category)
       const currentChars = filteredList.slice(
         indexOfFirstCharacter,
         indexOfLastCharacter
