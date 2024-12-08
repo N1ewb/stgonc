@@ -29,75 +29,44 @@ export const MessagingProvider = ({ children }) => {
   const notificationRef = collection(firestore, "Notifications");
   const toastMessage = (message) => toast(message);
   
+  // const handleSendEmail = async () => {
+  //   try {
+  //     const res = await api.post('/api/sendmail', {
+  //       sendTo: 'nathaniellucero20@gmail.com',
+  //       subject: "Test Icles",
+  //       message: "Sending my merry chirstmas to you"
+  //     });
+  //     console.log(res.data); // Log the success message
+  //   } catch (error) {
+  //     console.error(error.response?.data || error.message); // Log the error message
+  //   }
+  // };
 
   const sendEmail = async (recipient_email, content, subject) => {
-    const form = document.createElement("form");
-
-    const dummyData = {
-      from_name: "STGONC Team",
-      from_email: "stgoncteam.spc@gmail.com",
-      to_email: recipient_email,
-      sender_name: auth.currentUser.displayName,
-      message: content,
-      subject: subject,
-    };
-    Object.keys(dummyData).forEach((key) => {
-      const input = document.createElement("input");
-      input.type = "hidden";
-      input.name = key;
-      input.value = dummyData[key];
-      form.appendChild(input);
-    });
     try {
-      emailjs
-        .sendForm("service_vfk9424", "template_z5a9rqm", form, {
-          publicKey: "8BBDOBwWlicJlebvq",
-          privateKey: "m5ISSvW-0RaQIXjqUBH4Q",
-        })
-        .then(
-          () => {
-            toastMessage("SUCCESS!");
-          },
-          (error) => {
-            console.log("FAILED...", error);
-          }
-        );
+      const res = await api.post('/api/sendmail', {
+        sendTo: recipient_email,
+        subject,
+        message: content
+      });
+      if(res){
+        return res
+      }
     } catch (error) {
       toastMessage(error.message);
     }
   };
 
   const sendEmailRegistrationRequest = async (recipient_email, senderName) => {
-    const form = document.createElement("form");
-
-    const dummyData = {
-      from_name: "STGONC Team",
-      from_email: "stgoncteam.spc@gmail.com",
-      to_email: recipient_email,
-      sender_name: senderName,
-      message: "A new student has requested to register an account",
-      subject: "Registration",
-    };
-    Object.keys(dummyData).forEach((key) => {
-      const input = document.createElement("input");
-      input.type = "hidden";
-      input.name = key;
-      input.value = dummyData[key];
-      form.appendChild(input);
-    });
     try {
-      emailjs
-        .sendForm("service_6ohiq8x", "template_t4nesyk", form, {
-          publicKey: "8BBDOBwWlicJlebvq",
-        })
-        .then(
-          () => {
-            toastMessage("SUCCESS!");
-          },
-          (error) => {
-            console.log("FAILED...", error);
-          }
-        );
+      const res = await api.post('/api/sendmail', {
+        sendTo: recipient_email,
+        subject: `STGONC Registration Request`,
+        message: `A new registration request has been posted by ${senderName}`
+      });
+      if(res){
+        return res
+      }
     } catch (error) {
       toastMessage(error.message);
     }
