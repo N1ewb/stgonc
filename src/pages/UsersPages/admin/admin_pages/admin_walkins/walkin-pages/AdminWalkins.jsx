@@ -37,7 +37,7 @@ const AdminWalkins = () => {
 </div>
       <div className="walkins-content w-full flex flex-row pb-10">
         <div
-          className={`transition-all duration-500 ease-in-out pb-5 px-2 ${
+          className={`transition-all duration-500 max-h-[80%] overflow-auto flex items-start ease-in-out pb-5 px-2 ${
             isFormOpen ? "w-1/2" : "w-0"
           } overflow-hidden`}
         >

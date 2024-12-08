@@ -226,6 +226,12 @@ export const DBProvider = ({ children }) => {
     lastName,
     email,
     appointeeType,
+
+    issues,
+    rootcause,
+    recommendation,
+    expectedOutcome,
+
     concern,
     date,
     duration,
@@ -243,6 +249,10 @@ export const DBProvider = ({ children }) => {
             role: appointeeType,
           },
           appointeeType,
+          issues,
+          rootcause,
+          recommendation,
+          expectedOutcome,
           appointmentConcern: concern,
           appointmentDate: date,
           appointmentDuration: duration,
