@@ -2,11 +2,23 @@ const nodemailer = require("nodemailer");
 require("dotenv").config();
 
 module.exports = async (req, res) => {
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+
+  if (req.method === "OPTIONS") {
+    return res.status(204).end();
+  }
+
   if (req.method === "POST") {
     const { sendTo, subject, message } = req.body;
 
     if (!sendTo || !subject || !message) {
-      return res.status(400).json({ error: "Missing required fields: sendTo, subject, or message." });
+      return res
+        .status(400)
+        .json({
+          error: "Missing required fields: sendTo, subject, or message.",
+        });
     }
 
     try {
@@ -16,7 +28,9 @@ module.exports = async (req, res) => {
       res.status(500).json({ error: error.message });
     }
   } else {
-    res.status(405).json({ error: "Method not allowed. Only POST requests are supported." });
+    res
+      .status(405)
+      .json({ error: "Method not allowed. Only POST requests are supported." });
   }
 };
 
