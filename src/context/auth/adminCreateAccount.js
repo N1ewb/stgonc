@@ -64,8 +64,10 @@ export const AdminAccepptStudentAccount = async (
     await signOut(secondaryAuth);
 
     toastMessage("Student Account Created Successfully");
+    return 200
   } catch (error) {
     toastMessage(error.message);
+    return 500
   }
 };
 

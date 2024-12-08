@@ -1513,7 +1513,7 @@ export const DBProvider = ({ children }) => {
         );
         const updatedRegistrationDocRef = {
           status: "Denied",
-          updateMessage: `This Appointment was denied by ${Auth.currentUser.firstName} ${Auth.currentUser.lastName}`,
+          updateMessage: `This Registration was denied by ${Auth.currentUser.firstName} ${Auth.currentUser.lastName}`,
         };
         await notif.storeNotifToDB(
           "Registration Denied",
@@ -1561,13 +1561,13 @@ export const DBProvider = ({ children }) => {
         available: true,
         createdAt: Timestamp.now(),
       });
-      if (!notifSent) {
-        await notif.storeNotifToDB(
-          "Schedules",
-          `Your consultation hours Schedule has been updated, please proceed to schedules pages to view your new consultation schedules`,
-          assignedInstructor.email
-        );
-      }
+      // if (!notifSent) {
+      //   await notif.storeNotifToDB(
+      //     "Schedules",
+      //     `Your consultation hours Schedule has been updated, please proceed to schedules pages to view your new consultation schedules`,
+      //     assignedInstructor.email
+      //   );
+      // }
       setNotifSent(true);
     } catch (error) {
       toastMessage("Error adding document: ", error.message);

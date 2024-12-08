@@ -45,7 +45,7 @@ export const MessagingProvider = ({ children }) => {
 
   const sendEmail = async (recipient_email, content, subject) => {
     try {
-      const res = await api.post('/api/sendmail', {
+      const res = await api.post('/api/sendemail', {
         sendTo: recipient_email,
         subject,
         message: content
@@ -60,7 +60,7 @@ export const MessagingProvider = ({ children }) => {
 
   const sendEmailRegistrationRequest = async (recipient_email, senderName) => {
     try {
-      const res = await api.post('/api/sendmail', {
+      const res = await api.post('/api/sendemail', {
         sendTo: recipient_email,
         subject: `STGONC Registration Request`,
         message: `A new registration request has been posted by ${senderName}`

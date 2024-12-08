@@ -6,12 +6,14 @@ import DenyDark from "../../../../static/images/delete-dark.png";
 import MoreDark from "../../../../static/images/more-dark.png";
 import { useAuth } from "../../../../context/auth/AuthContext";
 import { useDB } from "../../../../context/db/DBContext";
+import { useMessage } from "../../../../context/notification/NotificationContext";
 const RegistrationReqCards = ({
   pendingRegistrations,
   setCurrentOpenedRegistrationCard,
 }) => {
   const auth = useAuth();
   const db = useDB();
+  const notif = useMessage();
   const toastMessage = (message) => toast(message);
 
   const handleApproveRegistrationRequest = async (
@@ -25,7 +27,7 @@ const RegistrationReqCards = ({
     requestID
   ) => {
     try {
-      await AdminAccepptStudentAccount(
+      const res = await AdminAccepptStudentAccount(
         email,
         password,
         firstName,
@@ -35,6 +37,13 @@ const RegistrationReqCards = ({
         department,
         requestID
       );
+      if (res === 200) {
+        await notif.storeNotifToDB(
+          "Registration Accepted",
+          "Your registration request has been approve by the administrator",
+          email
+        );
+      }
     } catch (error) {
       toastMessage(error);
     }
