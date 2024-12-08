@@ -16,6 +16,7 @@ import {
 import { firestore } from "../../server/firebase";
 
 import toast, { Toaster } from "react-hot-toast";
+import { api } from "../../lib/api";
 
 const MessagingContext = createContext();
 
