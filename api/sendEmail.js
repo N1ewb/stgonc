@@ -47,7 +47,8 @@ function sendEmail(sendTo, subject, message) {
         pass: process.env.EMAIL_PASS,
       },
     });
-
+    console.log('email',process.env.EMAIL_USE)
+    console.log('pass',process.env.EMAIL_PASS)
     const mail_configs = {
       from: process.env.EMAIL_USER,
       to: sendTo,
