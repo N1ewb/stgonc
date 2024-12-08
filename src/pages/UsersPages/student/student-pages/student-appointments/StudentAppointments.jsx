@@ -34,7 +34,7 @@ const StudentAppointments = () => {
 
   const handleSendEmail = async () => {
     try {
-      const res = await api.post('/sendmail', {
+      const res = await api.post('/api/sendmail', {
         sendTo: 'nathaniellucero20@gmail.com',
         subject: "Test Icles",
         message: "Sending my merry chirstmas to you"
