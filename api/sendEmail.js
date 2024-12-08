@@ -10,7 +10,7 @@ module.exports = async (req, res) => {
     return res.status(204).end();
   }
 
-  if (req.method === "POST") {
+  if (req.method === "GET") {
     const { sendTo, subject, message } = req.body;
 
     if (!sendTo || !subject || !message) {
