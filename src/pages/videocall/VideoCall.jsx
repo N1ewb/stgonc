@@ -2,9 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { useCall } from "../../context/call/CallContext";
 import { useLocation, useNavigate } from "react-router-dom";
 
-import Profile from "../../static/images/default-profile.png";
 import Camera from "../../static/images/icons8-camera-64.png";
-import CallButton from "../../static/images/icons8-call-64-white.png";
 import HangUp from "../../static/images/icons8-hang-up-48.png";
 
 import "./VideoCall.css";

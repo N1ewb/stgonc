@@ -72,7 +72,8 @@ export const theme = {
     xsm: { max: "560px" },
     xxsm: { max: "430px" },
     xxxsm: { max: "390px" },
-    xxxxsm: { max: "375px" },
+    xxxxsm: { max: "350px" },
+    myphone: { max: "300px" },
   },
 };
 export const plugins = [];

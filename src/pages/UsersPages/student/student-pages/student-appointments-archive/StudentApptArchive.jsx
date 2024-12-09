@@ -26,9 +26,9 @@ const StudentApptArchive = () => {
   }, [db]);
 
   return (
-    <div className="h-[100%] w-full flex flex-col justify-start">
+    <div className="h-[100%] w-full flex flex-col gap-2 justify-start">
       <div className="archive-page-header w-full h-[10%] flex-col flex ">
-        <h1 className="font-light text-[#720000]">
+        <h1 className="font-light text-[#720000] text-3xl xsm:text-[16px] xxsm:text-[12px]">
           Student  <span className="font-bold"> Appointment Archive</span>
         </h1>
       </div>

@@ -6,7 +6,6 @@ import Profile from "../../static/images/default-profile.png";
 import AnswerCall from "../../static/images/icons8-video-call-64.png";
 import HangUp from "../../static/images/icons8-hang-up-48.png";
 
-import "./ReceiveCallReq.css";
 import { useDB } from "../../context/db/DBContext";
 
 const ReceiveCallReq = () => {
@@ -72,17 +71,17 @@ const ReceiveCallReq = () => {
 
   return (
     <>
-      <div className="home-container">
-        <div className="caller-details">
+      <div className="w-full h-[100vh] bg-black flex flex-col [&_p]:text-white [&_span]:text-white [&_p]:m-0 items-center justify-around">
+        <div className=" flex flex-col w-full justify-center items-center ">
           <p>Incoming Call</p>
-          <img src={Profile} alt="profile-picture" height="80px" />
+          <img src={Profile} alt="profile-picture" className="h-[180px] w-[180px] xsm:w-[50px] xsm:h-[50px]"   />
           <p>
             {callerName && callerName.firstName + " " + callerName.lastName} is
             calling you
           </p>
           <span>The call will start as soon as accept</span>
         </div>
-        <div className="cam-button">
+        <div className="cam-button [&_button]:bg-transparent hover:[&_button]:bg-transparent">
           <input
             style={{ display: "none" }}
             ref={callInput}

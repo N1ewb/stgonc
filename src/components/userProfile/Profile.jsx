@@ -58,7 +58,7 @@ const Profile = () => {
   return (
     <div className="profile-container ">
       <Dropdown>
-        <div className="relative w-[150px]">
+        <div className="relative w-[150px] xsm:w-[100px] myphone:w-[70px]">
           <Dropdown.Toggle
             style={{
               backgroundColor: "transparent",
@@ -71,7 +71,7 @@ const Profile = () => {
             <div className="relative">
               {auth.currentUser && (
                 <img
-                  className="w-[100px] h-[100px] lg:w-[70px] lg:h-[70px] rounded-full object-cover"
+                  className="w-[100px] h-[100px] xsm:w-[50px] xsm:h-[50px] myphone:w-[35px] myphone:h-[35px] lg:w-[70px] lg:h-[70px] rounded-full object-cover"
                   src={
                     auth.currentUser?.photoURL
                       ? auth.currentUser.photoURL

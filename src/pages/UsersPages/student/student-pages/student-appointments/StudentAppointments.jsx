@@ -33,15 +33,15 @@ const StudentAppointments = () => {
   }, [db]);
 
   return (
-    <div className="flex flex-col gap-10 h-full">
+    <div className="flex flex-col gap-2 h-full">
       <div className="div-header">
-        <h1 className="font-light text-[#720000]">
+        <h1 className="font-light text-[#720000] text-3xl xsm:text-[16px] xxsm:text-[12px]">
           Your <span className="font-bold">Appointments</span>
         </h1>
       </div>
 
-      <div className="flex flex-row justify-between items-start h-full">
-        <div className="div w-[50%] lg:w-full flex gap-2 flex-wrap max-h-[80%] overflow-x-hidden overflow-y-auto">
+      <div className="flex flex-row gap-4 justify-between items-start h-full pb-4">
+        <div className="div flex-1 lg:w-full flex gap-2 flex-wrap max-h-[100%] overflow-x-hidden overflow-y-auto">
           {appointments && appointments.length !== 0
             ? appointments.map((appointment) => (
                 <StudentAppointmentCard
@@ -53,7 +53,7 @@ const StudentAppointments = () => {
               ))
             : ""}
         </div>
-        <div className="w-[48%] lg:w-full lg:absolute transition-all ease-in-out duration-300">
+        <div className="flex-1 lg:w-full lg:absolute transition-all ease-in-out duration-300">
           {currentAppointment && (
             <AppointmentInfo
               appointment={currentAppointment}

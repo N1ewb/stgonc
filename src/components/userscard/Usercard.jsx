@@ -46,21 +46,21 @@ const Usercard = ({ data, buttons }) => {
   return (
     <div
       className={`datacard-container w-full flex flex-col m-2 p-3 text-[#320000] rounded-3xl 
-      shadow-inner border border-[#ADADAD] hover:shadow-lg hover:shadow-[#320000]/40 
+      shadow-inner border border-[#ADADAD] hover:shadow-lg hover:shadow-[#320000]/40 overflow-hidden
       `}
     >
       {data && (
         <>
-          <div className="w-full flex flex-row pb-3 gap-3 border-b border-[#777777]">
+          <div className="w-full flex flex-row pb-3 gap-3 xsm:gap-2 xxsm:gap-1 xsm:pb-2 xxsm:pb-1 border-b border-[#777777] overflow-hidden">
             <img
-              className="w-[50px] h-[50px] xl:w-[40px] xl:h-[40px] p-[2px] bg-[#320000] rounded-full object-cover"
+              className="w-[50px] h-[50px] xl:w-[40px] xl:h-[40px] xsm:w-[30px] xsm:h-[30px] xxsm:w-[24px] xxsm:h-[24px] p-[2px] xsm:p-[1px] bg-[#320000] rounded-full object-cover"
               src={displayPhotoURL}
               alt="profile"
             />
             <p className="text-[16px] flex flex-col xl:w-[90%]">
-              <span className="font-bold lg:truncate ... xl:w-[90%] xl:text-[1rem]">{`${displayFirstName} ${displayLastName}`}</span>
+              <span className="font-bold lg:truncate ... xl:w-[90%] xl:text-[1rem]  xsm:text-[12px] xxsm:text-[10px]">{`${displayFirstName} ${displayLastName}`}</span>
 
-              <span className="text-[#360000] font-light text-[12px] max-w-[90%] lg:truncate ...">
+              <span className="text-[#360000] font-light text-[12px] xsm:text-[10px] xxsm:text-[8px] max-w-[90%] lg:truncate ...">
                 {displayEmail}
               </span>
             </p>

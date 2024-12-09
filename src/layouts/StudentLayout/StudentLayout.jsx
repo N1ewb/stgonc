@@ -16,10 +16,10 @@ const StudentLayout = () => {
           <Sidebar SidebarLinks={StudentSidebarLinks} />
         )}
         </div>
-      <main className="student-main-content flex flex-col pt-3 h-[85vh] lg:h-[75vh] lg:w-full bg-white w-[83%] mt-[83px] lg:mt-[120px] p-[50px] md:px-[20px] rounded-tl-[70px] rounded-bl-[70px] lg:rounded-bl-[0px] lg:rounded-tl-[0px]">
+      <main className="student-main-content flex flex-col pt-3 h-[85vh] lg:h-[75vh]  lg:w-full bg-white w-[83%] mt-[83px] lg:mt-[120px] xsm:h-screen xsm:mt-[80px] p-[50px] md:px-[20px] rounded-tl-[70px] rounded-bl-[70px] lg:rounded-bl-[0px] lg:rounded-tl-[0px] overflow-hidden">
         <Outlet />
       </main>
-      {isMobile && (
+      {/* {isMobile && (
         <div className="mobile-navigation absolute w-full bottom-[2.5%] flex justify-center items-center ">
           <MobileNavigationBar
             Links={StudentSidebarLinks}
@@ -27,7 +27,7 @@ const StudentLayout = () => {
             setActiveLink={setActiveLink}
           />
         </div>
-      )}
+      )} */}
     </div>
   );
 };

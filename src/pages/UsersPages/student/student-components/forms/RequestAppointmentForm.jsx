@@ -227,15 +227,13 @@ const RequestAppointmentForm = ({ instructor, show, toggleShow }) => {
         >
           <Modal.Title className="text-[#273240] flex flex-row justify-between w-[95%]">
             <div className="icon flex flex-row gap-4 m-0">
-              {" "}
               <img src={CalendarIcon} alt="Calenday" height={30} width={40} />
-              <span className="font-bold m-0">
-                {" "}
+              <span className="font-bold m-0 xsm:text-[14px]">
                 Appointment <span className="font-light">Application Form</span>
               </span>
             </div>
-            <h3 className="relative top-4">
-              Requesting{" "}
+            <h3 className="relative top-4 xsm:text-[12px]">
+              Requesting
               <span className="font-bold text-[#320000]">
                 {instructor && instructor.firstName + " " + instructor.lastName}
               </span>
@@ -243,8 +241,8 @@ const RequestAppointmentForm = ({ instructor, show, toggleShow }) => {
           </Modal.Title>
         </Modal.Header>
         <Modal.Body className="bg-[#ECECEC]" ref={calendarRef}>
-          <div className="application-form h-[100%] w-full flex flex-row justify-around gap-3">
-            <div className="data-time-container flex flex-col justify-around w-[45%] gap-5">
+          <div className="application-form h-[100%] w-full flex xsm:flex-col-reverse justify-around gap-3">
+            <div className="data-time-container flex flex-col justify-around w-[45%] md:w-full gap-5">
               <Calendar
                 setAppointmentDate={setAppointmentDate}
                 instructorSchedule={instructorSchedule}
@@ -265,7 +263,7 @@ const RequestAppointmentForm = ({ instructor, show, toggleShow }) => {
                 ></textarea>
               </div>
             </div>
-            <div className="form-group-container flex flex-col w-[50%] justify-around">
+            <div className="form-group-container flex flex-col w-[50%] md:w-full justify-around">
               <Timeslot
                 calendarRef={calendarRef}
                 setAppointmentTime={setAppointmentTime}

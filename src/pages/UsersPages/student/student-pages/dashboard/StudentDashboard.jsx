@@ -98,13 +98,13 @@ const StudentDashboard = () => {
   }, [call, auth.currentUser, navigate]);
 
   return (
-    <div className="h-[100%] flex flex-col gap-10  w-full">
+    <div className="h-[100%] flex flex-col gap-2 w-full">
       <header className="flex w-full justify-between items-center lg:!flex-col">
-        <h1 className="text-[#360000] flex flex-col xl:gap-4  lg:flex-row">
-          <span className="font-bold">{myInfo && myInfo.department} </span>{" "}
-          <span className="font-light">Department Instructors</span>{" "}
+        <h1 className="text-[#360000] flex flex-col xl:gap-4 lg:flex-row ">
+          <span className="font-bold text-3xl xsm:text-[16px] xxsm:text-[12px] ">{myInfo && myInfo.department} </span>{" "}
+          <span className="font-light text-2xl xsm:text-[12px] xxsm:text-[8px]">Department Instructors</span>{" "}
         </h1>
-        <div className="options flex flex-row w-1/2 lg:w-full lg:justify-start gap-4 justify-end bg-[#320000] rounded-3xl  [&_button]:rounded-3xl p-2">
+        <div className="options flex flex-row w-1/2 lg:w-full lg:justify-start gap-4 justify-end bg-[#320000] rounded-3xl xsm:[&_button]:text-[12px] xxsm:[&_button]:text-[10px] xxxsm:[&_button]:text-[8px] xsm:[&_button]:flex-1 xsm:[&_button]:py-2 xxsm:[&_button]:py-[2px] [&_button]:rounded-3xl p-2">
           <button
             className={` ${
               currentOption === "Instructors"

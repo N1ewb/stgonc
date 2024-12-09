@@ -8,13 +8,18 @@ import Chatbox from "../components/Chatsbox/Chatbox";
 import Loading from "../components/Loading/Loading";
 import { useExport } from "../context/exportContext/ExportContext";
 import AppointmentData from "../ComponentToPDF/AppointmentData";
-import { AdminSidebarLinks, FacultySidebarLinks, GuidanceSidebarLinks, StudentSidebarLinks } from "../lib/global";
+import {
+  AdminSidebarLinks,
+  FacultySidebarLinks,
+  GuidanceSidebarLinks,
+  StudentSidebarLinks,
+} from "../lib/global";
 
 const Layout = () => {
   const auth = useAuth();
   const db = useDB();
   const chat = useChat();
-  const Export = useExport()
+  const Export = useExport();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
@@ -55,29 +60,24 @@ const Layout = () => {
     return <Loading />;
   }
 
-  const handleGetSidebarLinks = () => {
-    if (auth.currentUser) {
-      const role = auth.currentUser.role; 
-      switch(role) {
-        case "Admin":
-          return AdminSidebarLinks; 
-        case "Faculty":
-          return FacultySidebarLinks; 
-        case "Guidance":
-          return GuidanceSidebarLinks; 
-        case "Student":
-          return StudentSidebarLinks; 
-        default:
-          return []; 
-      }
-    } else {
-      return []; 
-    }
-  };
+  let sidebarLinks = [];
+
+  if (auth.currentUser) {
+    const role = auth.currentUser.role;
+
+    const roleLinks = {
+      Admin: AdminSidebarLinks,
+      Faculty: FacultySidebarLinks,
+      Guidance: GuidanceSidebarLinks,
+      Student: StudentSidebarLinks,
+    };
+
+    sidebarLinks = roleLinks[role] || [];
+  }
 
   return (
     <div className="flex flex-col w-full h-auto items-center">
-      <Navbar sidebarLinks={handleGetSidebarLinks()} />
+      <Navbar sidebarLinks={sidebarLinks} />
       <main className="w-full h-auto relative">
         <div className="outlet w-full h-auto">
           <Outlet />
@@ -90,7 +90,9 @@ const Layout = () => {
             setCurrentChatReceiver={chat.setCurrentChatReceiver}
           />
         )}
-        {auth.currentUser && Export.currentAppointmentData && <AppointmentData data={Export.currentAppointmentData} />}
+        {auth.currentUser && Export.currentAppointmentData && (
+          <AppointmentData data={Export.currentAppointmentData} />
+        )}
       </main>
     </div>
   );

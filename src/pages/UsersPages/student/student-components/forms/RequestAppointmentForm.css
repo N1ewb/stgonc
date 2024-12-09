@@ -20,3 +20,11 @@
     border-top: 0 !important;
    background-color:#ECECEC;
 }
+
+@media (max-width: 560px) {
+    .modal-dialog {
+        max-width: 100% !important;
+        width: 100% !important;
+        padding: 10px;
+    }
+}

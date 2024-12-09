@@ -6,7 +6,7 @@ export default function MobileNavigationBar({
   setActiveLink,
 }) {
   return (
-    <div className="bg-[#360000] h-[200px] w-full flex flex-wrap gap-5 justify-center p-3 relative">
+    <div className="bg-[#360000] h-auto w-full flex flex-wrap gap-5 justify-center p-3 relative">
       {Links &&
         Links.map((link) => {
           return (

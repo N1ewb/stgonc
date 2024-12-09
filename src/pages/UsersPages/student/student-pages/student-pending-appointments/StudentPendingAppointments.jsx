@@ -30,9 +30,9 @@ const StudentPendingAppointments = () => {
     fetchData();
   }, [db]);
   return (
-    <div className="flex flex-col w-full gap-10">
+    <div className="flex flex-col w-full gap-2">
       <div className="student-pending-appointment-header w-full">
-        <h1 className="font-bold">
+        <h1 className="font-bold text-3xl xsm:text-[16px] xxsm:text-[12px]">
           <span className="font-light">Pending</span> Appointment
         </h1>
       </div>
