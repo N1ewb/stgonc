@@ -17,6 +17,7 @@ import AdjustmentsTab from "./adjustments-tab/AdjustmentsTab";
 import TabularReport from "./Papers/TabularGeneralAppointmentReport";
 import GuidanceReport from "./Papers/GuidanceReport";
 import GuidanceTabularReport from "./Papers/GuidanceTabularReport";
+import { useExport } from "../context/exportContext/ExportContext";
 
 const departmentLogos = {
   "College of Computer Studies": ccsLogo,
@@ -30,8 +31,9 @@ const departmentLogos = {
 const AppointmentData = ({ data }) => {
   const { currentUser } = useAuth();
   const db = useDB();
-
+  const {setCurrentAppointmentData} = useExport()
   const [appointee, setAppointee] = useState(null);
+  const [report, setReport] = useState(null);
   const [loading, setLoading] = useState(true);
   const [arrangementType, setArrangementType] = useState("default");
   const [isBlank, setIsBlank] = useState(false);
@@ -48,7 +50,10 @@ const AppointmentData = ({ data }) => {
         try {
           setLoading(true);
           const user = await db.getUser(data.appointee);
+          const report = await db.getAppointmentReport(data.id);
+
           setAppointee(user);
+          setReport(report);
         } catch (error) {
           console.log("An error occurred");
         } finally {
@@ -95,9 +100,10 @@ const AppointmentData = ({ data }) => {
   }
 
   return (
-    <div
-      // onClick={() => setCurrentAppointmentData(null)}
-      className="absolute z-10 top-[15%] right-[1%] w-[81%] h-[80%]  rounded-[65px]  max-h-full bg-[#273240] flex"
+    <div onClick={() => setCurrentAppointmentData(null)} className="absolute z-50 top-0 left-0 flex justify-center items-center w-full h-full bg-[#00000065]">
+      <div
+      onClick={(e) => e.stopPropagation()}
+      className=" w-[81%] h-[80%]  rounded-[65px]  max-h-full bg-[#273240] flex overflow-hidden"
     >
       <div className="file-visualizer w-[40%] h-full p-10 flex flex-col ">
         <h1 className="text-white text-3xl">
@@ -112,37 +118,43 @@ const AppointmentData = ({ data }) => {
           </p>
         </div>
 
-        <div className="paper w-full max-h-full overflow-auto bg-white">{arrangementType === "default" ? (
-          currentUser?.role === "Guidance" ? (
-            <GuidanceReport
+        <div className="paper w-full max-h-full overflow-auto bg-white">
+          {arrangementType === "default" ? (
+            currentUser?.role === "Guidance" ? (
+              <GuidanceReport
+                contentRef={contentRef}
+                data={data}
+                report={report}
+                appointee={data.appointee}
+                isBlank={isBlank}
+              />
+            ) : (
+              <GeneralAppointmenteport
+                contentRef={contentRef}
+                data={data}
+                report={report}
+                appointee={appointee}
+                isBlank={isBlank}
+              />
+            )
+          ) : currentUser?.role === "Guidance" ? (
+            <GuidanceTabularReport
               contentRef={contentRef}
               data={data}
+              report={report}
               appointee={data.appointee}
               isBlank={isBlank}
             />
           ) : (
-            <GeneralAppointmenteport
+            <TabularReport
               contentRef={contentRef}
               data={data}
+              report={report}
               appointee={appointee}
               isBlank={isBlank}
             />
-          )
-        ) : currentUser?.role === "Guidance" ? (
-          <GuidanceTabularReport
-            contentRef={contentRef}
-            data={data}
-            appointee={data.appointee}
-            isBlank={isBlank}
-          />
-        ) : (
-          <TabularReport
-            contentRef={contentRef}
-            data={data}
-            appointee={appointee}
-            isBlank={isBlank}
-          />
-        )}</div>
+          )}
+        </div>
         {/* <SamplePaper /> */}
       </div>
       <div className="adjustments-tab w-[60%] flex pb-10">
@@ -156,6 +168,7 @@ const AppointmentData = ({ data }) => {
           setFileType={setFileType}
         />
       </div>
+    </div>
     </div>
   );
 };

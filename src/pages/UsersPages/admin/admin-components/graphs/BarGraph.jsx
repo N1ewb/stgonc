@@ -4,8 +4,10 @@ import "chart.js/auto";
 
 import ExportIcon from "../../../../../static/images/import-export.png";
 import { Tooltip } from "react-tooltip";
+import { useAuth } from "../../../../../context/auth/AuthContext";
 
 const BarGraph = ({ apptList, exportButton }) => {
+  const auth = useAuth();
   const [sortedApptList, setSortedApptList] = useState([]);
   const [category, setCategory] = useState("week");
 
@@ -110,14 +112,16 @@ const BarGraph = ({ apptList, exportButton }) => {
         <h3 className=" font-bold">
           Appointment <span className="font-light">Statistics</span>
         </h3>
-        <button
-          className="export-button bg-transparent m-0 p-0"
-          id="export-button"
-          data-tooltip-id="export-button"
-          onClick={exportButton}
-        >
-          <img src={ExportIcon} alt="Export" width={35} />
-        </button>
+        {auth.currentUser && auth.currentUser.role === "Admin" && (
+          <button
+            className="export-button bg-transparent m-0 p-0"
+            id="export-button"
+            data-tooltip-id="export-button"
+            onClick={exportButton}
+          >
+            <img src={ExportIcon} alt="Export" width={35} />
+          </button>
+        )}
       </header>
       <div className="flex flex-row justify-between">
         <p>This {category}</p>

@@ -8,14 +8,16 @@ import { useAppointment } from "../../context/appointmentContext/AppointmentCont
 import { useDB } from "../../context/db/DBContext";
 import Loading from "../Loading/Loading";
 import Usercard from "../userscard/Usercard";
+import { useReschedDialog } from "../../context/appointmentContext/ReschedContext";
 
 const AppointmentReqList = ({
   handleAcceptAppointment,
-  handleDenyAppointment,
+// handleDenyAppointment,
   appointment,
 }) => {
   const db = useDB();
   const { setCurrentAppointment } = useAppointment();
+  const { handleToggleReschedDialog } = useReschedDialog();
   const [appointee, setAppointee] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -52,12 +54,7 @@ const AppointmentReqList = ({
     {
       src: DenyDark,
       alt: "Deny",
-      function: () =>
-        handleDenyAppointment({
-          id: appointment.id,
-          receiver: appointee.userID,
-          reason: "REASON: BALA KA JAN",
-        }),
+      function: () => handleToggleReschedDialog(appointment),
       needsParams: false,
     },
     {
@@ -65,9 +62,13 @@ const AppointmentReqList = ({
       alt: "More",
       function: () => setCurrentAppointment(appointment),
       needsParams: true,
-    },
+    },  
   ];
-
+  // handleDenyAppointment({
+  //   id: appointment.id,
+  //   receiver: appointee.userID,
+  //   reason: "REASON: BALA KA JAN",
+  // });
   if (loading) {
     return <Loading />;
   }

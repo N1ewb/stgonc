@@ -28,11 +28,7 @@ const GuidanceEndcallPage = () => {
 
   const yearLevelRef = useRef();
   const ageRef = useRef();
-  const sessionNumberRef = useRef();
   const locationRef = useRef();
-
-  const consultationModeRef = useRef();
-
   const concernTypeRef = useRef();
   const observationRef = useRef();
   const nonVerbalCuesRef = useRef();
@@ -40,10 +36,8 @@ const GuidanceEndcallPage = () => {
   const techniquesRef = useRef();
   const actionPlanRef = useRef();
   const evaluationRef = useRef();
-
   const dateRef = useRef();
 
-  const [isResolved, setIsResolved] = useState("");
   const [isFollowupFormOpen, setIsFollowupFormOpen] = useState(false);
 
   useEffect(() => {
@@ -58,12 +52,11 @@ const GuidanceEndcallPage = () => {
 
   const submitForm = async (e) => {
     e.preventDefault();
-    const consultationMode = consultationModeRef.current?.value || "";
+
     const concernType = concernTypeRef.current?.value || "";
     const apptDate = dateRef.current?.value || "";
     const yearLevel = yearLevelRef.current?.value || "";
     const age = ageRef.current?.value || "";
-    const sessionNumber = sessionNumberRef.current?.value || "";
     const location = locationRef.current?.value || "";
     const observation = observationRef.current?.value || "";
     const nonVerbalCues = nonVerbalCuesRef.current?.value || "";
@@ -73,11 +66,9 @@ const GuidanceEndcallPage = () => {
     const evaluation = evaluationRef.current?.value || "";
 
     if (
-      !consultationMode ||
       !concernType ||
       !yearLevel ||
       !age ||
-      !sessionNumber ||
       !location ||
       !nonVerbalCues ||
       !techniques ||
@@ -94,16 +85,15 @@ const GuidanceEndcallPage = () => {
 
     try {
       setSubmitting(true);
-        console.log("DATE: ", apptDate)
+
       if (auth.currentUser) {
-        await db.makeGuidanceReport(
+        const res = await db.makeGuidanceReport({
           appointment,
           currentAppointment,
           concernType,
           apptDate,
           yearLevel,
           age,
-          sessionNumber,
           location,
           observation,
           nonVerbalCues,
@@ -112,16 +102,20 @@ const GuidanceEndcallPage = () => {
           actionPlan,
           evaluation,
           receiver,
-          isResolved,
-          consultationMode,
-        );
+        });
 
-        navigate(`/private/${user?.role}/dashboard`);
+        if (res.status === "success") {
+          toast.success(`Success: ${res.message}`);
+        } else {
+          toast.error(`Error: ${res.error || "Submission failed"}`);
+        }
       }
+
     } catch (error) {
-      console.error("Error creating report:", error);
-      toastMessage("An error occurred while creating the report.");
+      
+      toast.error("Error during submission. Please try again.");
     } finally {
+      navigate(`/private/${user?.role}/dashboard`);
       setSubmitting(false);
     }
   };
@@ -136,6 +130,7 @@ const GuidanceEndcallPage = () => {
       );
     }
   };
+
   return (
     <div className="h-screen w-full flex flex-col justify-center items-center bg-white ">
       <div className="f-end-page-header w-full"></div>
@@ -147,13 +142,9 @@ const GuidanceEndcallPage = () => {
         >
           <GuidanceConsultationReport
             setIsFollowupFormOpen={setIsFollowupFormOpen}
-            setIsResolved={setIsResolved}
             submitForm={handleSubmitReport}
-            isResolved={isResolved}
-            modeRef={consultationModeRef}
             yearLevelRef={yearLevelRef}
             ageRef={ageRef}
-            sessionNumberRef={sessionNumberRef}
             locationRef={locationRef}
             concernTypeRef={concernTypeRef}
             observationRef={observationRef}

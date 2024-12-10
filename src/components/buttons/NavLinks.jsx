@@ -10,7 +10,7 @@ const NavLink = ({ to, location, label }) => {
   return (
     <Link
       to={normalizedTo === currentPath ? "" : normalizedTo}
-      className={`text-base w-full border-2 border-white rounded-2xl font-medium px-2 text-[12px] py-[6px] text-center transition-all duration-200 decoration-transparent
+      className={`text-base w-full border-2 border-white flex-1 rounded-2xl font-medium px-2 text-[10px] py-[4px] text-center transition-all duration-200 decoration-transparent
         ${
           currentPath === normalizedTo
             ? "text-[#320000] bg-white"

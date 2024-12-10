@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from "react";
 import TotalAppointments from "../../admin/admin-components/graphs/TotalAppointments";
 import { useDB } from "../../../../context/db/DBContext";
-import { Link } from "react-router-dom";
-
 
 const GuidanceDashboard = () => {
   const db = useDB()
@@ -19,7 +17,6 @@ const GuidanceDashboard = () => {
   },[db])
   return (
     <div className="h-[100%] w-full">
-      <Link to='/private/GuidanceEndcallPage' >GO to end call page</Link>
       <header>
         <h1 className="font-bold">Dashboard</h1>
       </header>

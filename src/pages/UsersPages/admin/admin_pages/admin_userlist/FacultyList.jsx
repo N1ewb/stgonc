@@ -32,7 +32,7 @@ const FacultyList = () => {
   }, [setCategory]);
 
   return (
-    <div className="user-list flex flex-row flex-wrap items-start max-h-[100%]  overflow-auto py-3">
+    <div className="user-list flex flex-row flex-wrap items-start max-h-[100%] gap-2 overflow-auto py-2">
       {currentCharacters && currentCharacters.length !== 0 ? (
         currentCharacters.map((users, index) => (
           <div className="userlist-container w-[48%]" key={index}>

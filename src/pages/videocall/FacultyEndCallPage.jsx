@@ -16,30 +16,29 @@ const FacultyEndCallPage = () => {
   const receiver = queryParams.get("receiver");
   const appointment = queryParams.get("appointment");
   const currentAppointment = queryParams.get("currentAppointment");
-  const toastMessage = (message) => toast(message);
+
   const [submitting, setSubmitting] = useState(false);
+  const [isFollowupFormOpen, setIsFollowupFormOpen] = useState(false);
 
   const keyissuesRef = useRef();
   const rootCauseRef = useRef();
   const recommendationRef = useRef();
   const expectedOutcomeRef = useRef();
-
-  const sessionNumberRef = useRef();
   const yearLevelRef = useRef();
   const ageRef = useRef();
-
   const dateRef = useRef();
   const durationRef = useRef();
-  const modeRef = useRef();
-
-  const [isResolved, setIsResolved] = useState("");
-  const [isFollowupFormOpen, setIsFollowupFormOpen] = useState(false);
 
   useEffect(() => {
     if (auth.currentUser) {
       const handleGetUser = async () => {
-        const user = await db.getUser(auth.currentUser.uid);
-        setUser(user);
+        try {
+          const user = await db.getUser(auth.currentUser.uid);
+          setUser(user);
+        } catch (error) {
+          toast.error("Error fetching user data.");
+          console.error(error);
+        }
       };
       handleGetUser();
     }
@@ -50,59 +49,56 @@ const FacultyEndCallPage = () => {
 
     const date = dateRef.current.value;
     const duration = durationRef.current.value;
-    const mode = modeRef.current.value;
-
     const yearlevel = yearLevelRef.current.value;
     const age = ageRef.current.value;
-    const sessionNumber = sessionNumberRef.current.value;
-
     const keyissues = keyissuesRef.current.value;
     const rootcause = rootCauseRef.current.value;
     const recommendation = recommendationRef.current.value;
     const expectedOutcome = expectedOutcomeRef.current.value;
 
     if (
-      (currentAppointment || appointment,
-      date,
-      duration,
-      mode,
-      isResolved,
-      keyissues,
-      rootcause,
-      recommendation,
-      expectedOutcome,
-      yearlevel,
-      age,
-      sessionNumber)
+      appointment &&
+      date &&
+      duration &&
+      keyissues &&
+      rootcause &&
+      recommendation &&
+      expectedOutcome &&
+      yearlevel &&
+      age
     ) {
       try {
         setSubmitting(true);
-        if (auth.currentUser) {
-          await db.makeReport(
-            appointment,
-            currentAppointment,
-            date,
-            duration,
-            mode,
-            isResolved,
-            receiver,
-            keyissues,
-            rootcause,
-            recommendation,
-            expectedOutcome,
-            yearlevel,
-            age,
-            sessionNumber
-          );
+
+        const payload = {
+          appointment,
+          currentAppointment: currentAppointment || null,
+          appointmentDate: date,
+          appointmentDuration: duration,
+          receiver,
+          keyissues,
+          rootcause,
+          recommendation,
+          expectedOutcome,
+          yearlevel,
+          age,
+        };
+
+        const res = await db.makeReport(payload);
+
+        if (res.status === "success") {
+          toast.success(`Success: ${res.message}`);
+        } else {
+          toast.error(`Error: ${res.error || "Submission failed"}`);
         }
       } catch (error) {
-        console.error("Error in:", error);
+        toast.error("Error during submission. Please try again.");
       } finally {
-        setSubmitting(false);
         navigate(`/private/${user?.role}/dashboard`);
+        setSubmitting(false);
       }
     } else {
-      toastMessage("Fill in fields");
+      toast.error("Please fill in all required fields.");
     }
   };
 
@@ -110,12 +106,13 @@ const FacultyEndCallPage = () => {
     try {
       await submitForm(e);
       await db.finishAppointment(appointment, receiver);
+      toast.success("Appointment marked as finished.");
     } catch (error) {
-      toastMessage(
-        `Error in submitting report or Marking appointment finished`
-      );
+      toast.error("Error marking appointment as finished.");
+      console.error(error);
     }
   };
+
   return (
     <div className="h-screen w-full flex flex-col justify-center items-center bg-white overflow-x-hidden">
       <div className="f-end-page-header w-full"></div>
@@ -127,22 +124,18 @@ const FacultyEndCallPage = () => {
         >
           <ConsultationReport
             submitForm={handleSubmitReport}
-            setIsResolved={setIsResolved}
-            isResolved={isResolved}
             setSubmitting={setSubmitting}
             submitting={submitting}
             receiver={receiver}
             dateRef={dateRef}
             durationRef={durationRef}
-            modeRef={modeRef}
-            setIsFollowupFormOpen={setIsFollowupFormOpen}
             keyissuesRef={keyissuesRef}
             rootCauseRef={rootCauseRef}
             recommendationRef={recommendationRef}
             expectedOutcomeRef={expectedOutcomeRef}
             yearLevelRef={yearLevelRef}
             ageRef={ageRef}
-            sessionNumberRef={sessionNumberRef}
+            setIsFollowupFormOpen={setIsFollowupFormOpen}
           />
         </div>
         <div

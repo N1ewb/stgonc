@@ -4,10 +4,12 @@ import { useAppointment } from "../../context/appointmentContext/AppointmentCont
 import { useDB } from "../../context/db/DBContext";
 import RedButton from "../buttons/RedButton";
 import GreenButton from "../buttons/GreenButton";
+import { useReschedDialog } from "../../context/appointmentContext/ReschedContext";
 
 const AppointmentInfo = ({ positiveClick, negativeClick }) => {
   const db = useDB();
   const { currentAppointment, setCurrentAppointment } = useAppointment();
+  const { handleToggleReschedDialog } = useReschedDialog();
   const [appointee, setAppointee] = useState(null);
   const [status, setStatus] = useState(null);
 
@@ -35,6 +37,12 @@ const AppointmentInfo = ({ positiveClick, negativeClick }) => {
       day: "numeric",
     });
   };
+
+  // negativeClick({
+  //   id: currentAppointment.id,
+  //   receiver: appointee?.userID || appointee,
+  //   reason: "Bala ka jan",
+  // })
 
   if (!currentAppointment) {
     return null;
@@ -68,6 +76,10 @@ const AppointmentInfo = ({ positiveClick, negativeClick }) => {
         <p>
           <span className="text-[#320000] font-bold ">Student Name:</span>{" "}
           {`${appointee?.firstName} ${appointee?.lastName} `}
+        </p>
+        <p>
+          <span className="text-[#320000] font-bold ">Student Phone Number:</span>{" "}
+           {appointee?.phoneNumber} 
         </p>
         <p>
           <span className="text-[#320000] font-bold">Student Concern:</span>
@@ -107,15 +119,9 @@ const AppointmentInfo = ({ positiveClick, negativeClick }) => {
               </button>
               <button
                 className="m-0 py-2 px-5 bg-[#720000] rounded-md"
-                onClick={() =>
-                  negativeClick({
-                    id: currentAppointment.id,
-                    receiver: appointee?.userID || appointee,
-                    reason: "Bala ka jan",
-                  })
-                }
+                onClick={() => handleToggleReschedDialog(currentAppointment)}
               >
-                Deny
+                Re-Sched
               </button>
             </div>
           ) : (
@@ -123,11 +129,15 @@ const AppointmentInfo = ({ positiveClick, negativeClick }) => {
               <div className="appointment-info-footer w-full flex flex-row items-end justify-end gap-3 ">
                 <GreenButton
                   label="Finish"
-                  click={ () => positiveClick({
-                    curID:  currentAppointment.id,
-                    id: currentAppointment.precedingAppt || currentAppointment.id,
-                    receiver: appointee?.userID || appointee,
-                  })}
+                  click={() =>
+                    positiveClick({
+                      curID: currentAppointment.id,
+                      id:
+                        currentAppointment.precedingAppt ||
+                        currentAppointment.id,
+                      receiver: appointee?.userID || appointee,
+                    })
+                  }
                 />
                 <RedButton
                   click={() => negativeClick({ id: currentAppointment.id })}

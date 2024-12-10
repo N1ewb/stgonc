@@ -4,16 +4,19 @@ import { useDB } from "../../../../context/db/DBContext";
 import toast from "react-hot-toast";
 
 const WalkinForm = ({ handleOpenWalkinForm }) => {
-  const db = useDB()
-  const toastMessage = (message) => toast(message)
-  const [submitting, setSubmitting] = useState(false)
+  const db = useDB();
+  const toastMessage = (message) => toast(message);
+  const [submitting, setSubmitting] = useState(false);
+
+  const guardianNameRef = useRef();
+  const guardianPhoneNumberRef = useRef();
 
   const firstnameRef = useRef();
   const lastnameRef = useRef();
   const emailRef = useRef();
   const yearLevelRef = useRef();
   const ageRef = useRef();
-  
+
   const sessionNumberRef = useRef();
   const locationRef = useRef();
 
@@ -31,12 +34,16 @@ const WalkinForm = ({ handleOpenWalkinForm }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    try{
-      setSubmitting(true)
+    try {
+      setSubmitting(true);
+
+      const guardianName = guardianNameRef.current.value;
+      const guardianPhoneNumber = guardianPhoneNumberRef.current.value;
+
       const firstname = firstnameRef.current.value;
       const lastname = lastnameRef.current.value;
       const email = emailRef.current.value;
-      
+
       const department = departmentRef.current.value;
       const concernType = concernTypeRef.current.value;
       const date = dateRef.current.value;
@@ -52,7 +59,10 @@ const WalkinForm = ({ handleOpenWalkinForm }) => {
       const techniques = techniquesRef.current.value;
       const actionPlan = actionPlanRef.current.value;
       const evaluation = evaluationRef.current.value;
-      if(firstname &&
+      if (
+        guardianName &&
+        guardianPhoneNumber &&
+        firstname &&
         lastname &&
         email &&
         department &&
@@ -67,7 +77,8 @@ const WalkinForm = ({ handleOpenWalkinForm }) => {
         summary &&
         techniques &&
         actionPlan &&
-        evaluation){
+        evaluation
+      ) {
         await db.makeWalkin(
           firstname,
           lastname,
@@ -84,209 +95,224 @@ const WalkinForm = ({ handleOpenWalkinForm }) => {
           summary,
           techniques,
           actionPlan,
-          evaluation)
-        toastMessage("Successfuly submitted Walkin data")
+          evaluation
+        );
+        toastMessage("Successfuly submitted Walkin data");
       }
-    }catch(error){
-      toastMessage(`Error in submitting walkin data: ${error.message}`)
-    }finally{
-      setSubmitting(false)
+    } catch (error) {
+      toastMessage(`Error in submitting walkin data: ${error.message}`);
+    } finally {
+      setSubmitting(false);
     }
   };
   return (
     <form
-    onSubmit={handleSubmit}
-    className="flex flex-col w-full max-h-[98%] overflow-auto p-4 shadow-md rounded-3xl"
-  >
-    <div className="form-header flex flex-row justify-between w-full">
-      <h5>
-        <span className="font-light">Walkin</span> Form
-      </h5>
-      <button
-        className="bg-[#720000] hover:bg-[#320000] rounded-md"
-        onClick={handleOpenWalkinForm}
-      >
-        X
-      </button>
-    </div>
-    <div className="input-group flex flex-col [&_input]:border-solid [&_input]:border-[1px] [&_input]:border-[#273240] [&_input]:rounded-[4px]">
-      <div className="input-group flex gap-2 justify-between w-full">
-        <div className="group flex flex-col w-[31%]">
-          <label htmlFor="firstname">First Name</label>
-          <input
-            type="text"
-            id="firstname"
-            name="firstname"
-            ref={firstnameRef}
-          />
-        </div>
-        <div className="group flex flex-col w-[31%]">
-          <label htmlFor="lastname">Last Name</label>
-          <input
-            type="text"
-            id="lastname"
-            name="lastname"
-            ref={lastnameRef}
-          />
-        </div>
-        <div className="group flex flex-col w-[31%]">
-          <label htmlFor="email">Email</label>
-          <input type="email" id="email" name="email" ref={emailRef} />
-        </div>
-      </div>
-
-      <div className="input-group flex justify-between w-full">
-        <div className="group flex flex-col w-[48%]">
-          <label htmlFor="year-level">Year Level</label>
-          <input
-            type="text"
-            name="year-level"
-            id="year-level"
-            ref={yearLevelRef}
-          />
-        </div>
-        <div className="group flex flex-col w-[48%]">
-          <label htmlFor="age">Age</label>
-          <input type="text" name="age" id="age" ref={ageRef} />
-        </div>
-      </div>
-
-      <div className="input-group flex w-full gap-3 justify-between">
-        <div className="group flex flex-col w-[48%]">
-          <label htmlFor="session-number">Session Number</label>
-          <input
-            type="text"
-            name="session-number"
-            id="session-number"
-            ref={sessionNumberRef}
-          />
-        </div>
-
-        <div className="group flex flex-col w-[48%]">
-          <label htmlFor="location">Location</label>
-          <input
-            type="text"
-            name="location"
-            id="location"
-            ref={locationRef}
-          />
-        </div>
-      </div>
-
-      <div className="group flex flex-col">
-        <label htmlFor="concernType">Reason for Counseling</label>
-        <select
-          className="border-solid border-[1px] border-[#273240] rounded-[4px]"
-          name="concernType"
-          id="concernType"
-          ref={concernTypeRef}
-        >
-          <option value=""></option>
-          <option value="Academic">Academic</option>
-          <option value="Career">Career</option>
-          <option value="Personal">Personal</option>
-          <option value="Behavioral">Behavioral</option>
-        </select>
-      </div>
-
-      {/* sheesh */}
-      <div className="group flex flex-col">
-        <label htmlFor="observation">Observation</label>
-        <textarea
-          type="text"
-          name="observation"
-          id="observation"
-          ref={observationRef}
-          className="border-solid border-[1px] border-[#273240] rounded-[4px] p-1"
-        />
-      </div>
-      <div className="group flex flex-col">
-        <label htmlFor="cues">Non Verbal Cues</label>
-        <textarea
-          type="text"
-          name="cues"
-          id="cues"
-          ref={nonVerbalCuesRef}
-          className="border-solid border-[1px] border-[#273240] rounded-[4px] p-1"
-        />
-      </div>
-      <div className="group flex flex-col">
-        <label htmlFor="summary">Discussion Summary</label>
-        <textarea
-          type="text"
-          name="summary"
-          id="summary"
-          ref={summaryRef}
-          className="border-solid border-[1px] border-[#273240] rounded-[4px] p-1"
-        />
-      </div>
-      <div className="group flex flex-col">
-        <label htmlFor="techniques">Techniques/ Approaches Used</label>
-        <textarea
-          type="text"
-          name="techniques"
-          id="techniques"
-          ref={techniquesRef}
-          className="border-solid border-[1px] border-[#273240] rounded-[4px] p-1"
-        />
-      </div>
-      <div className="group flex flex-col">
-        <label htmlFor="action-plan">Action Plan/ Next Steps</label>
-        <textarea
-          type="text"
-          name="action-plan"
-          id="action-plan"
-          ref={actionPlanRef}
-          className="border-solid border-[1px] border-[#273240] rounded-[4px] p-1"
-        />
-      </div>
-      <div className="group flex flex-col">
-        <label htmlFor="evaluation">Counselor's Evaluation</label>
-        <textarea
-          type="text"
-          name="evaluation"
-          id="evaluation"
-          ref={evaluationRef}
-          className="border-solid border-[1px] border-[#273240] rounded-[4px] p-1"
-        />
-      </div>
-
-      {/* sheesh */}
-
-      <div className="group flex flex-col">
-        <label htmlFor="date">Date</label>
-        <input type="date" id="date" name="date" ref={dateRef} />
-      </div>
-      <div className="group flex flex-col">
-        <label htmlFor="department">Department</label>
-        <select
-          id="department"
-          className="border-solid border-[1px] border-[#273240] rounded-[4px]"
-          ref={departmentRef}
-        >
-          <option name="placeholder" value=""></option>
-          {spcDepartments && spcDepartments.length !== 0 ? (
-            spcDepartments.map((department, index) => (
-              <option value={department} key={index}>
-                {department}
-              </option>
-            ))
-          ) : (
-            <option value="">No Department</option>
-          )}
-        </select>
-      </div>
-    </div>
-    <button
-      type="submit"
-      className={`bg-[#720000] hover:bg-[#320000] rounded-md ${
-        submitting ? "opacity-50 cursor-not-allowed" : ""
-      }`}
-      disabled={submitting}
+      onSubmit={handleSubmit}
+      className="flex flex-col w-full max-h-[98%] overflow-auto p-4 shadow-md rounded-3xl"
     >
-      {submitting ? "Submitting..." : "Submit"}
-    </button>
-  </form>
+      <div className="form-header flex flex-row justify-between w-full">
+        <h5>
+          <span className="font-light">Walkin</span> Form
+        </h5>
+        <button
+          className="bg-[#720000] hover:bg-[#320000] rounded-md"
+          onClick={handleOpenWalkinForm}
+        >
+          X
+        </button>
+      </div>
+      <div className="input-group flex flex-col [&_input]:border-solid [&_input]:border-[1px] [&_input]:border-[#273240] [&_input]:rounded-[4px]">
+        <div className="input-group flex gap-2">
+          <div className="group flex flex-col flex-1">
+            <label htmlFor="guardian-name">Guardian Name</label>
+            <input type="text" name="guardian-name" ref={guardianNameRef} />
+          </div>
+          <div className="group flex-1 flex flex-col">
+            <label htmlFor="guardian-number">Guardian Phone Number</label>
+            <input
+              type="text"
+              name="guardian-phone-number"
+              ref={guardianPhoneNumberRef}
+            />
+          </div>
+        </div>
+        <div className="input-group flex gap-2 justify-between w-full">
+          <div className="group flex flex-col flex-1">
+            <label htmlFor="firstname">First Name</label>
+            <input
+              type="text"
+              id="firstname"
+              name="firstname"
+              ref={firstnameRef}
+            />
+          </div>
+          <div className="group flex flex-col flex-1">
+            <label htmlFor="lastname">Last Name</label>
+            <input
+              type="text"
+              id="lastname"
+              name="lastname"
+              ref={lastnameRef}
+            />
+          </div>
+          <div className="group flex flex-col flex-1">
+            <label htmlFor="email">Email</label>
+            <input type="email" id="email" name="email" ref={emailRef} />
+          </div>
+        </div>
+
+        <div className="input-group flex justify-between w-full">
+          <div className="group flex flex-col flex-1">
+            <label htmlFor="year-level">Year Level</label>
+            <input
+              type="text"
+              name="year-level"
+              id="year-level"
+              ref={yearLevelRef}
+            />
+          </div>
+          <div className="group flex flex-col flex-1">
+            <label htmlFor="age">Age</label>
+            <input type="text" name="age" id="age" ref={ageRef} />
+          </div>
+        </div>
+
+        <div className="input-group flex w-full gap-3 justify-between">
+          <div className="group flex flex-col flex-1">
+            <label htmlFor="session-number">Session Number</label>
+            <input
+              type="text"
+              name="session-number"
+              id="session-number"
+              ref={sessionNumberRef}
+            />
+          </div>
+
+          <div className="group flex flex-col flex-1">
+            <label htmlFor="location">Location</label>
+            <input
+              type="text"
+              name="location"
+              id="location"
+              ref={locationRef}
+            />
+          </div>
+        </div>
+
+        <div className="group flex flex-col">
+          <label htmlFor="concernType">Reason for Counseling</label>
+          <select
+            className="border-solid border-[1px] border-[#273240] rounded-[4px]"
+            name="concernType"
+            id="concernType"
+            ref={concernTypeRef}
+          >
+            <option value=""></option>
+            <option value="Academic">Academic</option>
+            <option value="Career">Career</option>
+            <option value="Personal">Personal</option>
+            <option value="Behavioral">Behavioral</option>
+          </select>
+        </div>
+
+        {/* sheesh */}
+        <div className="group flex flex-col">
+          <label htmlFor="observation">Observation</label>
+          <textarea
+            type="text"
+            name="observation"
+            id="observation"
+            ref={observationRef}
+            className="border-solid border-[1px] border-[#273240] rounded-[4px] p-1"
+          />
+        </div>
+        <div className="group flex flex-col">
+          <label htmlFor="cues">Non Verbal Cues</label>
+          <textarea
+            type="text"
+            name="cues"
+            id="cues"
+            ref={nonVerbalCuesRef}
+            className="border-solid border-[1px] border-[#273240] rounded-[4px] p-1"
+          />
+        </div>
+        <div className="group flex flex-col">
+          <label htmlFor="summary">Discussion Summary</label>
+          <textarea
+            type="text"
+            name="summary"
+            id="summary"
+            ref={summaryRef}
+            className="border-solid border-[1px] border-[#273240] rounded-[4px] p-1"
+          />
+        </div>
+        <div className="group flex flex-col">
+          <label htmlFor="techniques">Techniques/ Approaches Used</label>
+          <textarea
+            type="text"
+            name="techniques"
+            id="techniques"
+            ref={techniquesRef}
+            className="border-solid border-[1px] border-[#273240] rounded-[4px] p-1"
+          />
+        </div>
+        <div className="group flex flex-col">
+          <label htmlFor="action-plan">Action Plan/ Next Steps</label>
+          <textarea
+            type="text"
+            name="action-plan"
+            id="action-plan"
+            ref={actionPlanRef}
+            className="border-solid border-[1px] border-[#273240] rounded-[4px] p-1"
+          />
+        </div>
+        <div className="group flex flex-col">
+          <label htmlFor="evaluation">Counselor's Evaluation</label>
+          <textarea
+            type="text"
+            name="evaluation"
+            id="evaluation"
+            ref={evaluationRef}
+            className="border-solid border-[1px] border-[#273240] rounded-[4px] p-1"
+          />
+        </div>
+
+        {/* sheesh */}
+
+        <div className="group flex flex-col">
+          <label htmlFor="date">Date</label>
+          <input type="date" id="date" name="date" ref={dateRef} />
+        </div>
+        <div className="group flex flex-col">
+          <label htmlFor="department">Department</label>
+          <select
+            id="department"
+            className="border-solid border-[1px] border-[#273240] rounded-[4px]"
+            ref={departmentRef}
+          >
+            <option name="placeholder" value=""></option>
+            {spcDepartments && spcDepartments.length !== 0 ? (
+              spcDepartments.map((department, index) => (
+                <option value={department} key={index}>
+                  {department}
+                </option>
+              ))
+            ) : (
+              <option value="">No Department</option>
+            )}
+          </select>
+        </div>
+      </div>
+      <button
+        type="submit"
+        className={`bg-[#720000] hover:bg-[#320000] rounded-md ${
+          submitting ? "opacity-50 cursor-not-allowed" : ""
+        }`}
+        disabled={submitting}
+      >
+        {submitting ? "Submitting..." : "Submit"}
+      </button>
+    </form>
   );
 };
 

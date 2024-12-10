@@ -3,7 +3,7 @@ import React from "react";
 const UserlistInfo = ({ setCurrentUserInfo, currentUserInfo }) => {
   return (
     <div className="w-full h-auto flex flex-col p-5 ">
-      <header className="flex flex-row w-full justify-between items-center pb-5 ">
+      <header className="flex flex-row w-full justify-between items-center pb-4 ">
         <h3 className="font-light text-[32px]">
           User <span className="font-semibold">Info</span>
         </h3>
@@ -14,8 +14,8 @@ const UserlistInfo = ({ setCurrentUserInfo, currentUserInfo }) => {
           X
         </button>
       </header>
-      <main className="flex flex-row w-full justify-between items-center pt-3 text-[#320000]">
-        <div className=" [&_span]:font-bold [&_span]:text-[14px] [&_p]:font-light flex flex-col gap-3">
+      <main className="flex flex-row w-full justify-between items-center pt-2 text-[#320000]">
+        <div className=" [&_span]:font-bold [&_span]:text-[14px] [&_p]:font-light flex flex-col gap-1">
           <p className="capitalize">
             <span>Name: </span> {currentUserInfo.firstName}{" "}
             {currentUserInfo.lastName}
@@ -23,6 +23,10 @@ const UserlistInfo = ({ setCurrentUserInfo, currentUserInfo }) => {
           <p>
             <span>Email: </span>
             {currentUserInfo.email}
+          </p>
+          <p>
+            <span>Phone Number: </span>
+            {currentUserInfo.phoneNumber}
           </p>
           <p>
             <span>School ID Number: </span>

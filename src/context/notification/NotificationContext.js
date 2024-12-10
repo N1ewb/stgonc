@@ -24,12 +24,11 @@ export function useMessage() {
   return useContext(MessagingContext);
 }
 
-
 export const MessagingProvider = ({ children }) => {
   const auth = useAuth();
   const notificationRef = collection(firestore, "Notifications");
   const toastMessage = (message) => toast(message);
-  
+
   // const handleSendEmail = async () => {
   //   try {
   //     const res = await api.post('/api/sendmail', {
@@ -45,13 +44,13 @@ export const MessagingProvider = ({ children }) => {
 
   const sendEmail = async (recipient_email, content, subject) => {
     try {
-      const res = await api.post('/api/sendEmail', {
+      const res = await api.post("/api/sendEmail", {
         sendTo: recipient_email,
         subject,
-        message: content
+        message: content,
       });
-      if(res){
-        return res
+      if (res) {
+        return res;
       }
     } catch (error) {
       toastMessage(error.message);
@@ -60,13 +59,13 @@ export const MessagingProvider = ({ children }) => {
 
   const sendEmailRegistrationRequest = async (recipient_email, senderName) => {
     try {
-      const res = await api.post('/api/sendEmail', {
+      const res = await api.post("/api/sendEmail", {
         sendTo: recipient_email,
         subject: `STGONC Registration Request`,
-        message: `A new registration request has been posted by ${senderName}`
+        message: `A new registration request has been posted by ${senderName}`,
       });
-      if(res){
-        return res
+      if (res) {
+        return res;
       }
     } catch (error) {
       toastMessage(error.message);
@@ -93,7 +92,7 @@ export const MessagingProvider = ({ children }) => {
       return true;
     } catch (error) {
       console.error("Error storing notification or sending email:", error);
-      toastMessage(error.message);
+      toast.error(error.message);
       return false;
     }
   };
@@ -115,13 +114,12 @@ export const MessagingProvider = ({ children }) => {
 
         await sendEmail(receiver, content, subject);
 
-        return {message: "Succesfully stored notification"};
+        return { message: "Succesfully stored notification" };
       } else {
-        return {message: "User is not authenticated"}
+        return { message: "User is not authenticated" };
       }
     } catch (error) {
-      return {message: "Error in storing notification"};
-
+      return { message: "Error in storing notification" };
     }
   };
 
@@ -182,7 +180,7 @@ export const MessagingProvider = ({ children }) => {
       const notificationDocsRef = doc(firestore, "Notifications", id);
       await updateDoc(notificationDocsRef, { read: true });
     } catch (error) {
-      toastMessage(`Error in marking notification,: ${error.message}`);
+      toast.error(`Error in marking notification,: ${error.message}`);
     }
   }
 
@@ -191,7 +189,7 @@ export const MessagingProvider = ({ children }) => {
       const notificationDocsRef = doc(firestore, "Notifications", id);
       await deleteDoc(notificationDocsRef);
     } catch (error) {
-      toastMessage(`Error in deleteing notification: ${error.message}`);
+      toast.error(`Error in deleteing notification: ${error.message}`);
     }
   }
 

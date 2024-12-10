@@ -14,12 +14,15 @@ import {
   GuidanceSidebarLinks,
   StudentSidebarLinks,
 } from "../lib/global";
+import { useReschedDialog } from "../context/appointmentContext/ReschedContext";
+import ReschedAPpointmentDialog from "../components/appointments/ReschedAPpointmentDialog";
 
 const Layout = () => {
   const auth = useAuth();
   const db = useDB();
   const chat = useChat();
   const Export = useExport();
+  const resched = useReschedDialog()
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
@@ -76,9 +79,9 @@ const Layout = () => {
   }
 
   return (
-    <div className="flex flex-col w-full h-auto items-center">
+    <div className="flex flex-col w-full h-auto items-center relative">
       <Navbar sidebarLinks={sidebarLinks} />
-      <main className="w-full h-auto relative">
+      <main className="w-full h-auto">
         <div className="outlet w-full h-auto">
           <Outlet />
         </div>
@@ -92,6 +95,9 @@ const Layout = () => {
         )}
         {auth.currentUser && Export.currentAppointmentData && (
           <AppointmentData data={Export.currentAppointmentData} />
+        )}
+        {auth.currentUser && resched.openReschedDialog && (
+          <ReschedAPpointmentDialog  />
         )}
       </main>
     </div>

@@ -96,7 +96,7 @@ const AdminUserList = () => {
           </div>
         </div>
         <div className="h-[80%] max-h-[90%] flex flex-row w-full justify-between items-start">
-          <div className="div flex flex-col max-h-full w-[48%]  p-0 m-0">
+          <div className="div flex flex-col max-h-full w-[48%] p-0 m-0">
             {currentUserPageType === "all" ? (
               <UserList />
             ) : currentUserPageType === "Faculty" ? (

@@ -13,7 +13,7 @@ const WalkinScheduleAppt = () => {
   const firstNameRef = useRef();
   const lastNameRef = useRef();
   const emailRef = useRef();
-  const appteeTypeRef = useRef()
+  const appteeTypeRef = useRef();
   const isFormOpen = true;
   const {
     selectedDate,
@@ -35,11 +35,24 @@ const WalkinScheduleAppt = () => {
     const firstName = firstNameRef.current.value;
     const lastName = lastNameRef.current.value;
     const email = emailRef.current.value;
-    const appteeType = appteeTypeRef.current.value
+    const appteeType = appteeTypeRef.current.value;
 
     setIsSubmitting(true);
-    console.log(`Email: ${email}, Firstname: ${firstName}, Lastname: ${lastName}, Appt Date: ${appointmentDate.dateWithoutTime}, Appt Time: ${JSON.stringify(appointmentTime)}, Appt Type: ${appteeType}`)
-    if (email && firstName && lastName && appointmentDate && appointmentTime && appteeType) {
+    console.log(
+      `Email: ${email}, Firstname: ${firstName}, Lastname: ${lastName}, Appt Date: ${
+        appointmentDate.dateWithoutTime
+      }, Appt Time: ${JSON.stringify(
+        appointmentTime
+      )}, Appt Type: ${appteeType}`
+    );
+    if (
+      email &&
+      firstName &&
+      lastName &&
+      appointmentDate &&
+      appointmentTime &&
+      appteeType
+    ) {
       try {
         await db.walkinScheduleAppointment(
           firstName,
@@ -76,41 +89,10 @@ const WalkinScheduleAppt = () => {
 
       <form
         onSubmit={handleSubmit}
-        className="w-full h-[100%] flex flex-col items-center justify-center p-10"
+        className="w-full h-full flex flex-col items-center justify-center p-10"
       >
-        <div className="flex flex-row w-full">
-          <div className="input-forms w-1/2 flex flex-col [&_input]:w-[80%]">
-            <div className="group flex flex-col items-center w-full ">
-              <label htmlFor="firstname">First Name</label>
-              <input
-                id="firstname"
-                type="text"
-                name="firstname"
-                ref={firstNameRef}
-              />
-            </div>
-            <div className="group flex flex-col items-center w-full">
-              <label htmlFor="lastname">Last Name</label>
-              <input
-                id="lastname"
-                type="text"
-                name="lastname"
-                ref={lastNameRef}
-              />
-            </div>
-            <div className="group flex flex-col items-center w-full">
-              <label htmlFor="email">Email</label>
-              <input id="email" type="email" name="email" ref={emailRef} />
-            </div>
-            <div className="group flex flex-col items-center w-full">
-              <label htmlFor="role">Appointee Type</label>
-              <select ref={appteeTypeRef}>
-                <option value='Student'>Student</option>
-                <option value='Guardian'>Guardian</option>
-              </select>
-            </div>
-          </div>
-          <div className="date-and-time flex flex-col w-1/2 justify-around gap-10">
+        <div className="flex flex-row w-full h-full gap-4">
+          <div className="date-and-time flex flex-col flex-1 justify-around gap-10 max-h-[80vh] overflow-auto">
             <div className="calendar-container w-[80%]">
               <Calendar
                 setAppointmentDate={setAppointmentDate}
@@ -120,7 +102,72 @@ const WalkinScheduleAppt = () => {
                 calendarRef={calendarRef}
               />
             </div>
-            <div className="timeslot-container w-[80%]">
+          </div>
+          <div className="input-forms h-full flex-1 flex flex-col space-y-4">
+            <div className="group flex flex-col items-start  w-full">
+              <label
+                htmlFor="firstname"
+                className="text-[10px] font-medium text-gray-700"
+              >
+                First Name
+              </label>
+              <input
+                id="firstname"
+                type="text"
+                name="firstname"
+                ref={firstNameRef}
+                className="mt-1 p-1 border border-gray-300 rounded-md w-full focus:outline-none focus:ring-2 focus:ring-[#720000] focus:border-[#720000]"
+              />
+            </div>
+
+            <div className="group flex flex-col items-start w-full">
+              <label
+                htmlFor="lastname"
+                className="text-[10px] font-medium text-gray-700"
+              >
+                Last Name
+              </label>
+              <input
+                id="lastname"
+                type="text"
+                name="lastname"
+                ref={lastNameRef}
+                className="mt-1 p-1 border border-gray-300 rounded-md w-full focus:outline-none focus:ring-2 focus:ring-[#720000] focus:border-[#720000]"
+              />
+            </div>
+
+            <div className="group flex flex-col items-start w-full">
+              <label
+                htmlFor="email"
+                className="text-[10px] font-medium text-gray-700"
+              >
+                Email
+              </label>
+              <input
+                id="email"
+                type="email"
+                name="email"
+                ref={emailRef}
+                className="mt-1 p-1 border border-gray-300 rounded-md w-full focus:outline-none focus:ring-2 focus:ring-[#720000] focus:border-[#720000]"
+              />
+            </div>
+
+            <div className="group flex flex-col items-start w-full">
+              <label
+                htmlFor="role"
+                className="text-[10px] font-medium text-gray-700"
+              >
+                Appointee Type
+              </label>
+              <select
+                ref={appteeTypeRef}
+                className="mt-1 p-1 border border-gray-300 rounded-md w-full focus:outline-none focus:ring-2 focus:ring-[#720000] focus:border-[#720000]"
+              >
+                <option value="Student">Student</option>
+                <option value="Guardian">Guardian</option>
+              </select>
+            </div>
+            <div className="timeslot-container w-full">
               <Timeslot
                 setAppointmentTime={setAppointmentTime}
                 appointmentDate={appointmentDate}
@@ -129,9 +176,14 @@ const WalkinScheduleAppt = () => {
                 calendarRef={calendarRef}
               />
             </div>
+            <button
+              type="submit"
+              className="bg-[#720000] hover:bg-[#320000] text-white p-2 rounded-md w-full mt-4 focus:outline-none focus:ring-2 focus:ring-[#320000]"
+            >
+              Submit
+            </button>
           </div>
         </div>
-        <button type="submit">Submit</button>
       </form>
     </div>
   );

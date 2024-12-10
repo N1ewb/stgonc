@@ -45,15 +45,11 @@ export const AuthProvider = ({ children }) => {
               isOnline: true,
             });
           }
-        );
+        )
+        
       } catch (error) {
-        toastMessage(error.message);
-        setError(true);
-      } finally {
-        if (!error) {
-          toastMessage("Logged in Successfully");
-        }
-      }
+        return { message: "Login Failed", status: "success" };
+      } 
     } else {
       return toastMessage("Already logged in");
     }
@@ -235,11 +231,12 @@ export const AuthProvider = ({ children }) => {
           role: firestoreUserData?.role || "",
           isOnline: firestoreUserData?.isOnline || false,
           department: firestoreUserData?.department || "",
-          instructorColorCode: firestoreUserData?.instructorColorCode || "#323232",
+          instructorColorCode:
+            firestoreUserData?.instructorColorCode || "#323232",
           facultyIdnumber: firestoreUserData?.facultyIdnumber,
           studentIdnumber: firestoreUserData?.studentIdnumber,
           guidanceIdnumber: firestoreUserData?.guidanceIdnumber,
-          eSignature: firestoreUserData?.eSignature
+          eSignature: firestoreUserData?.eSignature,
         };
 
         setCurrentUser(userData);

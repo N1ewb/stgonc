@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import "./Login.css";
 import { AuthProvider } from "../../../context/auth/AuthContext";
 import { useDB } from "../../../context/db/DBContext";
+import toast from "react-hot-toast";
 
 const LoginPage = () => {
   const auth = useAuth();
@@ -22,7 +23,6 @@ const LoginPage = () => {
 
   useEffect(() => {
     const fetchUserAndRedirect = async () => {
-      
       if (auth.currentUser) {
         try {
           const user = await db.getUser(auth.currentUser.uid);
@@ -30,11 +30,14 @@ const LoginPage = () => {
             const userRole = user.role;
             if (userRole) {
               navigate(`/private/${userRole}/dashboard`);
+              toast.succes("Logged in successfuly");
             } else {
               navigate("/");
             }
           } else {
-            console.error("User not found or failed to fetch user details.");
+            toast.error(
+              "Login failed credentials does not exist, check password or email"
+            );
           }
         } catch (error) {
           console.error("Error fetching user data:", error);
@@ -85,24 +88,29 @@ const LoginPage = () => {
                   >
                     {!isSubmitting ? "Login" : "Submitting"}
                   </button>
-                 <div className="w-full flex justify-between"> <p>
-                    Don't have an account?{" "}
-                    <Link
-                      to={"/auth/StudentRegistration"}
-                      style={{ textDecoration: "none" }}
-                    >
-                      <span style={{ color: "#FF8682" }}>{"Sign up"}</span>
-                    </Link>
-                  </p>
-                  <p>
-                    Forgot Password? {" "}
-                    <Link
-                      to={"/auth/Resetpassword"}
-                      style={{ textDecoration: "none" }}
-                    >
-                      <span style={{ color: "#FF8682" }}>{"Reset Password"}</span>
-                    </Link>
-                  </p></div>
+                  <div className="w-full flex justify-between">
+                    {" "}
+                    <p>
+                      Don't have an account?{" "}
+                      <Link
+                        to={"/auth/StudentRegistration"}
+                        style={{ textDecoration: "none" }}
+                      >
+                        <span style={{ color: "#FF8682" }}>{"Sign up"}</span>
+                      </Link>
+                    </p>
+                    <p>
+                      Forgot Password?{" "}
+                      <Link
+                        to={"/auth/Resetpassword"}
+                        style={{ textDecoration: "none" }}
+                      >
+                        <span style={{ color: "#FF8682" }}>
+                          {"Reset Password"}
+                        </span>
+                      </Link>
+                    </p>
+                  </div>
                 </div>
               </form>
             </div>

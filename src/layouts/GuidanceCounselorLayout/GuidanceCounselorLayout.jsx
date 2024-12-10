@@ -15,7 +15,7 @@ const GuidanceCounselorLayout = () => {
       </div>
       <main className="group-with-spacer h-[100vh] w-[83%] lg:w-full flex flex-col justify-around overflow-hidden">
         <div className="spacer w-full h-[5vh]"></div>
-        <div className="outlet-Content flex flex-col pt-3 h-[85vh] lg:h-[75vh]  lg:w-full bg-white w-[83%] mt-[83px] lg:mt-[120px] xsm:h-screen xsm:mt-[80px] p-[50px] md:px-[20px] rounded-tl-[70px] rounded-bl-[70px] lg:rounded-bl-[0px] lg:rounded-tl-[0px] overflow-hidden">
+        <div className="outlet-Content flex flex-col pt-3 h-[85vh] lg:h-[75vh]  w-full bg-white mt-[83px] lg:mt-[120px] xsm:h-screen xsm:mt-[80px] p-[50px] md:px-[20px] rounded-tl-[70px] rounded-bl-[70px] lg:rounded-bl-[0px] lg:rounded-tl-[0px] overflow-hidden">
           <Outlet />
         </div>
       </main>

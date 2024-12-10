@@ -8,6 +8,10 @@ const ReferalForm = ({ handleOpenForm }) => {
   const toastMessage = (message) => toast(message);
   const [submitting, setSubmitting] = useState(false);
 
+  //Guirdian
+  const guardianNameRef = useRef();
+  const guardianPhoneNumberRef = useRef();
+
   const firstnameRef = useRef();
   const lastnameRef = useRef();
   const emailRef = useRef();
@@ -35,6 +39,9 @@ const ReferalForm = ({ handleOpenForm }) => {
     try {
       setSubmitting(true);
 
+      const guardianName = guardianNameRef.current.value;
+      const guardianPhoneNumber = guardianPhoneNumberRef.current.value;
+
       const firstname = firstnameRef.current.value;
       const lastname = lastnameRef.current.value;
       const email = emailRef.current.value;
@@ -56,25 +63,29 @@ const ReferalForm = ({ handleOpenForm }) => {
       const evaluation = evaluationRef.current.value;
 
       if (
-          firstname &&
-          lastname &&
-          email &&
-          referee &&
-          department &&
-          concernType &&
-          date &&
-          yearLevel &&
-          age &&
-          sessionNumber &&
-          location &&
-          observation &&
-          nonVerbalCues &&
-          summary &&
-          techniques &&
-          actionPlan &&
-          evaluation
+        guardianName &&
+        guardianPhoneNumber &&
+        firstname &&
+        lastname &&
+        email &&
+        referee &&
+        department &&
+        concernType &&
+        date &&
+        yearLevel &&
+        age &&
+        sessionNumber &&
+        location &&
+        observation &&
+        nonVerbalCues &&
+        summary &&
+        techniques &&
+        actionPlan &&
+        evaluation
       ) {
         await db.makeReferal(
+          guardianName,
+          guardianPhoneNumber,
           firstname,
           lastname,
           email,
@@ -121,8 +132,22 @@ const ReferalForm = ({ handleOpenForm }) => {
         </button>
       </div>
       <div className="input-group flex flex-col [&_input]:border-solid [&_input]:border-[1px] [&_input]:border-[#273240] [&_input]:rounded-[4px]">
+        <div className="input-group flex gap-2">
+          <div className="group flex flex-col flex-1">
+            <label htmlFor="guardian-name">Guardian Name</label>
+            <input type="text" name="guardian-name" ref={guardianNameRef} />
+          </div>
+          <div className="group flex-1 flex flex-col">
+            <label htmlFor="guardian-number">Guardian Phone Number</label>
+            <input
+              type="text"
+              name="guardian-phone-number"
+              ref={guardianPhoneNumberRef}
+            />
+          </div>
+        </div>
         <div className="input-group flex gap-2 justify-between w-full">
-          <div className="group flex flex-col w-[31%]">
+          <div className="group flex flex-col flex-1">
             <label htmlFor="firstname">First Name</label>
             <input
               type="text"
@@ -131,7 +156,7 @@ const ReferalForm = ({ handleOpenForm }) => {
               ref={firstnameRef}
             />
           </div>
-          <div className="group flex flex-col w-[31%]">
+          <div className="group flex flex-col flex-1">
             <label htmlFor="lastname">Last Name</label>
             <input
               type="text"
@@ -140,14 +165,14 @@ const ReferalForm = ({ handleOpenForm }) => {
               ref={lastnameRef}
             />
           </div>
-          <div className="group flex flex-col w-[31%]">
+          <div className="group flex flex-col flex-1">
             <label htmlFor="email">Email</label>
             <input type="email" id="email" name="email" ref={emailRef} />
           </div>
         </div>
 
         <div className="input-group flex justify-between w-full">
-          <div className="group flex flex-col w-[48%]">
+          <div className="group flex flex-col flex-1">
             <label htmlFor="year-level">Year Level</label>
             <input
               type="text"
@@ -156,14 +181,14 @@ const ReferalForm = ({ handleOpenForm }) => {
               ref={yearLevelRef}
             />
           </div>
-          <div className="group flex flex-col w-[48%]">
+          <div className="group flex flex-col flex-1">
             <label htmlFor="age">Age</label>
             <input type="text" name="age" id="age" ref={ageRef} />
           </div>
         </div>
 
         <div className="input-group flex w-full gap-3 justify-between">
-          <div className="group flex flex-col w-[48%]">
+          <div className="group flex flex-col flex-1">
             <label htmlFor="session-number">Session Number</label>
             <input
               type="text"
@@ -173,7 +198,7 @@ const ReferalForm = ({ handleOpenForm }) => {
             />
           </div>
 
-          <div className="group flex flex-col w-[48%]">
+          <div className="group flex flex-col flex-1">
             <label htmlFor="location">Location</label>
             <input
               type="text"

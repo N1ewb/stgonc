@@ -1,10 +1,8 @@
 import React from "react";
 import { useAuth } from "../../context/auth/AuthContext";
 
-export default function TabularReport({ contentRef, data, appointee, isBlank }) {
+export default function TabularReport({ contentRef, data,report, appointee, isBlank }) {
   const { currentUser } = useAuth();
-
-  const report = Array.isArray(data?.report) ? data?.report[0] : data?.report;
   const todayDate = new Date();
 
   const formattedDate = todayDate.toLocaleDateString("en-US", {
@@ -66,13 +64,13 @@ export default function TabularReport({ contentRef, data, appointee, isBlank }) 
             <tr>
               <td className="border border-gray-300 p-2">Session Number</td>
               <td className="border border-gray-300 p-2">
-                {isBlank ? "" : report.sessionNumber}
+                {isBlank ? "" : data.sessionNumber}
               </td>
             </tr>
             <tr>
               <td className="border border-gray-300 p-2">Mode of Consultation</td>
               <td className="border border-gray-300 p-2">
-                {isBlank ? "" : report.mode}
+                {isBlank ? "" : data.appointmentFormat}
               </td>
             </tr>
             <tr>

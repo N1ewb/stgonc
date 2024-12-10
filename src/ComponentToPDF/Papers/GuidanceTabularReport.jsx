@@ -5,6 +5,7 @@ export default function GuidanceTabularReport({
   contentRef,
   data,
   appointee,
+  report,
   isBlank,
 }) {
   const { currentUser } = useAuth();
@@ -54,13 +55,13 @@ export default function GuidanceTabularReport({
             <tr>
               <td className="border border-gray-300 p-2">Year Level / Age</td>
               <td className="border border-gray-300 p-2">
-                {isBlank ? "" : `${data?.yearLevel} Year / ${data?.age}`}
+                {isBlank ? "" : `${report?.yearlevel} Year / ${report?.age}`}
               </td>
             </tr>
             <tr>
               <td className="border border-gray-300 p-2">Date of Session</td>
               <td className="border border-gray-300 p-2">
-                {isBlank ? "" : data?.appointmentDate || data?.date}
+                {isBlank ? "" : report?.appointmentDate || report?.date}
               </td>
             </tr>
             <tr>
@@ -78,9 +79,9 @@ export default function GuidanceTabularReport({
               </td>
             </tr>
             <tr>
-              <td className="border border-gray-300 p-2">Mode of Consultation</td>
+              <td className="border border-gray-300 p-2">Location</td>
               <td className="border border-gray-300 p-2">
-                {isBlank ? "" : data?.location}
+                {isBlank ? "" : report?.location}
               </td>
             </tr>
             <tr>
@@ -98,31 +99,31 @@ export default function GuidanceTabularReport({
             <tr>
               <td className="border border-gray-300 p-2 w-1/2">Observation</td>
               <td className="border border-gray-300 p-2 w-1/2">
-                {isBlank ? "" : data?.observation}
+                {isBlank ? "" : report?.observation}
               </td>
             </tr>
             <tr>
               <td className="border border-gray-300 p-2 w-1/2">Non-verbal Cues</td>
               <td className="border border-gray-300 p-2 w-1/2">
-                {isBlank ? "" : data?.nonVerbalCues}
+                {isBlank ? "" : report?.nonVerbalCues}
               </td>
             </tr>
             <tr>
               <td className="border border-gray-300 p-2 w-1/2">Discussion Summary</td>
               <td className="border border-gray-300 p-2 w-1/2">
-                {isBlank ? "" : data?.summary}
+                {isBlank ? "" : report?.summary}
               </td>
             </tr>
             <tr>
               <td className="border border-gray-300 p-2 w-1/2">Techniques Approach Used</td>
               <td className="border border-gray-300 p-2 w-1/2">
-                {isBlank ? "" : data?.techniques}
+                {isBlank ? "" : report?.techniques}
               </td>
             </tr>
             <tr>
               <td className="border border-gray-300 p-2 w-1/2">Action Plan/Next Steps</td>
               <td className="border border-gray-300 p-2 w-1/2">
-                {isBlank ? "" : data?.actionPlan}
+                {isBlank ? "" : report?.actionPlan}
               </td>
             </tr>
             <tr>
@@ -132,7 +133,7 @@ export default function GuidanceTabularReport({
             <tr>
               <td className="border border-gray-300 p-2 w-1/2">Counselor's Evaluation</td>
               <td className="border border-gray-300 p-2 w-1/2">
-                {isBlank ? "" : data?.evaluation}
+                {isBlank ? "" : report?.evaluation}
               </td>
             </tr>
           </tbody>

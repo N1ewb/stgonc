@@ -270,6 +270,8 @@ export const DBProvider = ({ children }) => {
   };
 
   const makeReferal = async (
+    guardianName,
+    guardianPhoneNumber,
     firstName,
     lastName,
     email,
@@ -298,6 +300,8 @@ export const DBProvider = ({ children }) => {
             email,
             department,
           },
+          guardianName,
+          guardianPhoneNumber,
           appointedFaculty: Auth.currentUser.uid,
           referee,
           appointmentDate: date,
@@ -324,6 +328,8 @@ export const DBProvider = ({ children }) => {
   };
 
   const makeWalkin = async (
+    guardianName,
+    guardianPhoneNumber,
     firstName,
     lastName,
     email,
@@ -351,6 +357,8 @@ export const DBProvider = ({ children }) => {
             email,
             department,
           },
+          guardianName,
+          guardianPhoneNumber,
           appointedFaculty: Auth.currentUser.uid,
           appointmentDate: date,
           appointmentFormat: "Walkin",
@@ -459,6 +467,39 @@ export const DBProvider = ({ children }) => {
     }
   };
 
+  const getAppointmentReport = async (id) => {
+    try {
+      if (Auth.currentUser) {
+        const docRef = doc(appointmentsRef, id);
+        const docSnap = await getDoc(docRef);
+
+        if (docSnap.exists()) {
+          const reportRef = collection(docRef, "Reports");
+          const q = query(reportRef);
+          const querySnapshot = await getDocs(q);
+
+          if (!querySnapshot.empty) {
+            const reportDoc = querySnapshot.docs[0];
+            return {
+              id: reportDoc.id,
+              ...reportDoc.data(),
+              appointmentData: { id: docSnap.id, ...docSnap.data() },
+            };
+          } else {
+            console.log("No report found for this appointment!");
+            return null;
+          }
+        } else {
+          console.log("No such appointment document!");
+          return null;
+        }
+      }
+    } catch (error) {
+      notifyError(error);
+      return null;
+    }
+  };
+
   const getAppointmentRecords = async (id) => {
     try {
       if (Auth.currentUser) {
@@ -543,6 +584,44 @@ export const DBProvider = ({ children }) => {
       }
     } catch (error) {
       notifyError(error);
+    }
+  };
+
+  const reschedAppointment = async (
+    id,
+    receiver,
+    reason,
+    appointmentDate,
+    appointmentTime
+  ) => {
+    try {
+      if (Auth.currentUser) {
+        const appointmentDocRef = doc(firestore, "Appointments", id);
+        const updatedAppointmentDocRef = {
+          appointmentDate,
+          appointmentTime,
+          appointmentStatus: "Accepted",
+          updateMessage: `This Appointment was rescheduled by ${Auth.currentUser.firstName} ${Auth.currentUser.lastName}. Your Appointment will e held at ${appointmentDate} in ${appointmentTime.appointmentStartTime} AM`,
+        };
+        await updateDoc(appointmentDocRef, updatedAppointmentDocRef);
+        const res = await notif.storeNotifToDB(
+          "Appointment Rescheduled",
+          `You appointment has been rescheduled because: ${reason}`,
+          receiver
+        );
+        if (!res) {
+          console.log("Email not sent");
+        }
+        return {
+          message: "The appointment has been succesfully rescheduled",
+          status: "success",
+        };
+      }
+    } catch (error) {
+      return {
+        message: "An error occured rescheduling the appointment",
+        status: "failed",
+      };
     }
   };
 
@@ -735,142 +814,146 @@ export const DBProvider = ({ children }) => {
     try {
       if (Auth.currentUser) {
         const recevingUser = await getUser(receiver);
+
         const appointmentDocRef = doc(firestore, "Appointments", id);
+
+        const appointmentSnapshot = await getDoc(appointmentDocRef);
+
+        let sessionNumber = 1;
+        if (appointmentSnapshot.exists()) {
+          const appointmentData = appointmentSnapshot.data();
+          sessionNumber = appointmentData.sessionNumber
+            ? appointmentData.sessionNumber + 1
+            : 1;
+        }
+
         const updatedAppointmentDocRef = {
+          sessionNumber,
           appointmentStatus: "Finished",
           updateMessage: `This Appointment was marked finished by ${Auth.currentUser.firstName} ${Auth.currentUser.lastName}`,
         };
 
         await updateDoc(appointmentDocRef, updatedAppointmentDocRef);
+
         if (recevingUser) {
           await notif.storeNotifToDB(
             "Appointment",
-            `You appointment with ${Auth.currentUser.displayName} has been marked finished`,
-            "nathaniellucero20@gmail.com"
+            `Your appointment with ${Auth.currentUser.displayName} has been marked finished.`,
+            receiver
           );
         }
       }
+      return { message: "Succesfuly finished appointment", status: "success" };
     } catch (error) {
-      notifyError(error);
+      return {
+        message: "Error has occured in finishing appointment",
+        status: "failed",
+      };
     }
   };
-
-  const makeReport = async (
-    id,
-    currentAppointment,
-    date,
-    duration,
-    mode,
-    radio,
-    receiver,
-    keyissues,
-    rootcause,
-    recommendation,
-    expectedOutcome,
-    yearLevel,
-    age,
-    sessionNumber
-  ) => {
+  // { id,
+  //   currentAppointment,
+  //   date,
+  //   duration,
+  //   radio,
+  //   receiver,
+  //   keyissues,
+  //   rootcause,
+  //   recommendation,
+  //   expectedOutcome,
+  //   yearLevel,
+  //   age}
+  const makeReport = async (formValue) => {
     try {
-      if (Auth.currentUser) {
-        const appointmentDocRef = doc(firestore, "Appointments", id);
-        let reportRef;
-
-        if (currentAppointment) {
-          const followupRef = doc(
-            appointmentDocRef,
-            "Followup",
-            currentAppointment
-          );
-          reportRef = collection(followupRef, "Reports");
-        } else {
-          reportRef = collection(appointmentDocRef, "Reports");
-        }
-
-        const querySnapshot = await getDocs(query(reportRef));
-        if (!querySnapshot.empty) {
-          toastMessage("A report already exists for this document!");
-          return false;
-        }
-
-        await addDoc(reportRef, {
-          date,
-          duration,
-          mode,
-          resolved: radio,
-          keyissues,
-          rootcause,
-          recommendation,
-          expectedOutcome,
-          yearLevel,
-          age,
-          sessionNumber,
-          receiver,
-          ReportBy: Auth.currentUser.uid,
-          appointmentReference: id,
-          createdAt: serverTimestamp(),
-        });
-
-        toastMessage("Report made successfully!");
-        return true;
+      if (!Auth.currentUser) {
+        throw new Error("User is not authenticated.");
       }
+      const appointmentDocRef = doc(
+        firestore,
+        "Appointments",
+        formValue.appointment
+      );
+      let reportRef;
+
+      if (formValue.currentAppointment) {
+        const followupRef = doc(
+          appointmentDocRef,
+          "Followup",
+          formValue.currentAppointment
+        );
+        reportRef = collection(followupRef, "Reports");
+      } else {
+        reportRef = collection(appointmentDocRef, "Reports");
+      }
+
+      const querySnapshot = await getDocs(query(reportRef));
+      if (!querySnapshot.empty) {
+        return {
+          message: "A report already exists for this document!",
+          status: "failed",
+        };
+      }
+
+      await addDoc(reportRef, {
+        ...formValue,
+        ReportBy: Auth.currentUser.uid,
+        appointmentReference: formValue.appointment,
+        createdAt: serverTimestamp(),
+      });
+
+      return { message: "Report made successfully!", status: "success" };
     } catch (error) {
-      toastMessage("Error in making report: ");
-      console.log(error.message);
-      return false;
+      return {
+        message: `Error in making report: ${error.message}`,
+        status: "failed",
+      };
     }
   };
 
-  const makeGuidanceReport = async (
-    appointment,
-    concernType,
-    apptDate,
-    yearLevel,
-    age,
-    sessionNumber,
-    location,
-    observation,
-    nonVerbalCues,
-    summary,
-    techniques,
-    actionPlan,
-    evaluation,
-    receiver,
-    isResolved,
-    consultationMode
-  ) => {
+  // appointment,
+  // concernType,
+  // apptDate,
+  // yearLevel,
+  // age,
+  // sessionNumber,
+  // location,
+  // observation,
+  // nonVerbalCues,
+  // summary,
+  // techniques,
+  // actionPlan,
+  // evaluation,
+  // receiver,
+  const makeGuidanceReport = async (formValue) => {
     try {
       if (Auth.currentUser) {
-        console.log("apptDate: ", apptDate);
-        const appointmentDocRef = doc(firestore, "Appointments", appointment);
+        const appointmentDocRef = doc(
+          firestore,
+          "Appointments",
+          formValue.appointment
+        );
+
+        const appointmentSnapshot = await getDoc(appointmentDocRef);
+        if (!appointmentSnapshot.exists()) {
+          throw new Error("Appointment does not exist.");
+        }
 
         const reportRef = collection(appointmentDocRef, "Reports");
+
         await addDoc(reportRef, {
-          appointmentDate: apptDate,
+          ...formValue,
+          appointmentDate: formValue.apptDate,
           department: "Guidance",
-          concernType,
-          yearLevel,
-          age,
-          sessionNumber,
-          location,
-          observation,
-          nonVerbalCues,
-          summary,
-          techniques,
-          actionPlan,
-          evaluation,
-          consultationMode,
-          receiver,
-          resolved: isResolved,
           ReportBy: Auth.currentUser.uid,
           createdAt: serverTimestamp(),
         });
 
-        toastMessage("Report successfully created!");
+        return { message: "Report successfully created!", status: "success" };
+      } else {
+        return { message: "User not authenticated", status: "failed" };
       }
     } catch (error) {
-      console.error("Error in making guidance report:", error);
-      toastMessage(`Error in making report: ${error.message}`);
+      return { message: "Error in making report", status: "failed" };
     }
   };
 
@@ -992,7 +1075,6 @@ export const DBProvider = ({ children }) => {
   };
 
   const changeUserProfile = async (imageFile) => {
-    
     if (Auth.currentUser) {
       try {
         const storageRef = ref(
@@ -1855,6 +1937,7 @@ export const DBProvider = ({ children }) => {
     sendAppointmentRequest,
     cancelAppointment,
     getAppointment,
+    getAppointmentReport,
     getAppointmentRecords,
     walkinAppointment,
     makeReferal,
@@ -1866,6 +1949,7 @@ export const DBProvider = ({ children }) => {
     getInstructorAppointment,
     approveAppointment,
     denyAppointment,
+    reschedAppointment,
     denyRegistration,
     followupAppointment,
     guidanceFollowupRecord,

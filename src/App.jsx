@@ -88,6 +88,7 @@ import FullRecordInfo from "./pages/UsersPages/GuidanceCounselor/GuidancePages/S
 import ResetPassword from "./pages/authentication/resetpassword/ResetPassword";
 import AboutUs from "./pages/miscPages/AboutUs";
 import ContactUs from "./pages/miscPages/ContactUs";
+import { ReschedProvider } from "./context/appointmentContext/ReschedContext";
 
 function App() {
   const router = createBrowserRouter([
@@ -205,7 +206,6 @@ function App() {
               path: "/private/Guidance",
               element: <GuidanceCounselorLayout />,
               children: [
-                
                 {
                   path: "/private/Guidance/dashboard",
                   element: <GuidanceDashboard />,
@@ -219,12 +219,12 @@ function App() {
                       element: <SCSDashboard />,
                     },
                     {
-                      path: '/private/Guidance/student-counseling-services/add-followup-record',
-                      element: <AddFollowupRecord />
+                      path: "/private/Guidance/student-counseling-services/add-followup-record",
+                      element: <AddFollowupRecord />,
                     },
                     {
-                      path: '/private/Guidance/student-counseling-services/view-appointment-record',
-                      element: <FullRecordInfo />
+                      path: "/private/Guidance/student-counseling-services/view-appointment-record",
+                      element: <FullRecordInfo />,
                     },
                     {
                       path: "/private/Guidance/student-counseling-services/Walkin",
@@ -382,8 +382,8 @@ function App() {
               element: <EndCallPage />,
             },
             {
-              path: '/private/GuidanceEndcallPage',
-              element: <GuidanceEndcallPage />
+              path: "/private/GuidanceEndcallPage",
+              element: <GuidanceEndcallPage />,
             },
           ],
         },
@@ -436,10 +436,12 @@ function App() {
                   <PrimeReactProvider>
                     <UserListProvider>
                       <ExportProvider>
-                        <div className="App h-full w-full bg-[#320000] overflow-auto relative">
-                          <RouterProvider router={router} />
-                          <Toaster />
-                        </div>
+                        <ReschedProvider>
+                          <div className="App h-full w-full bg-[#320000] overflow-auto relative">
+                            <RouterProvider router={router} />
+                            <Toaster />
+                          </div>
+                        </ReschedProvider>
                       </ExportProvider>
                     </UserListProvider>
                   </PrimeReactProvider>
