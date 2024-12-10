@@ -241,7 +241,7 @@ const RequestAppointmentForm = ({ instructor, show, toggleShow }) => {
           </Modal.Title>
         </Modal.Header>
         <Modal.Body className="bg-[#ECECEC]" ref={calendarRef}>
-          <div className="application-form h-[100%] w-full flex xsm:flex-col-reverse justify-around gap-3">
+          <div className="application-form h-[100%] w-full flex xsm:!flex-col justify-around gap-3">
             <div className="data-time-container flex flex-col justify-around w-[45%] md:w-full gap-5">
               <Calendar
                 setAppointmentDate={setAppointmentDate}
@@ -263,7 +263,7 @@ const RequestAppointmentForm = ({ instructor, show, toggleShow }) => {
                 ></textarea>
               </div>
             </div>
-            <div className="form-group-container flex flex-col w-[50%] md:w-full justify-around">
+            <div className="form-group-container flex  flex-col w-[50%] md:w-full justify-around">
               <Timeslot
                 calendarRef={calendarRef}
                 setAppointmentTime={setAppointmentTime}

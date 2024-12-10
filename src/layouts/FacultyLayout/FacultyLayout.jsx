@@ -18,7 +18,7 @@ const FacultyLayout = () => {
       </div>
       <main className="group-with-spacer h-[100vh] w-[83%] lg:w-full flex flex-col justify-around overflow-hidden">
         <div className="spacer w-full h-[5vh]"></div>
-        <div className="outlet-Content bg-white w-full h-[85vh] rounded-tl-[70px] rounded-bl-[70px] p-[50px]  lg:rounded-bl-[0px] lg:rounded-tl-[0px] sm:p-4">
+        <div className="outlet-Content bg-white w-full h-[85vh] rounded-tl-[70px] rounded-bl-[70px] p-[50px] overflow-hidden lg:rounded-bl-[0px] lg:rounded-tl-[0px] sm:p-4">
           <Outlet />
         </div>
       </main>

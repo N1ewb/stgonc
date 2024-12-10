@@ -50,7 +50,7 @@ const Navbar = ({ sidebarLinks }) => {
 
   return (
     <div className="navbar-container bg-[#360000] flex fixed items-center w-full justify- z-20 p-[20px] xsm:p-3">
-      <div className="logo-wrapper flex-1 flex flex-row items-center justify-start w-[15%]">
+      <div className="logo-wrapper flex-1 flex flex-row items-center justify-start ">
         <button
           href="#"
           onClick={handleLogoClick}

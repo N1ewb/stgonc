@@ -35,7 +35,7 @@ align-items: center;
 display: flex;
 justify-content: center;
 margin-bottom: 10px;
-color: #4CAF50;
+color: black;
 }
 
 .row {
@@ -67,7 +67,7 @@ justify-content: center;
 align-items: center;
 height: 50px !important;
 width: 55px !important;
-color: #4CAF50;
+color: black;
 
 }
 
@@ -109,6 +109,6 @@ transform: scale(1.5);
 }
 
 .instructor-available {
-  
-    color: #1900ff75;
+    font-weight: bold;
+    color: #4CAF50;
   }

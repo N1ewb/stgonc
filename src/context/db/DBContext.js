@@ -533,12 +533,12 @@ export const DBProvider = ({ children }) => {
           department: Auth.currentUser.department,
           updateMessage: `This Appointment was approved by ${Auth.currentUser.firstName} ${Auth.currentUser.lastName}`,
         };
+        await updateDoc(appointmentDocRef, updatedAppointmentDocRef);
         await notif.storeNotifToDB(
           "Appointment Accepted",
           `You appointment Request has been accepted and will be held on ${date}`,
           receiver
         );
-        await updateDoc(appointmentDocRef, updatedAppointmentDocRef);
         toastMessage("Appointment Accepted");
       }
     } catch (error) {
@@ -554,12 +554,12 @@ export const DBProvider = ({ children }) => {
           appointmentStatus: "Denied",
           updateMessage: `This Appointment was denied by ${Auth.currentUser.firstName} ${Auth.currentUser.lastName}`,
         };
+        await updateDoc(appointmentDocRef, updatedAppointmentDocRef);
         await notif.storeNotifToDB(
           "Appointment Denied",
           `You appointment Request has been denied because: ${reason}`,
           receiver
         );
-        await updateDoc(appointmentDocRef, updatedAppointmentDocRef);
         toastMessage("Appointment Denied");
       }
     } catch (error) {
@@ -1515,12 +1515,12 @@ export const DBProvider = ({ children }) => {
           status: "Denied",
           updateMessage: `This Registration was denied by ${Auth.currentUser.firstName} ${Auth.currentUser.lastName}`,
         };
+        await updateDoc(registrationDocRef, updatedRegistrationDocRef);
         await notif.storeNotifToDB(
           "Registration Denied",
           denyMessage,
           receiver
         );
-        await updateDoc(registrationDocRef, updatedRegistrationDocRef);
         toastMessage("Registration Denied");
       }
     } catch (error) {

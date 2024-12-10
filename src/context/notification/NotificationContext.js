@@ -113,17 +113,15 @@ export const MessagingProvider = ({ children }) => {
 
         await addDoc(notificationRef, newNotification);
 
-        // EMAIL NOTIFICATION
         await sendEmail(receiver, content, subject);
 
-        return true;
+        return {message: "Succesfully stored notification"};
       } else {
-        throw new Error("User is not authenticated");
+        return {message: "User is not authenticated"}
       }
     } catch (error) {
-      console.error("Error storing notification or sending email:", error);
-      toastMessage(error.message);
-      return false;
+      return {message: "Error in storing notification"};
+
     }
   };
 
