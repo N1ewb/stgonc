@@ -161,7 +161,7 @@ const SendCallReq = () => {
           }}
         >
           <img src={Profile} alt="profile" height="70px" />
-          <h4>{auth.currentUser?.displayName}</h4>
+          <h4 className="text-white">{auth.currentUser?.displayName}</h4>
           {connecting ? <p>Connecting to network</p> : <p>Dialing the user</p>}
         </div>
 

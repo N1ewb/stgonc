@@ -82,20 +82,53 @@ export const CallProvider = ({ children }) => {
     return localStream;
   };
 
-  const WebcamOn = () => {
+  const WebcamOn = async () => {
     if (localVideoRef.current) {
       localVideoRef.current.srcObject = localStream || null;
     }
   };
+
+  const toggleReceiverCamera = async () => {
+    try {
+      if (!localStream) {
+        const stream = await handleWaitForLocalStream();
+        setLocalStream(stream);
+        pc.getReceivers().forEach((receiver) => {
+          if (receiver.track.kind === "video") {
+            receiver.replaceTrack(stream.getVideoTracks()[0]);
+          }
+        })
+  
+        WebcamOn(); // Start the camera
+        console.log("Receiver's camera is now active.");
+        return;
+      }
+  
+      const videoTrack = localStream.getVideoTracks()[0]; // Get the video track from the stream
+  
+      if (videoTrack.enabled) {
+        videoTrack.enabled = false; // Disable the track
+        console.log("Receiver's camera turned off.");
+      } else {
+        videoTrack.enabled = true; // Enable the track
+        console.log("Receiver's camera turned on.");
+      }
+    } catch (error) {
+      console.error("Error toggling receiver's camera:", error);
+      toastMessage("Failed to toggle the receiver's camera");
+    }
+  };
+  
 
   const toggleCamera = async () => {
     try {
       if (!localStream) {
         const stream = await handleWaitForLocalStream();
         setLocalStream(stream);
+
         pc.getSenders().forEach((sender) => {
           if (sender.track.kind === "video") {
-            sender.replaceTrack(stream.getVideoTracks()[0]);
+            sender.removeTrack(stream.getVideoTracks()[0]);
           }
         });
         WebcamOn();
@@ -114,6 +147,38 @@ export const CallProvider = ({ children }) => {
     } catch (error) {
       console.error("Error toggling camera:", error);
       toastMessage("Failed to toggle camera");
+    }
+  };
+
+  const toggleRecieverMic = async () => {
+    try {
+      if (!localStream) {
+        const stream = await handleWaitForLocalStream();
+        setLocalStream(stream);
+        const audioTrack = stream.getAudioTracks()[0];
+
+        pc.getReceivers().forEach((receiver) => {
+          if (receiver.track.kind === "audio") {
+            receiver.replaceTrack(audioTrack);
+          }
+        });
+        return;
+      }
+
+      const audioTrack = localStream.getAudioTracks()[0];
+
+      if (audioTrack) {
+        if (audioTrack.enabled) {
+          audioTrack.enabled = false;
+          console.log("Microphone turned off");
+        } else {
+          audioTrack.enabled = true;
+          console.log("Microphone turned on");
+        }
+      }
+    } catch (error) {
+      console.error("Error toggling microphone:", error);
+      toastMessage("Failed to toggle microphone");
     }
   };
 
@@ -642,7 +707,9 @@ export const CallProvider = ({ children }) => {
     PcState,
     WebcamOn,
     toggleCamera,
+    toggleReceiverCamera,
     toggleMic,
+    toggleRecieverMic,
     CallButton,
     AnswerCall,
     hangUp,

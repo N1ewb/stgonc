@@ -22,11 +22,12 @@ const VideoCall = () => {
     callState,
     answerCallOffer,
     hangUp,
-    toggleCamera,
     toggleMic,
     localVideoRef,
     remoteVideoRef,
-    callInput,
+    callInput, 
+    toggleReceiverCamera,
+    toggleRecieverMic
   } = call;
 
   const handleAnswerCall = async () => {
@@ -98,13 +99,13 @@ const VideoCall = () => {
     <>
       <div className="home-container">
         <div className="v-local-cam-display">
-          <video ref={localVideoRef} autoPlay muted />
+          {localVideoRef ? <video ref={localVideoRef} autoPlay muted /> : <img src="" alt="placeholder" className="w-[500px] h-[250px] bg-[#4f4f4f] rounded-md" />}
         </div>
         <div className="v-remote-cam-display">
-          <video ref={remoteVideoRef} autoPlay />
+        {remoteVideoRef ? <video ref={remoteVideoRef} autoPlay muted /> : <img src="" alt="placeholder" className="w-full h-full bg-[#4f4f4f] rounded-md" />}
         </div>
         <div className="call-buttons">
-          <button onClick={toggleCamera}>
+          <button onClick={toggleReceiverCamera}>
             <img src={Camera} alt="camera" width="30px" />
           </button>
           <input
@@ -113,7 +114,7 @@ const VideoCall = () => {
             ref={callInput}
             placeholder="Call Input"
           />
-          <button onClick={toggleMic}>Mute</button>
+          <button onClick={toggleRecieverMic}>Mute</button>
           <button onClick={handleHangUp}>
             <img src={HangUp} alt="hang up" width="30px" />
           </button>
