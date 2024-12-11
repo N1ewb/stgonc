@@ -57,12 +57,14 @@ const TeacherAppointmentFollowups = () => {
     <div>
       <header className="flex  items-end w-1/2 justify-between">
         <h3 className="text-4xl font-bold text-[#320000]">Followup</h3>
-        <AdminSearchBar
-          datas={appointments}
-          setData={setAppointments}
-          temp={temp}
-          setCurrentPage={() => null}
-        />
+        <div className="w-1/2">
+          <AdminSearchBar
+            datas={appointments}
+            setData={setAppointments}
+            temp={temp}
+            setCurrentPage={() => null}
+          />
+        </div>
       </header>
       <main className=" w-full flex  justify-between items-start h-[100%]">
         <div className="followup-appointments-container w-1/2 max-h-[90%] flex  flex-wrap overflow-auto pb-3">

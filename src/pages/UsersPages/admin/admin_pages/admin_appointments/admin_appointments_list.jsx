@@ -57,12 +57,14 @@ const AdminAppointmentPage = () => {
     <div className="admin-appointments-container h-[100%] w-full flex flex-col gap-10 ">
       <div className="appointments-header flex flex-row items-end w-1/2 justify-between">
         <h3 className="text-4xl font-bold text-[#320000]">List</h3>
-        <AdminSearchBar
-          datas={appointments}
-          setData={setAppointments}
-          temp={temp}
-          setCurrentPage={() => null}
-        />
+        <div className="w-1/2">
+          <AdminSearchBar
+            datas={appointments}
+            setData={setAppointments}
+            temp={temp}
+            setCurrentPage={() => null}
+          />
+        </div>
       </div>
       <div className="appoinments-container w-full flex flex-row justify-between items-start h-[100%]">
         <div className="accepted-appointments-container w-1/2 max-h-[90%] flex flex-row flex-wrap overflow-auto pb-3">

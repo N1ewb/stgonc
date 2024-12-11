@@ -78,8 +78,10 @@ const AppointmentInfo = ({ positiveClick, negativeClick }) => {
           {`${appointee?.firstName} ${appointee?.lastName} `}
         </p>
         <p>
-          <span className="text-[#320000] font-bold ">Student Phone Number:</span>{" "}
-           {appointee?.phoneNumber} 
+          <span className="text-[#320000] font-bold ">
+            Student Phone Number:
+          </span>{" "}
+          {appointee?.phoneNumber}
         </p>
         <p>
           <span className="text-[#320000] font-bold">Student Concern:</span>
@@ -102,51 +104,26 @@ const AppointmentInfo = ({ positiveClick, negativeClick }) => {
         </div>
       </div>
       {status && status !== "Finished" && (
-        <>
-          {status === "Pending" ? (
-            <div className="appointment-info-footer w-full flex flex-row items-end justify-end gap-3 ">
-              <button
-                className="m-0 py-2 px-5 bg-[#57a627] rounded-md"
-                onClick={() =>
-                  positiveClick({
-                    id: currentAppointment.id,
-                    receiver: appointee?.userID || appointee,
-                    date: Date.now(),
-                  })
-                }
-              >
-                Accept
-              </button>
-              <button
-                className="m-0 py-2 px-5 bg-[#720000] rounded-md"
-                onClick={() => handleToggleReschedDialog(currentAppointment)}
-              >
-                Re-Sched
-              </button>
-            </div>
-          ) : (
-            (status === "Accepted" || status === "Followup") && (
-              <div className="appointment-info-footer w-full flex flex-row items-end justify-end gap-3 ">
-                <GreenButton
-                  label="Finish"
-                  click={() =>
-                    positiveClick({
-                      curID: currentAppointment.id,
-                      id:
-                        currentAppointment.precedingAppt ||
-                        currentAppointment.id,
-                      receiver: appointee?.userID || appointee,
-                    })
-                  }
-                />
-                <RedButton
-                  click={() => negativeClick({ id: currentAppointment.id })}
-                  label="Cancel"
-                />
-              </div>
-            )
-          )}
-        </>
+        <div className="appointment-info-footer w-full flex flex-row items-end justify-end gap-3 ">
+          <button
+            className="m-0 py-2 px-5 bg-[#57a627] rounded-md"
+            onClick={() =>
+              positiveClick({
+                id: currentAppointment.id,
+                receiver: appointee?.userID || appointee,
+                date: Date.now(),
+              })
+            }
+          >
+            Accept
+          </button>
+          <button
+            className="m-0 py-2 px-5 bg-[#720000] rounded-md"
+            onClick={() => handleToggleReschedDialog(currentAppointment)}
+          >
+            Re-Sched
+          </button>
+        </div>
       )}
     </div>
   );

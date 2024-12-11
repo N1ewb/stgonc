@@ -14,6 +14,7 @@ import InstructorsList from "../../student-components/InstructorsList";
 import InstructorInfo from "../../student-components/InstructorInfo";
 import Loading from "../../../../../components/Loading/Loading";
 import toast from "react-hot-toast";
+import AdminSearchBar from "../../../admin/admin-components/AdminSearchBar";
 
 const StudentDashboard = () => {
   const db = useDB();
@@ -27,6 +28,7 @@ const StudentDashboard = () => {
   const [show, setShow] = useState(false);
   const [currentOption, setCurrentOption] = useState("Instructors");
   const [loading, setLoading] = useState(true);
+  const [temp, setTemp] = useState()
   const toastMessage = (message) => toast(message);
 
   const handleSetCurrentOption = (option) => {
@@ -40,6 +42,7 @@ const StudentDashboard = () => {
           setLoading(true);
           const teachers = await db.getTeachers();
           setInstructors(teachers);
+          setTemp(teachers)
         } catch (error) {
           toastMessage("Error occured in retreiving the instructors");
         } finally {
@@ -53,6 +56,7 @@ const StudentDashboard = () => {
           setLoading(true);
           const guidance = await db.getGuidance();
           setInstructors(guidance);
+          setTemp(guidance)
         } catch (error) {
           toastMessage("Error occured in retreiving the guidance counselor");
         } finally {
@@ -99,24 +103,31 @@ const StudentDashboard = () => {
 
   return (
     <div className="h-[100%] flex flex-col gap-2 w-full">
-      <header className="flex w-full justify-between items-center lg:!flex-col">
+      <header className="flex w-full gap-5 items-center lg:!flex-col">
         <h1 className="text-[#360000] flex flex-col xl:gap-4 lg:flex-row ">
-          <span className="font-bold text-3xl xsm:text-[16px] xxsm:text-[12px] ">{myInfo && myInfo.department} </span>{" "}
-          <span className="font-light text-2xl xsm:text-[12px] xxsm:text-[8px]">Department Instructors</span>{" "}
+          <span className="font-bold text-3xl xsm:text-[16px] xxsm:text-[12px] ">
+            {myInfo && myInfo.department}{" "}
+          </span>{" "}
+          <span className="font-light text-2xl xsm:text-[12px] xxsm:text-[8px]">
+            Department Instructors
+          </span>{" "}
         </h1>
-        <div className="options flex flex-row w-1/2 lg:w-full lg:justify-start gap-4 justify-end bg-[#320000] rounded-3xl xsm:[&_button]:text-[12px] xxsm:[&_button]:text-[10px] xxxsm:[&_button]:text-[8px] xsm:[&_button]:flex-1 xsm:[&_button]:py-2 xxsm:[&_button]:py-[2px] [&_button]:rounded-3xl p-2">
+        <div className="options flex flex-1 lg:w-full lg:justify-start gap-4 justify-end bg-[#320000] rounded-3xl xsm:[&_button]:text-[12px] xxsm:[&_button]:text-[10px] xxxsm:[&_button]:text-[8px] xsm:[&_button]:flex-1 xsm:[&_button]:py-2 xxsm:[&_button]:py-[2px] [&_button]:rounded-3xl p-2">
+          <div className="container flex-1">
+            <AdminSearchBar datas={instructors} setData={setInstructors} temp={temp} setCurrentPage={() => null} />
+          </div>  
           <button
-            className={` ${
+            className={` flex-1 ${
               currentOption === "Instructors"
                 ? "bg-white text-[#320000]"
-                : "text-white border-2 border-solid bg-transparent border-white"
+                : "text-white border-2 border-solid bg-transparent border-white "
             }`}
             onClick={() => handleSetCurrentOption("Instructors")}
           >
             Instructors
           </button>
           <button
-            className={`${
+            className={` flex-1 ${
               currentOption === "Guidance"
                 ? "bg-white text-[#320000]"
                 : "text-white border-2 border-solid bg-transparent border-white"

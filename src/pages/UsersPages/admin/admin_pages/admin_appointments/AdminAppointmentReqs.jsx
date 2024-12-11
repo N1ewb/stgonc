@@ -57,12 +57,14 @@ const AdminAppointmentReqsPage = () => {
     <div className="admin-appointments-container w-full flex flex-col h-[100%] gap-10">
       <div className="admin-appointment-request-header flex flex-row w-1/2 justify-between items-end">
         <h3 className="text-4xl font-bold">Requests</h3>
-        <AdminSearchBar
-          datas={appointments}
-          setData={setAppointments}
-          temp={temp}
-          setCurrentPage={() => null}
-        />
+        <div className="w-1/2">
+          <AdminSearchBar
+            datas={appointments}
+            setData={setAppointments}
+            temp={temp}
+            setCurrentPage={() => null}
+          />
+        </div>
       </div>
       <div className="w-full flex flex-row justify-between items-start h-[100%]">
         <div className="w-1/2 max-h-[90%] overflow-auto pb-3 flex flex-row flex-wrap">

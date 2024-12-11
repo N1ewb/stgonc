@@ -43,14 +43,14 @@ const FacultyLeaderboard = ({insList}) => {
       <h5 className="text-[#320000] font-light">
         Faculty <span className="font-bold">Leaderboard</span>
       </h5>
-      {topInstructors.length > 0 ? (
+      {topInstructors ? topInstructors.length > 0 ? (
         <div className="top-instructors flex flex-col gap-5">
           <TopInstructors topInstructors={topInstructors} />
           <Leaderboard insList={insList} />
         </div>
       ) : (
-        <Loading />
-      )}
+        <p>No Rated instructors yet</p>
+      ) : <Loading />}
     </div>
   );
 };

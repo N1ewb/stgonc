@@ -1102,6 +1102,32 @@ export const DBProvider = ({ children }) => {
 
   //As Admin
 
+  const updateUserInfo = async (formValue, id) => {
+    try {
+      if (Auth.currentUser) {
+        const usersDocRef = doc(firestore, "Users", id);
+        const updatedUsersRef = {
+          ...formValue,
+          updatedAt: new Date().toISOString(),
+        };
+        await updateDoc(usersDocRef, updatedUsersRef);
+
+        return {
+          message: "Updated users information successfuly",
+          status: "success",
+        };
+      } else {
+        toast.error("User is not authenticated");
+      }
+    } catch (error) {
+      return {
+        message: `Updating users information failed `,
+        status: "failed",
+        errorDetails: error,
+      };
+    }
+  };
+
   const subscribeToUserChanges = async (callback) => {
     try {
       if (Auth.currentUser) {
@@ -1978,6 +2004,7 @@ export const DBProvider = ({ children }) => {
     getAppointmentList,
     getFinishedFacultyAppointment,
     getPendingRegistrationRequests,
+    updateUserInfo,
     subscribetoPendingRegistration,
     subscribeToAppointmentChanges,
     subscribeToSwithTGAppointmentChanges,
