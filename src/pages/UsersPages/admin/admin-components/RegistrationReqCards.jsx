@@ -7,6 +7,7 @@ import MoreDark from "../../../../static/images/more-dark.png";
 import { useAuth } from "../../../../context/auth/AuthContext";
 import { useDB } from "../../../../context/db/DBContext";
 import { useMessage } from "../../../../context/notification/NotificationContext";
+import { Tooltip } from "react-tooltip";
 const RegistrationReqCards = ({
   pendingRegistrations,
   setCurrentOpenedRegistrationCard,
@@ -86,6 +87,7 @@ const RegistrationReqCards = ({
         {pendingRegistrations.status === "Pending" ? (
           <div className="registration-buttons-container w-full [&_button]:bg-transparent [&_button]:p-0 [&_button]:hover:bg-transparent gap-3 flex flex-row items-center justify-end">
             <button
+              data-tooltip-id="approve-button"
               className=""
               onClick={() =>
                 handleApproveRegistrationRequest(
@@ -102,10 +104,15 @@ const RegistrationReqCards = ({
             >
               <img src={CheckMarkDark} alt="accept" height={25} width={25} />
             </button>
-            <button className="" onClick={handleDenyRegistration}>
+            <button
+              data-tooltip-id="deny-button"
+              className=""
+              onClick={handleDenyRegistration}
+            >
               <img src={DenyDark} alt="deny" height={25} width={25} />
             </button>
             <button
+            data-tooltip-id="more-button"
               className=""
               onClick={() =>
                 setCurrentOpenedRegistrationCard(pendingRegistrations)
@@ -118,6 +125,19 @@ const RegistrationReqCards = ({
           <p></p>
         )}
       </footer>
+      <Tooltip
+        data-anchorselect=".approve-button"
+        id="approve-button"
+        place="top"
+      >
+        Approve Registration
+      </Tooltip>
+      <Tooltip data-anchorselect=".deny-button" id="deny-button" place="top">
+        Deny Registration
+      </Tooltip>
+      <Tooltip data-anchorselect=".more-button" id="more-button" place="top">
+        More Info
+      </Tooltip>
     </div>
   );
 };

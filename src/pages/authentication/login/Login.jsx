@@ -15,10 +15,25 @@ const LoginPage = () => {
   const navigate = useNavigate();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleSignIn = (e) => {
+  const handleSignIn = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
-    auth.SignIn(emailRef.current.value, passwordRef.current.value);
+    try {
+      setIsSubmitting(true);
+      const res = await auth.SignIn(
+        emailRef.current.value,
+        passwordRef.current.value
+      );
+      if (res.status === 'success') {
+        toast.success(res.message);
+      } else if (res.status === 'failed') {
+        toast.error(res.message);
+      }
+    } catch (error) {
+      toast.error("Error in logging in");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   useEffect(() => {
@@ -30,7 +45,7 @@ const LoginPage = () => {
             const userRole = user.role;
             if (userRole) {
               navigate(`/private/${userRole}/dashboard`);
-              toast.succes("Logged in successfuly");
+              toast.success("Logged in successfuly");
             } else {
               navigate("/");
             }

@@ -46,16 +46,18 @@ const AdmingPendingRegPage = () => {
 
   return (
     <div className="pending-registrations-container h-full w-full">
-      <header className="flex flex-row justify-between w-1/2 items-end pb-3">
-        <h1 className="text-[#320000] text-4xl font-bold">
+      <header className="flex flex-row justify-between w-1/2 items-end pb-3 gap-4">
+        <h1 className="text-[#320000] text-4xl font-bold flex-1">
           Pending<br></br> <span className="font-light">Registrations</span>
         </h1>
-        <AdminSearchBar
-          datas={pendingRegistrationList}
-          setData={setPendingRegistrationList}
-          temp={temp}
-          setCurrentPage={() => null}
-        />
+        <div className="flex-1">
+          <AdminSearchBar
+            datas={pendingRegistrationList}
+            setData={setPendingRegistrationList}
+            temp={temp}
+            setCurrentPage={() => null}
+          />
+        </div>
       </header>
       <div className="pending-regitrations-content-container flex flex-row justify-between h-[90%] w-full">
         <div className="flex flex-wrap items-start w-1/2 max-h-full gap-3 overflow-auto py-3">

@@ -165,15 +165,7 @@ export const DBProvider = ({ children }) => {
   };
 
   //As Student
-  const sendAppointmentRequest = async (
-    teacheremail,
-    facultyUID,
-    concern,
-    date,
-    time,
-    format,
-    type,
-    department
+  const sendAppointmentRequest = async ( teacheremail, facultyUID, concern, date, time, format, type, department
   ) => {
     try {
       if (Auth.currentUser) {

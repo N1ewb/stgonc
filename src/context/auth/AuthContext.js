@@ -36,20 +36,22 @@ export const AuthProvider = ({ children }) => {
   const SignIn = async (email, password) => {
     if (!currentUser) {
       try {
-        return await signInWithEmailAndPassword(auth, email, password).then(
-          async () => {
-            const uid = auth.currentUser.uid;
-            const usersDocRef = doc(usersCollectionRef, uid);
+        const data = await signInWithEmailAndPassword(
+          auth,
+          email,
+          password
+        ).then(async () => {
+          const uid = auth.currentUser.uid;
+          const usersDocRef = doc(usersCollectionRef, uid);
 
-            await updateDoc(usersDocRef, {
-              isOnline: true,
-            });
-          }
-        )
-        
+          await updateDoc(usersDocRef, {
+            isOnline: true,
+          });
+        });
+        return { data, message: "Successfully logged in", status: "success" };
       } catch (error) {
-        return { message: "Login Failed", status: "success" };
-      } 
+        return { data: null, message: "Login Failed", status: "failed" };
+      }
     } else {
       return toastMessage("Already logged in");
     }

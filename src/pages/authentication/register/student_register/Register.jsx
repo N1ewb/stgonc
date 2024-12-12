@@ -25,8 +25,8 @@ const StudentRegister = () => {
   const notif = useMessage();
 
   const [loading, setLoading] = useState(false);
-
-  const toastMessage = (message) => toast(message);
+  const [message, setMessage] = useState(null);
+  const [processingImage, setProcessingImage] = useState(false);
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
@@ -41,56 +41,64 @@ const StudentRegister = () => {
 
   const handleStudentSignUp = async (e) => {
     e.preventDefault();
-
-    if (idImage !== null) {
-      if (passwordRef.current.value.length < 6) {
-        toastMessage("Password should be 6 characters or longer");
-      } else {
-        if (passwordRef.current.value === passwordConfirmRef.current.value) {
-          setLoading(true);
-          try {
-            const aiTestResultString = await runAiTest(idImage);
-            const aiTestResult = JSON.parse(aiTestResultString);
-
-            if (aiTestResult && aiTestResult.is_similar === true) {
-              await auth.StudentSignUpRequest(
-                emailRef.current.value,
-                passwordRef.current.value,
-                firstNameRef.current.value,
-                lastNameRef.current.value,
-                phoneNumberRef.current.value,
-                studentIDnumberRef.current.value,
-                departmentRef.current.value
-              );
-              const notification = await notif.storeUserNotifToDB(
-                emailRef.current.value,
-                "mellaniegambe@gmail.com",
-                "Registration",
-                "A student has requested to register for an account!"
-              );
-              if (notification) {
-                toastMessage("Registration Request is sent");
-                clearForm();
-
-                navigate("/auth/PendingRequestMessage");
-              } else {
-                console.log("wa pa");
-              }
-            } else {
-              toastMessage("Can't prove ID");
-            }
-          } catch (error) {
-            console.log(error.message);
-            toastMessage("Error during registration: " + error.message);
-          } finally {
-            setLoading(false);
-          }
-        } else {
-          toastMessage("Passwords do not match");
-        }
+    if (!idImage) {
+      toast.error("Please upload an ID image");
+      return;
+    }
+    const password = passwordRef.current.value;
+    const confirmPassword = passwordConfirmRef.current.value;
+    if (password.length < 6) {
+      toast.error("Password should be 6 characters or longer");
+      return;
+    }
+    if (password !== confirmPassword) {
+      toast.error("Passwords do not match");
+      return;
+    }
+    setLoading(true);
+    setProcessingImage(true);
+    setMessage("");
+    try {
+      const aiTestResultString = await runAiTest(idImage);
+      if (aiTestResultString.status === "failed") {
+        throw new Error("AI Test failed");
       }
-    } else {
-      toastMessage("Please upload an ID image");
+      const aiTestResult = JSON.parse(aiTestResultString.text);
+
+      if (!aiTestResult || aiTestResult.is_similar !== true) {
+        toast.error("Can't prove ID");
+        setMessage("Can't prove your ID is valid");
+        setProcessingImage(false);
+        return;
+      }
+      await auth.StudentSignUpRequest(
+        emailRef.current.value,
+        password,
+        firstNameRef.current.value,
+        lastNameRef.current.value,
+        phoneNumberRef.current.value,
+        studentIDnumberRef.current.value,
+        departmentRef.current.value
+      );
+      const notification = await notif.storeUserNotifToDB(
+        emailRef.current.value,
+        "mellaniegambe@gmail.com",
+        "Registration",
+        "A student has requested to register for an account!"
+      );
+      if (notification) {
+        toast.success("Registration request sent");
+        clearForm();
+        navigate("/auth/PendingRequestMessage");
+      } else {
+        console.error("Notification could not be sent");
+      }
+    } catch (error) {
+      console.error(error.message);
+      toast.error("Error during registration: " + error.message);
+    } finally {
+      setLoading(false);
+      setProcessingImage(false);
     }
   };
 
@@ -102,7 +110,7 @@ const StudentRegister = () => {
     studentIDnumberRef.current.value = "";
     passwordRef.current.value = "";
     passwordConfirmRef.current.value = "";
-    setIdImage(null); // Clear image preview
+    setIdImage(null);
   };
 
   useEffect(() => {
@@ -222,13 +230,26 @@ const StudentRegister = () => {
                   placeholder={"Confirm Password"}
                 />
                 <div className="register-sign-in-buttons w-full flex flex-col text-center gap-3">
+                  {processingImage && (
+                    <div className="processing-feedback w-full flex items-center justify-center px-5 py-3 rounded-md bg-blue-500 text-white">
+                      <p>Processing your ID image. Please wait...</p>
+                    </div>
+                  )}
                   <button
-                    className="w-full bg-[#740000] rounded-[4px]"
+                    className={`w-full ${loading || processingImage ? "bg-[#7400004c] cursor-not-allowed" : "bg-[#740000]"} rounded-[4px]`}
                     type="submit"
-                    disabled={loading}
+                    disabled={loading || processingImage}
                   >
                     {loading ? "Creating account..." : "Create account"}
                   </button>
+                  {message && (
+                    <div className="w-full flex items-center justify-center px-5 py-3 rounded-md bg-red-800 [&_p]:m-0 text-white relative">
+                      <p onClick={() => setMessage(null)} className="absolute top-2 right-2 bg-transparent hover:bg-transparent">
+                        X
+                      </p>
+                      <p>{message}</p>
+                    </div>
+                  )}
                   <p>
                     <b>Already have an account?</b>{" "}
                     <Link to={"/auth/Login"} style={{ textDecoration: "none" }}>
