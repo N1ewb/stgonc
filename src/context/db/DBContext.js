@@ -261,27 +261,7 @@ export const DBProvider = ({ children }) => {
     }
   };
 
-  const makeReferal = async (
-    guardianName,
-    guardianPhoneNumber,
-    firstName,
-    lastName,
-    email,
-    referee,
-    department,
-    concernType,
-    date,
-    yearLevel,
-    age,
-    sessionNumber,
-    location,
-    observation,
-    nonVerbalCues,
-    summary,
-    techniques,
-    actionPlan,
-    evaluation
-  ) => {
+  const makeReferal = async ( guardianName, guardianPhoneNumber, firstName, lastName, email, referee, department, concernType, date, yearLevel, age, sessionNumber, location, observation, nonVerbalCues, summary, techniques, actionPlan, evaluation) => {
     try {
       if (Auth.currentUser) {
         const q = query(appointmentsRef);
@@ -319,26 +299,7 @@ export const DBProvider = ({ children }) => {
     }
   };
 
-  const makeWalkin = async (
-    guardianName,
-    guardianPhoneNumber,
-    firstName,
-    lastName,
-    email,
-    department,
-    concernType,
-    date,
-    yearLevel,
-    age,
-    sessionNumber,
-    location,
-    observation,
-    nonVerbalCues,
-    summary,
-    techniques,
-    actionPlan,
-    evaluation
-  ) => {
+  const makeWalkin = async ( guardianName, guardianPhoneNumber, firstName, lastName, email, department, concernType, date, yearLevel, age, sessionNumber, location, observation, nonVerbalCues, summary, techniques, actionPlan, evaluation ) => {
     try {
       if (Auth.currentUser) {
         const q = query(appointmentsRef);
@@ -579,13 +540,7 @@ export const DBProvider = ({ children }) => {
     }
   };
 
-  const reschedAppointment = async (
-    id,
-    receiver,
-    reason,
-    appointmentDate,
-    appointmentTime
-  ) => {
+  const reschedAppointment = async ( id, receiver, reason, appointmentDate, appointmentTime ) => {
     try {
       if (Auth.currentUser) {
         const appointmentDocRef = doc(firestore, "Appointments", id);
@@ -638,37 +593,21 @@ export const DBProvider = ({ children }) => {
     }
   };
 
-  const followupAppointment = async (
-    id,
-    curID = null,
-    receiver,
-    format,
-    date,
-    appointmentsTime,
-    location
-  ) => {
+  const followupAppointment = async ( id, curID = null, receiver, format, date, appointmentsTime, location ) => {
     try {
       if (!Auth.currentUser) return;
-
       const receivingUser = await getUser(receiver);
       const oldAppointmentRef = doc(appointmentsRef, id);
-
-      console.log("curID:", curID);
-
       const appointmentToUpdateRef = curID
         ? doc(oldAppointmentRef, "Followup", curID)
         : oldAppointmentRef;
-
       const appointmentData = await getDoc(appointmentToUpdateRef);
-
       if (!appointmentData.exists()) {
         throw new Error(`Appointment with ID ${curID || id} does not exist.`);
       }
-
       await updateDoc(appointmentToUpdateRef, {
         appointmentStatus: "Finished",
       });
-
       const followupAppointmentRef = collection(oldAppointmentRef, "Followup");
       const precedingApptdata = await getAppointment(id);
 
@@ -690,7 +629,6 @@ export const DBProvider = ({ children }) => {
           createdAt: serverTimestamp(),
           department: user.department,
         });
-
         if (receivingUser) {
           await notif.storeNotifToDB(
             "Appointment",
@@ -806,9 +744,7 @@ export const DBProvider = ({ children }) => {
     try {
       if (Auth.currentUser) {
         const recevingUser = await getUser(receiver);
-
         const appointmentDocRef = doc(firestore, "Appointments", id);
-
         const appointmentSnapshot = await getDoc(appointmentDocRef);
 
         let sessionNumber = 1;
@@ -860,13 +796,8 @@ export const DBProvider = ({ children }) => {
       if (!Auth.currentUser) {
         throw new Error("User is not authenticated.");
       }
-      const appointmentDocRef = doc(
-        firestore,
-        "Appointments",
-        formValue.appointment
-      );
+      const appointmentDocRef = doc( firestore, "Appointments", formValue.appointment);
       let reportRef;
-
       if (formValue.currentAppointment) {
         const followupRef = doc(
           appointmentDocRef,
@@ -877,7 +808,6 @@ export const DBProvider = ({ children }) => {
       } else {
         reportRef = collection(appointmentDocRef, "Reports");
       }
-
       const querySnapshot = await getDocs(query(reportRef));
       if (!querySnapshot.empty) {
         return {
@@ -885,14 +815,12 @@ export const DBProvider = ({ children }) => {
           status: "failed",
         };
       }
-
       await addDoc(reportRef, {
         ...formValue,
         ReportBy: Auth.currentUser.uid,
         appointmentReference: formValue.appointment,
         createdAt: serverTimestamp(),
       });
-
       return { message: "Report made successfully!", status: "success" };
     } catch (error) {
       return {
@@ -1661,13 +1589,6 @@ export const DBProvider = ({ children }) => {
         available: true,
         createdAt: Timestamp.now(),
       });
-      // if (!notifSent) {
-      //   await notif.storeNotifToDB(
-      //     "Schedules",
-      //     `Your consultation hours Schedule has been updated, please proceed to schedules pages to view your new consultation schedules`,
-      //     assignedInstructor.email
-      //   );
-      // }
       setNotifSent(true);
     } catch (error) {
       toastMessage("Error adding document: ", error.message);

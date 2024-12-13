@@ -23,13 +23,10 @@ const ExportReport = ({ onClose, insList }) => {
       setLoading(true);
       try {
         if (insList.length === 0) return;
-
         let ratedInstructors = await calculateRating(db, insList);
-
         const sortedIns = ratedInstructors.sort(
           (a, b) => b.avgRating - a.avgRating
         );
-
         const updatedInstructors = await Promise.all(
           insList.map(async (ins) => {
             const insApts = await db.getFinishedFacultyAppointment(ins.id);
@@ -38,13 +35,11 @@ const ExportReport = ({ onClose, insList }) => {
               (sum, apt) => sum + (parseInt(apt.appointmentDuration) || 0),
               0
             );
-
             const ratingData = sortedIns.find(
               (rated) => rated.ins.userID === ins.id
             ) || {
               avgRating: "N/A",
             };
-
             return {
               ...ins,
               rating: ratingData.avgRating,
@@ -52,7 +47,6 @@ const ExportReport = ({ onClose, insList }) => {
             };
           })
         );
-
         console.log("Updated Instructors:", updatedInstructors);
         setAllRating(updatedInstructors);
       } catch (error) {
@@ -61,7 +55,6 @@ const ExportReport = ({ onClose, insList }) => {
         setLoading(false);
       }
     };
-
     fetchRatings();
   }, [insList, db]);
 

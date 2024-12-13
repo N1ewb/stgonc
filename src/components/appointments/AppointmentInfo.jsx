@@ -115,7 +115,7 @@ const AppointmentInfo = ({ positiveClick, negativeClick }) => {
               })
             }
           >
-            Accept
+            {status === 'Accepted' ? "Finish" : "Accept"}
           </button>
           <button
             className="m-0 py-2 px-5 bg-[#720000] rounded-md"
