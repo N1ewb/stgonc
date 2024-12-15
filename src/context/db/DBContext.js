@@ -1345,6 +1345,30 @@ export const DBProvider = ({ children }) => {
       toastMessage("Error subscribing to user changes:", error);
     }
   };
+  const subscribeToLogsChanges = async (callback) => {
+    try {
+      if (Auth.currentUser) {
+        const LogsCollectionRef = collection(firestore, 'ActionLogs')
+        if (user) {
+          const q = query(
+            LogsCollectionRef,
+            where("performedBy", "==", user.uid)
+          );
+          const unsubscribe = onSnapshot(q, (snapshot) => {
+            const data = snapshot.docs.map((doc) => ({
+              id: doc.id,
+              ...doc.data(),
+            }));
+            
+            callback(data);
+          });
+          return unsubscribe;
+        }
+      }
+    } catch (error) {
+      console.error('Error in getting action logs')
+    }
+  };
 
   const subscribeToInstructorChanges = async (callback) => {
     try {
@@ -2191,6 +2215,7 @@ export const DBProvider = ({ children }) => {
     getFinishedFacultyAppointment,
     getPendingRegistrationRequests,
     updateUserInfo,
+    subscribeToLogsChanges,
     subscribetoPendingRegistration,
     subscribeToAppointmentChanges,
     subscribeToSwithTGAppointmentChanges,

@@ -12,6 +12,7 @@ import AccountPage from "./UserPageComponents/AccountPage";
 import PasswordPage from "./UserPageComponents/PasswordPage";
 import NotificationPage from "./UserPageComponents/NotificationPage";
 import HelpPage from "./UserPageComponents/HelpPage";
+import ActionLogs from "./UserPageComponents/ActionLogs";
 
 const Userpage = () => {
   const auth = useAuth();
@@ -104,6 +105,16 @@ const Userpage = () => {
           >
             Help
           </button>
+          <button
+            className={`hover:bg-[#320000] hover:text-white ${
+              currentPage === "Logs"
+                ? "bg-[#720000] text-white"
+                : "bg-transparent text-black"
+            } `}
+            onClick={() => setCurrentPage("Logs")}
+          >
+            Logs
+          </button>
         </div>
         <div className="account-details-main-content-container h-[100%] w-4/5 lg:w-full lg:basis-full">
           {currentPage === "Account" ? (
@@ -114,7 +125,8 @@ const Userpage = () => {
             <NotificationPage />
           ) : currentPage === "Help" ? (
             <HelpPage />
-          ) : (
+          ) : currentPage === "Logs" ? (
+            <ActionLogs />) : (
             "Page not found"
           )}
         </div>
