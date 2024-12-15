@@ -67,7 +67,7 @@ const AdminAppointmentReqsPage = () => {
         </div>
       </div>
       <div className="w-full flex flex-row justify-between items-start h-[100%]">
-        <div className="w-1/2 max-h-[90%] overflow-auto pb-3 flex flex-row flex-wrap">
+        <div className="w-1/2 max-h-[90%] overflow-auto pb-2 gap-2 flex flex-row flex-wrap">
           {appointments && appointments.length ? (
             appointments.map((appointment) =>
               appointment.appointmentStatus === "Pending" &&

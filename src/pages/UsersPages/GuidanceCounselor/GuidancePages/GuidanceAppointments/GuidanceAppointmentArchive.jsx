@@ -54,13 +54,15 @@ const GuidanceAppointmentArchive = () => {
   return (
     <div className="h-full w-full">
       <header className="pb-10 w-1/2 flex justify-between ">
-        <h4 className="font-bold">Archive</h4>
-        <AdminSearchBar
-          datas={appointments}
-          setData={setAppointments}
-          temp={temp}
-          setCurrentPage={() => null}
-        />
+        <h4 className="font-bold text-xl flex-1">Archive</h4>
+        <div className="flex-1">
+          <AdminSearchBar
+            datas={appointments}
+            setData={setAppointments}
+            temp={temp}
+            setCurrentPage={() => null}
+          />
+        </div>
       </header>
       <main>
         <div className="appoinments-container w-full flex flex-row justify-between items-start h-[100%]">

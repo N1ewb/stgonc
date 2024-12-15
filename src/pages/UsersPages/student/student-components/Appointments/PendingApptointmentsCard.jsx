@@ -37,9 +37,11 @@ const PendingApptointmentsCard = ({ appointment, setCurrentAppointment }) => {
     },
   ];
 
+  const data = {...appointment, ...faculty}
+
   return (
     <div className="w-[48%]">
-      {faculty && <Usercard buttons={buttons} data={faculty} />}
+      {faculty && <Usercard buttons={buttons} data={data} />}
     </div>
   );
 };

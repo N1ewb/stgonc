@@ -124,7 +124,7 @@ export const MessagingProvider = ({ children }) => {
     }
   };
 
-  function subscribeToUserNotifications(email, callback) {
+  function subscribeToUserNotifications(sentTo, callback) {
     if (!auth.currentUser) {
       throw new Error("User is not authenticated");
     }
@@ -132,7 +132,7 @@ export const MessagingProvider = ({ children }) => {
     try {
       const q = query(
         notificationRef,
-        where("sentTo", "==", email),
+        where("sentTo", "==", sentTo),
         where("read", "==", false),
         orderBy("createdAt", "desc")
       );

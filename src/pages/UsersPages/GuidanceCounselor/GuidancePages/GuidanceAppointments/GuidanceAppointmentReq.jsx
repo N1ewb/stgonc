@@ -52,13 +52,15 @@ const GuidanceAppointmentReq = () => {
   return (
     <div className="w-full">
       <header className="pb-10 w-1/2 justify-between flex">
-        <h4 className="font-bold"> Requests</h4>
-        <AdminSearchBar
-          datas={appointments}
-          setData={setAppointments}
-          temp={temp}
-          setCurrentPage={() => null}
-        />
+        <h4 className="font-bold text-xl flex-1"> Requests</h4>
+        <div className="flex-1">
+          <AdminSearchBar
+            datas={appointments}
+            setData={setAppointments}
+            temp={temp}
+            setCurrentPage={() => null}
+          />
+        </div>
       </header>
       <main className="w-full flex flex-row justify-between items-start h-[100%]">
         <div className="w-1/2 max-h-full overflow-auto pb-3 flex flex-row flex-wrap">

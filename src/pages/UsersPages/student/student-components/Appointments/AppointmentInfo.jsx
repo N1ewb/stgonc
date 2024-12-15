@@ -2,17 +2,10 @@ import { useDB } from "../../../../../context/db/DBContext";
 import toast from "react-hot-toast";
 import { useReschedDialog } from "../../../../../context/appointmentContext/ReschedContext";
 import { useEffect } from "react";
-import useScheduleAppointment from "../../../../../hooks/useScheduleAppointment";
 
 const AppointmentInfo = ({ appointment, setCurrentAppointmentInfo }) => {
-  const { cancelAppointment } = useDB();
-  const { handleToggleReschedDialog,openReschedDialog } = useReschedDialog();
-
-  useEffect(() => {
-    if(openReschedDialog){
-      console.log('Faculty: ', appointment.faculty)
-    }
-  },[openReschedDialog])
+  const { cancelAppointment, acceptResched } = useDB();
+  const { handleToggleReschedDialog, openReschedDialog } = useReschedDialog();
 
   const handleApptRequest = async () => {
     const res = await cancelAppointment(
@@ -26,6 +19,21 @@ const AppointmentInfo = ({ appointment, setCurrentAppointmentInfo }) => {
       toast.error(res.message);
     }
     setCurrentAppointmentInfo(null);
+  };
+
+  const handleAcceptResched = async () => {
+    try {
+      const res = await acceptResched(appointment.appt.id,appointment.appt.appointedFaculty);
+      if (res.status === "success") {
+        toast.success(res.message);
+      } else {
+        toast.error(res.message);
+      }
+    } catch (error) {
+      toast.error("Error in accepting new schedule");
+    }finally{
+      setCurrentAppointmentInfo(null)
+    }
   };
 
   return (
@@ -42,10 +50,19 @@ const AppointmentInfo = ({ appointment, setCurrentAppointmentInfo }) => {
         </button>
       </header>
       <main className="w-full pt-3 [&_span]:text-[14px] [&_span]:text-[#929292] flex flex-col gap-3 max-h-[90%] overflow-auto">
-        {appointment.appt?.isRescheduled && (
-          <p className="p-3 bg-[#7200007a] flex-1 rounded-md text-white text-center">
-            This Appointment was rescheduled
-          </p>
+        {appointment.appt?.isRescheduled ? (
+          appointment.appt?.rescheduledBy === "appointed" ? (
+            <p className="p-3 bg-[#7200007a] flex-1 rounded-md text-white text-center">
+              This Appointment was rescheduled
+            </p>
+          ) : (
+            <p className="p-3 bg-[#098e2b7a] flex-1 rounded-md text-white text-center">
+              Waiting for the appointed counsellor to accept your appealed
+              schedule time
+            </p>
+          )
+        ) : (
+          ""
         )}
         <p>
           <span>Appointed Faculty Name: </span>
@@ -69,24 +86,30 @@ const AppointmentInfo = ({ appointment, setCurrentAppointmentInfo }) => {
           <span>Concern: </span>
           {appointment.appt.appointmentConcern}
         </p>
-        {appointment.appt?.isRescheduled ? (
-           <div className="footer w-full flex flex-row justify-end gap-4 [&_button]:text-[12px]">
-             <button
-            onClick={handleToggleReschedDialog}
-            className="bg-[#ab4d1f] flex-1 hover:bg-[#833f1d] rounded-md"
-          >
-            Appeal New Schedule
-            
-          </button>
-           <button
-             onClick={() => null}
-             className="bg-[#1b8833] flex-1 hover:bg-[#196929] rounded-md"
-           >
-             Accept New Schedule
-            
-           </button>
-         </div>
-         
+        {appointment.appt?.isRescheduled &&
+        appointment.appt?.rescheduledBy === "appointed" ? (
+          <div className="footer w-full flex flex-row justify-end gap-4 [&_button]:text-[12px]">
+            <button
+              onClick={() =>
+                handleToggleReschedDialog(
+                  appointment && {
+                    ...appointment,
+                    ...appointment.appt,
+                    ...appointment.faculty,
+                  }
+                )
+              }
+              className="bg-[#ab4d1f] flex-1 hover:bg-[#833f1d] rounded-md"
+            >
+              Appeal New Schedule
+            </button>
+            <button
+              onClick={() => handleAcceptResched()}
+              className="bg-[#1b8833] flex-1 hover:bg-[#196929] rounded-md"
+            >
+              Accept New Schedule
+            </button>
+          </div>
         ) : (
           <button className="bg-transparent flex-1 "></button>
         )}

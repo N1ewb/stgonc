@@ -5,9 +5,11 @@ import useScheduleAppointment from "../../hooks/useScheduleAppointment";
 import Timeslot from "../../pages/UsersPages/student/student-components/timeslots/Timeslot";
 import { useDB } from "../../context/db/DBContext";
 import toast from "react-hot-toast";
+import { useAuth } from "../../context/auth/AuthContext";
 
 export default function ReschedAPpointmentDialog({ id, receiver }) {
   const db = useDB();
+  const { currentUser } = useAuth();
   const { openReschedDialog, handleToggleReschedDialog, reschedappointment } =
     useReschedDialog();
   const {
@@ -51,9 +53,11 @@ export default function ReschedAPpointmentDialog({ id, receiver }) {
         !appointmentTime
       )
         return toast.error("Please fill in fields");
+      
+      const receiver = currentUser.role === "Student" ? reschedappointment.appointedFaculty : reschedappointment.appointee;
       const res = await db.reschedAppointment(
         reschedappointment.id,
-        reschedappointment.appointee,
+        receiver,
         reason,
         appointmentDate.dateWithoutTime,
         appointmentTime

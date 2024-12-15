@@ -67,7 +67,7 @@ const AdminAppointmentPage = () => {
         </div>
       </div>
       <div className="appoinments-container w-full flex flex-row justify-between items-start h-[100%]">
-        <div className="accepted-appointments-container w-1/2 max-h-[90%] flex flex-row flex-wrap overflow-auto pb-3">
+        <div className="accepted-appointments-container w-1/2 max-h-[90%] flex flex-row flex-wrap overflow-auto pb-2 gap-2">
           {appointments && appointments.length ? (
             appointments.map((appointment, index) => (
               <AppointmentList

@@ -5,6 +5,7 @@ export default function GuidanceTabularReport({
   contentRef,
   data,
   appointee,
+  report,
   isBlank,
 }) {
   const { currentUser } = useAuth();
@@ -15,6 +16,8 @@ export default function GuidanceTabularReport({
     month: "long",
     day: "numeric",
   });
+
+  const reportData = report || data; // Fallback to data if report doesn't exist
 
   return (
     <div
@@ -54,13 +57,13 @@ export default function GuidanceTabularReport({
             <tr>
               <td className="border border-gray-300 p-2">Year Level / Age</td>
               <td className="border border-gray-300 p-2">
-                {isBlank ? "" : `${data?.yearlevel} Year / ${data?.age}`}
+                {isBlank ? "" : `${reportData.yearLevel} Year / ${reportData.age}`}
               </td>
             </tr>
             <tr>
               <td className="border border-gray-300 p-2">Date of Session</td>
               <td className="border border-gray-300 p-2">
-                {isBlank ? "" : data?.appointmentDate || data?.date}
+                {isBlank ? "" : reportData.appointmentDate || reportData.date}
               </td>
             </tr>
             <tr>
@@ -74,19 +77,19 @@ export default function GuidanceTabularReport({
             <tr>
               <td className="border border-gray-300 p-2">Session Number</td>
               <td className="border border-gray-300 p-2">
-                {isBlank ? "" : data?.sessionNumber}
+                {isBlank ? "" : reportData.sessionNumber}
               </td>
             </tr>
             <tr>
               <td className="border border-gray-300 p-2">Location</td>
               <td className="border border-gray-300 p-2">
-                {isBlank ? "" : data?.location}
+                {isBlank ? "" : reportData.location}
               </td>
             </tr>
             <tr>
               <td className="border border-gray-300 p-2">Reason for Counseling</td>
               <td className="border border-gray-300 p-2">
-                {isBlank ? "" : data?.appointmentType || "N/A"}
+                {isBlank ? "" : reportData.appointmentType || "N/A"}
               </td>
             </tr>
           </tbody>
@@ -98,31 +101,31 @@ export default function GuidanceTabularReport({
             <tr>
               <td className="border border-gray-300 p-2 w-1/2">Observation</td>
               <td className="border border-gray-300 p-2 w-1/2">
-                {isBlank ? "" : data?.observation}
+                {isBlank ? "" : reportData.observation}
               </td>
             </tr>
             <tr>
               <td className="border border-gray-300 p-2 w-1/2">Non-verbal Cues</td>
               <td className="border border-gray-300 p-2 w-1/2">
-                {isBlank ? "" : data?.nonVerbalCues}
+                {isBlank ? "" : reportData.nonVerbalCues}
               </td>
             </tr>
             <tr>
               <td className="border border-gray-300 p-2 w-1/2">Discussion Summary</td>
               <td className="border border-gray-300 p-2 w-1/2">
-                {isBlank ? "" : data?.summary}
+                {isBlank ? "" : reportData.summary}
               </td>
             </tr>
             <tr>
               <td className="border border-gray-300 p-2 w-1/2">Techniques Approach Used</td>
               <td className="border border-gray-300 p-2 w-1/2">
-                {isBlank ? "" : data?.techniques}
+                {isBlank ? "" : reportData.techniques}
               </td>
             </tr>
             <tr>
               <td className="border border-gray-300 p-2 w-1/2">Action Plan/Next Steps</td>
               <td className="border border-gray-300 p-2 w-1/2">
-                {isBlank ? "" : data?.actionPlan}
+                {isBlank ? "" : reportData.actionPlan}
               </td>
             </tr>
             <tr>
@@ -132,7 +135,7 @@ export default function GuidanceTabularReport({
             <tr>
               <td className="border border-gray-300 p-2 w-1/2">Counselor's Evaluation</td>
               <td className="border border-gray-300 p-2 w-1/2">
-                {isBlank ? "" : data?.evaluation}
+                {isBlank ? "" : reportData.evaluation}
               </td>
             </tr>
           </tbody>

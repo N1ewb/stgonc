@@ -675,10 +675,48 @@ export const DBProvider = ({ children }) => {
           `Your appointment Request has been accepted and will be held on ${date}`,
           receiver
         );
-        toastMessage("Appointment Accepted");
+        return {
+          message: "Successfuly approved appointment",
+          status: "success",
+        };
       }
     } catch (error) {
-      notifyError(error);
+      return { message: "Error in approving appointment", status: "failed" };
+    }
+  };
+
+  const acceptResched = async (id, receiver) => {
+    try {
+      if (Auth.currentUser) {
+        const appointmentDocRef = doc(firestore, "Appointments", id);
+        const receiverData = await getUser(receiver);
+        const appt = await getAppointment(id);
+        const updatedAppointmentDocRef = {
+          isRescheduled: false,
+          appointmentDate: appt.newSched.appointmentDate,
+          appointmentsTime: appt.newSched.appointmentsTime,
+          newSched: null,
+          acceptedAt: serverTimestamp(),
+          appointmentStatus: "Accepted",
+          updateMessage: `This Appointment reschedule was accepted by ${Auth.currentUser.firstName} ${Auth.currentUser.lastName}. Your Appointment will e held at ${appt.newSched.appointmentDate} in ${appt.newSched.appointmentsTime.appointmentStartTime} AM`,
+        };
+        await updateDoc(appointmentDocRef, updatedAppointmentDocRef);
+        await createLogs("RESCHEDULE", id, {
+          ...updatedAppointmentDocRef,
+          action: "Accepted Re-schedule of appointment",
+        });
+        await notif.storeNotifToDB(
+          "Appointment Resched|Accepted",
+          `Your appointment rescheduled was accepted ${Auth.currentUser.firstName} ${Auth.currentUser.lastName}`,
+          receiverData.email
+        );
+        return { message: "Accepted Resched Date and Time", status: "success" };
+      }
+    } catch (error) {
+      return {
+        message: "Error in accepting resched date and time",
+        status: "failed",
+      };
     }
   };
 
@@ -687,19 +725,27 @@ export const DBProvider = ({ children }) => {
     receiver,
     reason,
     appointmentDate,
-    appointmentTime
+    appointmentsTime
   ) => {
     try {
       if (Auth.currentUser) {
         const appointmentDocRef = doc(firestore, "Appointments", id);
+        const receiverData = await getUser(receiver);
+        const appt = await getAppointment(id);
         const updatedAppointmentDocRef = {
-          appointmentDate,
-          appointmentTime,
+          newSched: { appointmentDate, appointmentsTime },
+          oldSched: {
+            appointmentDate: appt.appointmentDate,
+            appointmentsTime: appt.appointmentsTime,
+          },
+          rescheduledAt: serverTimestamp(),
           isRescheduled: true,
-          appointmentStatus: "Accepted",
-          updateMessage: `This Appointment was rescheduled by ${Auth.currentUser.firstName} ${Auth.currentUser.lastName}. Your Appointment will e held at ${appointmentDate} in ${appointmentTime.appointmentStartTime} AM`,
+          rescheduledBy:
+            Auth.currentUser.role === "Student" ? "appointee" : "appointed",
+          reason,
+          appointmentStatus: "Pending",
+          updateMessage: `This Appointment was rescheduled by ${Auth.currentUser.firstName} ${Auth.currentUser.lastName}. Your Appointment will e held at ${appointmentDate} in ${appointmentsTime.appointmentStartTime} AM`,
         };
-        const appointee = await getUser(receiver);
         await updateDoc(appointmentDocRef, updatedAppointmentDocRef);
         await createLogs("RESCHEDULE", id, {
           ...updatedAppointmentDocRef,
@@ -707,8 +753,8 @@ export const DBProvider = ({ children }) => {
         });
         await notif.storeNotifToDB(
           "Appointment Rescheduled",
-          `Your appointment has been rescheduled bu ${Auth.currentUser.firstName} ${Auth.currentUser.lastName} because: ${reason}`,
-          appointee.email
+          `Your appointment has been rescheduled by ${Auth.currentUser.firstName} ${Auth.currentUser.lastName} because: ${reason}`,
+          receiverData.email
         );
         return {
           message: "The appointment has been succesfully rescheduled",
@@ -2114,6 +2160,7 @@ export const DBProvider = ({ children }) => {
     getInstructorAppointment,
     approveAppointment,
     denyAppointment,
+    acceptResched,
     reschedAppointment,
     denyRegistration,
     followupAppointment,

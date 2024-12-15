@@ -3,10 +3,12 @@ import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { useDB } from "../context/db/DBContext";
 import { useAuth } from "../context/auth/AuthContext";
+import { useReschedDialog } from "../context/appointmentContext/ReschedContext";
 
 const useScheduleAppointment = (isFormOpen) => {
   const db = useDB();
   const auth = useAuth();
+  const { reschedappointment } = useReschedDialog()
   const [selectedDate, setSelectedDate] = useState(null);
   const [instructorSchedule, setInstructorSchedule] = useState([]);
   const [instructorTimeslots, setInstructorTimeslots] = useState([]);
@@ -17,7 +19,11 @@ const useScheduleAppointment = (isFormOpen) => {
   const [availableDays, setAvailableDays] = useState([]);
 
   const toastMessage = (message) => toast(message);
-
+  useEffect(() => {
+    if(reschedappointment){
+      console.log(reschedappointment)
+    }
+  },[])
   useEffect(() => {
     const fetchAvailableDays = async () => {
       try {
@@ -45,11 +51,12 @@ const useScheduleAppointment = (isFormOpen) => {
 
   const fetchInstructorAvailableDays = async (days) => {
     try {
+      const useEmail = reschedappointment.email || auth.currentUser.email
       const availableDays = [];
       for (const day of days) {
         const timeslots = await db.getInstructorTimeslots(
           day,
-          auth.currentUser.email
+          useEmail
         );
         if (timeslots.length > 0) {
           availableDays.push(day.dayOfWeek);
@@ -65,10 +72,11 @@ const useScheduleAppointment = (isFormOpen) => {
 
   const fetchInstructorTimeslots = async (day) => {
     try {
+      const useEmail = reschedappointment.email || auth.currentUser.email
       const scheduleDay = await db.getScheduleDay(day.dayOfWeek);
       const timeslots = await db.getInstructorTimeslots(
         scheduleDay[0],
-        auth.currentUser.email
+        useEmail
       );
       setInstructorTimeslots(timeslots);
     } catch (error) {
@@ -80,8 +88,9 @@ const useScheduleAppointment = (isFormOpen) => {
     if (isFormOpen) {
       const fetchAppointments = async () => {
         try {
+          const useID = reschedappointment.userID || auth.currentUser.uid
           const appointments = await db.getInstructorAppointment(
-            auth.currentUser.uid
+            useID
           );
           const filteredAppointments = appointments.filter(
             (appt) => appt.appointedFaculty === auth.currentUser.uid

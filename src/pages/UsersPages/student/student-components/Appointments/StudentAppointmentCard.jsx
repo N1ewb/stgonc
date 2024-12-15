@@ -7,6 +7,7 @@ import Chat from "../../../../../static/images/chat-dark.png";
 import { useDB } from "../../../../../context/db/DBContext";
 import { useChat } from "../../../../../context/chatContext/ChatContext";
 import Usercard from "../../../../../components/userscard/Usercard";
+import Loading from "../../../../../components/Loading/Loading";
 
 const StudentAppointmentCard = ({ appointment, setCurrentAppointment }) => {
   const db = useDB();
@@ -47,9 +48,13 @@ const StudentAppointmentCard = ({ appointment, setCurrentAppointment }) => {
     },
   ];
 
+  if(!faculty){
+    return <Loading />
+  }
+  const data = {...appointment, ...faculty}
   return (
     <div className="w-[48%]">
-      {faculty && <Usercard data={faculty} buttons={buttons} />}
+      <Usercard data={data} buttons={buttons} />
     </div>
   );
 };

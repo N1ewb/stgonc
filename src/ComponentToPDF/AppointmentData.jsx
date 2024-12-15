@@ -50,7 +50,6 @@ const AppointmentData = ({ data }) => {
         try {
           setLoading(true);
           const user = await db.getUser(data.appointee);
-          console.log(data)
           const report = await db.getAppointmentReport(data.id);
 
           setAppointee(user);
@@ -125,6 +124,7 @@ const AppointmentData = ({ data }) => {
               <GuidanceReport
                 contentRef={contentRef}
                 data={data}
+                report={report}
                 appointee={data.appointee}
                 isBlank={isBlank}
               />
@@ -141,6 +141,7 @@ const AppointmentData = ({ data }) => {
             <GuidanceTabularReport
               contentRef={contentRef}
               data={data}
+              report={report}
               appointee={data.appointee}
               isBlank={isBlank}
             />
