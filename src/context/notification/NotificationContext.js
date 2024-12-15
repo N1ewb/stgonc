@@ -8,6 +8,7 @@ import {
   doc,
   getDocs,
   onSnapshot,
+  orderBy,
   query,
   serverTimestamp,
   updateDoc,
@@ -132,7 +133,8 @@ export const MessagingProvider = ({ children }) => {
       const q = query(
         notificationRef,
         where("sentTo", "==", email),
-        where("read", "==", false)
+        where("read", "==", false),
+        orderBy("createdAt", "desc")
       );
 
       const unsubscribe = onSnapshot(q, (querySnapshot) => {

@@ -81,7 +81,7 @@ const TopThree = ({ topInstructors }) => {
 
 const TopInstructors = ({ topInstructors }) => {
   return (
-    <div className="w-full flex flex-row basis-[60%] h-[60%] justify-center gap-1 text-[#320000] ">
+    <div className="w-full flex flex-row flex-1 justify-center gap-1 text-[#320000] ">
       {topInstructors.length > 1 && <TopTWo topInstructors={topInstructors} />}
       {topInstructors.length > 0 && <TopOne topInstructors={topInstructors} />}
       {topInstructors.length > 2 && <TopThree topInstructors={topInstructors} />}

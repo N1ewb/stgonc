@@ -2,8 +2,6 @@ import React, { useEffect, useState } from "react";
 import Close from "../../static/images/close-dark.png";
 import { useAppointment } from "../../context/appointmentContext/AppointmentContext";
 import { useDB } from "../../context/db/DBContext";
-import RedButton from "../buttons/RedButton";
-import GreenButton from "../buttons/GreenButton";
 import { useReschedDialog } from "../../context/appointmentContext/ReschedContext";
 
 const AppointmentInfo = ({ positiveClick, negativeClick }) => {
@@ -88,6 +86,9 @@ const AppointmentInfo = ({ positiveClick, negativeClick }) => {
           <br></br>
           {currentAppointment.appointmentConcern}
         </p>
+        {status && status === 'Cancelled' && <p className="p-5 bg-[#9a24247d] rounded-md text-white font-semibold">
+          This student cancelled their counselling appointment
+        </p>}
         <div className="flex flex-row gap-3">
           <p className="capitalize">
             <span className="text-[#320000] font-bold">Type:</span>{" "}
@@ -103,26 +104,67 @@ const AppointmentInfo = ({ positiveClick, negativeClick }) => {
           </p>
         </div>
       </div>
-      {status && status !== "Finished" && (
-        <div className="appointment-info-footer w-full flex flex-row items-end justify-end gap-3 ">
-          <button
-            className="m-0 py-2 px-5 bg-[#57a627] rounded-md"
-            onClick={() =>
-              positiveClick({
-                id: currentAppointment.id,
-                receiver: appointee?.userID || appointee,
-                date: Date.now(),
-              })
-            }
-          >
-            {status === 'Accepted' ? "Finish" : "Accept"}
-          </button>
-          <button
-            className="m-0 py-2 px-5 bg-[#720000] rounded-md"
-            onClick={() => handleToggleReschedDialog(currentAppointment)}
-          >
-            Re-Sched
-          </button>
+      {status && (
+        <div className="appointment-info-footer w-full flex flex-row items-end justify-end gap-3">
+          {status === "Pending" && (
+            <>
+              <button
+                className="m-0 py-2 px-5 bg-[#57a627] rounded-md"
+                onClick={() =>
+                  positiveClick({
+                    id: currentAppointment.id,
+                    receiver: appointee?.userID || appointee,
+                    date: Date.now(),
+                  })
+                }
+              >
+                Accept
+              </button>
+              <button
+                className="m-0 py-2 px-5 bg-[#720000] rounded-md"
+                onClick={() => handleToggleReschedDialog(currentAppointment)}
+              >
+                Re-Sched
+              </button>
+            </>
+          )}
+          {status === "Accepted" && (
+            <>
+              <button
+                className="m-0 py-2 px-5 bg-[#57a627] rounded-md"
+                onClick={() =>
+                  positiveClick({
+                    id: currentAppointment.id,
+                    receiver: appointee?.userID || appointee,
+                    date: Date.now(),
+                  })
+                }
+              >
+                Finish
+              </button>
+              <button
+                className="m-0 py-2 px-5 bg-[#720000] rounded-md"
+                onClick={() => handleToggleReschedDialog(currentAppointment)}
+              >
+                Re-Sched
+              </button>
+            </>
+          )}
+          {status === "Cancelled" && (
+            <button className="m-0 py-2 px-5 bg-gray-500 rounded-md">
+              Dismissed
+            </button>
+          )}
+          {status === "Finished" && (
+            <p className="text-green-600 font-semibold">
+              Appointment Completed
+            </p>
+          )}
+          {status === "Re-Scheduled" && (
+            <button className="m-0 py-2 px-5 bg-[#57a627] rounded-md">
+              View New Schedule
+            </button>
+          )}
         </div>
       )}
     </div>

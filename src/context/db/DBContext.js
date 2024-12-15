@@ -164,24 +164,73 @@ export const DBProvider = ({ children }) => {
     }
   };
 
+  const createLogs = async (type, appointmentId, formValue) => {
+    if (!Auth.currentUser) {
+      return { message: "User is not authenticated", status: "failed" };
+    }
+
+    const logsCollectionRef = collection(firestore, "ActionLogs");
+
+    const logDetails = {
+      type,
+      action: formValue.action || "No action description provided",
+      appointmentId,
+      performedBy: Auth.currentUser.uid || "Anonymous",
+      targetUser:
+        Auth.currentUser.role === "student"
+          ? formValue.appointedFaculty
+          : formValue.appointee ||
+            formValue.appointee?.firstName + formValue.appointee?.lastName,
+      timestamp: Date.now(),
+      details: formValue || {},
+      status: "pending",
+      notes: formValue.notes || null,
+    };
+
+    try {
+      await addDoc(logsCollectionRef, logDetails);
+      return { message: "Successfully created action log", status: "success" };
+    } catch (error) {
+      logDetails.status = "failed";
+      logDetails.errorMessage = error.message;
+
+      await addDoc(logsCollectionRef, logDetails);
+      return { message: "Could not create action log", status: "failed" };
+    }
+  };
+
   //As Student
-  const sendAppointmentRequest = async ( teacheremail, facultyUID, concern, date, time, format, type, department
+  const sendAppointmentRequest = async (
+    teacheremail,
+    facultyUID,
+    concern,
+    date,
+    time,
+    format,
+    type,
+    department
   ) => {
     try {
+      const formValues = {
+        appointedFaculty: facultyUID,
+        appointee: Auth.currentUser.uid,
+        appointmentConcern: concern,
+        appointmentDate: date,
+        appointmentsTime: time,
+        appointmentStatus: "Pending",
+        appointmentFormat: format,
+        appointmentType: type,
+        appointmentDuration: 1,
+        createdAt: new Date(),
+        teacherRemarks: null,
+        department,
+      };
       if (Auth.currentUser) {
-        await addDoc(appointmentsRef, {
-          appointedFaculty: facultyUID,
-          appointee: Auth.currentUser.uid,
-          appointmentConcern: concern,
-          appointmentDate: date,
-          appointmentsTime: time,
-          appointmentStatus: "Pending",
-          appointmentFormat: format,
-          appointmentType: type,
-          appointmentDuration: 1,
-          createdAt: new Date(),
-          teacherRemarks: null,
-          department,
+        const docRef = await addDoc(appointmentsRef, formValues);
+
+        await createLogs("SEND_REQUEST", docRef.id, {
+          ...formValues,
+          action: "Sent Appointment Request",
         });
 
         await notif.storeNotifToDB(
@@ -191,24 +240,38 @@ export const DBProvider = ({ children }) => {
         );
       }
     } catch (error) {
-      notifyError(error);
+      toast.error(error);
     }
   };
 
   //General
-  const cancelAppointment = async (id) => {
+  const cancelAppointment = async (id, reason, sendTo) => {
     try {
       if (Auth.currentUser) {
         const appointmentDocRef = doc(firestore, "Appointments", id);
+
         const updatedAppointmentDocRef = {
           appointmentStatus: "Cancelled",
           updateMessage: `This Appointment was cancelled by ${Auth.currentUser.firstName} ${Auth.currentUser.lastName}`,
+          reason,
         };
         await updateDoc(appointmentDocRef, updatedAppointmentDocRef);
-        toastMessage("Appointment Cancelled");
+        await createLogs("CANCEL", id, {
+          ...updatedAppointmentDocRef,
+          action: "Cancelled Appointment",
+        });
+        await notif.storeNotifToDB("Appointment Cancelled", reason, sendTo);
+        return {
+          message: "Successfully cancelled appointment",
+          status: "success",
+        };
       }
     } catch (error) {
-      console.log("Error occured in canceling appointment");
+      console.error("Error cancelling appointment:", error);
+      return {
+        message: "Error occurred in cancelling appointment",
+        status: "failed",
+      };
     }
   };
 
@@ -231,8 +294,7 @@ export const DBProvider = ({ children }) => {
   ) => {
     try {
       if (Auth.currentUser) {
-        const q = query(appointmentsRef);
-        await addDoc(q, {
+        const formValues = {
           appointee: {
             firstName,
             lastName,
@@ -253,19 +315,52 @@ export const DBProvider = ({ children }) => {
           appointmentStatus: "Recorded",
           createdAt: serverTimestamp(),
           appointedFaculty: Auth.currentUser.uid,
+        };
+        const q = query(appointmentsRef);
+        const docRef = await addDoc(q, formValues);
+
+        await createLogs("RECORD", docRef.id, {
+          ...formValues,
+          action: "Create walkin data",
         });
-        toastMessage("Submitted Succesfuly");
+        return {
+          message: "Successfully created walkin data",
+          status: "success",
+        };
       }
     } catch (error) {
-      toastMessage(`Error in storing data to database, ${error.message}`);
+      return {
+        message: "Error occurred in creating walkin data",
+        status: "failed",
+      };
     }
   };
 
-  const makeReferal = async ( guardianName, guardianPhoneNumber, firstName, lastName, email, referee, department, concernType, date, yearLevel, age, sessionNumber, location, observation, nonVerbalCues, summary, techniques, actionPlan, evaluation) => {
+  const makeReferal = async (
+    guardianName,
+    guardianPhoneNumber,
+    firstName,
+    lastName,
+    email,
+    referee,
+    department,
+    concernType,
+    date,
+    yearLevel,
+    age,
+    sessionNumber,
+    location,
+    observation,
+    nonVerbalCues,
+    summary,
+    techniques,
+    actionPlan,
+    evaluation
+  ) => {
     try {
       if (Auth.currentUser) {
         const q = query(appointmentsRef);
-        await addDoc(q, {
+        const formValues = {
           appointee: {
             firstName,
             lastName,
@@ -292,18 +387,48 @@ export const DBProvider = ({ children }) => {
           actionPlan,
           evaluation,
           createdAt: serverTimestamp(),
+        };
+        const docRef = await addDoc(q, formValues);
+        await createLogs("RECORD", docRef.id, {
+          ...formValues,
+          action: "Create walkin data",
         });
+        return {
+          message: "Successfully created referral data",
+          status: "success",
+        };
       }
     } catch (error) {
-      throw new Error(`Error in making referral: ${error.message}`);
+      return {
+        message: "Error occurred in making referral data",
+        status: "failed",
+      };
     }
   };
 
-  const makeWalkin = async ( guardianName, guardianPhoneNumber, firstName, lastName, email, department, concernType, date, yearLevel, age, sessionNumber, location, observation, nonVerbalCues, summary, techniques, actionPlan, evaluation ) => {
+  const makeWalkin = async (
+    guardianName,
+    guardianPhoneNumber,
+    firstName,
+    lastName,
+    email,
+    department,
+    concernType,
+    date,
+    yearLevel,
+    age,
+    sessionNumber,
+    location,
+    observation,
+    nonVerbalCues,
+    summary,
+    techniques,
+    actionPlan,
+    evaluation
+  ) => {
     try {
       if (Auth.currentUser) {
-        const q = query(appointmentsRef);
-        await addDoc(q, {
+        const formValues = {
           appointee: {
             firstName,
             lastName,
@@ -329,10 +454,23 @@ export const DBProvider = ({ children }) => {
           actionPlan,
           evaluation,
           createdAt: serverTimestamp(),
+        };
+        const q = query(appointmentsRef);
+        const docRef = await addDoc(q, formValues);
+        await createLogs("RECORD", docRef.id, {
+          ...formValues,
+          action: "Create walkin data",
         });
+        return {
+          message: "Successfully created walkin data",
+          status: "success",
+        };
       }
     } catch (error) {
-      throw new Error(`Error in making referal ${error.message}`);
+      return {
+        message: "Error in creating walkin data",
+        status: "failed",
+      };
     }
   };
 
@@ -475,11 +613,11 @@ export const DBProvider = ({ children }) => {
           const result = [
             {
               ...appointment,
+              id,
               followup: followupRecords,
             },
           ];
 
-          console.log(result);
           return result;
         } else {
           console.log("Appointment not found");
@@ -528,9 +666,13 @@ export const DBProvider = ({ children }) => {
           updateMessage: `This Appointment was approved by ${Auth.currentUser.firstName} ${Auth.currentUser.lastName}`,
         };
         await updateDoc(appointmentDocRef, updatedAppointmentDocRef);
+        await createLogs("APPROVE", id, {
+          ...updatedAppointmentDocRef,
+          action: "Approve Appointment Request",
+        });
         await notif.storeNotifToDB(
           "Appointment Accepted",
-          `You appointment Request has been accepted and will be held on ${date}`,
+          `Your appointment Request has been accepted and will be held on ${date}`,
           receiver
         );
         toastMessage("Appointment Accepted");
@@ -540,25 +682,34 @@ export const DBProvider = ({ children }) => {
     }
   };
 
-  const reschedAppointment = async ( id, receiver, reason, appointmentDate, appointmentTime ) => {
+  const reschedAppointment = async (
+    id,
+    receiver,
+    reason,
+    appointmentDate,
+    appointmentTime
+  ) => {
     try {
       if (Auth.currentUser) {
         const appointmentDocRef = doc(firestore, "Appointments", id);
         const updatedAppointmentDocRef = {
           appointmentDate,
           appointmentTime,
+          isRescheduled: true,
           appointmentStatus: "Accepted",
           updateMessage: `This Appointment was rescheduled by ${Auth.currentUser.firstName} ${Auth.currentUser.lastName}. Your Appointment will e held at ${appointmentDate} in ${appointmentTime.appointmentStartTime} AM`,
         };
+        const appointee = await getUser(receiver);
         await updateDoc(appointmentDocRef, updatedAppointmentDocRef);
-        const res = await notif.storeNotifToDB(
+        await createLogs("RESCHEDULE", id, {
+          ...updatedAppointmentDocRef,
+          action: "Re schedule appointment",
+        });
+        await notif.storeNotifToDB(
           "Appointment Rescheduled",
-          `You appointment has been rescheduled because: ${reason}`,
-          receiver
+          `Your appointment has been rescheduled bu ${Auth.currentUser.firstName} ${Auth.currentUser.lastName} because: ${reason}`,
+          appointee.email
         );
-        if (!res) {
-          console.log("Email not sent");
-        }
         return {
           message: "The appointment has been succesfully rescheduled",
           status: "success",
@@ -581,6 +732,10 @@ export const DBProvider = ({ children }) => {
           updateMessage: `This Appointment was denied by ${Auth.currentUser.firstName} ${Auth.currentUser.lastName}`,
         };
         await updateDoc(appointmentDocRef, updatedAppointmentDocRef);
+        await createLogs("DENY", id, {
+          ...updatedAppointmentDocRef,
+          action: "Denied appointment",
+        });
         await notif.storeNotifToDB(
           "Appointment Denied",
           `You appointment Request has been denied because: ${reason}`,
@@ -593,7 +748,15 @@ export const DBProvider = ({ children }) => {
     }
   };
 
-  const followupAppointment = async ( id, curID = null, receiver, format, date, appointmentsTime, location ) => {
+  const followupAppointment = async (
+    id,
+    curID = null,
+    receiver,
+    format,
+    date,
+    appointmentsTime,
+    location
+  ) => {
     try {
       if (!Auth.currentUser) return;
       const receivingUser = await getUser(receiver);
@@ -612,7 +775,7 @@ export const DBProvider = ({ children }) => {
       const precedingApptdata = await getAppointment(id);
 
       if (precedingApptdata) {
-        await addDoc(followupAppointmentRef, {
+        const formValues = {
           precedingAppt: id,
           appointee: receiver,
           appointedFaculty: Auth.currentUser.uid,
@@ -628,10 +791,15 @@ export const DBProvider = ({ children }) => {
           location,
           createdAt: serverTimestamp(),
           department: user.department,
-        });
+        };
+        const docRef = await addDoc(followupAppointmentRef, formValues);
         if (receivingUser) {
+          await createLogs("FOLLOWUP", docRef.id, {
+            ...formValues,
+            action: "Followup appointment",
+          });
           await notif.storeNotifToDB(
-            "Appointment",
+            "Appointment Followup",
             `A follow-up appointment has been made between ${
               Auth.currentUser.displayName
             } and you. ${
@@ -672,8 +840,7 @@ export const DBProvider = ({ children }) => {
         const oldAppointmentRef = doc(appointmentsRef, id);
 
         const followupRef = collection(oldAppointmentRef, "Followup");
-
-        await addDoc(followupRef, {
+        const formValues = {
           appointee: {
             firstName,
             lastName,
@@ -696,10 +863,22 @@ export const DBProvider = ({ children }) => {
           actionPlan,
           evaluation,
           createdAt: serverTimestamp(),
+        };
+        const docRef = await addDoc(followupRef, formValues);
+        await createLogs("FOLLOWUP", docRef.id, {
+          ...formValues,
+          action: "Followup appointment",
         });
+        return {
+          message: "Successfully scheduled follow up appointment",
+          status: "success",
+        };
       }
     } catch (error) {
-      throw new Error(`Error in making referral: ${error.message}`);
+      return {
+        message: "Error occurred in scheduling followup appointment ",
+        status: "failed",
+      };
     }
   };
 
@@ -713,8 +892,7 @@ export const DBProvider = ({ children }) => {
   ) => {
     try {
       if (Auth.currentUser) {
-        console.log("SDSD: ", time.appointmentStartTime);
-        await addDoc(appointmentsRef, {
+        const formValues = {
           appointee: {
             firstName,
             lastName,
@@ -733,10 +911,23 @@ export const DBProvider = ({ children }) => {
           appointmentFormat: "Walkin",
           appointmentStatus: "Pending",
           appointmentType: type,
+        };
+        const docRef = await addDoc(appointmentsRef, formValues);
+        await createLogs("WALKIN", docRef.id, {
+          ...formValues,
+          action: "Scheduled a walkin Appointment",
         });
+
+        return {
+          message: "Successfully scheduled walkin appointment",
+          status: "success",
+        };
       }
     } catch (error) {
-      toastMessage(`Error scheduling walkin appointment: ${error.message}`);
+      return {
+        message: "Error in scheduling walkin appointment",
+        status: "failed",
+      };
     }
   };
 
@@ -762,7 +953,10 @@ export const DBProvider = ({ children }) => {
         };
 
         await updateDoc(appointmentDocRef, updatedAppointmentDocRef);
-
+        await createLogs("FINISH", id, {
+          ...updatedAppointmentDocRef,
+          action: "Finish Counseling Appointment",
+        });
         if (recevingUser) {
           await notif.storeNotifToDB(
             "Appointment",
@@ -796,7 +990,11 @@ export const DBProvider = ({ children }) => {
       if (!Auth.currentUser) {
         throw new Error("User is not authenticated.");
       }
-      const appointmentDocRef = doc( firestore, "Appointments", formValue.appointment);
+      const appointmentDocRef = doc(
+        firestore,
+        "Appointments",
+        formValue.appointment
+      );
       let reportRef;
       if (formValue.currentAppointment) {
         const followupRef = doc(
@@ -893,20 +1091,36 @@ export const DBProvider = ({ children }) => {
       const appointmentRatingRef = collection(firestore, "AppointmentRating");
 
       if (Auth.currentUser) {
-        await addDoc(facultyRatingRef, {
+        const formValuesF = {
           facultyRating,
           facultyfeedback,
           createdAt: serverTimestamp(),
-        });
-
-        await addDoc(appointmentRatingRef, {
+        };
+        const docFRef = await addDoc(facultyRatingRef, formValuesF);
+        const formValuesA = {
           appointmentID: aid,
           consultationRating,
           consultationfeedback,
+        };
+        const docARef = await addDoc(appointmentRatingRef, formValuesA);
+        await createLogs("RATING", docFRef.id, {
+          ...formValuesF,
+          action: "Rated instructor",
         });
+        await createLogs("RATING", docARef.id, {
+          ...formValuesA,
+          action: "Rated appointment",
+        });
+        return {
+          message: "Successfully rated experiences",
+          status: "success",
+        };
       }
     } catch (error) {
-      toastMessage("Error in sending rating: ", error.message);
+      return {
+        message: "Error occurred in rating expreriences",
+        status: "failed",
+      };
     }
   };
 
@@ -942,17 +1156,29 @@ export const DBProvider = ({ children }) => {
   const sendMessage = async (formValue, uid, receiver) => {
     try {
       if (Auth.currentUser) {
-        await addDoc(messagesRef, {
+        const formValues = {
           text: formValue,
           createAt: serverTimestamp(),
           uid,
           sentBy: Auth.currentUser.displayName,
           sentTo: receiver,
           participants: [Auth.currentUser.displayName, receiver],
+        };
+        const docRef = await addDoc(messagesRef);
+        await createLogs("MESSAGE", docRef.id, {
+          ...formValues,
+          action: "Sent Message",
         });
       }
+      return {
+        message: "Successfully sent message",
+        status: "success",
+      };
     } catch (error) {
-      console.log(error);
+      return {
+        message: "Error occurred in sending message",
+        status: "failed",
+      };
     }
   };
 

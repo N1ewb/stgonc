@@ -5,7 +5,6 @@ export default function GuidanceReport({
   contentRef,
   data,
   appointee,
-  report,
   isBlank,
 }) {
   const { currentUser } = useAuth();
@@ -47,13 +46,13 @@ export default function GuidanceReport({
             <li>
               Year Level / Age:{" "}
               <span className="font-bold text-gray-600">
-                {isBlank ? "" : `${report?.yearLevel} Year / ${report?.age}`}
+                {isBlank ? "" : `${data?.yearLevel} Year / ${data?.age}`}
               </span>
             </li>
             <li>
               Date of Session:{" "}
               <span className="font-bold text-gray-600">
-                {isBlank ? "" : report?.appointmentDate || report?.date}
+                {isBlank ? "" : data?.appointmentDate || data?.date}
               </span>
             </li>
             <li>
@@ -73,7 +72,7 @@ export default function GuidanceReport({
             <li>
               Location:{" "}
               <span className="font-bold text-gray-600">
-                {isBlank ? "" : report?.location}
+                {isBlank ? "" : data?.location}
               </span>
             </li>
           </ul>
@@ -87,28 +86,28 @@ export default function GuidanceReport({
           <p className="">Faculty's Observation</p>
           <div className="fields">
             <p>
-              Observation: <span>{isBlank ? "" : report?.observation}</span>
+              Observation: <span>{isBlank ? "" : data?.observation}</span>
             </p>
             <p>
-              Non-verbal Cues: <span>{isBlank ? "" : report?.nonVerbalCues}</span>
+              Non-verbal Cues: <span>{isBlank ? "" : data?.nonVerbalCues}</span>
             </p>
             <p>
-              Discussion Summary: <span>{isBlank ? "" : report?.summary}</span>
+              Discussion Summary: <span>{isBlank ? "" : data?.summary}</span>
             </p>
             <p>
               Techniques Approach Used:{" "}
-              <span>{isBlank ? "" : report?.techniques}</span>
+              <span>{isBlank ? "" : data?.techniques}</span>
             </p>
             <p>
               Action Plan/ Next Steps:{" "}
-              <span>{isBlank ? "" : report?.actionPlan}</span>
+              <span>{isBlank ? "" : data?.actionPlan}</span>
             </p>
             <p>
               Next Appointment: <span>{isBlank ? "" : ""}</span>
             </p>
             <p>
               Counselors Evaluation:{" "}
-              <span>{isBlank ? "" : report?.evaluation}</span>
+              <span>{isBlank ? "" : data?.evaluation}</span>
             </p>
           </div>
           <div className="signatures flex w-full justify-between items-start [&_p]:w-1/2">

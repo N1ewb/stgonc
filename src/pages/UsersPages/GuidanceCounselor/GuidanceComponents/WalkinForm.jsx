@@ -79,7 +79,9 @@ const WalkinForm = ({ handleOpenWalkinForm }) => {
         actionPlan &&
         evaluation
       ) {
-        await db.makeWalkin(
+        const res = await db.makeWalkin(
+          guardianName,
+          guardianPhoneNumber,
           firstname,
           lastname,
           email,
@@ -97,7 +99,11 @@ const WalkinForm = ({ handleOpenWalkinForm }) => {
           actionPlan,
           evaluation
         );
-        toastMessage("Successfuly submitted Walkin data");
+        if(res.status === 'success'){
+          toast.success(res.message)
+        }else {
+          toast.error(res.message)
+        }
       }
     } catch (error) {
       toastMessage(`Error in submitting walkin data: ${error.message}`);
@@ -165,15 +171,17 @@ const WalkinForm = ({ handleOpenWalkinForm }) => {
           <div className="group flex flex-col flex-1">
             <label htmlFor="year-level">Year Level</label>
             <input
-              type="text"
+              type="number"
               name="year-level"
               id="year-level"
               ref={yearLevelRef}
+              max={4}
+              min={1}
             />
           </div>
           <div className="group flex flex-col flex-1">
             <label htmlFor="age">Age</label>
-            <input type="text" name="age" id="age" ref={ageRef} />
+            <input type="number" name="age" id="age" ref={ageRef} min={0} max={150} />
           </div>
         </div>
 
@@ -181,10 +189,12 @@ const WalkinForm = ({ handleOpenWalkinForm }) => {
           <div className="group flex flex-col flex-1">
             <label htmlFor="session-number">Session Number</label>
             <input
-              type="text"
+              type="number"
               name="session-number"
               id="session-number"
               ref={sessionNumberRef}
+              min={1}
+              max={100}
             />
           </div>
 

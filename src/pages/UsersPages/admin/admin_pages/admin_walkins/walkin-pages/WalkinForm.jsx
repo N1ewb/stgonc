@@ -1,5 +1,6 @@
 import React, { useRef, useState } from "react";
 import { useDB } from "../../../../../../context/db/DBContext";
+import toast from "react-hot-toast";
 
 const WalkinForm = () => {
   const db = useDB();
@@ -38,7 +39,7 @@ const WalkinForm = () => {
         durationRef.current.value > 0 &&
         remarksRef.current.value
       ) {
-        await db.walkinAppointment(
+        const res = await db.walkinAppointment(
           appointeeFirstNameRef.current.value,
           appointeeLastNameRef.current.value,
           emailRef.current.value,
@@ -54,6 +55,12 @@ const WalkinForm = () => {
           durationRef.current.value,
           remarksRef.current.value
         );
+
+        if(res.status === 'success'){
+          toast.success(res.message)
+        }else {
+          toast.error(res.message)
+        }
       }
       appointeeFirstNameRef.current.value = "";
       appointeeLastNameRef.current.value = "";

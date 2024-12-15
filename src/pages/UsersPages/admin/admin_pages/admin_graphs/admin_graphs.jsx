@@ -46,11 +46,11 @@ const AdminGraphs = () => {
           <ExportReport onClose={handleCloseOverlay} insList={insList} />
         </div>
       )}
-      <div className="admin-dashboard-content flex flex-row w-full justify-between lg:flex-wrap lg:justify-center lg:gap-10">
-        <div className="appointments-info w-1/2 z-0">
+      <div className="admin-dashboard-content flex flex-row gap-5 w-full justify-between lg:flex-wrap lg:justify-center lg:gap-10">
+        <div className="appointments-info flex-1 z-0">
           <TotalAppointments apptList={apptList} exportButton={handleExport} />
         </div>
-        <div className="faculty-of-the-month h-full w-[45%]">
+        <div className="faculty-of-the-month max-h-full overflow-y-auto flex-1">
           <FacultyLeaderboard insList={insList} />
         </div>
       </div>

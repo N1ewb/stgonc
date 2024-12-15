@@ -103,10 +103,10 @@ const SCSApptInfo = ({ currentSCSAppt, setCurrentSCSAppt }) => {
         </div>
       </main>
       <footer className="flex py-3 w-full items-center justify-between ">
-        <button className="bg-green-500 rounded-md px-4 py-2 text-[14px]" onClick={() => navigate(`/private/Guidance/student-counseling-services/add-followup-record?appointment=${currentSCSAppt.precedingApt || currentSCSAppt.id}`)}>
+        <button className="bg-green-500 rounded-md px-4 py-2 text-[10px]" onClick={() => navigate(`/private/Guidance/student-counseling-services/add-followup-record?appointment=${currentSCSAppt.precedingApt || currentSCSAppt.id}`)}>
           Add Follow-up Record
         </button>
-        <button className="bg-[#273240] rounded-md px-4 py-2 text-[14px]" onClick={() => navigate(`/private/Guidance/student-counseling-services/view-appointment-record?appointment=${currentSCSAppt.precedingApt || currentSCSAppt.id}`)}>View Full Appointment Records</button>
+        <button className="bg-[#273240] rounded-md px-4 py-2 text-[10px]" onClick={() => navigate(`/private/Guidance/student-counseling-services/view-appointment-record?appointment=${currentSCSAppt.precedingApt || currentSCSAppt.id}`)}>View Full Appointment Records</button>
       </footer>
     </div>
   );
