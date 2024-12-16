@@ -37,6 +37,19 @@ const AppointmentInfo = ({ positiveClick, negativeClick }) => {
     }
   };
 
+  const handleMarkAppointmentNoShow = async () => {
+    console.log(currentAppointment.appointee)
+    const res = await db.markAppointmentNoShow(
+      currentAppointment.id,
+      currentAppointment.appointee
+    );
+    if(res.status === 'success'){
+      toast.success(res.message)
+    }else {
+      toast.error(res.message)
+    }
+  };
+
   useEffect(() => {
     if (currentAppointment?.appointee) {
       handleGetUser(currentAppointment.appointee);
@@ -87,7 +100,10 @@ const AppointmentInfo = ({ positiveClick, negativeClick }) => {
           <img src={Close} alt="close" height={20} width={20} />
         </button>
       </div>
-      <div className="appointment-info-body [&_span]:text-[13px] capitalize">
+      <div className="appointment-info-body [&_span]:text-[13px] capitalize relative">
+        <button onClick={handleMarkAppointmentNoShow} className="absolute right-0 top-0 bg-[#931b1b] hover:bg-[#7a1c1c] rounded-md px-4 py-1 text-[12px] text-white">
+          MARK AS NO SHOW
+        </button>
         {currentAppointment?.isRescheduled && (
           <p className="p-3 bg-[#7200007a] flex-1 rounded-md text-white text-center">
             {`${appointee?.firstName} ${appointee?.lastName} `} Appealed to
@@ -114,8 +130,8 @@ const AppointmentInfo = ({ positiveClick, negativeClick }) => {
           {currentAppointment.appointmentConcern}
         </p>
         {status && status === "Cancelled" && (
-          <p className="p-5 bg-[#9a24247d] rounded-md text-white font-semibold">
-            This student cancelled their counselling appointment
+          <p className="p-5 bg-[#9a24247d] rounded-md text-white text-center font-semibold">
+            This counselling appointment was cancelled
           </p>
         )}
         <div className="flex flex-row gap-3">
@@ -135,7 +151,6 @@ const AppointmentInfo = ({ positiveClick, negativeClick }) => {
       </div>
       {status && (
         <div className="appointment-info-footer w-full flex flex-row items-end justify-end gap-3">
-
           {status === "Pending" && (
             <>
               {!currentAppointment.isRescheduled ? (

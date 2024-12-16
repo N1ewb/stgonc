@@ -22,7 +22,7 @@ const DeanAppointmentAchive = () => {
       if (auth.currentUser) {
         try {
           const unsubscribe = db.subscribeToAppointmentChanges(
-            ["Finished", 'Followup', 'Denied', 'Cancelled'],
+            ["Finished", 'Followup', 'Denied', 'Cancelled', 'NOSHOW'],
             (callback) => {
               setAppointments(callback);
               setTemp(callback);

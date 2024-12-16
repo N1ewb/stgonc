@@ -794,6 +794,32 @@ export const DBProvider = ({ children }) => {
     }
   };
 
+  const markAppointmentNoShow = async (id, receiver) => {
+    try {
+      if (Auth.currentUser) {
+        const appointmentDocRef = doc(firestore, "Appointments", id);
+        const updatedAppointmentDocRef = {
+          appointmentStatus: "NOSHOW",
+          updateMessage: `You did not anwser the call attempt of ${Auth.currentUser.displayName}`,
+        };
+        const user = await getUser(receiver)
+        await updateDoc(appointmentDocRef, updatedAppointmentDocRef);
+        await createLogs("NOSHOW", id, {
+          ...updatedAppointmentDocRef,
+          action: "Marked appointment as NO SHOW",
+        });
+        await notif.storeNotifToDB(
+          "Appointment NOSHOW",
+          `You appointment with ${Auth.currentUser.displayName} was marked as a NO SHOW because you did not answer the call attempt.`,
+          user.email
+        );
+        return { message: 'Successfully marked appointment as No SHOW', status: 'success'}
+      }
+    } catch (error) {
+      return { message: 'Error in marking appointment as No SHOW', status: 'failed'}
+    }
+  };
+
   const followupAppointment = async (
     id,
     curID = null,
@@ -1352,7 +1378,8 @@ export const DBProvider = ({ children }) => {
         if (user) {
           const q = query(
             LogsCollectionRef,
-            where("performedBy", "==", user.uid)
+            where("performedBy", "==", user.uid),
+            orderBy("timestamp", 'desc')
           );
           const unsubscribe = onSnapshot(q, (snapshot) => {
             const data = snapshot.docs.map((doc) => ({
@@ -2183,6 +2210,7 @@ export const DBProvider = ({ children }) => {
     getAppointmentRequests,
     getInstructorAppointment,
     approveAppointment,
+    markAppointmentNoShow,
     denyAppointment,
     acceptResched,
     reschedAppointment,

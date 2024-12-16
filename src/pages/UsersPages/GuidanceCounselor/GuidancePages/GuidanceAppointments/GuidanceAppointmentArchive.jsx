@@ -26,7 +26,7 @@ const GuidanceAppointmentArchive = () => {
       if (auth.currentUser) {
         try {
           const unsubscribe = db.subscribeToAppointmentChanges(
-            ["Finished", "Cancelled", "Denied"],
+            ["Finished", "Followup", "Denied", "Cancelled", "NOSHOW"],
             (callback) => {
               setAppointments(callback);
               setTemp(callback)

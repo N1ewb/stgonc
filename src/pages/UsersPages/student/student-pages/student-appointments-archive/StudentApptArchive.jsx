@@ -15,7 +15,7 @@ const StudentApptArchive = () => {
   useEffect(() => {
     const fetchData = async () => {
       const unsubscribe = await db.subscribeToRequestedAppointmentChanges(
-        ["Denied", "Finished", "Cancelled"],
+        ["Denied", "Finished", "Cancelled", "NOSHOW"],
         (callback) => {
           setArchiveAppointments(callback);
         }
