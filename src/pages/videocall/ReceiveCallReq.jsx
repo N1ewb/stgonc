@@ -51,6 +51,32 @@ const ReceiveCallReq = () => {
 
   useEffect(() => {
     const fetchData = async () => {
+      const unsubscribe = await call.subscribeToNotAnsweredOfferChanges('receiver',
+        (callback) => {
+          navigate(`/private/notAnswered?callOfferId=${callback.id}`);
+        }
+      );
+
+      return () => {
+        unsubscribe();
+      };
+    };
+
+    fetchData();
+  }, [call]);
+
+  useEffect(() => {
+    if (newCalloffer && newCalloffer.status === "notAnswered") {
+      const cancel = async () => {
+        await handlehangUp();
+        navigate(`/private/notAnswered`);
+      };
+      cancel();
+    }
+  }, [newCalloffer && newCalloffer.status]);
+
+  useEffect(() => {
+    const fetchData = async () => {
       try {
         const unsubscribe = call.subscribeToCallChanges(
           async (newCallOffers) => {
@@ -74,7 +100,11 @@ const ReceiveCallReq = () => {
       <div className="w-full h-[100vh] bg-black flex flex-col [&_p]:text-white [&_span]:text-white [&_p]:m-0 items-center justify-around">
         <div className=" flex flex-col w-full justify-center items-center ">
           <p>Incoming Call</p>
-          <img src={Profile} alt="profile-picture" className="h-[180px] w-[180px] xsm:w-[50px] xsm:h-[50px]"   />
+          <img
+            src={Profile}
+            alt="profile-picture"
+            className="h-[180px] w-[180px] xsm:w-[50px] xsm:h-[50px]"
+          />
           <p>
             {callerName && callerName.firstName + " " + callerName.lastName} is
             calling you

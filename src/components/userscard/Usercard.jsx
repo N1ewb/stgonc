@@ -16,8 +16,8 @@ const Usercard = ({ data, buttons }) => {
     if (data.appointee && !isFetched.current) {
       const handleGetAppointee = async () => {
         setLoading(true);
-
-        try {
+        console.log(data.appointmentStatus)
+        try { 
           const user = await db.getUser(data.appointee);
           setAppointee(user);
         } catch (err) {
@@ -44,6 +44,11 @@ const Usercard = ({ data, buttons }) => {
   const displayLastName = data?.lastName || appointee?.lastName || "";
   const displayEmail = data?.email || appointee?.email || "No email available";
 
+  const showRescheduled =
+    data?.isRescheduled &&
+    (data?.appointmentStatus !== "Cancelled" ||
+      data?.appointmentStatus !== "Finished");
+
   return (
     <div
       className={`datacard-container w-full flex flex-col m-2 p-3 text-[#320000] rounded-3xl 
@@ -67,7 +72,7 @@ const Usercard = ({ data, buttons }) => {
                 </span>
               </p>
               <div className="text-end">
-                {data?.isRescheduled && (
+                {showRescheduled && (
                   <p className="text-red-400 font-bold text-[12px]">
                     RESCHEDULED
                   </p>

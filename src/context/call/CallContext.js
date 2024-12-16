@@ -97,15 +97,15 @@ export const CallProvider = ({ children }) => {
           if (receiver.track.kind === "video") {
             receiver.replaceTrack(stream.getVideoTracks()[0]);
           }
-        })
-  
+        });
+
         WebcamOn(); // Start the camera
         console.log("Receiver's camera is now active.");
         return;
       }
-  
+
       const videoTrack = localStream.getVideoTracks()[0]; // Get the video track from the stream
-  
+
       if (videoTrack.enabled) {
         videoTrack.enabled = false; // Disable the track
         console.log("Receiver's camera turned off.");
@@ -118,7 +118,6 @@ export const CallProvider = ({ children }) => {
       toastMessage("Failed to toggle the receiver's camera");
     }
   };
-  
 
   const toggleCamera = async () => {
     try {
@@ -304,22 +303,46 @@ export const CallProvider = ({ children }) => {
 
     while (retries > 0) {
       try {
+        // Ensure local and remote streams are initialized
         if (!localStream || !remoteStream) {
           PcState();
           await InitializeStreams();
         }
 
-        const callId = callInput.current.value;
+        console.log("trying, ", retries);
+
+        // Wait for callId to be defined (max wait: 15 seconds)
+        const waitForCallId = async () => {
+          let timeout = 15000; // 15 seconds
+          const interval = 100; // Check every 100ms
+          const start = Date.now();
+
+          while (!callInput.current.value) {
+            if (Date.now() - start >= timeout) {
+              throw new Error("Call ID is undefined after 15 seconds");
+            }
+            await new Promise((resolve) => setTimeout(resolve, interval));
+          }
+
+          return callInput.current.value;
+        };
+
+        const callId = await waitForCallId();
+        console.log("Received call ID:", callId);
+
+        // Firestore references
         const callDoc = doc(collection(firestore, "calls"), callId);
         const answerCandidates = collection(callDoc, "answerCandidates");
         const offerCandidates = collection(callDoc, "offerCandidates");
 
+        // Handle ICE candidates
         pc.onicecandidate = async (event) => {
           if (event.candidate) {
             await addDoc(answerCandidates, event.candidate.toJSON());
           }
         };
 
+        // Wait for offer data
         let callData = (await getDoc(callDoc)).data();
 
         while (!callData?.offer || !callData.offer.type) {
@@ -327,6 +350,7 @@ export const CallProvider = ({ children }) => {
           callData = (await getDoc(callDoc)).data();
         }
 
+        // Set remote description and create answer
         const offerDescription = new RTCSessionDescription(callData.offer);
         await pc.setRemoteDescription(offerDescription);
 
@@ -338,8 +362,10 @@ export const CallProvider = ({ children }) => {
           sdp: answerDescription.sdp,
         };
 
+        // Update call document with the answer
         await updateDoc(callDoc, { answer });
 
+        // Listen for additional ICE candidates
         onSnapshot(offerCandidates, (snapshot) => {
           snapshot.docChanges().forEach((change) => {
             if (change.type === "added") {
@@ -350,6 +376,7 @@ export const CallProvider = ({ children }) => {
           });
         });
 
+        // Wait for ICE connection
         await new Promise((resolve, reject) => {
           pc.oniceconnectionstatechange = () => {
             console.log("ICE Connection State:", pc.iceConnectionState);
@@ -378,30 +405,27 @@ export const CallProvider = ({ children }) => {
           }, 2000);
         });
 
-        setCallState("connected");
         console.log("Call connected successfully");
         return;
       } catch (error) {
-        console.error("Error in AnswerCall:", error);
-        retries--;
+        console.error(
+          `Connection attempt failed, retries left: ${retries}`,
+          error
+        );
+        retries -= 1;
+
         if (retries === 0) {
           setCallState("failed");
-          toastMessage("Failed to establish call after multiple attempts");
-          throw error;
+          if (error.message.includes("Call ID is undefined")) {
+            toastMessage("Call ID not provided. Please enter a valid Call ID.");
+          } else {
+            toastMessage("Failed to connect the call. Please try again.");
+          }
+          return;
         }
-        await new Promise((resolve) => setTimeout(resolve, 2000));
       }
     }
-  }, [
-    callState,
-    localStream,
-    remoteStream,
-    PcState,
-    InitializeStreams,
-    pc,
-    callInput,
-    toastMessage,
-  ]);
+  }, [callState, localStream, remoteStream, pc]);
 
   const hangUp = async (newCallOffer) => {
     try {
@@ -459,10 +483,28 @@ export const CallProvider = ({ children }) => {
     }
   };
 
+  const cancelCall = async (callId) => {
+    try {
+      const callDocRef = doc(firestore, "CallOffers", callId);
+      await updateDoc(callDocRef, { status: "notAnswered" });
+      console.log("Cancelled call (marked as notAnswered):", callId);
+
+      await disconnectAllDevices();
+
+      return {
+        message: "Cancelled call successfully after 30 seconds",
+        status: "success",
+      };
+    } catch (error) {
+      console.error("Error in cancelling call:", error);
+      return { message: "Error in cancelling call", status: "failed" };
+    }
+  };
+
   const offerCall = async (receiver, caller, callID, appointmentID) => {
     try {
       if (auth.currentUser) {
-        await addDoc(callOffersRef, {
+        const docRef = await addDoc(callOffersRef, {
           appointment: appointmentID,
           receiver: receiver,
           caller: caller,
@@ -470,9 +512,36 @@ export const CallProvider = ({ children }) => {
           status: "calling",
           createdAt: serverTimestamp(),
         });
+
+        console.log("Call offer created:", docRef.id);
+
+        const timeoutId = setTimeout(async () => {
+          try {
+            const docSnap = await getDoc(docRef);
+            const snapStatus =
+              docSnap.data().status === "calling" ||
+              docSnap.data().status === "responded";
+            if (docSnap.exists() && snapStatus) {
+              const res = await cancelCall(docRef.id);
+              return {message: res.message, status: 'failed'}
+            }
+          } catch (error) {
+            return {message: 'Error in canceling call', status: 'failed'}
+          }
+        }, 15000);
+
+        const unsubscribe = onSnapshot(docRef, (snapshot) => {
+          const data = snapshot.data();
+          if (data && data.status === "answered") {
+            console.log("Call answered. Clearing timeout.");
+            clearTimeout(timeoutId);
+            unsubscribe();
+          }
+        });
       }
+      return {message: 'Offered Call', status: 'success'}
     } catch (error) {
-      console.log(error);
+      return {message: 'Error in offering call', status: 'failed'}
     }
   };
 
@@ -532,6 +601,42 @@ export const CallProvider = ({ children }) => {
       console.log(error);
     }
   };
+
+  const subscribeToNotAnsweredOfferChanges = async (who ,callback) => {
+    try {
+      if (auth.currentUser) {
+        const currentTimestamp = Date.now();
+        const fiveSecondsAgo = currentTimestamp - 5000; 
+  
+        const unsubscribe = onSnapshot(
+          query(
+            callOffersRef,
+            where(who, "==", auth.currentUser.uid),
+            where("status", "==", "notAnswered"),
+            where("createdAt", ">=", new Date(fiveSecondsAgo)), 
+            orderBy("createdAt", "desc"),
+            limit(1)
+          ),
+          (snapshot) => {
+            snapshot.docChanges().forEach((change) => {
+              if (change.type === "added") {
+                const doc = change.doc;
+                const data = {
+                  id: doc.id,
+                  ...doc.data(),
+                };
+                callback(data);
+              }
+            });
+          }
+        );
+        return unsubscribe;
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  
 
   const subscribeToCallOfferChanges = async (callback) => {
     try {
@@ -721,6 +826,7 @@ export const CallProvider = ({ children }) => {
     updateCallOffer,
     answerCallOffer,
     subscribeToCallChanges,
+    subscribeToNotAnsweredOfferChanges,
     subscribeToAnsweredOfferChanges,
     subscribeToCallOfferChanges,
     subscribeToRespondedCallChanges,

@@ -9,6 +9,7 @@ import HangUp from "../../static/images/icons8-hang-up-48.png";
 import "./SendCallReq.css";
 import { useAuth } from "../../context/auth/AuthContext";
 import { useDB } from "../../context/db/DBContext";
+import toast from "react-hot-toast";
 
 const SendCallReq = () => {
   const auth = useAuth();
@@ -41,6 +42,24 @@ const SendCallReq = () => {
     handleGetUser();
   }, [auth.currentUser]);
 
+  useEffect(() => {
+    const fetchData = async () => {
+      const unsubscribe = await call.subscribeToNotAnsweredOfferChanges(
+        "caller",
+        (callback) => {
+          navigate(`/private/notAnswered?callOfferId=${callback.id}`);
+          toast.error('The student did not answer the call')
+        }
+      );
+
+      return () => {
+        unsubscribe();
+      };
+    };
+
+    fetchData();
+  }, [call]);
+
   const handleCallButton = async () => {
     if (callInitiatedRef.current) return;
     try {
@@ -49,7 +68,7 @@ const SendCallReq = () => {
       console.log("pressed call button");
 
       await call.CallButton();
-      await call.offerCall(
+      const res = await call.offerCall(
         receiver,
         caller,
         callInput.current.value,
@@ -67,7 +86,9 @@ const SendCallReq = () => {
       if (newCallOffer) {
         await call.hangUp(newCallOffer.id);
         callInitiatedRef.current = false;
-        navigate(`/private/end-call-page?appointment=${appointment}&receiver=${receiver}`);
+        navigate(
+          `/private/end-call-page?appointment=${appointment}&receiver=${receiver}`
+        );
       }
     } catch (error) {
       console.log(error.message);

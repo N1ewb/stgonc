@@ -89,6 +89,7 @@ import ResetPassword from "./pages/authentication/resetpassword/ResetPassword";
 import AboutUs from "./pages/miscPages/AboutUs";
 import ContactUs from "./pages/miscPages/ContactUs";
 import { ReschedProvider } from "./context/appointmentContext/ReschedContext";
+import NotAnsweredPage from "./pages/videocall/NotAnsweredPage";
 
 function App() {
   const router = createBrowserRouter([
@@ -364,6 +365,10 @@ function App() {
             {
               path: "/private/ReceiveCallReq",
               element: <ReceiveCallReq />,
+            },
+            {
+              path: "/private/notAnswered",
+              element: <NotAnsweredPage />,
             },
             {
               path: "/private/Chatroom",
