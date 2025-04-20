@@ -78,7 +78,7 @@ export async function runAiTest(idToTestImage) {
       {
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer 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`,
+          Authorization: `Bearer ${process.env.REACT_APP_OPENROUTER_API}`,
         },
       }
     );
