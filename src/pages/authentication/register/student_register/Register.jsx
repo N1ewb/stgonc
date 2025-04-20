@@ -208,6 +208,7 @@ const StudentRegister = () => {
                     <option value="">No Department</option>
                   )}
                 </select>
+                <label htmlFor="id-image">Picture of your ID</label>
                 <input
                   onChange={handleFileChange}
                   type="file"
@@ -236,7 +237,11 @@ const StudentRegister = () => {
                     </div>
                   )}
                   <button
-                    className={`w-full ${loading || processingImage ? "bg-[#7400004c] cursor-not-allowed" : "bg-[#740000]"} rounded-[4px]`}
+                    className={`w-full ${
+                      loading || processingImage
+                        ? "bg-[#7400004c] cursor-not-allowed"
+                        : "bg-[#740000]"
+                    } rounded-[4px]`}
                     type="submit"
                     disabled={loading || processingImage}
                   >
@@ -244,7 +249,10 @@ const StudentRegister = () => {
                   </button>
                   {message && (
                     <div className="w-full flex items-center justify-center px-5 py-3 rounded-md bg-red-800 [&_p]:m-0 text-white relative">
-                      <p onClick={() => setMessage(null)} className="absolute top-2 right-2 bg-transparent hover:bg-transparent">
+                      <p
+                        onClick={() => setMessage(null)}
+                        className="absolute top-2 right-2 bg-transparent hover:bg-transparent"
+                      >
                         X
                       </p>
                       <p>{message}</p>

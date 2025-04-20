@@ -103,6 +103,7 @@ const useAvailableSchedules = (instructor, appointmentDate) => {
     try {
       if (days.length) {
         const availableDays = [];
+        console.log("Ins Email", instructor.email);
         for (const day of days) {
           const timeslots = await db.getInstructorTimeslots(
             day,

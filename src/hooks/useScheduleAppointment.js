@@ -8,7 +8,7 @@ import { useReschedDialog } from "../context/appointmentContext/ReschedContext";
 const useScheduleAppointment = (isFormOpen) => {
   const db = useDB();
   const auth = useAuth();
-  const { reschedappointment } = useReschedDialog()
+  const { reschedappointment } = useReschedDialog();
   const [selectedDate, setSelectedDate] = useState(null);
   const [instructorSchedule, setInstructorSchedule] = useState([]);
   const [instructorTimeslots, setInstructorTimeslots] = useState([]);
@@ -20,10 +20,10 @@ const useScheduleAppointment = (isFormOpen) => {
 
   const toastMessage = (message) => toast(message);
   useEffect(() => {
-    if(reschedappointment){
-      console.log(reschedappointment)
+    if (reschedappointment) {
+      console.log(reschedappointment);
     }
-  },[])
+  }, []);
   useEffect(() => {
     const fetchAvailableDays = async () => {
       try {
@@ -51,12 +51,17 @@ const useScheduleAppointment = (isFormOpen) => {
 
   const fetchInstructorAvailableDays = async (days) => {
     try {
-      const useEmail = reschedappointment.email || auth.currentUser.email
+      // console.log("Email", auth.currentUser.email);
+      // const useEmail = reschedappointment.email
+      //   ? reschedappointment.email
+      //   : auth.currentUser.email;
+      // console.log("Use email", useEmail);
       const availableDays = [];
+      console.log("Ava days");
       for (const day of days) {
         const timeslots = await db.getInstructorTimeslots(
           day,
-          useEmail
+          auth.currentUser.email
         );
         if (timeslots.length > 0) {
           availableDays.push(day.dayOfWeek);
@@ -72,7 +77,7 @@ const useScheduleAppointment = (isFormOpen) => {
 
   const fetchInstructorTimeslots = async (day) => {
     try {
-      const useEmail = reschedappointment.email || auth.currentUser.email
+      const useEmail = auth.currentUser.email;
       const scheduleDay = await db.getScheduleDay(day.dayOfWeek);
       const timeslots = await db.getInstructorTimeslots(
         scheduleDay[0],
@@ -88,10 +93,8 @@ const useScheduleAppointment = (isFormOpen) => {
     if (isFormOpen) {
       const fetchAppointments = async () => {
         try {
-          const useID = reschedappointment.userID || auth.currentUser.uid
-          const appointments = await db.getInstructorAppointment(
-            useID
-          );
+          const useID = auth.currentUser.uid;
+          const appointments = await db.getInstructorAppointment(useID);
           const filteredAppointments = appointments.filter(
             (appt) => appt.appointedFaculty === auth.currentUser.uid
           );
