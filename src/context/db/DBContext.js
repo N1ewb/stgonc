@@ -802,7 +802,7 @@ export const DBProvider = ({ children }) => {
           appointmentStatus: "NOSHOW",
           updateMessage: `You did not anwser the call attempt of ${Auth.currentUser.displayName}`,
         };
-        const user = await getUser(receiver)
+        const user = await getUser(receiver);
         await updateDoc(appointmentDocRef, updatedAppointmentDocRef);
         await createLogs("NOSHOW", id, {
           ...updatedAppointmentDocRef,
@@ -813,10 +813,16 @@ export const DBProvider = ({ children }) => {
           `You appointment with ${Auth.currentUser.displayName} was marked as a NO SHOW because you did not answer the call attempt.`,
           user.email
         );
-        return { message: 'Successfully marked appointment as No SHOW', status: 'success'}
+        return {
+          message: "Successfully marked appointment as No SHOW",
+          status: "success",
+        };
       }
     } catch (error) {
-      return { message: 'Error in marking appointment as No SHOW', status: 'failed'}
+      return {
+        message: "Error in marking appointment as No SHOW",
+        status: "failed",
+      };
     }
   };
 
@@ -1236,12 +1242,16 @@ export const DBProvider = ({ children }) => {
           sentTo: receiver,
           participants: [Auth.currentUser.displayName, receiver],
         };
-        const docRef = await addDoc(messagesRef);
+        console.log("formvalues", formValues);
+        const docRef = await addDoc(messagesRef, formValues);
+        console.log("docRef", docRef);
         await createLogs("MESSAGE", docRef.id, {
           ...formValues,
           action: "Sent Message",
         });
       }
+      console.log("logs");
+
       return {
         message: "Successfully sent message",
         status: "success",
@@ -1374,26 +1384,26 @@ export const DBProvider = ({ children }) => {
   const subscribeToLogsChanges = async (callback) => {
     try {
       if (Auth.currentUser) {
-        const LogsCollectionRef = collection(firestore, 'ActionLogs')
+        const LogsCollectionRef = collection(firestore, "ActionLogs");
         if (user) {
           const q = query(
             LogsCollectionRef,
             where("performedBy", "==", user.uid),
-            orderBy("timestamp", 'desc')
+            orderBy("timestamp", "desc")
           );
           const unsubscribe = onSnapshot(q, (snapshot) => {
             const data = snapshot.docs.map((doc) => ({
               id: doc.id,
               ...doc.data(),
             }));
-            
+
             callback(data);
           });
           return unsubscribe;
         }
       }
     } catch (error) {
-      console.error('Error in getting action logs')
+      console.error("Error in getting action logs");
     }
   };
 

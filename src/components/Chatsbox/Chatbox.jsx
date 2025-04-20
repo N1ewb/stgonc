@@ -10,11 +10,10 @@ const Chatbox = ({ auth, db, receiver, setCurrentChatReceiver }) => {
   const notif = useMessage();
   const dummy = useRef();
   const formValueRef = useRef();
-  const toastMessage = (message) => toast(message)
+  const toastMessage = (message) => toast(message);
   const [messages, setMessages] = useState();
   const [filterbyParticipants, setFilterbyParticipants] = useState();
 
- 
   const getParticipantName = (receiver) => {
     return (
       receiver?.displayName ||
@@ -35,8 +34,6 @@ const Chatbox = ({ auth, db, receiver, setCurrentChatReceiver }) => {
     setMessages(messages);
   };
 
-  
-
   useEffect(() => {
     const filterParticipants = async () => {
       if (auth.currentUser && messages) {
@@ -49,8 +46,8 @@ const Chatbox = ({ auth, db, receiver, setCurrentChatReceiver }) => {
         setFilterbyParticipants(filtered);
       }
     };
-    filterParticipants()
-  },[messages]);
+    filterParticipants();
+  }, [messages]);
 
   useEffect(() => {
     if (messages === undefined) {
@@ -66,7 +63,7 @@ const Chatbox = ({ auth, db, receiver, setCurrentChatReceiver }) => {
           const unsubscribe = db.subscribeToMessageChanges((newmessages) => {
             setMessages(newmessages);
             setFilterbyParticipants();
-            
+
             if (dummy.current) {
               dummy.current.scrollIntoView({ behavior: "smooth" });
             }
@@ -85,13 +82,24 @@ const Chatbox = ({ auth, db, receiver, setCurrentChatReceiver }) => {
       const participantName = getParticipantName(receiver);
       const participantEmail = getParticipantEmail(receiver);
 
-      await db.sendMessage(formValue, auth.currentUser.uid, participantName);
-      await notif.storeUserNotifToDB(
-        auth.currentUser.email,
-        participantEmail,
-        "Message",
-        `${auth.currentUser.displayName} has sent you a message!`
+      const res = await db.sendMessage(
+        formValue,
+        auth.currentUser.uid,
+        participantName
       );
+      if (res.status === "success") {
+        console.log("res message", res.message);
+        toastMessage(res.message);
+      } else {
+        console.log("res message", res.message);
+        toastMessage(res.message);
+      }
+      // await notif.storeUserNotifToDB(
+      //   auth.currentUser.email,
+      //   participantEmail,
+      //   "Message",
+      //   `${auth.currentUser.displayName} has sent you a message!`
+      // );
     }
 
     formValueRef.current.value = "";
@@ -101,12 +109,12 @@ const Chatbox = ({ auth, db, receiver, setCurrentChatReceiver }) => {
   };
 
   const handleAttachFile = async (e) => {
-    const file = e.target.files[0]
-    try{
-      if(file && auth.currentUser){
+    const file = e.target.files[0];
+    try {
+      if (file && auth.currentUser) {
         const participantName = getParticipantName(receiver);
         const participantEmail = getParticipantEmail(receiver);
-        await db.attachFile(file, auth.currentUser.uid, participantName )
+        await db.attachFile(file, auth.currentUser.uid, participantName);
         await notif.storeUserNotifToDB(
           auth.currentUser.email,
           participantEmail,
@@ -114,10 +122,10 @@ const Chatbox = ({ auth, db, receiver, setCurrentChatReceiver }) => {
           `${auth.currentUser.displayName} has sent you an attachment!`
         );
       }
-    }catch(error){
-      toastMessage("Error in attaching file", error.message)
+    } catch (error) {
+      toastMessage("Error in attaching file", error.message);
     }
-  }
+  };
 
   return (
     <div className="absolute bottom-3 right-5 z-50 bg-white text-white h-[450px] w-[350px] flex flex-col rounded-t-[10px] shadow-lg">
@@ -155,8 +163,8 @@ const Chatbox = ({ auth, db, receiver, setCurrentChatReceiver }) => {
           <img src={AttachFile} alt="attach file" className="w-6 h-6 mr-2" />
           <input
             type="file"
-            className="hidden" 
-            onChange={(e) => handleAttachFile(e)} 
+            className="hidden"
+            onChange={(e) => handleAttachFile(e)}
           />
         </label>
 
